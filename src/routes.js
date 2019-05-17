@@ -13,6 +13,6 @@ var routes = [{
     name: "Giriş Sayfası",
     component: LoginPage,
     layout: "/auth"
-}]
+}];
 
 export default routes;
