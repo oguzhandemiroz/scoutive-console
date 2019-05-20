@@ -4,49 +4,49 @@ class Menu extends Component {
 	render() {
 		return (
 			<div id="menu">
-				<div class="header collapse d-lg-flex p-0" id="headerMenuCollapse">
-					<div class="container">
-						<div class="row align-items-center">
-							<div class="col-lg-3 ml-auto">
-								<form class="input-icon my-3 my-lg-0">
+				<div className="header collapse d-lg-flex p-0" id="headerMenuCollapse">
+					<div className="container">
+						<div className="row align-items-center">
+							<div className="col-lg-3 ml-auto">
+								<form className="input-icon my-3 my-lg-0">
 									<input
 										type="search"
-										class="form-control header-search"
+										className="form-control header-search"
 										placeholder="Ara&hellip;"
-										tabindex="1"
+										tabIndex="1"
 									/>
-									<div class="input-icon-addon">
-										<i class="fe fe-search" />
+									<div className="input-icon-addon">
+										<i className="fe fe-search" />
 									</div>
 								</form>
 							</div>
-							<div class="col-lg order-lg-first">
-								<ul class="nav nav-tabs border-0 flex-column flex-lg-row">
-									<li class="nav-item">
+							<div className="col-lg order-lg-first">
+								<ul className="nav nav-tabs border-0 flex-column flex-lg-row">
+									<li className="nav-item">
 										<NavLink to="/" exact activeClassName="active" className="nav-link">
-											<i class="fe fe-home" /> Anasayfa
+											<i className="fe fe-home" /> Anasayfa
 										</NavLink>
 									</li>
-									<li class="nav-item">
+									<li className="nav-item">
 										<NavLink to="/employees" activeClassName="active" className="nav-link">
-											<i class="fe fe-award" /> Personeller
+											<i className="fe fe-award" /> Personeller
 										</NavLink>
 									</li>
-									<li class="nav-item">
+									<li className="nav-item">
 										<NavLink to="/students" activeClassName="active" className="nav-link">
-											<i class="fe fe-users" /> Öğrenciler
+											<i className="fe fe-users" /> Öğrenciler
 										</NavLink>
 									</li>
-									<li class="nav-item">
+									<li className="nav-item">
 										<NavLink
 											to="/rollcalls"
 											activeClassName="active"
 											className="nav-link"
 											data-toggle="dropdown">
-											<i class="fe fe-check-square" />
+											<i className="fe fe-check-square" />
 											Yoklamalar
 										</NavLink>
-										<div class="dropdown-menu dropdown-menu-arrow">
+										<div className="dropdown-menu dropdown-menu-arrow">
 											<NavLink to="/rollcalls/student" className="dropdown-item">
 												Öğrenci Yoklaması
 											</NavLink>
@@ -55,9 +55,9 @@ class Menu extends Component {
 											</NavLink>
 										</div>
 									</li>
-									<li class="nav-item">
+									<li className="nav-item">
 										<NavLink to="/reports" activeClassName="active" className="nav-link">
-											<i class="fe fe-pie-chart" /> Raporlar
+											<i className="fe fe-pie-chart" /> Raporlar
 										</NavLink>
 									</li>
 								</ul>

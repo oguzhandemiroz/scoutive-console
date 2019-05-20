@@ -4,6 +4,10 @@
   "private": true,
   "dependencies": {
     "bootstrap": "^4.3.1",
+    "c3": "^0.7.0",
+    "d3": "^5.9.2",
+    "datatables.net": "^1.10.19",
+    "datatables.net-bs4": "^1.10.19",
     "jquery": "^3.4.1",
     "popper.js": "^1.15.0",
     "react": "^16.8.6",
