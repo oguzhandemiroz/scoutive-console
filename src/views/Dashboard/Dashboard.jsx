@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Revenue, Cost, NewUser } from "../../components/Dashboard/dashboard";
 
-class Home extends Component {
+class Dashboard extends Component {
     render() {
         return (
             <div className="container">
@@ -18,4 +18,4 @@ class Home extends Component {
     }
 }
 
-export default Home;
+export default Dashboard;
