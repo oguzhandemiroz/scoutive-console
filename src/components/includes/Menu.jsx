@@ -1,6 +1,10 @@
 import React, { Component } from "react";
 import { NavLink } from "react-router-dom";
+
 class Menu extends Component {
+	constructor(props) {
+		super(props);
+	}
 	render() {
 		return (
 			<div id="menu">
@@ -23,23 +27,35 @@ class Menu extends Component {
 							<div className="col-lg order-lg-first">
 								<ul className="nav nav-tabs border-0 flex-column flex-lg-row">
 									<li className="nav-item">
-										<NavLink to="/" exact activeClassName="active" className="nav-link">
+										<NavLink
+											to={`${this.props.layout}/dashboard`}
+											exact
+											activeClassName="active"
+											className="nav-link">
 											<i className="fe fe-home" /> Anasayfa
 										</NavLink>
 									</li>
 									<li className="nav-item">
-										<NavLink to="/employees" activeClassName="active" className="nav-link">
+										<NavLink
+											to={`${this.props.layout}/employees`}
+											exact
+											activeClassName="active"
+											className="nav-link">
 											<i className="fe fe-award" /> Personeller
 										</NavLink>
 									</li>
 									<li className="nav-item">
-										<NavLink to="/students" activeClassName="active" className="nav-link">
+										<NavLink
+											to={`${this.props.layout}/students`}
+											exact
+											activeClassName="active"
+											className="nav-link">
 											<i className="fe fe-users" /> Öğrenciler
 										</NavLink>
 									</li>
 									<li className="nav-item">
 										<NavLink
-											to="/rollcalls"
+											to={`${this.props.layout}/rollcalls`}
 											activeClassName="active"
 											className="nav-link"
 											data-toggle="dropdown">
@@ -47,16 +63,26 @@ class Menu extends Component {
 											Yoklamalar
 										</NavLink>
 										<div className="dropdown-menu dropdown-menu-arrow">
-											<NavLink to="/rollcalls/student" className="dropdown-item">
+											<NavLink
+												to={`${this.props.layout}/rollcalls/student`}
+												exact
+												className="dropdown-item">
 												Öğrenci Yoklaması
 											</NavLink>
-											<NavLink to="/rollcalls/employee" className="dropdown-item">
+											<NavLink
+												to={`${this.props.layout}/rollcalls/employee`}
+												exact
+												className="dropdown-item">
 												Personel Yoklaması
 											</NavLink>
 										</div>
 									</li>
 									<li className="nav-item">
-										<NavLink to="/reports" activeClassName="active" className="nav-link">
+										<NavLink
+											to={`${this.props.layout}/reports`}
+											exact
+											activeClassName="active"
+											className="nav-link">
 											<i className="fe fe-pie-chart" /> Raporlar
 										</NavLink>
 									</li>

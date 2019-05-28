@@ -9,7 +9,7 @@ class HeaderMenu extends Component {
         <div className="header py-4">
           <div className="container">
             <div className="d-flex">
-              <Link className="header-brand" to="/">
+              <Link className="header-brand" to="/app">
                 <img id="ScoutiveLogo" src={logo} alt="" />
               </Link>
               <div className="d-flex order-lg-2 ml-auto">
