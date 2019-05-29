@@ -1,11 +1,13 @@
-import React, { Component } from "react";
+import React, {
+    Component
+} from "react";
 import "jquery";
 import c3 from "c3";
 import * as d3 from "d3";
 import "../../assets/css/c3.min.css";
 import sc from "../../assets/js/sc";
-import  "../../assets/js/core";
-import { ep } from "../../assets/js/urls";
+import "../../assets/js/core";
+import ep from "../../assets/js/urls";
 
 const $ = require("jquery");
 $.DataTable = require("datatables.net");
@@ -21,14 +23,14 @@ const chartOptions = {
     },
     tooltip: {
         format: {
-            value: function(value) {
+            value: function (value) {
                 return d3.format("")(value);
             }
         }
     },
     pie: {
         label: {
-            format: function(value) {
+            format: function (value) {
                 return d3.format("")(value);
             }
         }
@@ -80,15 +82,24 @@ class GeneralEmployee extends Component {
         });
     }
     render() {
-        return (
-            <div className="col-sm-6 col-md-4">
-                <div className="card">
-                    <div className="card-body p-3 text-center">
-                        <div className="h5">Genel Personel Raporu</div>
-                        <div id="general-employee" style={{ height: "192px" }} />
-                    </div>
-                </div>
-            </div>
+        return ( <
+            div className = "col-sm-6 col-md-4" >
+            <
+            div className = "card" >
+            <
+            div className = "card-body p-3 text-center" >
+            <
+            div className = "h5" > Genel Personel Raporu < /div> <
+            div id = "general-employee"
+            style = {
+                {
+                    height: "192px"
+                }
+            }
+            /> <
+            /div> <
+            /div> <
+            /div>
         );
     }
 }
@@ -141,15 +152,24 @@ class DailyEmployee extends Component {
         });
     }
     render() {
-        return (
-            <div className="col-sm-6 col-md-4">
-                <div className="card">
-                    <div className="card-body p-3 text-center">
-                        <div className="h5">Günlük Personel Raporu</div>
-                        <div id="daily-employee" style={{ height: "192px" }} />
-                    </div>
-                </div>
-            </div>
+        return ( <
+            div className = "col-sm-6 col-md-4" >
+            <
+            div className = "card" >
+            <
+            div className = "card-body p-3 text-center" >
+            <
+            div className = "h5" > Günlük Personel Raporu < /div> <
+            div id = "daily-employee"
+            style = {
+                {
+                    height: "192px"
+                }
+            }
+            /> <
+            /div> <
+            /div> <
+            /div>
         );
     }
 }
@@ -197,8 +217,7 @@ class Table extends Component {
                 decimal: ",",
                 thousands: "."
             },
-            columnDefs: [
-                {
+            columnDefs: [{
                     targets: [0, 1],
                     visible: false
                 },
@@ -211,7 +230,7 @@ class Table extends Component {
                 url: ep.LIST_EMPLOYEE,
                 type: "POST",
                 datatype: "json",
-                data: function(d) {
+                data: function (d) {
                     return JSON.stringify({
                         type: 0,
                         sid: 63,
@@ -219,12 +238,11 @@ class Table extends Component {
                     });
                 },
                 contentType: "application/json",
-                complete: function(res) {
+                complete: function (res) {
                     console.log(res.responseJSON);
                 }
             },
-            columns: [
-                {
+            columns: [{
                     data: "uid"
                 },
                 {
@@ -233,7 +251,7 @@ class Table extends Component {
                 {
                     data: "image",
                     class: "text-center",
-                    render: function(data, type, row) {
+                    render: function (data, type, row) {
                         var status = row.status.type;
                         var bg_class_type = {
                             "0": "secondary",
@@ -263,7 +281,7 @@ class Table extends Component {
                 },
                 {
                     data: "name",
-                    render: function(data, type, row) {
+                    render: function (data, type, row) {
                         var fullname = data + " " + (row.surname || "");
                         return (
                             '<a href="employee/view.html?eid=' + row.uid + '" class="text-inherit">' + fullname + "</a>"
@@ -272,13 +290,13 @@ class Table extends Component {
                 },
                 {
                     data: "phone",
-                    render: function(data, type, row) {
+                    render: function (data, type, row) {
                         return '<a href="tel:' + (data || "...") + '" class="text-inherit">' + (data || "...") + "</a>";
                     }
                 },
                 {
                     data: "email",
-                    render: function(data, type, row) {
+                    render: function (data, type, row) {
                         return (
                             '<a href="mailto:' + (data || "...") + '" class="text-inherit">' + (data || "...") + "</a>"
                         );
@@ -289,7 +307,7 @@ class Table extends Component {
                 },
                 {
                     data: "salary",
-                    render: function(data, type, row) {
+                    render: function (data, type, row) {
                         var convert = typeof data === "number" ? data.format() : data;
                         convert = convert ? convert + " ₺" : "...";
                         return convert;
@@ -297,7 +315,7 @@ class Table extends Component {
                 },
                 {
                     data: "status",
-                    render: function(data, type, row) {
+                    render: function (data, type, row) {
                         var status_type = {
                             "0": ["Tanımsız", "secondary"],
                             "1": ["Çalışıyor", "success"],
@@ -316,7 +334,7 @@ class Table extends Component {
                 },
                 {
                     data: "action",
-                    render: function(data, type, row) {
+                    render: function (data, type, row) {
                         var fullname = row["name"] + " " + (row["surname"] || "");
                         return (
                             '<div class="dropdown btn-block" id="action-dropdown">' +
@@ -372,7 +390,7 @@ class Table extends Component {
         });
 
         $.fn.DataTable.ext.errMode = "none";
-        $("#employee-list").on("error.dt", function(e, settings, techNote, message) {
+        $("#employee-list").on("error.dt", function (e, settings, techNote, message) {
             console.log("An error has been reported by DataTables: ", message, techNote);
         });
     }
@@ -386,25 +404,34 @@ class Table extends Component {
         return false;
     }
     render() {
-        return (
-            <table id="employee-list" className="table card-table table-vcenter table-striped text-nowrap datatable">
-                <thead>
-                    <tr>
-                        <th className="">ID</th>
-                        <th className="w-1 no-sort">T.C.</th>
-                        <th className="w-1 text-center no-sort">#</th>
-                        <th>AD SOYAD</th>
-                        <th>TELEFON</th>
-                        <th>EMAIL</th>
-                        <th>POZİSYON</th>
-                        <th>MAAŞ</th>
-                        <th>DURUM</th>
-                        <th className="no-sort" />
-                    </tr>
-                </thead>
-            </table>
+        return ( <
+            table id = "employee-list"
+            className = "table card-table table-vcenter table-striped text-nowrap datatable" >
+            <
+            thead >
+            <
+            tr >
+            <
+            th className = "" > ID < /th> <
+            th className = "w-1 no-sort" > T.C. < /th> <
+            th className = "w-1 text-center no-sort" > # < /th> <
+            th > AD SOYAD < /th> <
+            th > TELEFON < /th> <
+            th > EMAIL < /th> <
+            th > POZİSYON < /th> <
+            th > MAAŞ < /th> <
+            th > DURUM < /th> <
+            th className = "no-sort" / >
+            <
+            /tr> <
+            /thead> <
+            /table>
         );
     }
 }
 
-export { DailyEmployee, GeneralEmployee, Table };
+export {
+    DailyEmployee,
+    GeneralEmployee,
+    Table
+};

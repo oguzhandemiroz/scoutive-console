@@ -18,4 +18,4 @@ var ep = {
     "CHECK_PERMISSION": host + api_version + "check/permission",
 }
 
-export {ep};
+export default ep;
