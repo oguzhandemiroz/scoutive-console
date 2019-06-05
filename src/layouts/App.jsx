@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Switch, Route, Redirect } from "react-router-dom";
+import { Switch, Route, Redirect, withRouter } from "react-router-dom";
 import Menu from "../components/includes/Menu.jsx";
 import HeaderMenu from "../components/includes/HeaderMenu.jsx";
 import Footer from "../components/includes/Footer.jsx";
@@ -41,4 +41,4 @@ class App extends Component {
 	}
 }
 
-export default App;
+export default withRouter(App);

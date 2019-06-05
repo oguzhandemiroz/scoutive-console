@@ -46,7 +46,7 @@ export class ForgotPassword extends Component {
 								</form>
 								<div className="text-center text-muted">
 									Hatırladım,{" "}
-									<a href="javascript:void(0)" onClick={() => this.props.history.goBack()}>
+									<a href="#" onClick={() => this.props.history.goBack()}>
 										geriye dön
 									</a>
 									.

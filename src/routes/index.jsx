@@ -42,6 +42,8 @@ var indexRoutes = [
 		prop: { exact: true }
 	},
 	{
+		path: "*",
+		layout: "",
 		name: "404",
 		component: _404
 	}

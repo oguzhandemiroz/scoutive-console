@@ -1,9 +1,6 @@
 import React, { Component } from "react";
 
 class _404 extends Component {
-	constructor(props) {
-		super(props);
-	}
 	render() {
 		return (
 			<div className="container pt-5 text-center">
@@ -11,10 +8,10 @@ class _404 extends Component {
 					<i className="si si-exclamation" /> 404
 				</div>
 				<h1 className="h2 mb-5">Hata... Aradığınız sayfa bulunamadı...</h1>
-				<a href="javascript:void(0)" className="btn btn-primary" onClick={() => this.props.history.goBack()}>
+				<button className="btn btn-primary" onClick={() => this.props.history.goBack()}>
 					<i className="fe fe-arrow-left mr-2" />
 					Geri Dön
-				</a>
+				</button>
 			</div>
 		);
 	}
