@@ -9,7 +9,7 @@ const Toast = Swal.mixin({
 
 const showSwal = options => {
 	try {
-		Swal.fire({
+		return Swal.fire({
 			heightAuto: false,
 			confirmButtonText: "Tamam",
 			...options

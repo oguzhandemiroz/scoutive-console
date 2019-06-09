@@ -18671,6 +18671,7 @@ a.tag-addon:hover {
   -ms-flex-positive: 1;
   flex-grow: 1;
   position: relative;
+  margin-bottom: 0;
 }
 
 .selectgroup:not(.selectgroup-vertical)>.selectgroup-item+.selectgroup-item {
@@ -22273,4 +22274,8 @@ figure span.player-number {
 
 .table-responsive.employee-list {
   -webkit-overflow-scrolling: auto!important;
+}
+
+.cursor-pointer {
+  cursor: pointer!important;
 }

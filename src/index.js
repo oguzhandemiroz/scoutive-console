@@ -7,6 +7,19 @@ import ReactDOM from "react-dom";
 
 import * as serviceWorker from "./serviceWorker";
 import Core from "./layouts/Core.jsx";
+const $ = require("jquery");
+
+/** Initialize popovers */
+$(function() {
+    $('[data-toggle="popover"]').popover({
+        html: true,
+        trigger: "hover"
+    });
+});
+
+$(function() {
+    $('[data-toggle="tooltip"]').tooltip();
+});
 
 const rootElement = document.getElementById("root");
 

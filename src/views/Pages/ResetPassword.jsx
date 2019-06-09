@@ -1,9 +1,8 @@
 import React, {Component} from "react";
 import {Link} from "react-router-dom";
 import logo from "../../assets/images/logo.svg";
-import {Forgot} from "../../services/Password";
+import {Reset} from "../../services/Password";
 
-const emailRegEx = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
 const formValid = ({formErrors, ...rest}) => {
     let valid = true;
 
@@ -18,16 +17,18 @@ const formValid = ({formErrors, ...rest}) => {
     return valid;
 };
 
-class ForgotPassword extends Component {
+class ResetPassword extends Component {
     constructor(props) {
         super(props);
-
         this.state = {
-            username: null,
+            UID: props.match.params.uid,
+            newPassword: null,
+            newPasswordAgain: null,
             formErrors: {
-                username: ""
-			},
-			loadingButton: ""
+                newPassword: "",
+                newPasswordAgain: ""
+            },
+            loadingButton: ""
         };
     }
 
@@ -37,22 +38,36 @@ class ForgotPassword extends Component {
         if (formValid(this.state)) {
             console.log(`
 				---SUBMITTING---
-				username: ${this.state.username}
+				UID: ${this.state.UID}
+				newPassword: ${this.state.newPassword}
+				newPasswordAgain: ${this.state.newPasswordAgain}
 			`);
             this.setState({loadingButton: "btn-loading"});
 
-            Forgot({
-                email: this.state.username
-            }).then(() => this.setState({loadingButton: ""}));
+            Reset(
+                {
+                    uid: this.state.UID,
+                    password: this.state.newPassword
+                },
+                this.props.history
+            ).then(() => this.setState({loadingButton: ""}));
         } else {
             const {value} = e.target;
             let formErrors = {...this.state.formErrors};
             console.error("FORM INVALID - DISPLAY ERROR");
 
-            formErrors.username = this.state.username
-                ? !emailRegEx.test(this.state.username.toLowerCase())
+            formErrors.newPassword = this.state.newPassword
+                ? this.state.newPassword.length < 3
                     ? "is-invalid"
                     : ""
+                : "is-invalid";
+
+            formErrors.newPasswordAgain = this.state.newPasswordAgain
+                ? this.state.newPasswordAgain.length < 3
+                    ? "is-invalid"
+                    : this.state.newPasswordAgain === this.state.newPassword
+                    ? ""
+                    : "is-invalid"
                 : "is-invalid";
             this.setState({formErrors});
         }
@@ -64,8 +79,17 @@ class ForgotPassword extends Component {
         let formErrors = {...this.state.formErrors};
 
         switch (name) {
-            case "username":
-                formErrors.username = !emailRegEx.test(value.toLowerCase()) ? "is-invalid" : "";
+            case "newPassword":
+                formErrors.newPassword = value.length < 3 ? "is-invalid" : "";
+                break;
+
+            case "newPasswordAgain":
+                formErrors.newPasswordAgain =
+                    value.length < 3
+                        ? "is-invalid"
+                        : this.state.newPassword === value
+                        ? ""
+                        : "is-invalid";
                 break;
             default:
                 break;
@@ -90,19 +114,30 @@ class ForgotPassword extends Component {
                                 <form className="card" noValidate onSubmit={this.handleSubmit}>
                                     <div className="card-body p-6">
                                         <div className="card-title">Şifremi Unuttum</div>
-                                        <p className="text-muted">
-                                            Lütfen email adresinizi girin, şifre sıfırlama
-                                            bağlantısı gönderilecektir.
-                                        </p>
                                         <div className="form-group">
-                                            <label className="form-label" htmlFor="username">
-                                                Email
+                                            <label className="form-label">Yeni Şifre</label>
+                                            <input
+                                                type="email"
+                                                className={`form-control ${formErrors.newPassword}`}
+                                                name="newPassword"
+                                                aria-describedby="emailHelp"
+                                                placeholder="Yeni Şifre"
+                                                noValidate
+                                                onChange={this.handleChange}
+                                            />
+                                        </div>
+                                        <div className="form-group">
+                                            <label className="form-label">
+                                                Yeni Şifre (Tekrar)
                                             </label>
                                             <input
-                                                type="text"
-                                                className={`form-control ${formErrors.username}`}
-                                                name="username"
-                                                placeholder="Email"
+                                                type="email"
+                                                className={`form-control ${
+                                                    formErrors.newPasswordAgain
+                                                }`}
+                                                name="newPasswordAgain"
+                                                aria-describedby="emailHelp"
+                                                placeholder="Yeni Şifre (Tekrar)"
                                                 noValidate
                                                 onChange={this.handleChange}
                                             />
@@ -118,13 +153,6 @@ class ForgotPassword extends Component {
                                         </div>
                                     </div>
                                 </form>
-                                <div className="text-center text-muted">
-                                    Hatırladım,{" "}
-                                    <a href="#" onClick={() => this.props.history.goBack()}>
-                                        geriye dön
-                                    </a>
-                                    .
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -134,4 +162,4 @@ class ForgotPassword extends Component {
     }
 }
 
-export default ForgotPassword;
+export default ResetPassword;

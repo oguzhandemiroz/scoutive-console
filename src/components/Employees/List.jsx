@@ -6,6 +6,7 @@ import "../../assets/css/c3.min.css";
 import sc from "../../assets/js/sc";
 import "../../assets/js/core";
 import ep from "../../assets/js/urls";
+import {fatalSwal} from "../Alert.jsx";
 
 const $ = require("jquery");
 $.DataTable = require("datatables.net");
@@ -198,6 +199,9 @@ const datatable_turkish = {
 
 class Table extends Component {
     componentDidMount() {
+        const sID = localStorage.getItem("sID");
+        const UID = localStorage.getItem("UID");
+        const sType = localStorage.getItem("sType");
         $("#employee-list").DataTable({
             responsive: true,
             order: [0, "desc"],
@@ -223,14 +227,15 @@ class Table extends Component {
                 datatype: "json",
                 data: function(d) {
                     return JSON.stringify({
-                        type: 0,
-                        sid: 63,
-                        uid: "51572b5d-33d7-437a-a0c7-b0cad59dcc27"
+                        type: sType,
+                        sid: sID,
+                        uid: UID
                     });
                 },
                 contentType: "application/json",
                 complete: function(res) {
-                    console.log(res.responseJSON);
+                    console.log(res);
+                    if (res.status !== 200 && !res.responseJSON) fatalSwal();
                 }
             },
             columns: [
@@ -261,7 +266,7 @@ class Table extends Component {
                             );
                         } else {
                             return (
-                                '<div class="avatar d-block" style="background-image: url(' +
+                                '<div class="avatar" style="background-image: url(' +
                                 data +
                                 ')">' +
                                 '<span class="avatar-status bg-' +
@@ -275,37 +280,27 @@ class Table extends Component {
                     data: "name",
                     render: function(data, type, row) {
                         var fullname = data + " " + (row.surname || "");
-                        return (
-                            '<a href="employee/view.html?eid=' +
-                            row.uid +
-                            '" class="text-inherit">' +
-                            fullname +
-                            "</a>"
-                        );
+
+                        return `<a href="/app/employees/detail/${
+                            row.uid
+                        }" style="width:160px;" data-toggle="tooltip" data-placement="top" data-original-title="${fullname}" class="text-truncate d-block text-inherit">${fullname}</a>`;
                     }
                 },
                 {
                     data: "phone",
                     render: function(data, type, row) {
-                        return (
-                            '<a href="tel:' +
-                            (data || "...") +
-                            '" class="text-inherit">' +
-                            (data || "...") +
-                            "</a>"
-                        );
+                        return `<a href="tel:${data ||
+                            "..."}" data-toggle="tooltip" data-placement="top" data-original-title="${data ||
+                            "..."}" class="text-inherit">${data || "..."}</a>`;
                     }
                 },
                 {
                     data: "email",
                     render: function(data, type, row) {
-                        return (
-                            '<a href="mailto:' +
-                            (data || "...") +
-                            '" class="text-inherit">' +
-                            (data || "...") +
-                            "</a>"
-                        );
+                        return `<a href="mailto:${data ||
+                            "..."}" data-toggle="tooltip" data-placement="top" data-original-title="${data ||
+                            "..."}" class="text-truncate w-9 d-block text-inherit">${data ||
+                            "..."}</a>`;
                     }
                 },
                 {
@@ -342,62 +337,64 @@ class Table extends Component {
                     data: "action",
                     render: function(data, type, row) {
                         var fullname = row["name"] + " " + (row["surname"] || "");
-                        return (
-                            '<div class="dropdown btn-block" id="action-dropdown">' +
-                            '<button type="button" id="employee-action"class="btn btn-sm btn-secondary btn-block dropdown-toggle"data-toggle="dropdown" aria-haspopup="true"aria-expanded="false">İşlem</button>' +
-                            '<div class="dropdown-menu dropdown-menu-right"aria-labelledby="employee-action" x-placement="top-end">' +
-                            '<a class="dropdown-item disabled text-azure" href="javascript:void(0)">' +
-                            '<i class="dropdown-icon fa fa-user text-azure"></i>' +
-                            fullname +
-                            "</a>" +
-                            '<div role="separator" class="dropdown-divider"></div>' +
-                            '<a class="dropdown-item action-pay-salary" href="javascript:void(0)">' +
-                            '<i class="dropdown-icon fa fa-money-bill-wave"></i> Maaş Öde' +
-                            "</a>" +
-                            '<a class="dropdown-item action-advance-payment" href="javascript:void(0)">' +
-                            '<i class="dropdown-icon fa fa-hand-holding-usd"></i> Avans Ver' +
-                            "</a>" +
-                            '<a class="dropdown-item action-salary-raise" href="javascript:void(0)">' +
-                            '<i class="dropdown-icon fa fa-coins"></i> Zam Yap' +
-                            "</a>" +
-                            '<div role="separator" class="dropdown-divider"></div>' +
-                            '<a class="dropdown-item action-day-off" href="javascript:void(0)">' +
-                            '<i class="dropdown-icon fa fa-coffee"></i> İzin Yaz' +
-                            "</a>" +
-                            '<div role="separator" class="dropdown-divider"></div>' +
-                            '<a class="dropdown-item action-send-message" href="javascript:void(0)">' +
-                            '<i class="dropdown-icon fa fa-paper-plane"></i> Mesaj Gönder' +
-                            "</a>" +
-                            '<a class="dropdown-item action-warning" href="javascript:void(0)">' +
-                            '<i class="dropdown-icon fa fa-exclamation-triangle"></i> İkaz Et' +
-                            "</a>" +
-                            '<div role="separator" class="dropdown-divider"></div>' +
-                            '<a class="dropdown-item action-edit" href="javascript:void(0)">' +
-                            '<i class="dropdown-icon fa fa-pen"></i> Düzenle' +
-                            "</a>" +
-                            '<a class="dropdown-item action-change-password" href="javascript:void(0)">' +
-                            '<i class="dropdown-icon fa fa-key"></i> Şifre Değiştir' +
-                            "</a>" +
-                            '<a class="dropdown-item action-permission" href="javascript:void(0)">' +
-                            '<i class="dropdown-icon fa fa-user-cog"></i> Yetkiledirme' +
-                            "</a>" +
-                            '<a class="dropdown-item action-all-salary-info" href="javascript:void(0)">' +
-                            '<i class="dropdown-icon fa fa-receipt"></i> Tüm Maaş Bilgisi' +
-                            "</a>" +
-                            '<a class="dropdown-item action-all-info" href="javascript:void(0)">' +
-                            '<i class="dropdown-icon fa fa-info-circle"></i> Tüm Bilgileri' +
-                            "</a>" +
-                            "</div>" +
-                            "</div>"
-                        );
+                        return `<div class="dropdown btn-block" id="action-dropdown">
+                            <button type="button" id="employee-action" class="btn btn-sm btn-secondary btn-block dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                İşlem
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="employee-action" x-placement="top-end">
+                                <a class="dropdown-item disabled text-azure" href="javascript:void(0)">
+                                    <i class="dropdown-icon fa fa-user text-azure"></i>${fullname}
+                                </a>
+                                <div role="separator" class="dropdown-divider"></div>
+                                <a class="dropdown-item action-pay-salary" href="javascript:void(0)">
+                                    <i class="dropdown-icon fa fa-money-bill-wave"></i> Maaş Öde
+                                </a>
+                                <a class="dropdown-item action-advance-payment" href="javascript:void(0)">
+                                    <i class="dropdown-icon fa fa-hand-holding-usd"></i> Avans Ver
+                                </a>
+                                <a class="dropdown-item action-salary-raise" href="javascript:void(0)">
+                                    <i class="dropdown-icon fa fa-coins"></i> Zam Yap
+                                </a>
+                                <div role="separator" class="dropdown-divider"></div>
+                                <a class="dropdown-item action-day-off" href="javascript:void(0)">
+                                    <i class="dropdown-icon fa fa-coffee"></i> İzin Yaz
+                                </a>
+                                <div role="separator" class="dropdown-divider"></div>
+                                <a class="dropdown-item action-send-message" href="javascript:void(0)">
+                                    <i class="dropdown-icon fa fa-paper-plane"></i> Mesaj Gönder
+                                </a>
+                                <a class="dropdown-item action-warning" href="javascript:void(0)">
+                                    <i class="dropdown-icon fa fa-exclamation-triangle"></i> İkaz Et
+                                </a>
+                                <div role="separator" class="dropdown-divider"></div>
+                                <a class="dropdown-item action-edit" href="javascript:void(0)">
+                                    <i class="dropdown-icon fa fa-pen"></i> Düzenle
+                                </a>
+                                <a class="dropdown-item action-change-password" href="javascript:void(0)">
+                                    <i class="dropdown-icon fa fa-key"></i> Şifre Değiştir
+                                </a>
+                                <a class="dropdown-item action-permission" href="javascript:void(0)">
+                                    <i class="dropdown-icon fa fa-user-cog"></i> Yetkiledirme
+                                </a>
+                                <a class="dropdown-item action-all-salary-info" href="javascript:void(0)">
+                                    <i class="dropdown-icon fa fa-receipt"></i> Tüm Maaş Bilgisi
+                                </a>
+                                <a class="dropdown-item action-all-info" href="javascript:void(0)">
+                                    <i class="dropdown-icon fa fa-info-circle"></i> Tüm Bilgileri
+                                </a>
+                            </div>
+                        </div>`;
                     }
                 }
             ]
         });
-
         $.fn.DataTable.ext.errMode = "none";
         $("#employee-list").on("error.dt", function(e, settings, techNote, message) {
             console.log("An error has been reported by DataTables: ", message, techNote);
+        });
+
+        $("#employee-list").on("draw.dt", function() {
+            $('[data-toggle="tooltip"]').tooltip();
         });
     }
     componentWillUnmount() {
@@ -416,10 +413,16 @@ class Table extends Component {
                 className="table card-table table-vcenter table-striped text-nowrap datatable">
                 <thead>
                     <tr>
-                        <th className=""> ID </th> <th className="w-1 no-sort"> T.C. </th>
-                        <th className="w-1 text-center no-sort"> # </th> <th> AD SOYAD </th>
-                        <th> TELEFON </th> <th> EMAIL </th> <th> POZİSYON </th> <th> MAAŞ </th>
-                        <th> DURUM </th> <th className="no-sort" />
+                        <th>ID</th>
+                        <th className="w-1 no-sort">T.C.</th>
+                        <th className="w-1 text-center no-sort">#</th>
+                        <th>AD SOYAD</th>
+                        <th>TELEFON</th>
+                        <th>EMAIL</th>
+                        <th>POZİSYON</th>
+                        <th>MAAŞ</th>
+                        <th>DURUM</th>
+                        <th className="no-sort" />
                     </tr>
                 </thead>
             </table>

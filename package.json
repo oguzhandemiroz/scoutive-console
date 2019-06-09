@@ -5,6 +5,7 @@
   "dependencies": {
     "bootstrap": "^4.3.1",
     "c3": "^0.7.0",
+    "crypto-js": "^3.1.9-1",
     "d3": "^5.9.2",
     "datatables.net": "^1.10.19",
     "datatables.net-bs4": "^1.10.19",
@@ -16,6 +17,7 @@
     "react-dom": "^16.8.6",
     "react-router-dom": "^5.0.0",
     "react-scripts": "3.0.1",
+    "react-select": "^3.0.4",
     "sweetalert2": "^8.11.6"
   },
   "scripts": {

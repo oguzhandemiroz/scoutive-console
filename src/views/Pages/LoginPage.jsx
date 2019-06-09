@@ -1,9 +1,7 @@
 import logo from "../../assets/images/logo.svg";
 import React, {Component} from "react";
 import {Link, withRouter} from "react-router-dom";
-import {showSwal} from "../../components/Alert.jsx";
 import {RequestLogin} from "../../services/Login.jsx";
-import {Redirect} from "react-router-dom";
 
 const formValid = ({formErrors, ...rest}) => {
     let valid = true;
@@ -57,13 +55,12 @@ export class LoginPage extends Component {
                 this.state.remember
             ).then(code => {
                 this.setState({loadingButton: ""});
-                //this.props.history.push("/app");
-                setTimeout(() => {
-                    //window.location.reload();
-                }, 100);
+                if (code === 1020)
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1000);
             });
         } else {
-            const {value} = e.target;
             let formErrors = {...this.state.formErrors};
             console.error("FORM INVALID - DISPLAY ERROR");
 
@@ -108,8 +105,6 @@ export class LoginPage extends Component {
 
     render() {
         const {formErrors} = this.state;
-        /*const isLogin = localStorage.getItem("UID");
-        if (isLogin) return <Redirect to="/" />;*/
         return (
             <div className="page">
                 <div className="page-single">

@@ -1,16 +1,16 @@
 import React, {Component} from "react";
-import {DailyEmployee, GeneralEmployee, Table} from "../../components/Employees/employees";
+import {DailyEmployee, GeneralEmployee, Table} from "../../components/Employees/List.jsx";
+import {Link} from "react-router-dom";
 
 class Employees extends Component {
-    componentDidMount() {
-        console.log(this.props.location.state);
-    }
     render() {
         return (
             <div className="container">
                 <div className="page-header">
                     <h1 className="page-title">Personeller</h1>
-                    <button className="btn btn-sm btn-success ml-3">Personel Ekle</button>
+                    <Link to="/app/employees/add" className="btn btn-sm btn-success ml-3">
+                        Personel Ekle
+                    </Link>
                 </div>
                 <div className="row row-cards">
                     <DailyEmployee />

@@ -3,13 +3,21 @@ import {Link, withRouter} from "react-router-dom";
 import logo from "../../assets/images/logo.svg";
 
 class HeaderMenu extends Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            sName: localStorage.getItem("sName") || "...",
+            sImage: localStorage.getItem("sImage"),
+            sPosition: localStorage.getItem("sPosition") || "..."
+        };
+    }
+
     Logout = () => {
-        const localeStorageList = ["sLogo", "sName", "UID", "sID", "sType"];
-        localeStorageList.map(el => {
-            localStorage.removeItem(el);
-        });
+        const localeStorageList = ["sImage", "sName", "UID", "sID", "sType", "sPosition"];
+        localeStorageList.map(el => localStorage.removeItem(el));
         setTimeout(() => {
-            this.props.history.push("/");
+            this.props.history.push("/auth");
             window.location.reload();
         }, 100);
     };
@@ -82,13 +90,14 @@ class HeaderMenu extends Component {
                                         href="javascript:void(0)"
                                         className="nav-link pr-0 leading-none"
                                         data-toggle="dropdown">
-                                        <span className="avatar" id="schoolLogo" />
+                                        <span
+                                            className="avatar"
+                                            style={{backgroundImage: `url(${this.state.sImage})`}}
+                                        />
                                         <span className="ml-2 d-none d-lg-block">
-                                            <span className="text-default" id="schoolName">
-                                                ...
-                                            </span>
+                                            <span className="text-default">{this.state.sName}</span>
                                             <small className="text-muted d-block mt-1">
-                                                Sahibi
+                                                {this.state.sPosition}
                                             </small>
                                         </span>
                                     </span>

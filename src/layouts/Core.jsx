@@ -1,11 +1,8 @@
 import React, {Component} from "react";
-import {BrowserRouter as Router, Route, Switch, Redirect, withRouter} from "react-router-dom";
-import {createBrowserHistory} from "history";
+import {BrowserRouter as Router, Route, Switch, Redirect} from "react-router-dom";
 import Auth from "./Auth";
 import App from "./App";
 import _404 from "../views/Pages/404.jsx";
-
-const history = createBrowserHistory();
 
 const auth = {
     isAuthenticated: localStorage.getItem("UID") ? true : false
@@ -30,10 +27,6 @@ const PublicRoute = ({component: Component, ...rest}) => (
 );
 
 export class Core extends Component {
-    constructor(props) {
-        super(props);
-    }
-
     render() {
         return (
             <Router>
