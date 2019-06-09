@@ -37,7 +37,7 @@ const Branchs = () => {
             const data = response.data;
             const status = response.status;
             const selectData = [];
-            console.log("Bloods: ", response);
+            console.log("Branchs: ", response);
 
             if (status.code !== 1020) {
                 Toast.fire({
@@ -103,8 +103,8 @@ const Days = () => {
 
     for (day; day <= endDay; day++) {
         days.push({
-            value: day,
-            label: day.toString()
+            value: day < 10 ? "0" + day.toString() : day.toString(),
+            label: day < 10 ? "0" + day.toString() : day.toString()
         });
     }
 
@@ -114,51 +114,51 @@ const Days = () => {
 const Months = () => {
     const months = [
         {
-            value: 1,
+            value: "01",
             label: "Ocak"
         },
         {
-            value: 2,
+            value: "02",
             label: "Şubat"
         },
         {
-            value: 3,
+            value: "03",
             label: "Mart"
         },
         {
-            value: 4,
+            value: "04",
             label: "Nisan"
         },
         {
-            value: 5,
+            value: "05",
             label: "Mayıs"
         },
         {
-            value: 6,
+            value: "06",
             label: "Haziran"
         },
         {
-            value: 7,
+            value: "07",
             label: "Temmuz"
         },
         {
-            value: 8,
+            value: "08",
             label: "Ağustos"
         },
         {
-            value: 9,
+            value: "09",
             label: "Eylül"
         },
         {
-            value: 10,
+            value: "10",
             label: "Ekim"
         },
         {
-            value: 11,
+            value: "11",
             label: "Kasım"
         },
         {
-            value: 12,
+            value: "12",
             label: "Aralık"
         }
     ];

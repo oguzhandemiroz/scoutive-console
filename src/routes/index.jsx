@@ -4,11 +4,15 @@ import ForgotPassword from "../views/Pages/ForgotPassword.jsx";
 import ResetPassword from "../views/Pages/ResetPassword.jsx";
 import Dashboard from "../views/Dashboard/Dashboard.jsx";
 import Employees from "../views/Employees/Employees.jsx";
+import Players from "../views/Players/Players.jsx";
 import _404 from "../views/Pages/404.jsx";
 
 import AddEmployee from "../components/Employees/Add.jsx";
 import DetailEmployee from "../components/Employees/Detail.jsx";
 import EditEmployee from "../components/Employees/Edit.jsx";
+
+import AddPlayers from "../components/Players/Add.jsx";
+import DetailPlayer from "../components/Players/Detail.jsx";
 
 var indexRoutes = [
     {
@@ -71,6 +75,27 @@ var indexRoutes = [
         path: "/employees/edit/:uid",
         name: "Edit Employee",
         component: EditEmployee,
+        layout: "/app",
+        prop: {exact: true}
+    },
+    {
+        path: "/players",
+        name: "Players",
+        component: Players,
+        layout: "/app",
+        prop: {exact: true}
+    },
+    {
+        path: "/players/add",
+        name: "Add Players",
+        component: AddPlayers,
+        layout: "/app",
+        prop: {exact: true}
+    },
+    {
+        path: "/players/detail/:uid",
+        name: "Detail Players",
+        component: DetailPlayer,
         layout: "/app",
         prop: {exact: true}
     },

@@ -43,8 +43,7 @@ class Menu extends Component {
                                     </li>
                                     <li className="nav-item">
                                         <NavLink
-                                            to={`${this.props.layout}/students`}
-                                            exact
+                                            to={`${this.props.layout}/players`}
                                             activeClassName="active"
                                             className="nav-link">
                                             <i className="fe fe-users" /> Öğrenciler

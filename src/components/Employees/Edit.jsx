@@ -10,6 +10,7 @@ import {
     Kinship
 } from "../../services/FillSelect.jsx";
 import {DetailEmployee, UpdateEmployee} from "../../services/Employee.jsx";
+import {SplitBirthday} from "../../services/Others.jsx";
 import {showSwal} from "../../components/Alert.jsx";
 import Select from "react-select";
 
@@ -101,42 +102,6 @@ export class Edit extends Component {
         const {uid, to} = this.state;
         let select = {...this.state.select};
 
-        DetailEmployee({
-            uid: uid,
-            to: to
-        }).then(response => {
-            const data = response.data;
-            const status = response.status;
-            initialState.body = {};
-            if (status.code === 1020) {
-                initialState.name = data.name;
-                initialState.surname = data.surname;
-                initialState.securityNo = data.security_id;
-                initialState.phone = data.phone_gsm;
-                initialState.salary = data.salary;
-                initialState.image = data.photo;
-                initialState.email = data.email;
-                initialState.position = data.position;
-                /*initialState.branch = data.branch_name || "...";
-                initialState.address = data.address || "...";
-                initialState.gender = data.gender || "...";
-                initialState.birthday = data.birthday || "...";
-                initialState.blood = data.blood_name || "...";
-                initialState.emergency = data.emergency;
-                initialState.school = data.school_history;
-                initialState.certificate = data.certificates;
-                initialState.body.height = data.body_metrics ? data.body_metrics.height : "...";
-                initialState.body.weight = data.body_metrics ? data.body_metrics.weight : "...";
-                
-                initialState.secretSalary = data.salary
-                    ? CryptoJS.AES.encrypt(data.salary.toString(), "scSecretSalary").toString()
-                    : null;
-*/
-                this.setState({...initialState});
-                this.setState({onLoadedData: true});
-            }
-        });
-
         Bloods().then(response => {
             console.log(response);
             select.bloods = response;
@@ -153,6 +118,67 @@ export class Edit extends Component {
             console.log(response);
             select.branchs = response;
             this.setState({select});
+        });
+
+        DetailEmployee({
+            uid: uid,
+            to: to
+        }).then(response => {
+            const data = response.data;
+            const status = response.status;
+            initialState.body = {};
+            if (status.code === 1020) {
+                initialState.name = data.name;
+                initialState.surname = data.surname;
+                initialState.securityNo = data.security_id;
+                initialState.phone = data.phone_gsm;
+                initialState.salary = data.salary;
+                initialState.image = data.photo;
+                initialState.email = data.email;
+                // select position
+                const getPositionName = this.state.select.positions
+                    ? this.state.select.positions.find(x => x.label === data.position)
+                    : null;
+                initialState.position = getPositionName || null;
+                // select branch
+                const getBranchName = this.state.select.branchs.find(
+                    x => x.label === data.branch_name
+                );
+                initialState.branch = getBranchName || null;
+                const getSplitBirthday = SplitBirthday(data.birthday);
+                if (getSplitBirthday) {
+                    //select day
+                    const getDay = this.state.select.days.find(
+                        x => x.label === getSplitBirthday.day
+                    );
+                    initialState.day = getDay || null;
+                    //select month
+                    const getMonth = this.state.select.months.find(
+                        x => x.value === getSplitBirthday.month
+                    );
+                    initialState.month = getMonth || null;
+                    //select year
+                    const getYear = this.state.select.years.find(
+                        x => x.label === getSplitBirthday.year
+                    );
+                    initialState.year = getYear || null;
+                }
+                initialState.address = data.address || null;
+                /*initialState.gender = data.gender || "...";
+                initialState.blood = data.blood_name || "...";
+                initialState.emergency = data.emergency;
+                initialState.school = data.school_history;
+                initialState.certificate = data.certificates;
+                initialState.body.height = data.body_metrics ? data.body_metrics.height : "...";
+                initialState.body.weight = data.body_metrics ? data.body_metrics.weight : "...";
+                
+                initialState.secretSalary = data.salary
+                    ? CryptoJS.AES.encrypt(data.salary.toString(), "scSecretSalary").toString()
+                    : null;
+*/
+                this.setState({...initialState});
+                this.setState({onLoadedData: true});
+            }
         });
 
         select.days = Days();
@@ -330,7 +356,7 @@ export class Edit extends Component {
                         image: reader.result
                     },
                     () => {
-                        console.log(this.state.file);
+                        /*console.log(this.state.file);
                         formData.append("image", this.state.file);
                         fetch("https://3e76fbe3.ngrok.io/api/v1/upload/file", {
                             method: "POST",
@@ -340,7 +366,7 @@ export class Edit extends Component {
                             })
                         })
                             .then(res => res.json())
-                            .then(response => console.log(response));
+                            .then(response => console.log(response));*/
                     }
                 );
             };
@@ -378,6 +404,7 @@ export class Edit extends Component {
             phone,
             salary,
             image,
+            address,
             day,
             month,
             year,
@@ -666,14 +693,14 @@ export class Edit extends Component {
                                                         name="address"
                                                         rows={6}
                                                         placeholder="Adres"
-                                                        defaultValue={""}
+                                                        value={address}
                                                     />
                                                 </div>
                                             </div>
                                             <div className="col-lg-6 col-md-12">
                                                 <div className="form-group">
                                                     <label className="form-label">
-                                                        Vücut Metrikleri
+                                                        Vücut Metrikleri (Boy & Kilo)
                                                     </label>
                                                     <div className="row gutters-xs">
                                                         <div className="col-6">
@@ -913,8 +940,7 @@ export class Edit extends Component {
                                                 showCancelButton: true,
                                                 reverseButtons: true
                                             }).then(result => {
-                                                if (result.value)
-                                                    this.props.history.push("/app/employees");
+                                                if (result.value) this.props.history.goBack();
                                             });
                                         }}
                                         className="btn btn-link">

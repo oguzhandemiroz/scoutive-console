@@ -63,9 +63,9 @@ export class Detail extends Component {
                 stateData.secretSalary = data.salary
                     ? CryptoJS.AES.encrypt(data.salary.toString(), "scSecretSalary").toString()
                     : null;
+                stateData.onLoadedData = true;
 
                 this.setState({...stateData});
-                this.setState({onLoadedData: true});
             }
         });
     }
@@ -304,7 +304,7 @@ export class Detail extends Component {
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                            {emergency
+                                                            {Array.isArray(emergency)
                                                                 ? emergency.map((el, idx) => {
                                                                       return (
                                                                           <tr key={idx.toString()}>

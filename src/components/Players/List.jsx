@@ -36,7 +36,7 @@ const chartOptions = {
     }
 };
 
-class GeneralEmployee extends Component {
+class GeneralPlayer extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -61,7 +61,7 @@ class GeneralEmployee extends Component {
 
     renderChart() {
         c3.generate({
-            bindto: "#general-employee",
+            bindto: "#general-player",
             data: {
                 columns: this.state.data,
                 type: "pie", // default type of chart
@@ -87,7 +87,7 @@ class GeneralEmployee extends Component {
                     <div className="card-body p-3 text-center">
                         <div className="h5"> Genel Personel Raporu </div>
                         <div
-                            id="general-employee"
+                            id="general-player"
                             style={{
                                 height: "192px"
                             }}
@@ -99,7 +99,7 @@ class GeneralEmployee extends Component {
     }
 }
 
-class DailyEmployee extends Component {
+class DailyPlayer extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -125,7 +125,7 @@ class DailyEmployee extends Component {
 
     renderChart() {
         c3.generate({
-            bindto: "#daily-employee",
+            bindto: "#daily-player",
             data: {
                 columns: this.state.data,
                 type: "pie", // default type of chart
@@ -153,7 +153,7 @@ class DailyEmployee extends Component {
                     <div className="card-body p-3 text-center">
                         <div className="h5"> Günlük Personel Raporu </div>
                         <div
-                            id="daily-employee"
+                            id="daily-player"
                             style={{
                                 height: "192px"
                             }}
@@ -199,10 +199,8 @@ const datatable_turkish = {
 
 class Table extends Component {
     componentDidMount() {
-        const sID = localStorage.getItem("sID");
         const UID = localStorage.getItem("UID");
-        const sType = localStorage.getItem("sType");
-        $("#employee-list").DataTable({
+        $("#player-list").DataTable({
             responsive: true,
             order: [0, "desc"],
             stateSave: false, // change true
@@ -222,13 +220,11 @@ class Table extends Component {
                 }
             ],
             ajax: {
-                url: ep.LIST_EMPLOYEE,
+                url: ep.LIST_PLAYER,
                 type: "POST",
                 datatype: "json",
                 data: function(d) {
                     return JSON.stringify({
-                        type: sType,
-                        sid: sID,
                         uid: UID
                     });
                 },
@@ -243,13 +239,14 @@ class Table extends Component {
                     data: "uid"
                 },
                 {
-                    data: "security_id"
+                    //data: "security_id"
+                    data: "securit_id"
                 },
                 {
                     data: "image",
                     class: "text-center",
                     render: function(data, type, row) {
-                        var status = row.status.type;
+                        var status = row.status;
                         var bg_class_type = {
                             "0": "secondary",
                             "1": "success",
@@ -281,13 +278,13 @@ class Table extends Component {
                     render: function(data, type, row) {
                         var fullname = data + " " + (row.surname || "");
 
-                        return `<a href="/app/employees/detail/${
+                        return `<a href="/app/players/detail/${
                             row.uid
                         }" style="max-width:160px;" data-toggle="tooltip" data-placement="top" data-original-title="${fullname}" class="text-truncate d-block text-inherit">${fullname}</a>`;
                     }
                 },
                 {
-                    data: "phone",
+                    data: "parent",
                     render: function(data, type, row) {
                         return `<a href="tel:${data ||
                             "..."}" data-toggle="tooltip" data-placement="top" data-original-title="${data ||
@@ -295,24 +292,29 @@ class Table extends Component {
                     }
                 },
                 {
-                    data: "email",
+                    data: "phone_gsm",
                     render: function(data, type, row) {
-                        return `<a href="mailto:${data ||
+                        return `<a href="tel:${data ||
                             "..."}" data-toggle="tooltip" data-placement="top" data-original-title="${data ||
-                            "..."}" class="text-truncate w-9 d-block text-inherit">${data ||
-                            "..."}</a>`;
+                            "..."}" class="text-inherit">${data || "..."}</a>`;
                     }
                 },
                 {
-                    data: "position"
-                },
-                {
-                    data: "salary",
+                    data: "fee",
                     render: function(data, type, row) {
-                        var convert = typeof data === "number" ? data.format() : data;
-                        convert = convert ? convert + " ₺" : "...";
-                        return convert;
+                        return "100 ₺";
                     }
+                },
+                {
+                    data: "point"
+                },
+                {
+                    //data: "birthday"
+                    data: "bithday"
+                },
+                {
+                    data: "grup_name",
+                    render: () => "U-11"
                 },
                 {
                     data: "status",
@@ -327,9 +329,9 @@ class Table extends Component {
                         };
                         return (
                             '<span class="status-icon bg-' +
-                            status_type[data.type][1] +
+                            status_type[data][1] +
                             '"></span>' +
-                            status_type[data.type][0]
+                            status_type[data][0]
                         );
                     }
                 },
@@ -338,46 +340,57 @@ class Table extends Component {
                     render: function(data, type, row) {
                         var fullname = row["name"] + " " + (row["surname"] || "");
                         return `<div class="dropdown btn-block" id="action-dropdown">
-                            <button type="button" id="employee-action" class="btn btn-sm btn-secondary btn-block dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <button type="button" id="player-action" class="btn btn-sm btn-secondary btn-block dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 İşlem
                             </button>
-                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="employee-action" x-placement="top-end">
+                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="player-action" x-placement="top-end">
                                 <a class="dropdown-item disabled text-azure" href="javascript:void(0)">
                                     <i class="dropdown-icon fa fa-user text-azure"></i>${fullname}
                                 </a>
                                 <div role="separator" class="dropdown-divider"></div>
                                 <a class="dropdown-item action-pay-salary" href="javascript:void(0)">
-                                    <i class="dropdown-icon fa fa-money-bill-wave"></i> Maaş Öde
+                                    <i class="dropdown-icon fa fa-hand-holding-usd"></i> Ödeme Al
+                                </a>
+                                <a class="dropdown-item action-warning" href="javascript:void(0)">
+                                    <i class="dropdown-icon fa fa-exclamation-triangle"></i> Ödeme İkazı
+                                </a>
+                                <a class="dropdown-item action-change-password" href="javascript:void(0)">
+                                    <i class="dropdown-icon fa fa-hand-holding-heart"></i> Burs Ver
+                                </a>
+                                <div role="separator" class="dropdown-divider"></div>
+                                <a class="dropdown-item action-advance-payment" href="javascript:void(0)">
+                                    <i class="dropdown-icon fa fa-snowflake"></i> Kaydı Dondur
                                 </a>
                                 <a class="dropdown-item action-advance-payment" href="javascript:void(0)">
-                                    <i class="dropdown-icon fa fa-hand-holding-usd"></i> Avans Ver
+                                    <i class="dropdown-icon fa fa-sync-alt"></i> Kaydı Yenile
                                 </a>
                                 <a class="dropdown-item action-salary-raise" href="javascript:void(0)">
-                                    <i class="dropdown-icon fa fa-coins"></i> Zam Yap
+                                    <i class="dropdown-icon fa fa-user-times"></i> Kaydı Sil
                                 </a>
                                 <div role="separator" class="dropdown-divider"></div>
                                 <a class="dropdown-item action-day-off" href="javascript:void(0)">
                                     <i class="dropdown-icon fa fa-coffee"></i> İzin Yaz
                                 </a>
                                 <div role="separator" class="dropdown-divider"></div>
-                                <a class="dropdown-item action-send-message" href="javascript:void(0)">
-                                    <i class="dropdown-icon fa fa-paper-plane"></i> Mesaj Gönder
+                                <a class="dropdown-item action-permission" href="javascript:void(0)">
+                                    <i class="dropdown-icon fa fa-notes-medical"></i> Not (Puan) Ver
                                 </a>
-                                <a class="dropdown-item action-warning" href="javascript:void(0)">
-                                    <i class="dropdown-icon fa fa-exclamation-triangle"></i> İkaz Et
+                                <div role="separator" class="dropdown-divider"></div>
+                                <a class="dropdown-item action-send-message" href="javascript:void(0)">
+                                    <i class="dropdown-icon fa fa-paper-plane"></i> Veliye Mesaj Gönder
                                 </a>
                                 <div role="separator" class="dropdown-divider"></div>
                                 <a class="dropdown-item action-edit" href="javascript:void(0)">
                                     <i class="dropdown-icon fa fa-pen"></i> Düzenle
                                 </a>
-                                <a class="dropdown-item action-change-password" href="javascript:void(0)">
-                                    <i class="dropdown-icon fa fa-key"></i> Şifre Değiştir
-                                </a>
                                 <a class="dropdown-item action-permission" href="javascript:void(0)">
-                                    <i class="dropdown-icon fa fa-user-cog"></i> Yetkiledirme
+                                    <i class="dropdown-icon fa fa-user-cog"></i> Grup Değişikliği
                                 </a>
                                 <a class="dropdown-item action-all-salary-info" href="javascript:void(0)">
-                                    <i class="dropdown-icon fa fa-receipt"></i> Tüm Maaş Bilgisi
+                                    <i class="dropdown-icon fa fa-id-card-alt"></i> Öğrenci Belgesi
+                                </a>
+                                <a class="dropdown-item action-all-salary-info" href="javascript:void(0)">
+                                    <i class="dropdown-icon fa fa-receipt"></i> Tüm Aidat Bilgisi
                                 </a>
                                 <a class="dropdown-item action-all-info" href="javascript:void(0)">
                                     <i class="dropdown-icon fa fa-info-circle"></i> Tüm Bilgileri
@@ -389,11 +402,11 @@ class Table extends Component {
             ]
         });
         $.fn.DataTable.ext.errMode = "none";
-        $("#employee-list").on("error.dt", function(e, settings, techNote, message) {
+        $("#player-list").on("error.dt", function(e, settings, techNote, message) {
             console.log("An error has been reported by DataTables: ", message, techNote);
         });
 
-        $("#employee-list").on("draw.dt", function() {
+        $("#player-list").on("draw.dt", function() {
             $('[data-toggle="tooltip"]').tooltip();
         });
     }
@@ -409,7 +422,7 @@ class Table extends Component {
     render() {
         return (
             <table
-                id="employee-list"
+                id="player-list"
                 className="table card-table table-vcenter table-striped text-nowrap datatable">
                 <thead>
                     <tr>
@@ -417,10 +430,12 @@ class Table extends Component {
                         <th className="w-1 no-sort">T.C.</th>
                         <th className="w-1 text-center no-sort">#</th>
                         <th>AD SOYAD</th>
+                        <th>VELİ TEL.</th>
                         <th>TELEFON</th>
-                        <th>EMAIL</th>
-                        <th>POZİSYON</th>
-                        <th>MAAŞ</th>
+                        <th>AİDAT</th>
+                        <th>GENEL PUAN</th>
+                        <th>YAŞ</th>
+                        <th>GRUP</th>
                         <th>DURUM</th>
                         <th className="no-sort" />
                     </tr>
@@ -430,4 +445,4 @@ class Table extends Component {
     }
 }
 
-export {DailyEmployee, GeneralEmployee, Table};
+export {DailyPlayer, GeneralPlayer, Table};
