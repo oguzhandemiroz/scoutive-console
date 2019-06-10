@@ -8,7 +8,7 @@
 # testing
 /coverage
 
-# production
+# prod
 /build
 
 # misc
@@ -28,3 +28,4 @@ yarn-error.log*
 .yarn-cache
 dist
 *.log
+.vscode
