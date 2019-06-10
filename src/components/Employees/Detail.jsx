@@ -1,4 +1,4 @@
-import React, {Component, Fragment} from "react";
+import React, {Component} from "react";
 import {DetailEmployee} from "../../services/Employee.jsx";
 import {Link} from "react-router-dom";
 
@@ -46,14 +46,14 @@ export class Detail extends Component {
                 stateData.name = `${data.name || ""} ${data.surname || ""}`;
                 stateData.position = data.position || "...";
                 stateData.securityNo = data.security_id || "...";
-                stateData.phone = data.phone_gsm || "...";
+                stateData.phone = data.phone || "...";
                 stateData.email = data.email || "...";
-                stateData.branch = data.branch_name || "...";
-                stateData.image = data.photo || "...";
+                stateData.branch = data.branch || "...";
+                stateData.image = data.image || "...";
                 stateData.address = data.address || "...";
                 stateData.gender = data.gender || "...";
                 stateData.birthday = data.birthday || "...";
-                stateData.blood = data.blood_name || "...";
+                stateData.blood = data.blood || "...";
                 stateData.emergency = data.emergency;
                 stateData.school = data.school_history;
                 stateData.certificate = data.certificates;

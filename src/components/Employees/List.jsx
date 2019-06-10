@@ -327,9 +327,9 @@ class Table extends Component {
                         };
                         return (
                             '<span class="status-icon bg-' +
-                            status_type[data.type][1] +
+                            status_type[data][1] +
                             '"></span>' +
-                            status_type[data.type][0]
+                            status_type[data][0]
                         );
                     }
                 },

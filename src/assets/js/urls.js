@@ -1,5 +1,5 @@
-//var host = "https://3e76fbe3.ngrok.io/";
-var host = "https://scoutive.online/";
+var host = "https://4cdc8e32.ngrok.io/";
+//var host = "https://scoutive.online/";
 var api_version = "api/v1/";
 
 var ep = {
@@ -22,7 +22,8 @@ var ep = {
     GET_EMPLOYEE: host + api_version + "get/employee",
     LIST_PLAYER: host + api_version + "list/players",
     GET_PLAYER: host + api_version + "get/player",
-    CHECK_PERMISSION: host + api_version + "check/permission"
+    CHECK_PERMISSION: host + api_version + "check/permission",
+    UPLOAD_FILE: host + api_version + "upload/file"
 };
 
 export default ep;
