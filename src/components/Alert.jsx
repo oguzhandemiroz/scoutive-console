@@ -1,4 +1,5 @@
 import Swal from "sweetalert2";
+import { Logout } from "../services/Login.jsx";
 
 const Toast = Swal.mixin({
 	toast: true,
@@ -29,15 +30,16 @@ const errorSwal = (data, options) => {
 	} catch (e) {}
 };
 
-const fatalSwal = () => {
+const fatalSwal = (logout) => {
 	try {
 		showSwal({
 			allowOutsideClick: false,
 			type: "error",
 			title: "Hata Kodu: 1050",
-			text: "Kritik bir hata ile karşı karşıyayız. Üzerinde çalışıyoruz. Lütfen daha sonra tekrar deneyin...",
+			text: "Bir hata oluştu. Üzerinde çalışıyoruz. Lütfen daha sonra tekrar deneyin...",
 			preConfirm: function(val) {
 				if (val) {
+					if (!logout) Logout();
 				}
 			}
 		});

@@ -10,7 +10,7 @@ import {
 	Kinship
 } from "../../services/FillSelect.jsx";
 import { DetailEmployee, UpdateEmployee } from "../../services/Employee.jsx";
-import { SplitBirthday, UploadFile } from "../../services/Others.jsx";
+import { SplitBirthday, UploadFile, getSelectValue } from "../../services/Others.jsx";
 import { showSwal } from "../../components/Alert.jsx";
 import Select from "react-select";
 
@@ -57,8 +57,10 @@ const initialState = {
 	day: null,
 	month: null,
 	year: null,
+	gender: null,
 	schoolStartDate: null,
 	schoolEndDate: null,
+	emergency: null,
 	kinship: null,
 	image: null,
 	imagePreview: null
@@ -126,42 +128,31 @@ export class Edit extends Component {
 			uid: uid,
 			to: to
 		}).then(response => {
-			const data = response.data;
-			const status = response.status;
-			initialState.body = {};
-			if (status.code === 1020) {
-				initialState.name = data.name;
-				initialState.surname = data.surname;
-				initialState.securityNo = data.security_id;
-				initialState.phone = data.phone;
-				initialState.salary = data.salary;
-				initialState.imagePreview = data.image;
-				initialState.image = data.image;
-				initialState.email = data.email;
-				// select position
-				const getPositionName = this.state.select.positions
-					? this.state.select.positions.find(x => x.label === data.position)
-					: null;
-				initialState.position = getPositionName || null;
-				// select branch
-				const getBranchName = this.state.select.branchs.find(x => x.label === data.branch);
-				initialState.branch = getBranchName || null;
-				const getSplitBirthday = SplitBirthday(data.birthday);
-				if (getSplitBirthday) {
-					//select day
-					const getDay = this.state.select.days.find(x => x.label === getSplitBirthday.day);
-					initialState.day = getDay || null;
-					//select month
-					const getMonth = this.state.select.months.find(x => x.value === getSplitBirthday.month);
-					initialState.month = getMonth || null;
-					//select year
-					const getYear = this.state.select.years.find(x => x.label === getSplitBirthday.year);
-					initialState.year = getYear || null;
-				}
-				initialState.address = data.address || null;
-				/*initialState.gender = data.gender || "...";
-                initialState.blood = data.blood_name || "...";
-                initialState.emergency = data.emergency;
+			if (response !== null) {
+				const status = response.status;
+				initialState.body = {};
+				if (status.code === 1020) {
+					const data = response.data;
+					const getSplitBirthday = SplitBirthday(data.birthday);
+
+					initialState.name = data.name;
+					initialState.surname = data.surname;
+					initialState.securityNo = data.security_id;
+					initialState.phone = data.phone;
+					initialState.salary = data.salary;
+					initialState.imagePreview = data.image;
+					initialState.image = data.image;
+					initialState.email = data.email;
+					initialState.position = getSelectValue(select.positions, data.position, "label");
+					initialState.branch = getSelectValue(select.branchs, data.branch, "label");
+					initialState.day = getSelectValue(select.days, getSplitBirthday.day, "value");
+					initialState.month = getSelectValue(select.months, getSplitBirthday.month, "value");
+					initialState.year = getSelectValue(select.years, getSplitBirthday.year, "value");
+					initialState.address = data.address;
+					initialState.gender = data.gender;
+					initialState.blood = getSelectValue(select.bloods, data.blood, "label");
+					initialState.emergency = data.emergency;
+					/*initialState.emergency = data.emergency;
                 initialState.school = data.school_history;
                 initialState.certificate = data.certificates;
                 initialState.body.height = data.body_metrics ? data.body_metrics.height : "...";
@@ -171,8 +162,9 @@ export class Edit extends Component {
                     ? CryptoJS.AES.encrypt(data.salary.toString(), "scSecretSalary").toString()
                     : null;
 */
-				this.setState({ ...initialState });
-				this.setState({ onLoadedData: true });
+					this.setState({ ...initialState });
+					this.setState({ onLoadedData: true });
+				}
 			}
 		});
 
@@ -368,6 +360,11 @@ export class Edit extends Component {
 		console.log(this.state);
 	};
 
+	handleRadio = e => {
+		const { name, value } = e.target;
+		this.setState({ [name]: parseInt(value) });
+	};
+
 	render() {
 		const {
 			name,
@@ -384,6 +381,9 @@ export class Edit extends Component {
 			month,
 			year,
 			blood,
+			gender,
+			emergency,
+			kinship,
 			formErrors,
 			select,
 			imagePreview,
@@ -669,7 +669,9 @@ export class Edit extends Component {
 															<input
 																type="radio"
 																name="gender"
-																defaultValue={0}
+																value="1"
+																onChange={this.handleRadio}
+																checked={gender === 1 ? true : false}
 																className="selectgroup-input"
 															/>
 															<span className="selectgroup-button">Kız</span>
@@ -678,7 +680,9 @@ export class Edit extends Component {
 															<input
 																type="radio"
 																name="gender"
-																defaultValue={1}
+																value="0"
+																onChange={this.handleRadio}
+																checked={gender === 0 ? true : false}
 																className="selectgroup-input"
 															/>
 															<span className="selectgroup-button">Erkek</span>
@@ -719,47 +723,75 @@ export class Edit extends Component {
 															</tr>
 														</thead>
 														<tbody>
-															<tr>
-																<td className="pl-0 pr-0">
-																	<Select
-																		value={this.state.kinship}
-																		onChange={val =>
-																			this.handleSelect(val, "kinship")
-																		}
-																		options={this.state.select.kinships}
-																		name="kinship"
-																		placeholder="Seç..."
-																		styles={customStyles}
-																		isClearable={true}
-																		isSearchable={true}
-																		isDisabled={
-																			this.state.select.kinships ? false : true
-																		}
-																		noOptionsMessage={value =>
-																			`"${value.inputValue}" bulunamadı`
-																		}
-																		menuPlacement="top"
-																	/>
-																</td>
-																<td>
-																	<input type="text" className="form-control" />
-																</td>
-																<td className="pl-0">
-																	<input type="text" className="form-control" />
-																</td>
-																<td style={{ width: "5.5rem" }} className="pl-0 pr-0">
-																	<button
-																		type="button"
-																		className="btn btn-icon btn-success">
-																		<i className="fe fe-plus" />
-																	</button>
-																	<button
-																		type="button"
-																		className="btn btn-icon btn-danger">
-																		<i className="fe fe-minus" />
-																	</button>
-																</td>
-															</tr>
+															{emergency
+																? emergency.map(el => {																		
+																		return (
+																			<tr>
+																				<td className="pl-0 pr-0">
+																					<Select
+																						value={getSelectValue(select.kinships, el.kinship, "label")}
+																						onChange={val =>
+																							this.handleSelect(
+																								val,
+																								"kinship"
+																							)
+																						}
+																						options={
+																							this.state.select.kinships
+																						}
+																						name="kinship"
+																						placeholder="Seç..."
+																						styles={customStyles}
+																						isClearable={true}
+																						isSearchable={true}
+																						isDisabled={
+																							this.state.select.kinships
+																								? false
+																								: true
+																						}
+																						noOptionsMessage={value =>
+																							`"${
+																								value.inputValue
+																							}" bulunamadı`
+																						}
+																						menuPlacement="top"
+																					/>
+																				</td>
+																				<td>
+																					<input
+																						type="text"
+																						className="form-control"
+																						value={el.name}
+																					/>
+																				</td>
+																				<td className="pl-0">
+																					<input
+																						type="text"
+																						className="form-control"
+																						value={el.phone}
+																					/>
+																				</td>
+																				<td
+																					style={{
+																						width: "5.5rem",
+																						verticalAlign: "middle"
+																					}}
+																					className="pl-0 pr-0">
+																					<button
+																						type="button"
+																						className="btn btn-sm btn-icon btn-success mr-1">
+																						<i className="fe fe-plus" />
+																					</button>
+																					<button
+																						type="button"
+																						className="btn btn-sm btn-icon btn-danger">
+																						<i className="fe fe-minus" />
+																					</button>
+																				</td>
+																			</tr>
+																		);
+																  })
+																: null}
 														</tbody>
 													</table>
 												</div>

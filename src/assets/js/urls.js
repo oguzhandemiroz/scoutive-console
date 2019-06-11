@@ -1,4 +1,4 @@
-var host = "https://4cdc8e32.ngrok.io/";
+var host = "https://3c8be73c.ngrok.io/";
 //var host = "https://scoutive.online/";
 var api_version = "api/v1/";
 

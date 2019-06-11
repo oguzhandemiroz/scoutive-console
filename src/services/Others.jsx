@@ -2,17 +2,30 @@ import ep from "../assets/js/urls";
 import { fatalSwal, errorSwal } from "../components/Alert.jsx";
 
 const SplitBirthday = date => {
-	if (date) {
-		const _split = date.split("-");
-		const splitedBirthday = {
-			day: _split[2],
-			month: _split[1],
-			year: _split[0]
-		};
+	try {
+		if (date) {
+			const _split = date.split("-");
+			const splitedBirthday = {
+				day: _split[2],
+				month: _split[1],
+				year: _split[0]
+			};
 
-		return splitedBirthday;
+			return splitedBirthday;
+		}
+		return null;
+	} catch (e) {}
+};
+
+const getSelectValue = (select, to, type) => {
+	try {
+		if (select && to) {
+			const data = select.find(x => x[type] === to);
+			return data || null;
+		}
+	} catch (e) {
+		return null;
 	}
-	return null;
 };
 
 const UploadFile = formData => {
@@ -38,4 +51,4 @@ const UploadFile = formData => {
 	}
 };
 
-export { SplitBirthday,UploadFile};
+export { SplitBirthday, UploadFile, getSelectValue };
