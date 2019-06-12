@@ -3,17 +3,19 @@ import { fatalSwal, errorSwal } from "../components/Alert.jsx";
 
 const SplitBirthday = date => {
 	try {
+		const splitedBirthday = {
+			day: null,
+			month: null,
+			year: null
+		};
 		if (date) {
 			const _split = date.split("-");
-			const splitedBirthday = {
-				day: _split[2],
-				month: _split[1],
-				year: _split[0]
-			};
 
-			return splitedBirthday;
+			splitedBirthday.day = _split[2];
+			splitedBirthday.month = _split[1];
+			splitedBirthday.year = _split[0];
 		}
-		return null;
+		return splitedBirthday;
 	} catch (e) {}
 };
 

@@ -8934,6 +8934,10 @@ button.bg-dark:focus {
 	width: 6rem !important;
 }
 
+.w-10 {
+	width: 7.5rem !important;
+}
+
 .h-25 {
 	height: 25% !important;
 }

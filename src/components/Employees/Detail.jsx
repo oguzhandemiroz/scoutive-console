@@ -195,7 +195,9 @@ export class Detail extends Component {
 							</div>
 							<div className="card-footer">
 								<div className="d-flex justify-content-center">
-									<Link to={`/app/employees/edit/${to}`} className={`btn ${!onLoadedData ? "disabled" : ""} btn-link btn-block`}>
+									<Link
+										to={`/app/employees/edit/${to}`}
+										className={`btn ${!onLoadedData ? "disabled" : ""} btn-link btn-block`}>
 										Bilgileri Düzenle
 									</Link>
 								</div>

@@ -10,20 +10,20 @@ import Core from "./layouts/Core.jsx";
 const $ = require("jquery");
 
 /** Initialize popovers */
-$(function() {
+$(function () {
     $('[data-toggle="popover"]').popover({
         html: true,
-        trigger: "hover"
+        trigger: "hover",
     });
 });
 
-$(function() {
+$(function () {
     $('[data-toggle="tooltip"]').tooltip();
 });
 
 const rootElement = document.getElementById("root");
 
-ReactDOM.render(<Core />, rootElement);
+ReactDOM.render( < Core / > , rootElement);
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

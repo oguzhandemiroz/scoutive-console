@@ -4,11 +4,23 @@ import Menu from "../components/includes/Menu.jsx";
 import HeaderMenu from "../components/includes/HeaderMenu.jsx";
 import Footer from "../components/includes/Footer.jsx";
 import indexRoutes from "../routes/index.jsx";
-
+const $ = require("jquery");
 class App extends Component {
 	constructor(props) {
 		super(props);
 		console.log(props);
+	}
+
+	componentDidUpdate() {
+		console.log("render");
+		if ($(".tooltip.show")) {
+			$(".tooltip.show").remove();
+		}
+		$('[data-toggle="popover"]').popover({
+			html: true,
+			trigger: "hover"
+		});
+		$('[data-toggle="tooltip"]').tooltip();
 	}
 	render() {
 		return (

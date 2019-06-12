@@ -13,6 +13,7 @@ import { DetailEmployee, UpdateEmployee } from "../../services/Employee.jsx";
 import { SplitBirthday, UploadFile, getSelectValue } from "../../services/Others.jsx";
 import { showSwal } from "../../components/Alert.jsx";
 import Select from "react-select";
+import { thisTypeAnnotation } from "@babel/types";
 
 const emailRegEx = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
 const securityNoRegEx = /^\d+$/;
@@ -98,9 +99,48 @@ export class Edit extends Component {
 			},
 			loadingButton: "",
 			onLoadedData: false,
-			uploadedFile: true
+			uploadedFile: true,
+			displayData: []
 		};
 	}
+
+	KinshipElem = select => (
+		<tr>
+			<td className="pl-0 pr-0">
+				<Select
+					onChange={val => this.handleSelect(val, "kinship")}
+					options={select}
+					name="kinship"
+					placeholder="Seç..."
+					styles={customStyles}
+					isClearable={true}
+					isSearchable={true}
+					isDisabled={select ? false : true}
+					noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
+					menuPlacement="top"
+				/>
+			</td>
+			<td>
+				<input type="text" className="form-control" />
+			</td>
+			<td className="pl-0">
+				<input type="text" className="form-control" />
+			</td>
+			<td
+				style={{
+					width: "5.5rem",
+					verticalAlign: "middle"
+				}}
+				className="pl-0 pr-0">
+				<button type="button" className="btn btn-sm btn-icon btn-success mr-1">
+					<i className="fe fe-plus" />
+				</button>
+				<button type="button" className="btn btn-sm btn-icon btn-danger">
+					<i className="fe fe-minus" />
+				</button>
+			</td>
+		</tr>
+	);
 
 	componentDidMount() {
 		const { uid, to } = this.state;
@@ -134,6 +174,7 @@ export class Edit extends Component {
 				if (status.code === 1020) {
 					const data = response.data;
 					const getSplitBirthday = SplitBirthday(data.birthday);
+					console.log(getSplitBirthday);
 
 					initialState.name = data.name;
 					initialState.surname = data.surname;
@@ -724,28 +765,30 @@ export class Edit extends Component {
 														</thead>
 														<tbody>
 															{emergency
-																? emergency.map(el => {																		
+																? emergency.map((el, key) => {
 																		return (
-																			<tr>
+																			<tr key={key}>
 																				<td className="pl-0 pr-0">
 																					<Select
-																						value={getSelectValue(select.kinships, el.kinship, "label")}
+																						value={getSelectValue(
+																							select.kinships,
+																							el.kinship,
+																							"label"
+																						)}
 																						onChange={val =>
 																							this.handleSelect(
 																								val,
 																								"kinship"
 																							)
 																						}
-																						options={
-																							this.state.select.kinships
-																						}
+																						options={select.kinships}
 																						name="kinship"
 																						placeholder="Seç..."
 																						styles={customStyles}
 																						isClearable={true}
 																						isSearchable={true}
 																						isDisabled={
-																							this.state.select.kinships
+																							select.kinships
 																								? false
 																								: true
 																						}
@@ -779,6 +822,20 @@ export class Edit extends Component {
 																					className="pl-0 pr-0">
 																					<button
 																						type="button"
+																						onClick={() => {
+																							console.log("+++");
+																							console.log(this)
+																							this.setState(state => {
+																								const list = state.displayData.push(
+																									this.KinshipElem(
+																										select.kinships
+																									)
+																								);
+																								return {
+																									list
+																								};
+																							});
+																						}}
 																						className="btn btn-sm btn-icon btn-success mr-1">
 																						<i className="fe fe-plus" />
 																					</button>
@@ -792,6 +849,7 @@ export class Edit extends Component {
 																		);
 																  })
 																: null}
+															{this.state.displayData.map(el => el)}
 														</tbody>
 													</table>
 												</div>
@@ -843,7 +901,7 @@ export class Edit extends Component {
 																	className="pl-0 pr-0">
 																	<button
 																		type="button"
-																		className="btn btn-sm btn-icon btn-success">
+																		className="btn btn-sm btn-icon btn-success mr-1">
 																		<i className="fe fe-plus" />
 																	</button>
 																	<button
