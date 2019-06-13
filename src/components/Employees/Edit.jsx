@@ -13,7 +13,6 @@ import { DetailEmployee, UpdateEmployee } from "../../services/Employee.jsx";
 import { SplitBirthday, UploadFile, getSelectValue } from "../../services/Others.jsx";
 import { showSwal } from "../../components/Alert.jsx";
 import Select from "react-select";
-import { thisTypeAnnotation } from "@babel/types";
 
 const emailRegEx = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
 const securityNoRegEx = /^\d+$/;
@@ -36,6 +35,7 @@ const formValid = ({ formErrors, ...rest }) => {
 const customStyles = {
 	control: styles => ({ ...styles, borderColor: "rgba(0, 40, 100, 0.12)", borderRadius: 3 })
 };
+
 const customStylesError = {
 	control: styles => ({
 		...styles,
@@ -62,7 +62,7 @@ const initialState = {
 	schoolStartDate: null,
 	schoolEndDate: null,
 	emergency: null,
-	kinship: null,
+	kinship: [],
 	image: null,
 	imagePreview: null
 };
@@ -99,48 +99,9 @@ export class Edit extends Component {
 			},
 			loadingButton: "",
 			onLoadedData: false,
-			uploadedFile: true,
-			displayData: []
+			uploadedFile: true
 		};
 	}
-
-	KinshipElem = select => (
-		<tr>
-			<td className="pl-0 pr-0">
-				<Select
-					onChange={val => this.handleSelect(val, "kinship")}
-					options={select}
-					name="kinship"
-					placeholder="Seç..."
-					styles={customStyles}
-					isClearable={true}
-					isSearchable={true}
-					isDisabled={select ? false : true}
-					noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
-					menuPlacement="top"
-				/>
-			</td>
-			<td>
-				<input type="text" className="form-control" />
-			</td>
-			<td className="pl-0">
-				<input type="text" className="form-control" />
-			</td>
-			<td
-				style={{
-					width: "5.5rem",
-					verticalAlign: "middle"
-				}}
-				className="pl-0 pr-0">
-				<button type="button" className="btn btn-sm btn-icon btn-success mr-1">
-					<i className="fe fe-plus" />
-				</button>
-				<button type="button" className="btn btn-sm btn-icon btn-danger">
-					<i className="fe fe-minus" />
-				</button>
-			</td>
-		</tr>
-	);
 
 	componentDidMount() {
 		const { uid, to } = this.state;
@@ -192,7 +153,28 @@ export class Edit extends Component {
 					initialState.address = data.address;
 					initialState.gender = data.gender;
 					initialState.blood = getSelectValue(select.bloods, data.blood, "label");
-					initialState.emergency = data.emergency;
+					initialState.emergency = data.emergency || [];
+					if (initialState.emergency) {
+						const len = initialState.emergency.length;
+						if (len > 0) {
+							console.log(len);
+							data.emergency.map(el =>
+								initialState.kinship.push(getSelectValue(select.kinships, el.kinship, "label"))
+							);
+						}
+						if (len < 2) {
+							for (var i = 0; i < 2 - len; i++) {
+								initialState.emergency.push({
+									kinship: null,
+									name: null,
+									phone: null
+								});
+								initialState.kinship.push(
+									getSelectValue(select.kinships, null, "label")
+								);
+							}
+						}
+					}
 					/*initialState.emergency = data.emergency;
                 initialState.school = data.school_history;
                 initialState.certificate = data.certificates;
@@ -383,22 +365,25 @@ export class Edit extends Component {
 		} catch (e) {}
 	};
 
-	handleSelect = (value, name) => {
+	handleSelect = (value, name, extraData, arr) => {
 		let formErrors = { ...this.state.formErrors };
 
-		switch (name) {
-			case "position":
-				formErrors.position = value ? false : true;
-				break;
-			case "branch":
-				formErrors.branch = value ? false : true;
-				break;
-			default:
-				break;
-		}
+		if (arr) {
+			console.log(value, name, extraData, arr);
+		} else {
+			switch (name) {
+				case "position":
+					formErrors.position = value ? false : true;
+					break;
+				case "branch":
+					formErrors.branch = value ? false : true;
+					break;
+				default:
+					break;
+			}
 
-		this.setState({ formErrors, [name]: value });
-		console.log(this.state);
+			this.setState({ formErrors, [name]: value });
+		}
 	};
 
 	handleRadio = e => {
@@ -758,16 +743,13 @@ export class Edit extends Component {
 																<th className="pl-0">Yakınlık</th>
 																<th>Adı ve Soyadı</th>
 																<th className="pl-0">Telefon</th>
-																<th style={{ width: "5.5rem" }} className="pl-0">
-																	Ekle/Sil
-																</th>
 															</tr>
 														</thead>
 														<tbody>
 															{emergency
 																? emergency.map((el, key) => {
 																		return (
-																			<tr key={key}>
+																			<tr key={key.toString()}>
 																				<td className="pl-0 pr-0">
 																					<Select
 																						value={getSelectValue(
@@ -778,7 +760,9 @@ export class Edit extends Component {
 																						onChange={val =>
 																							this.handleSelect(
 																								val,
-																								"kinship"
+																								"kinship",
+																								key,
+																								true
 																							)
 																						}
 																						options={select.kinships}
@@ -804,52 +788,20 @@ export class Edit extends Component {
 																					<input
 																						type="text"
 																						className="form-control"
-																						value={el.name}
+																						value={el.name || ""}
 																					/>
 																				</td>
 																				<td className="pl-0">
 																					<input
 																						type="text"
 																						className="form-control"
-																						value={el.phone}
+																						value={el.phone || ""}
 																					/>
-																				</td>
-																				<td
-																					style={{
-																						width: "5.5rem",
-																						verticalAlign: "middle"
-																					}}
-																					className="pl-0 pr-0">
-																					<button
-																						type="button"
-																						onClick={() => {
-																							console.log("+++");
-																							console.log(this)
-																							this.setState(state => {
-																								const list = state.displayData.push(
-																									this.KinshipElem(
-																										select.kinships
-																									)
-																								);
-																								return {
-																									list
-																								};
-																							});
-																						}}
-																						className="btn btn-sm btn-icon btn-success mr-1">
-																						<i className="fe fe-plus" />
-																					</button>
-																					<button
-																						type="button"
-																						className="btn btn-sm btn-icon btn-danger">
-																						<i className="fe fe-minus" />
-																					</button>
 																				</td>
 																			</tr>
 																		);
 																  })
 																: null}
-															{this.state.displayData.map(el => el)}
 														</tbody>
 													</table>
 												</div>
@@ -866,9 +818,6 @@ export class Edit extends Component {
 																<th className="w-8 pl-0">Baş. Yılı</th>
 																<th className="w-8">BİTİŞ Yılı</th>
 																<th className="pl-0">Okul Adı</th>
-																<th style={{ width: "5.5rem" }} className="pl-0">
-																	Ekle/Sil
-																</th>
 															</tr>
 														</thead>
 														<tbody>
@@ -893,22 +842,51 @@ export class Edit extends Component {
 																		className="form-control school_name"
 																	/>
 																</td>
-																<td
-																	style={{
-																		width: "5.5rem",
-																		verticalAlign: "middle"
-																	}}
-																	className="pl-0 pr-0">
-																	<button
-																		type="button"
-																		className="btn btn-sm btn-icon btn-success mr-1">
-																		<i className="fe fe-plus" />
-																	</button>
-																	<button
-																		type="button"
-																		className="btn btn-sm btn-icon btn-danger">
-																		<i className="fe fe-minus" />
-																	</button>
+															</tr>
+
+															<tr>
+																<td className="pl-0 pr-0">
+																	<input
+																		type="text"
+																		maxLength="4"
+																		className="w-8 form-control school_start"
+																	/>
+																</td>
+																<td>
+																	<input
+																		type="text"
+																		maxLength="4"
+																		className="w-8 form-control school_end"
+																	/>
+																</td>
+																<td className="pl-0">
+																	<input
+																		type="text"
+																		className="form-control school_name"
+																	/>
+																</td>
+															</tr>
+
+															<tr>
+																<td className="pl-0 pr-0">
+																	<input
+																		type="text"
+																		maxLength="4"
+																		className="w-8 form-control school_start"
+																	/>
+																</td>
+																<td>
+																	<input
+																		type="text"
+																		maxLength="4"
+																		className="w-8 form-control school_end"
+																	/>
+																</td>
+																<td className="pl-0">
+																	<input
+																		type="text"
+																		className="form-control school_name"
+																	/>
 																</td>
 															</tr>
 														</tbody>

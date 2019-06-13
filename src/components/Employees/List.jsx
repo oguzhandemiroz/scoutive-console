@@ -6,7 +6,7 @@ import "../../assets/css/c3.min.css";
 import sc from "../../assets/js/sc";
 import "../../assets/js/core";
 import ep from "../../assets/js/urls";
-import { fatalSwal } from "../Alert.jsx";
+import { fatalSwal, errorSwal } from "../Alert.jsx";
 import ReactDOM from "react-dom";
 import { BrowserRouter, Link, NavLink, withRouter } from "react-router-dom";
 const $ = require("jquery");
@@ -201,9 +201,7 @@ const datatable_turkish = {
 class Table extends Component {
 	componentDidMount() {
 		try {
-			const sID = localStorage.getItem("sID");
 			const UID = localStorage.getItem("UID");
-			const sType = localStorage.getItem("sType");
 			$("#employee-list").DataTable({
 				responsive: true,
 				order: [0, "desc"],
@@ -316,19 +314,24 @@ class Table extends Component {
 					datatype: "json",
 					data: function(d) {
 						return JSON.stringify({
-							type: sType,
-							sid: sID,
 							uid: UID
 						});
 					},
 					contentType: "application/json",
 					complete: function(res) {
 						try {
-							console.log(res.responseJSON.data);
-							if (res.status !== 200 && !res.responseJSON) fatalSwal();
+							console.log(res);
+							if (res.responseJSON.status.code !== 1020) {
+								if (res.status !== 200) fatalSwal();
+								else errorSwal(res.responseJSON.status);
+							}
 						} catch (e) {
 							fatalSwal();
 						}
+					},
+					dataSrc: function(d) {
+						console.log(d)
+						return d.data;
 					}
 				},
 				columns: [
@@ -422,8 +425,8 @@ class Table extends Component {
 						data: "action"
 					}
 				]
-            });
-            
+			});
+
 			$.fn.DataTable.ext.errMode = "none";
 			$("#employee-list").on("error.dt", function(e, settings, techNote, message) {
 				console.log("An error has been reported by DataTables: ", message, techNote);
