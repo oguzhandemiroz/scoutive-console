@@ -25,7 +25,6 @@ const formValid = ({ formErrors, ...rest }) => {
 	});
 
 	Object.values(rest).forEach(val => {
-		console.log("rest: ", val);
 		val === null && (valid = false);
 	});
 
@@ -59,10 +58,8 @@ const initialState = {
 	month: null,
 	year: null,
 	gender: null,
-	schoolStartDate: null,
-	schoolEndDate: null,
 	emergency: null,
-	kinship: [],
+	school_history: null,
 	image: null,
 	imagePreview: null
 };
@@ -82,8 +79,6 @@ export class Edit extends Component {
 				months: null,
 				years: null,
 				branchs: null,
-				schoolStartDates: null,
-				schoolEndDates: null,
 				kinships: null
 			},
 			formErrors: {
@@ -154,28 +149,32 @@ export class Edit extends Component {
 					initialState.gender = data.gender;
 					initialState.blood = getSelectValue(select.bloods, data.blood, "label");
 					initialState.emergency = data.emergency || [];
+					initialState.school_history = data.school_history || [];
 					if (initialState.emergency) {
 						const len = initialState.emergency.length;
-						if (len > 0) {
-							console.log(len);
-							data.emergency.map(el =>
-								initialState.kinship.push(getSelectValue(select.kinships, el.kinship, "label"))
-							);
-						}
 						if (len < 2) {
 							for (var i = 0; i < 2 - len; i++) {
 								initialState.emergency.push({
-									kinship: null,
-									name: null,
-									phone: null
+									kinship: "",
+									name: "",
+									phone: ""
 								});
-								initialState.kinship.push(
-									getSelectValue(select.kinships, null, "label")
-								);
 							}
 						}
 					}
-					/*initialState.emergency = data.emergency;
+					if (initialState.school_history) {
+						const len = initialState.school_history.length;
+						if (len < 3) {
+							for (var i = 0; i < 3 - len; i++) {
+								initialState.school_history.push({
+									start: "",
+									end: "",
+									name: ""
+								});
+							}
+						}
+					}
+					/*
                 initialState.school = data.school_history;
                 initialState.certificate = data.certificates;
                 initialState.body.height = data.body_metrics ? data.body_metrics.height : "...";
@@ -194,8 +193,6 @@ export class Edit extends Component {
 		select.days = Days();
 		select.months = Months();
 		select.years = Years();
-		select.schoolStartDates = DateRange(1970, 2019);
-		select.schoolEndDates = DateRange(1970, 2030);
 		select.kinships = Kinship();
 
 		this.setState({ select });
@@ -213,10 +210,16 @@ export class Edit extends Component {
 			branch,
 			phone,
 			salary,
+			blood,
 			image,
+			gender,
+			day,
+			month,
+			year,
+			emergency,
+			school_history,
 			formErrors,
-			to,
-			addContinuously
+			to
 		} = this.state;
 		const requiredData = {};
 		requiredData.name = name;
@@ -228,38 +231,28 @@ export class Edit extends Component {
 		requiredData.phone = phone;
 		requiredData.salary = salary;
 		requiredData.formErrors = formErrors;
-
 		console.log(`
-    ---SUBMITTING---
-       name: ${name}
-       surname: ${surname}
-       securityNo: ${securityNo}
-       email: ${email}
-       position: ${position}
-       branch: ${branch}
-       phone: ${phone}
-       salary: ${salary}
-       image: ${image}
-   `);
-
-		console.log(requiredData);
-
-		if (formValid(requiredData)) {
-			console.log(`
-         ---SUBMITTING---
+            ---SUBMITTING---
             name: ${name}
             surname: ${surname}
             securityNo: ${securityNo}
             email: ${email}
-            position: ${position}
-            branch: ${branch}
+            position: ${JSON.stringify(position)}
+            branch: ${JSON.stringify(branch)}
             phone: ${phone}
             salary: ${salary}
             image: ${image}
+            emergency: ${JSON.stringify(emergency)}
+            school_history: ${JSON.stringify(school_history)}
+            blood: ${JSON.stringify(blood)}
+            gender: ${gender}
+            birthday: ${year.value}-${month.value}-${day.value}
         `);
 
-			this.setState({ loadingButton: "btn-loading" });
+		console.log(requiredData);
 
+		if (formValid(requiredData)) {
+			this.setState({ loadingButton: "btn-loading" });
 			UpdateEmployee({
 				uid: localStorage.getItem("UID"),
 				to: to,
@@ -270,12 +263,17 @@ export class Edit extends Component {
 				permission_id: position.value,
 				phone: phone,
 				image: image,
-				salary: salary
+				salary: salary,
+				emergency: emergency,
+				blood_id: blood ? blood.value : null,
+				gender: gender,
+				birthday: `${year.value}-${month.value}-${day.value}`,
+				school_history: school_history,
 			}).then(code => {
 				this.setState({ loadingButton: "" });
 				setTimeout(() => {
 					if (code === 1020) {
-						this.props.history.push("/app/employees/detail/" + to);
+						//this.props.history.push("/app/employees/detail/" + to);
 					}
 				}, 1000);
 			});
@@ -333,8 +331,13 @@ export class Edit extends Component {
 			default:
 				break;
 		}
-
-		this.setState({ formErrors, [name]: value });
+		if (name.indexOf(".") === -1) this.setState({ formErrors, [name]: value });
+		else {
+			const splitName = name.split(".");
+			this.setState(prevState => {
+				return (prevState[splitName[0]][splitName[2]][splitName[1]] = value);
+			});
+		}
 	};
 
 	handleImage = e => {
@@ -369,7 +372,9 @@ export class Edit extends Component {
 		let formErrors = { ...this.state.formErrors };
 
 		if (arr) {
-			console.log(value, name, extraData, arr);
+			this.setState(prevState => {
+				return (prevState[name][extraData].kinship = value.label);
+			});
 		} else {
 			switch (name) {
 				case "position":
@@ -409,7 +414,7 @@ export class Edit extends Component {
 			blood,
 			gender,
 			emergency,
-			kinship,
+			school_history,
 			formErrors,
 			select,
 			imagePreview,
@@ -760,16 +765,15 @@ export class Edit extends Component {
 																						onChange={val =>
 																							this.handleSelect(
 																								val,
-																								"kinship",
+																								"emergency",
 																								key,
 																								true
 																							)
 																						}
 																						options={select.kinships}
-																						name="kinship"
+																						name="emergency"
 																						placeholder="Seç..."
 																						styles={customStyles}
-																						isClearable={true}
 																						isSearchable={true}
 																						isDisabled={
 																							select.kinships
@@ -787,6 +791,8 @@ export class Edit extends Component {
 																				<td>
 																					<input
 																						type="text"
+																						name={`emergency.name.${key}`}
+																						onChange={this.handleChange}
 																						className="form-control"
 																						value={el.name || ""}
 																					/>
@@ -794,6 +800,8 @@ export class Edit extends Component {
 																				<td className="pl-0">
 																					<input
 																						type="text"
+																						name={`emergency.phone.${key}`}
+																						onChange={this.handleChange}
 																						className="form-control"
 																						value={el.phone || ""}
 																					/>
@@ -815,80 +823,51 @@ export class Edit extends Component {
 													<table className="table mb-0">
 														<thead>
 															<tr>
-																<th className="w-8 pl-0">Baş. Yılı</th>
-																<th className="w-8">BİTİŞ Yılı</th>
+																<th className="w-9 pl-0">Baş. Yılı</th>
+																<th className="w-9">BİTİŞ Yılı</th>
 																<th className="pl-0">Okul Adı</th>
 															</tr>
 														</thead>
 														<tbody>
-															<tr>
-																<td className="pl-0 pr-0">
-																	<input
-																		type="text"
-																		maxLength="4"
-																		className="w-8 form-control school_start"
-																	/>
-																</td>
-																<td>
-																	<input
-																		type="text"
-																		maxLength="4"
-																		className="w-8 form-control school_end"
-																	/>
-																</td>
-																<td className="pl-0">
-																	<input
-																		type="text"
-																		className="form-control school_name"
-																	/>
-																</td>
-															</tr>
-
-															<tr>
-																<td className="pl-0 pr-0">
-																	<input
-																		type="text"
-																		maxLength="4"
-																		className="w-8 form-control school_start"
-																	/>
-																</td>
-																<td>
-																	<input
-																		type="text"
-																		maxLength="4"
-																		className="w-8 form-control school_end"
-																	/>
-																</td>
-																<td className="pl-0">
-																	<input
-																		type="text"
-																		className="form-control school_name"
-																	/>
-																</td>
-															</tr>
-
-															<tr>
-																<td className="pl-0 pr-0">
-																	<input
-																		type="text"
-																		maxLength="4"
-																		className="w-8 form-control school_start"
-																	/>
-																</td>
-																<td>
-																	<input
-																		type="text"
-																		maxLength="4"
-																		className="w-8 form-control school_end"
-																	/>
-																</td>
-																<td className="pl-0">
-																	<input
-																		type="text"
-																		className="form-control school_name"
-																	/>
-																</td>
-															</tr>
+															{school_history
+																? school_history.map((el, key) => {
+																		return (
+																			<tr key={key.toString()}>
+																				<td className="pl-0 pr-0">
+																					<input
+                                                                                        type="number"
+                                                                                        min="1950"
+																						max="2030"
+																						className="w-9 form-control"
+																						name={`school_history.start.${key}`}
+																						value={el.start || ""}
+																						onChange={this.handleChange}
+																					/>
+																				</td>
+																				<td>
+																					<input
+																						type="number"
+                                                                                        min="1950"
+																						max="2030"
+																						className="w-9 form-control"
+																						name={`school_history.end.${key}`}
+																						value={el.end || ""}
+																						onChange={this.handleChange}
+																					/>
+																				</td>
+																				<td className="pl-0">
+																					<input
+																						type="text"
+																						className="form-control"
+																						name={`school_history.name.${key}`}
+																						value={el.name || ""}
+																						onChange={this.handleChange}
+																					/>
+																				</td>
+																			</tr>
+																		);
+																  })
+																: null}
 														</tbody>
 													</table>
 												</div>

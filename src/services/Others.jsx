@@ -24,6 +24,8 @@ const getSelectValue = (select, to, type) => {
 		if (select && to) {
 			const data = select.find(x => x[type] === to);
 			return data || null;
+		} else {
+			return null;
 		}
 	} catch (e) {
 		return null;

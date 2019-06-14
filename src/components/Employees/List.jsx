@@ -331,6 +331,9 @@ class Table extends Component {
 					},
 					dataSrc: function(d) {
 						console.log(d)
+						if (d.status.code !== 1020) {
+							fatalSwal(true);
+						}
 						return d.data;
 					}
 				},
@@ -422,7 +425,7 @@ class Table extends Component {
 						}
 					},
 					{
-						data: "action"
+						data: null
 					}
 				]
 			});
