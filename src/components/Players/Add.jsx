@@ -202,9 +202,7 @@ export class Add extends Component {
         requiredData.surname = surname;
         requiredData.securityNo = securityNo;
         requiredData.branch = branch ? branch.value : null;
-        requiredData.phone = phone;
         requiredData.fee = fee;
-        requiredData.point = point;
         requiredData.day = day ? day.value : null;
         requiredData.month = month ? month.value : null;
         requiredData.year = year ? year.value : null;
@@ -243,6 +241,10 @@ export class Add extends Component {
 
         if (foot_no) {
             attributesData.foot_no = foot_no.toString();
+        }
+
+        if (point) {
+            attributesData.point = point.toString();
         }
 
         console.log(`
@@ -284,10 +286,11 @@ export class Add extends Component {
                 email: email,
                 phone: phone,
                 address: address,
-                position: position ? position.value : null,
-                branch: branch ? branch.value : null,
-                parent: emergency,
-
+                position_id: position ? position.value : null,
+                branch_id: branch ? branch.value : null,
+                emergency: emergency,
+                point: point,
+                
                 attributes: attributesData
             }).then(code => {
                 this.setState({loadingButton: ""});
@@ -315,12 +318,12 @@ export class Add extends Component {
                     ? "is-invalid"
                     : ""
                 : "is-invalid";
-            formErrors.email = email ? (!emailRegEx.test(email) ? "is-invalid" : "") : "is-invalid";
-            formErrors.phone = phone ? (phone.length !== 10 ? "is-invalid" : "") : "is-invalid";
+            formErrors.email = email ? (!emailRegEx.test(email) ? "is-invalid" : "") : "";
+            formErrors.phone = phone ? (phone.length !== 10 ? "is-invalid" : "") : "";
             formErrors.fee = fee ? "" : "is-invalid";
-            formErrors.foot = foot ? "" : "is-invalid";
+            formErrors.foot = foot !== null ? "" : "is-invalid";
             formErrors.foot_no = foot_no ? "" : "is-invalid";
-            formErrors.point = point ? "" : "is-invalid-iconless";
+            //formErrors.point = point ? "" : "is-invalid-iconless";
             //select
             formErrors.position = position ? "" : true;
             formErrors.branch = branch ? "" : true;
@@ -361,9 +364,9 @@ export class Add extends Component {
             case "fee":
                 formErrors.fee = value ? "" : "is-invalid";
                 break;
-            case "point":
+            /*case "point":
                 formErrors.point = value ? "" : "is-invalid-iconless";
-                break;
+                break;*/
             case "foot_no":
                 formErrors.foot_no = value ? "" : "is-invalid";
                 break;
@@ -489,7 +492,7 @@ export class Add extends Component {
                                             Fotoğraf Ekle
                                         </label>
                                         <input
-                                            type="file"
+                                            type="file" accept="image/*"
                                             name="image"
                                             id="image"
                                             hidden
@@ -616,7 +619,6 @@ export class Add extends Component {
                                 <div className="form-group">
                                     <label className="form-label">
                                         Genel Puanı
-                                        <span className="form-required">*</span>
                                     </label>
                                     <div className="row align-items-center">
                                         <div className="col">
@@ -667,15 +669,14 @@ export class Add extends Component {
                                         <div className="form-group">
                                             <label className="form-label">
                                                 Telefonu
-                                                <span className="form-required">*</span>
                                             </label>
                                             <input
                                                 type="text"
                                                 className={`form-control ${formErrors.phone}`}
                                                 onChange={this.handleChange}
                                                 name="phone"
-                                                placeholder="Telefon (05xx)"
-                                                maxLength="11"
+                                                placeholder="Telefon (5xx)"
+                                                maxLength="10"
                                             />
                                         </div>
                                         <div className="form-group">

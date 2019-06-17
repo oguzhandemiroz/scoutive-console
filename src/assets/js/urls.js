@@ -18,7 +18,7 @@ var ep = {
     ACCOUNT_ACTIVATION: host + api_version + "activation",
     CREATE_EMPLOYEE: host + api_version + "create/employee",
     UPDATE_EMPLOYEE: host + api_version + "update/employee",
-    LIST_EMPLOYEE: host + api_version + "list/employee",
+    LIST_EMPLOYEE: host + api_version + "list/employees",
     GET_EMPLOYEE: host + api_version + "get/employee",
     CREATE_PLAYER: host + api_version + "create/player",
     LIST_PLAYER: host + api_version + "list/players",

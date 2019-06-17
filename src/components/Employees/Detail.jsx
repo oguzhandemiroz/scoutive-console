@@ -62,7 +62,7 @@ export class Detail extends Component {
 					stateData.body.weight = data.attributes.body_weight ? data.attributes.body_weight : "...";
 					stateData.salary = data.salary ? "∙∙∙∙∙∙" : null;
 					stateData.secretSalary = data.salary
-						? CryptoJS.AES.encrypt(data.salary.toString(), "scSecretSalary").toString()
+						? CryptoJS.AES.encrypt(data.salary.format(), "scSecretSalary").toString()
 						: null;
 					stateData.onLoadedData = true;
 
@@ -275,28 +275,32 @@ export class Detail extends Component {
 														<tbody>
 															{Array.isArray(emergency)
 																? emergency.map((el, idx) => {
-																	if(el.kinship !== "" & el.name !== "" & el.phone !== "") 
-																		return (
-																			<tr key={idx.toString()}>
-																				<td className="pl-0 pr-0">
-																					<div className="form-control-plaintext">
-																						{el.kinship}
-																					</div>
-																				</td>
-																				<td>
-																					<div className="form-control-plaintext">
-																						{el.name}
-																					</div>
-																				</td>
-																				<td className="pl-0">
-																					<div className="form-control-plaintext">
-																						<a href={"tel:" + el.phone}>
-																							{el.phone}
-																						</a>
-																					</div>
-																				</td>
-																			</tr>
-																		);
+																		if (
+																			(el.kinship !== "") &
+																			(el.name !== "") &
+																			(el.phone !== "")
+																		)
+																			return (
+																				<tr key={idx.toString()}>
+																					<td className="pl-0 pr-0">
+																						<div className="form-control-plaintext">
+																							{el.kinship}
+																						</div>
+																					</td>
+																					<td>
+																						<div className="form-control-plaintext">
+																							{el.name}
+																						</div>
+																					</td>
+																					<td className="pl-0">
+																						<div className="form-control-plaintext">
+																							<a href={"tel:" + el.phone}>
+																								{el.phone}
+																							</a>
+																						</div>
+																					</td>
+																				</tr>
+																			);
 																  })
 																: null}
 														</tbody>
@@ -317,26 +321,30 @@ export class Detail extends Component {
 														<tbody>
 															{school
 																? school.map((el, idx) => {
-																	if(el.start !== "" & el.end !== "" & el.name !== "") 
-																		return (
-																			<tr key={idx.toString()}>
-																				<td className="pl-0 pr-0">
-																					<div className="form-control-plaintext">
-																						{el.start}
-																					</div>
-																				</td>
-																				<td>
-																					<div className="form-control-plaintext">
-																						{el.end}
-																					</div>
-																				</td>
-																				<td className="pl-0">
-																					<div className="form-control-plaintext">
-																						{el.name}
-																					</div>
-																				</td>
-																			</tr>
-																		);
+																		if (
+																			(el.start !== "") &
+																			(el.end !== "") &
+																			(el.name !== "")
+																		)
+																			return (
+																				<tr key={idx.toString()}>
+																					<td className="pl-0 pr-0">
+																						<div className="form-control-plaintext">
+																							{el.start}
+																						</div>
+																					</td>
+																					<td>
+																						<div className="form-control-plaintext">
+																							{el.end}
+																						</div>
+																					</td>
+																					<td className="pl-0">
+																						<div className="form-control-plaintext">
+																							{el.name}
+																						</div>
+																					</td>
+																				</tr>
+																			);
 																  })
 																: null}
 														</tbody>
@@ -357,26 +365,30 @@ export class Detail extends Component {
 														<tbody>
 															{certificate
 																? certificate.map((el, idx) => {
-																	if(el.type !== "" & el.year !== "" & el.corporation !== "") 
-																		return (
-																			<tr key={idx.toString()}>
-																				<td className="pl-0 pr-0">
-																					<div className="form-control-plaintext">
-																						{el.year}
-																					</div>
-																				</td>
-																				<td>
-																					<div className="form-control-plaintext">
-																						{el.type}
-																					</div>
-																				</td>
-																				<td className="pl-0">
-																					<div className="form-control-plaintext">
-																						{el.corporation}
-																					</div>
-																				</td>
-																			</tr>
-																		);
+																		if (
+																			(el.type !== "") &
+																			(el.year !== "") &
+																			(el.corporation !== "")
+																		)
+																			return (
+																				<tr key={idx.toString()}>
+																					<td className="pl-0 pr-0">
+																						<div className="form-control-plaintext">
+																							{el.year}
+																						</div>
+																					</td>
+																					<td>
+																						<div className="form-control-plaintext">
+																							{el.type}
+																						</div>
+																					</td>
+																					<td className="pl-0">
+																						<div className="form-control-plaintext">
+																							{el.corporation}
+																						</div>
+																					</td>
+																				</tr>
+																			);
 																  })
 																: null}
 														</tbody>

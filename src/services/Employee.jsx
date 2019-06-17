@@ -27,9 +27,9 @@ const CreateEmployee = data => {
 					return status.code;
 				}
 			})
-			.catch(e => fatalSwal());
+			.catch(e => fatalSwal(true));
 	} catch (e) {
-		fatalSwal();
+		fatalSwal(true);
 	}
 };
 
@@ -59,9 +59,9 @@ const UpdateEmployee = data => {
 					return status.code;
 				}
 			})
-			.catch(e => fatalSwal());
+			.catch(e => fatalSwal(true));
 	} catch (e) {
-		fatalSwal();
+		fatalSwal(true);
 	}
 };
 
@@ -84,11 +84,11 @@ const DetailEmployee = data => {
 				return response;
 			})
 			.catch(e => {
-				fatalSwal();
+				fatalSwal(true);
 				return null;
 			});
 	} catch (e) {
-		fatalSwal();
+		fatalSwal(true);
 	}
 };
 

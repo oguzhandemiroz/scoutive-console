@@ -210,6 +210,8 @@ export class Edit extends Component {
                             }
                         }
                     }
+                    initialState.body_height = data.attributes.body_height; 
+                    initialState.body_weight = data.attributes.body_weight;
                     /*
                 initialState.body.height = data.body_metrics ? data.body_metrics.height : "...";
                 initialState.body.weight = data.body_metrics ? data.body_metrics.weight : "...";
@@ -278,7 +280,7 @@ export class Edit extends Component {
         if (AttributeDataChecker(responseData.salary, salary)) {
             attributesData.salary = salary;
         }
-        if (AttributeDataChecker(responseData.position, position.label)) {
+        if (AttributeDataChecker(responseData.position, (position ? position.label : null))) {
             attributesData.position = position.value;
         }
         if (AttributeDataChecker(responseData.email, email)) {
@@ -327,7 +329,7 @@ export class Edit extends Component {
                 permission_id: position ? position.value : null,
                 phone: phone,
                 image: image,
-                salary: salary,
+                salary: salary.replace(",", "."),
                 address: address,
                 emergency: emergency,
                 blood_id: blood ? blood.value : null,
@@ -537,7 +539,7 @@ export class Edit extends Component {
                                                     type="file"
                                                     id="image"
                                                     name="image"
-                                                    hidden
+                                                    hidden accept="image/*"
                                                     onClick={() => console.log("tıkladın")}
                                                     onChange={this.handleImage}
                                                 />
@@ -694,8 +696,8 @@ export class Edit extends Component {
                                                         }`}
                                                         onChange={this.handleChange}
                                                         name="phone"
-                                                        placeholder="Telefon (05xx)"
-                                                        maxLength="11"
+                                                        placeholder="Telefon (5xx)"
+                                                        maxLength="10"
                                                         value={phone || ""}
                                                     />
                                                 </div>

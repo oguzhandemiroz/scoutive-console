@@ -274,7 +274,7 @@ export class Add extends Component {
                 gender: gender,
                 blood: blood ? blood.value : null,
                 branch: branch ? branch.value : null,
-                salary: salary,
+                salary: salary.replace(",", "."),
                 birthday: `${year.value}-${month.value}-${day.value}`,
                 emergency: emergency,
                 school_history: school_history,
@@ -462,7 +462,7 @@ export class Add extends Component {
                                             type="file"
                                             name="image"
                                             className="disabled"
-                                            hidden
+                                            hidden accept="image/*"
                                             onChange={this.handleImage}
                                         />
                                     </div>
@@ -607,8 +607,8 @@ export class Add extends Component {
                                                 className={`form-control ${formErrors.phone}`}
                                                 onChange={this.handleChange}
                                                 name="phone"
-                                                placeholder="Telefon (05xx)"
-                                                maxLength="11"
+                                                placeholder="Telefon (5xx)"
+                                                maxLength="10"
                                             />
                                         </div>
                                         <div className="form-group">

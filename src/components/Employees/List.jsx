@@ -330,7 +330,7 @@ class Table extends Component {
 						}
 					},
 					dataSrc: function(d) {
-						console.log(d)
+						console.log(d);
 						if (d.status.code !== 1020) {
 							fatalSwal(true);
 						}
@@ -400,9 +400,13 @@ class Table extends Component {
 					{
 						data: "salary",
 						render: function(data, type, row) {
-							var convert = typeof data === "number" ? data.format() : data;
-							convert = convert ? convert + " ₺" : "...";
-							return convert;
+							if (type === "sort" || type === "type") {
+								return data;
+							} else {
+								var convert = typeof data === "number" ? data.format() : data;
+								convert = convert ? convert + " ₺" : "...";
+								return convert;
+							}
 						}
 					},
 					{
