@@ -4,7 +4,7 @@ var api_version = "api/v1/";
 
 var ep = {
     BLOOD_TYPE: host + api_version + "get/bloods",
-    PLAYER_POSITION_TYPE: host + api_version + "get/positions/player",
+    PLAYER_POSITION_TYPE: host + api_version + "get/positions/players",
     EMPLOYEE_POSITION_TYPE: host + api_version + "get/positions/employee",
     GROUP: host + api_version + "get/groups",
     BRANCH: host + api_version + "get/branchs",
@@ -20,6 +20,7 @@ var ep = {
     UPDATE_EMPLOYEE: host + api_version + "update/employee",
     LIST_EMPLOYEE: host + api_version + "list/employee",
     GET_EMPLOYEE: host + api_version + "get/employee",
+    CREATE_PLAYER: host + api_version + "create/player",
     LIST_PLAYER: host + api_version + "list/players",
     GET_PLAYER: host + api_version + "get/player",
     CHECK_PERMISSION: host + api_version + "check/permission",

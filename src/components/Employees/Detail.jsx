@@ -52,14 +52,14 @@ export class Detail extends Component {
 					stateData.branch = data.branch || "...";
 					stateData.image = data.image || "...";
 					stateData.address = data.address || "...";
-					stateData.gender = data.gender || "...";
+					stateData.gender = data.gender !== null ? data.gender : "...";
 					stateData.birthday = data.birthday || "...";
 					stateData.blood = data.blood || "...";
 					stateData.emergency = data.emergency;
 					stateData.school = data.school_history;
 					stateData.certificate = data.certificates;
-					stateData.body.height = data.body_metrics ? data.body_metrics.height : "...";
-					stateData.body.weight = data.body_metrics ? data.body_metrics.weight : "...";
+					stateData.body.height = data.attributes.body_height ? data.attributes.body_height : "...";
+					stateData.body.weight = data.attributes.body_weight ? data.attributes.body_weight : "...";
 					stateData.salary = data.salary ? "∙∙∙∙∙∙" : null;
 					stateData.secretSalary = data.salary
 						? CryptoJS.AES.encrypt(data.salary.toString(), "scSecretSalary").toString()
@@ -275,6 +275,7 @@ export class Detail extends Component {
 														<tbody>
 															{Array.isArray(emergency)
 																? emergency.map((el, idx) => {
+																	if(el.kinship !== "" & el.name !== "" & el.phone !== "") 
 																		return (
 																			<tr key={idx.toString()}>
 																				<td className="pl-0 pr-0">
@@ -316,6 +317,7 @@ export class Detail extends Component {
 														<tbody>
 															{school
 																? school.map((el, idx) => {
+																	if(el.start !== "" & el.end !== "" & el.name !== "") 
 																		return (
 																			<tr key={idx.toString()}>
 																				<td className="pl-0 pr-0">
@@ -347,24 +349,25 @@ export class Detail extends Component {
 													<table className="table mb-0">
 														<thead>
 															<tr>
-																<th className="pl-0">TÜRÜ</th>
-																<th>Aldığı Yıl</th>
+																<th className="pl-0">Aldığı Yıl</th>
+																<th>TÜRÜ</th>
 																<th className="pl-0">Aldığı Kurum</th>
 															</tr>
 														</thead>
 														<tbody>
 															{certificate
 																? certificate.map((el, idx) => {
+																	if(el.type !== "" & el.year !== "" & el.corporation !== "") 
 																		return (
 																			<tr key={idx.toString()}>
 																				<td className="pl-0 pr-0">
 																					<div className="form-control-plaintext">
-																						{el.type}
+																						{el.year}
 																					</div>
 																				</td>
 																				<td>
 																					<div className="form-control-plaintext">
-																						{el.year}
+																						{el.type}
 																					</div>
 																				</td>
 																				<td className="pl-0">

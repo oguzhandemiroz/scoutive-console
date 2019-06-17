@@ -10,6 +10,7 @@ import {
     Kinship
 } from "../../services/FillSelect.jsx";
 import {CreateEmployee} from "../../services/Employee.jsx";
+import {UploadFile} from "../../services/Others.jsx";
 import {showSwal} from "../../components/Alert.jsx";
 import Select from "react-select";
 
@@ -34,6 +35,7 @@ const formValid = ({formErrors, ...rest}) => {
 const customStyles = {
     control: styles => ({...styles, borderColor: "rgba(0, 40, 100, 0.12)", borderRadius: 3})
 };
+
 const customStylesError = {
     control: styles => ({
         ...styles,
@@ -54,12 +56,18 @@ const initialState = {
     position: null,
     branch: null,
     blood: null,
+    address: null,
+    body_height: null,
+    body_weight: null,
+    gender: null,
     day: null,
     month: null,
     year: null,
-    schoolStartDate: null,
-    schoolEndDate: null,
-    kinship: null
+    emergency: [],
+    school_history: [],
+    certificate: [],
+    image: null,
+    imagePreview: null
 };
 
 export class Add extends Component {
@@ -91,7 +99,8 @@ export class Add extends Component {
                 salary: ""
             },
             loadingButton: "",
-            addContinuously: false
+            addContinuously: false,
+            uploadedFile: true
         };
     }
 
@@ -115,15 +124,43 @@ export class Add extends Component {
             this.setState({select});
         });
 
+        for (var i = 0; i < 2; i++) {
+            initialState.emergency.push({
+                kinship: "",
+                name: "",
+                phone: ""
+            });
+        }
+
+        for (var i = 0; i < 3; i++) {
+            initialState.school_history.push({
+                start: "",
+                end: "",
+                name: ""
+            });
+        }
+
+        for (var i = 0; i < 3; i++) {
+            initialState.certificate.push({
+                type: "",
+                year: "",
+                corporation: ""
+            });
+        }
+
         select.days = Days();
         select.months = Months();
         select.years = Years();
-        select.schoolStartDates = DateRange(1970, 2019);
-        select.schoolEndDates = DateRange(1970, 2030);
         select.kinships = Kinship();
 
         this.setState({select});
         console.log(this.state.select);
+    }
+
+    componentWillUnmount() {
+        initialState.emergency = [];
+        initialState.school_history = [];
+        initialState.certificate = [];
     }
 
     handleSubmit = e => {
@@ -135,13 +172,28 @@ export class Add extends Component {
             email,
             position,
             branch,
+            blood,
             phone,
+            gender,
+            address,
             salary,
             image,
+            day,
+            month,
+            year,
             formErrors,
+            body_height,
+            body_weight,
+            emergency,
+            school_history,
+            certificate,
             addContinuously
         } = this.state;
+
         const requiredData = {};
+        const attributesData = {};
+
+        // require data
         requiredData.name = name;
         requiredData.surname = surname;
         requiredData.securityNo = securityNo;
@@ -151,6 +203,35 @@ export class Add extends Component {
         requiredData.phone = phone;
         requiredData.salary = salary;
         requiredData.formErrors = formErrors;
+
+        //attributes data
+        if (salary) {
+            attributesData.salary = salary.toString();
+        }
+
+        if (position) {
+            attributesData.position = position.value.toString();
+        }
+
+        if (email) {
+            attributesData.email = email.toString();
+        }
+
+        if (phone) {
+            attributesData.phone = phone.toString();
+        }
+
+        if (image) {
+            attributesData.image = image.toString();
+        }
+
+        if (body_height) {
+            attributesData.body_height = body_height.toString();
+        }
+
+        if (body_weight) {
+            attributesData.body_weight = body_weight.toString();
+        }
 
         console.log(`
         ---SUBMITTING---
@@ -163,24 +244,21 @@ export class Add extends Component {
            phone: ${phone}
            salary: ${salary}
            image: ${image}
+           address: ${address}
+           gender: ${gender}
+           blood: ${JSON.stringify(blood)}
+           attributes: ${JSON.stringify(attributesData)}
+           emergency: ${JSON.stringify(emergency)}
+           certificate: ${JSON.stringify(certificate)}
+           school_history: ${JSON.stringify(school_history)}
+           birthday: ${year ? year.value : null}-${month ? month.value : null}-${
+            day ? day.value : null
+        }
        `);
 
         console.log(requiredData);
 
         if (formValid(requiredData)) {
-            console.log(`
-             ---SUBMITTING---
-                name: ${name}
-                surname: ${surname}
-                securityNo: ${securityNo}
-                email: ${email}
-                position: ${position}
-                branch: ${branch}
-                phone: ${phone}
-                salary: ${salary}
-                image: ${image}
-			`);
-
             this.setState({loadingButton: "btn-loading"});
 
             CreateEmployee({
@@ -191,13 +269,22 @@ export class Add extends Component {
                 security_id: securityNo,
                 email: email,
                 permission_id: position.value,
-                phone_gsm: phone
+                phone: phone,
+                address: address,
+                gender: gender,
+                blood: blood ? blood.value : null,
+                branch: branch ? branch.value : null,
+                salary: salary,
+                birthday: `${year.value}-${month.value}-${day.value}`,
+                emergency: emergency,
+                school_history: school_history,
+                certificates: certificate,
+                attributes: attributesData
             }).then(code => {
                 this.setState({loadingButton: ""});
                 setTimeout(() => {
                     if (code === 1020) {
                         if (addContinuously) {
-                            console.log("devaaam");
                             this.setState({...initialState});
                         } else {
                             this.props.history.push("/app/employees");
@@ -209,17 +296,6 @@ export class Add extends Component {
             console.error("FORM INVALID - DISPLAY ERROR");
             const {value} = e.target;
             let formErrors = {...this.state.formErrors};
-            const {
-                name,
-                surname,
-                securityNo,
-                email,
-                position,
-                branch,
-                phone,
-                salary,
-                image
-            } = this.state;
 
             formErrors.name = name ? (name.length < 3 ? "is-invalid" : "") : "is-invalid";
             formErrors.surname = surname ? (surname.length < 3 ? "is-invalid" : "") : "is-invalid";
@@ -231,7 +307,7 @@ export class Add extends Component {
                     : ""
                 : "is-invalid";
             formErrors.email = email ? (!emailRegEx.test(email) ? "is-invalid" : "") : "is-invalid";
-            formErrors.phone = phone ? (phone.length !== 11 ? "is-invalid" : "") : "is-invalid";
+            formErrors.phone = phone ? (phone.length !== 10 ? "is-invalid" : "") : "is-invalid";
             formErrors.salary = salary ? "" : "is-invalid";
             //select
             formErrors.position = position ? "" : true;
@@ -266,7 +342,7 @@ export class Add extends Component {
                     value.length < 3 ? "is-invalid" : !emailRegEx.test(value) ? "is-invalid" : "";
                 break;
             case "phone":
-                formErrors.phone = value.length !== 11 ? "is-invalid" : "";
+                formErrors.phone = value.length !== 10 ? "is-invalid" : "";
                 break;
             case "salary":
                 formErrors.salary = value ? "" : "is-invalid";
@@ -274,54 +350,87 @@ export class Add extends Component {
             default:
                 break;
         }
-
-        this.setState({formErrors, [name]: value});
+        if (name.indexOf(".") === -1) this.setState({formErrors, [name]: value});
+        else {
+            const splitName = name.split(".");
+            this.setState(prevState => {
+                return (prevState[splitName[0]][splitName[2]][splitName[1]] = value);
+            });
+        }
     };
 
     handleImage = e => {
         try {
             e.preventDefault();
-
+            const formData = new FormData();
             let reader = new FileReader();
             let file = e.target.files[0];
-
             reader.onloadend = () => {
-                this.setState({
-                    file: file,
-                    image: reader.result
-                });
+                if (reader.result !== null) {
+                    this.setState({
+                        imagePreview: reader.result
+                    });
+                }
+                /*formData.append("image", file);
+                formData.append("uid", localStorage.getItem("UID"));
+                formData.append("to", this.state.to);
+                formData.append("type", "employee");
+                this.setState({uploadedFile: false});
+                UploadFile(formData).then(response => {
+                    if (response.status.code === 1020)
+                        this.setState({uploadedFile: true, image: response.data});
+                });*/
             };
 
             reader.readAsDataURL(file);
         } catch (e) {}
     };
 
-    handleSelect = (value, name) => {
+    handleSelect = (value, name, extraData, arr) => {
         let formErrors = {...this.state.formErrors};
 
-        switch (name) {
-            case "position":
-                formErrors.position = value ? false : true;
-                break;
-            case "branch":
-                formErrors.branch = value ? false : true;
-                break;
-            default:
-                break;
-        }
+        if (arr) {
+            this.setState(prevState => {
+                return (prevState[name][extraData].kinship = value.label);
+            });
+        } else {
+            switch (name) {
+                case "position":
+                    formErrors.position = value ? false : true;
+                    break;
+                case "branch":
+                    formErrors.branch = value ? false : true;
+                    break;
+                default:
+                    break;
+            }
 
-        this.setState({formErrors, [name]: value});
-        console.log(this.state);
+            this.setState({formErrors, [name]: value});
+        }
     };
 
     handleCheck = e => {
         const {name, checked} = e.target;
         this.setState({[name]: checked});
-        if (checked) console.log(checked);
+    };
+
+    handleRadio = e => {
+        const {name, value} = e.target;
+        this.setState({[name]: parseInt(value)});
     };
 
     render() {
-        const {image, formErrors} = this.state;
+        const {
+            loadingButton,
+            addContinuously,
+            select,
+            imagePreview,
+            formErrors,
+            uploadedFile,
+            emergency,
+            school_history,
+            certificate
+        } = this.state;
         return (
             <div className="container">
                 <div className="page-header">
@@ -338,19 +447,21 @@ export class Add extends Component {
                                     <div className="col-auto m-auto">
                                         <label
                                             htmlFor="image"
-                                            className="avatar avatar-xxxl cursor-pointer"
+                                            className={`avatar ${
+                                                uploadedFile ? "" : "btn-loading"
+                                            } avatar-xxxl cursor-pointer disabled`}
                                             style={{
                                                 border: "none",
                                                 outline: "none",
                                                 fontSize: ".875rem",
-                                                backgroundImage: `url(${this.state.image})`
+                                                backgroundImage: `url(${imagePreview})`
                                             }}>
-                                            {!this.state.image ? "Fotoğraf ekle" : ""}
+                                            {!imagePreview ? "Fotoğraf ekle" : ""}
                                         </label>
                                         <input
                                             type="file"
                                             name="image"
-                                            id="image"
+                                            className="disabled"
                                             hidden
                                             onChange={this.handleImage}
                                         />
@@ -368,7 +479,6 @@ export class Add extends Component {
                                         onChange={this.handleChange}
                                         placeholder="Adı"
                                         name="name"
-                                        value={this.state.name || ""}
                                     />
                                 </div>
 
@@ -383,7 +493,6 @@ export class Add extends Component {
                                         onChange={this.handleChange}
                                         placeholder="Soyadı"
                                         name="surname"
-                                        value={this.state.surname || ""}
                                     />
                                 </div>
 
@@ -399,7 +508,6 @@ export class Add extends Component {
                                         placeholder="T.C. Kimlik No"
                                         name="securityNo"
                                         maxLength="11"
-                                        value={this.state.securityNo || ""}
                                     />
                                 </div>
 
@@ -409,19 +517,18 @@ export class Add extends Component {
                                         <span className="form-required">*</span>
                                     </label>
                                     <Select
-                                        value={this.state.position}
                                         onChange={val => this.handleSelect(val, "position")}
-                                        options={this.state.select.positions}
+                                        options={select.positions}
                                         name="position"
                                         placeholder="Seç..."
                                         styles={
-                                            this.state.formErrors.position === true
+                                            formErrors.position === true
                                                 ? customStylesError
                                                 : customStyles
                                         }
                                         isClearable={true}
                                         isSearchable={true}
-                                        isDisabled={this.state.select.positions ? false : true}
+                                        isDisabled={select.positions ? false : true}
                                         noOptionsMessage={value =>
                                             `"${value.inputValue}" bulunamadı`
                                         }
@@ -434,19 +541,18 @@ export class Add extends Component {
                                         <span className="form-required">*</span>
                                     </label>
                                     <Select
-                                        value={this.state.branch}
                                         onChange={val => this.handleSelect(val, "branch")}
-                                        options={this.state.select.branchs}
+                                        options={select.branchs}
                                         name="branch"
                                         placeholder="Seç..."
                                         styles={
-                                            this.state.formErrors.branch === true
+                                            formErrors.branch === true
                                                 ? customStylesError
                                                 : customStyles
                                         }
                                         isClearable={true}
                                         isSearchable={true}
-                                        isDisabled={this.state.select.branchs ? false : true}
+                                        isDisabled={select.branchs ? false : true}
                                         noOptionsMessage={value =>
                                             `"${value.inputValue}" bulunamadı`
                                         }
@@ -464,7 +570,6 @@ export class Add extends Component {
                                         onChange={this.handleChange}
                                         placeholder="Maaş"
                                         name="salary"
-                                        value={this.state.salary || ""}
                                     />
                                 </div>
                             </div>
@@ -490,7 +595,6 @@ export class Add extends Component {
                                                 onChange={this.handleChange}
                                                 name="email"
                                                 placeholder="Email"
-                                                value={this.state.email || ""}
                                             />
                                         </div>
                                         <div className="form-group">
@@ -505,7 +609,6 @@ export class Add extends Component {
                                                 name="phone"
                                                 placeholder="Telefon (05xx)"
                                                 maxLength="11"
-                                                value={this.state.phone || ""}
                                             />
                                         </div>
                                         <div className="form-group">
@@ -513,18 +616,15 @@ export class Add extends Component {
                                             <div className="row gutters-xs">
                                                 <div className="col-4">
                                                     <Select
-                                                        value={this.state.day}
                                                         onChange={val =>
                                                             this.handleSelect(val, "day")
                                                         }
-                                                        options={this.state.select.days}
+                                                        options={select.days}
                                                         name="day"
                                                         placeholder="Gün"
                                                         styles={customStyles}
                                                         isSearchable={true}
-                                                        isDisabled={
-                                                            this.state.select.days ? false : true
-                                                        }
+                                                        isDisabled={select.days ? false : true}
                                                         noOptionsMessage={value =>
                                                             `"${value.inputValue}" bulunamadı`
                                                         }
@@ -532,18 +632,15 @@ export class Add extends Component {
                                                 </div>
                                                 <div className="col-4">
                                                     <Select
-                                                        value={this.state.month}
                                                         onChange={val =>
                                                             this.handleSelect(val, "month")
                                                         }
-                                                        options={this.state.select.months}
+                                                        options={select.months}
                                                         name="month"
                                                         placeholder="Ay"
                                                         styles={customStyles}
                                                         isSearchable={true}
-                                                        isDisabled={
-                                                            this.state.select.months ? false : true
-                                                        }
+                                                        isDisabled={select.months ? false : true}
                                                         noOptionsMessage={value =>
                                                             `"${value.inputValue}" bulunamadı`
                                                         }
@@ -551,18 +648,15 @@ export class Add extends Component {
                                                 </div>
                                                 <div className="col-4">
                                                     <Select
-                                                        value={this.state.year}
                                                         onChange={val =>
                                                             this.handleSelect(val, "year")
                                                         }
-                                                        options={this.state.select.years}
+                                                        options={select.years}
                                                         name="year"
                                                         placeholder="Yıl"
                                                         styles={customStyles}
                                                         isSearchable={true}
-                                                        isDisabled={
-                                                            this.state.select.years ? false : true
-                                                        }
+                                                        isDisabled={select.years ? false : true}
                                                         noOptionsMessage={value =>
                                                             `"${value.inputValue}" bulunamadı`
                                                         }
@@ -575,21 +669,24 @@ export class Add extends Component {
                                             <textarea
                                                 className="form-control"
                                                 name="address"
+                                                onChange={this.handleChange}
                                                 rows={6}
                                                 placeholder="Adres"
-                                                defaultValue={""}
                                             />
                                         </div>
                                     </div>
                                     <div className="col-lg-6 col-md-12">
                                         <div className="form-group">
-                                            <label className="form-label">Vücut Metrikleri (Boy & Kilo)</label>
+                                            <label className="form-label">
+                                                Vücut Metrikleri (Boy & Kilo)
+                                            </label>
                                             <div className="row gutters-xs">
                                                 <div className="col-6">
                                                     <input
                                                         type="number"
                                                         className="form-control"
-                                                        name="height"
+                                                        onChange={this.handleChange}
+                                                        name="body_height"
                                                         placeholder="Boy (cm)"
                                                         min={0}
                                                     />
@@ -598,7 +695,8 @@ export class Add extends Component {
                                                     <input
                                                         type="number"
                                                         className="form-control"
-                                                        name="weight"
+                                                        onChange={this.handleChange}
+                                                        name="body_weight"
                                                         placeholder="Kilo (kg)"
                                                         id="weight"
                                                         min={0}
@@ -613,37 +711,37 @@ export class Add extends Component {
                                                     <input
                                                         type="radio"
                                                         name="gender"
-                                                        defaultValue={0}
+                                                        value="1"
+                                                        onChange={this.handleRadio}
                                                         className="selectgroup-input"
-                                                        defaultChecked
                                                     />
-                                                    <span className="selectgroup-button">
-                                                        Erkek
-                                                    </span>
+                                                    <span className="selectgroup-button">Kız</span>
                                                 </label>
                                                 <label className="selectgroup-item">
                                                     <input
                                                         type="radio"
                                                         name="gender"
-                                                        defaultValue={1}
+                                                        value="0"
+                                                        onChange={this.handleRadio}
                                                         className="selectgroup-input"
                                                     />
-                                                    <span className="selectgroup-button">Kız</span>
+                                                    <span className="selectgroup-button">
+                                                        Erkek
+                                                    </span>
                                                 </label>
                                             </div>
                                         </div>
                                         <div className="form-group">
                                             <label className="form-label">Kan Grubu</label>
                                             <Select
-                                                value={this.state.blood}
                                                 onChange={val => this.handleSelect(val, "blood")}
-                                                options={this.state.select.bloods}
+                                                options={select.bloods}
                                                 name="blood"
                                                 placeholder="Seç..."
                                                 styles={customStyles}
                                                 isClearable={true}
                                                 isSearchable={true}
-                                                isDisabled={this.state.select.bloods ? false : true}
+                                                isDisabled={select.bloods ? false : true}
                                                 noOptionsMessage={value =>
                                                     `"${value.inputValue}" bulunamadı`
                                                 }
@@ -659,73 +757,62 @@ export class Add extends Component {
                                             <table className="table mb-0">
                                                 <thead>
                                                     <tr>
-                                                        <th className="pl-0">Yakınlık</th>
+                                                        <th className="pl-0 w-9">Yakınlık</th>
                                                         <th>Adı ve Soyadı</th>
                                                         <th className="pl-0">Telefon</th>
-                                                        <th
-                                                            style={{width: "5.5rem"}}
-                                                            className="pl-0">
-                                                            Ekle/Sil
-                                                        </th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <tr>
-                                                        <td className="pl-0 pr-0">
-                                                            <Select
-                                                                value={this.state.kinship}
-                                                                onChange={val =>
-                                                                    this.handleSelect(
-                                                                        val,
-                                                                        "kinship"
-                                                                    )
-                                                                }
-                                                                options={this.state.select.kinships}
-                                                                name="kinship"
-                                                                placeholder="Seç..."
-                                                                styles={customStyles}
-                                                                isClearable={true}
-                                                                isSearchable={true}
-                                                                isDisabled={
-                                                                    this.state.select.kinships
-                                                                        ? false
-                                                                        : true
-                                                                }
-                                                                noOptionsMessage={value =>
-                                                                    `"${
-                                                                        value.inputValue
-                                                                    }" bulunamadı`
-                                                                }
-                                                                menuPlacement="top"
-                                                            />
-                                                        </td>
-                                                        <td>
-                                                            <input
-                                                                type="text"
-                                                                className="form-control"
-                                                            />
-                                                        </td>
-                                                        <td className="pl-0">
-                                                            <input
-                                                                type="text"
-                                                                className="form-control"
-                                                            />
-                                                        </td>
-                                                        <td
-                                                            style={{width: "5.5rem"}}
-                                                            className="pl-0 pr-0">
-                                                            <button
-                                                                type="button"
-                                                                className="btn btn-icon btn-success">
-                                                                <i className="fe fe-plus" />
-                                                            </button>
-                                                            <button
-                                                                type="button"
-                                                                className="btn btn-icon btn-danger">
-                                                                <i className="fe fe-minus" />
-                                                            </button>
-                                                        </td>
-                                                    </tr>
+                                                    {emergency.map((el, key) => {
+                                                        return (
+                                                            <tr key={key.toString()}>
+                                                                <td className="pl-0 pr-0">
+                                                                    <Select
+                                                                        onChange={val =>
+                                                                            this.handleSelect(
+                                                                                val,
+                                                                                "emergency",
+                                                                                key,
+                                                                                true
+                                                                            )
+                                                                        }
+                                                                        options={select.kinships}
+                                                                        name="kinship"
+                                                                        placeholder="Seç..."
+                                                                        styles={customStyles}
+                                                                        isSearchable={true}
+                                                                        isDisabled={
+                                                                            select.kinships
+                                                                                ? false
+                                                                                : true
+                                                                        }
+                                                                        noOptionsMessage={value =>
+                                                                            `"${
+                                                                                value.inputValue
+                                                                            }" bulunamadı`
+                                                                        }
+                                                                        menuPlacement="top"
+                                                                    />
+                                                                </td>
+                                                                <td>
+                                                                    <input
+                                                                        type="text"
+                                                                        name={`emergency.name.${key}`}
+                                                                        onChange={this.handleChange}
+                                                                        className="form-control"
+                                                                    />
+                                                                </td>
+                                                                <td className="pl-0">
+                                                                    <input
+                                                                        type="text"
+                                                                        name={`emergency.phone.${key}`}
+                                                                        onChange={this.handleChange}
+                                                                        className="form-control"
+                                                                    />
+                                                                </td>
+                                                            </tr>
+                                                        );
+                                                    })}
                                                 </tbody>
                                             </table>
                                         </div>
@@ -738,104 +825,95 @@ export class Add extends Component {
                                             <table className="table mb-0">
                                                 <thead>
                                                     <tr>
-                                                        <th className="pl-0">Başl. Yılı</th>
-                                                        <th>Bitiş Yılı</th>
+                                                        <th className="w-9 pl-0">Baş. Yılı</th>
+                                                        <th className="w-9">BİTİŞ Yılı</th>
                                                         <th className="pl-0">Okul Adı</th>
-                                                        <th
-                                                            style={{width: "5.5rem"}}
-                                                            className="pl-0">
-                                                            Ekle/Sil
-                                                        </th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
+                                                    {school_history.map((el, key) => {
+                                                        return (
+                                                            <tr key={key.toString()}>
+                                                                <td className="pl-0 pr-0">
+                                                                    <input
+                                                                        type="number"
+                                                                        min="1950"
+                                                                        max="2030"
+                                                                        className="w-9 form-control"
+                                                                        name={`school_history.start.${key}`}
+                                                                        onChange={this.handleChange}
+                                                                    />
+                                                                </td>
+                                                                <td>
+                                                                    <input
+                                                                        type="number"
+                                                                        min="1950"
+                                                                        max="2030"
+                                                                        className="w-9 form-control"
+                                                                        name={`school_history.end.${key}`}
+                                                                        onChange={this.handleChange}
+                                                                    />
+                                                                </td>
+                                                                <td className="pl-0">
+                                                                    <input
+                                                                        type="text"
+                                                                        className="form-control"
+                                                                        name={`school_history.name.${key}`}
+                                                                        onChange={this.handleChange}
+                                                                    />
+                                                                </td>
+                                                            </tr>
+                                                        );
+                                                    })}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+
+                                    <div className="col-12 mt-3">
+                                        <label className="form-label">Sertifikalar</label>
+                                        <div className="table-responsive">
+                                            <table className="table mb-0">
+                                                <thead>
                                                     <tr>
-                                                        <td className="pl-0 pr-0">
-                                                            <Select
-                                                                value={this.state.schoolStartDate}
-                                                                onChange={val =>
-                                                                    this.handleSelect(
-                                                                        val,
-                                                                        "schoolStartDate"
-                                                                    )
-                                                                }
-                                                                options={
-                                                                    this.state.select
-                                                                        .schoolStartDates
-                                                                }
-                                                                name="schoolStartDate"
-                                                                placeholder="Seç..."
-                                                                styles={customStyles}
-                                                                isClearable={true}
-                                                                isSearchable={true}
-                                                                isDisabled={
-                                                                    this.state.select
-                                                                        .schoolStartDates
-                                                                        ? false
-                                                                        : true
-                                                                }
-                                                                noOptionsMessage={value =>
-                                                                    `"${
-                                                                        value.inputValue
-                                                                    }" bulunamadı`
-                                                                }
-                                                                menuPlacement="top"
-                                                            />
-                                                        </td>
-                                                        <td>
-                                                            <Select
-                                                                value={this.state.schoolEndDate}
-                                                                onChange={val =>
-                                                                    this.handleSelect(
-                                                                        val,
-                                                                        "schoolEndDate"
-                                                                    )
-                                                                }
-                                                                options={
-                                                                    this.state.select.schoolEndDates
-                                                                }
-                                                                name="schoolEndDate"
-                                                                placeholder="Seç..."
-                                                                styles={customStyles}
-                                                                isClearable={true}
-                                                                isSearchable={true}
-                                                                isDisabled={
-                                                                    this.state.select.schoolEndDates
-                                                                        ? false
-                                                                        : true
-                                                                }
-                                                                noOptionsMessage={value =>
-                                                                    `"${
-                                                                        value.inputValue
-                                                                    }" bulunamadı`
-                                                                }
-                                                                menuPlacement="top"
-                                                            />
-                                                        </td>
-                                                        <td className="pl-0">
-                                                            <input
-                                                                type="text"
-                                                                className="form-control"
-                                                            />
-                                                        </td>
-                                                        <td
-                                                            style={{width: "5.5rem"}}
-                                                            className="pl-0 pr-0">
-                                                            <button
-                                                                type="button"
-                                                                className="btn btn-icon btn-success">
-                                                                <i
-                                                                    className="fe fe-plus"
-                                                                    id="addSchool"
-                                                                />
-                                                            </button>
-                                                            <button
-                                                                type="button"
-                                                                className="btn btn-icon btn-danger">
-                                                                <i className="fe fe-minus" />
-                                                            </button>
-                                                        </td>
+                                                        <th className="pl-0 w-9">Aldığı Yıl</th>
+                                                        <th>TÜRÜ</th>
+                                                        <th className="pl-0">Aldığı Kurum</th>
                                                     </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {certificate.map((el, key) => {
+                                                        return (
+                                                            <tr key={key.toString()}>
+                                                                <td className="pl-0 pr-0">
+                                                                    <input
+                                                                        type="number"
+                                                                        min="1950"
+                                                                        max="2030"
+                                                                        className="w-9 form-control"
+                                                                        name={`certificate.year.${key}`}
+                                                                        onChange={this.handleChange}
+                                                                    />
+                                                                </td>
+                                                                <td>
+                                                                    <input
+                                                                        type="text"
+                                                                        className="form-control"
+                                                                        name={`certificate.type.${key}`}
+                                                                        onChange={this.handleChange}
+                                                                    />
+                                                                </td>
+                                                                <td className="pl-0">
+                                                                    <input
+                                                                        type="text"
+                                                                        className="form-control"
+                                                                        name={`certificate.corporation.${key}`}
+                                                                        onChange={this.handleChange}
+                                                                    />
+                                                                </td>
+                                                            </tr>
+                                                        );
+                                                    })}
                                                 </tbody>
                                             </table>
                                         </div>
@@ -871,7 +949,7 @@ export class Add extends Component {
                                                 type="checkbox"
                                                 name="addContinuously"
                                                 className="custom-switch-input"
-                                                checked={this.state.addContinuously}
+                                                checked={addContinuously}
                                                 onChange={this.handleCheck}
                                             />
                                             <span className="custom-switch-indicator" />
@@ -891,10 +969,9 @@ export class Add extends Component {
                                         <button
                                             style={{width: 100}}
                                             type="submit"
-                                            className={`btn btn-primary ml-3 ${
-                                                this.state.loadingButton
-                                            }`}>
-                                            {this.state.addContinuously ? "Ekle" : "Ekle ve Bitir"}
+                                            disabled={!uploadedFile ? true : false}
+                                            className={`btn btn-primary ml-3 ${loadingButton}`}>
+                                            {addContinuously ? "Ekle" : "Ekle ve Bitir"}
                                         </button>
                                     </div>
                                 </div>
