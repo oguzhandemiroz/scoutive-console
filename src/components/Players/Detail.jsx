@@ -15,15 +15,17 @@ export class Detail extends Component {
 			uid: localStorage.getItem("UID"),
 			to: props.match.params.uid,
 			image: "",
-			name: "...",
-			email: "...",
-			phone: "...",
-			securityNo: "...",
-			point: "...",
-			group: "...",
-			fee: "...",
-			branch: "...",
-			body: { height: "...", weight: "..." },
+			name: "—",
+			email: "—",
+			phone: "—",
+			birthday: "—",
+			securityNo: "—",
+			position: "—",
+			point: "—",
+			group: "—",
+			fee: "—",
+			branch: "—",
+			body: { height: "—", weight: "—" },
 			onLoadedData: false
 		};
 	}
@@ -31,26 +33,32 @@ export class Detail extends Component {
 	componentDidMount() {
 		const { uid, to } = this.state;
 		DetailPlayer({ uid: uid, to: to }).then(response => {
-			console.log(response);
-			const data = response.data;
-			const status = response.status;
 			const stateData = {};
-			stateData.body = {};
-			stateData.name = `${data.name || ""} ${data.surname || ""}`;
-			stateData.securityNo = data.security_id || "...";
-			stateData.image = data.photo || "...";
-			stateData.email = data.email || "...";
-			stateData.phone = data.phone || "...";
-			stateData.group = data.group || "...";
-			stateData.fee = data.fee || "...";
-			stateData.branch = data.branch || "...";
-			stateData.point = data.overall_average;
-			stateData.gender = genderToText[data.gender] || "...";
-			stateData.body.weight = "...";
-			stateData.body.height = "...";
-			stateData.address = "...";
-			stateData.blood = "...";
-			stateData.onLoadedData = true;
+			if (response) {
+				const status = response.status;
+				stateData.body = {};
+				if (status.code === 1020) {
+					const data = response.data;
+					stateData.body = {};
+					stateData.name = `${data.name || ""} ${data.surname || ""}`;
+					stateData.securityNo = data.security_id || "—";
+					stateData.image = data.image || "—";
+					stateData.email = data.email || "—";
+					stateData.phone = data.phone || "—";
+					stateData.birthday = data.birthday || "—";
+					stateData.group = data.group || "—";
+					stateData.fee = data.fee || "—";
+					stateData.position = data.position || "—";
+					stateData.branch = data.branch || "—";
+					stateData.point = data.point || "—";
+					stateData.gender = genderToText[data.gender] || "—";
+					stateData.body.height = data.attributes.body_height || "—";
+					stateData.body.weight = data.attributes.body_weight || "—";
+					stateData.address = "—";
+					stateData.blood = "—";
+					stateData.onLoadedData = true;
+				}
+			}
 
 			this.setState({ ...stateData });
 		});
@@ -65,6 +73,7 @@ export class Detail extends Component {
 			phone,
 			securityNo,
 			point,
+			position,
 			group,
 			fee,
 			branch,
@@ -104,7 +113,7 @@ export class Detail extends Component {
 											/>
 											<div className="media-body">
 												<h4 className="m-0">{name}</h4>
-												<p className="text-muted mb-0">{group}</p>
+												<p className="text-muted mb-0">{position}</p>
 												<ul className="social-links list-inline mb-0 mt-2">
 													<li className="list-inline-item">
 														<a
@@ -137,7 +146,15 @@ export class Detail extends Component {
 										</div>
 										<div className="form-group">
 											<label className="form-label">Grup</label>
-											<div className="form-control-plaintext">{branch}</div>
+											<div className="form-control-plaintext">
+												{typeof group === "object" ? (
+													<Link to={`/app/groups/detail/${group.group_id}`}>
+														{group.name}
+													</Link>
+												) : (
+													<div className="form-control-plaintext">{group}</div>
+												)}
+											</div>
 										</div>
 										<div className="form-group">
 											<label className="form-label">Aidat</label>
@@ -152,7 +169,7 @@ export class Detail extends Component {
 							</div>
 							<div className="card-footer">
 								<div className="d-flex justify-content-center">
-									<Link to={`/app/employees/edit/${to}`} className="btn btn-link btn-block">
+									<Link to={`/app/players/edit/${to}`} className="btn btn-link btn-block">
 										Bilgileri Düzenle
 									</Link>
 								</div>
@@ -211,6 +228,14 @@ export class Detail extends Component {
 												</div>
 												<div className="form-group">
 													<label className="form-label">Kan Grubu</label>
+													<div className="form-control-plaintext">{blood}</div>
+												</div>
+												<div className="form-group">
+													<label className="form-label">Kullandığı Ayak</label>
+													<div className="form-control-plaintext">{blood}</div>
+												</div>
+												<div className="form-group">
+													<label className="form-label">Ayak Numarası</label>
 													<div className="form-control-plaintext">{blood}</div>
 												</div>
 											</div>

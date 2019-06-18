@@ -8,7 +8,7 @@ import "../../assets/js/core";
 import ep from "../../assets/js/urls";
 import { fatalSwal, errorSwal } from "../Alert.jsx";
 import ReactDOM from "react-dom";
-import { BrowserRouter, Link, NavLink, withRouter } from "react-router-dom";
+import { BrowserRouter, Link } from "react-router-dom";
 const $ = require("jquery");
 $.DataTable = require("datatables.net");
 
@@ -381,17 +381,17 @@ class Table extends Component {
 					{
 						data: "phone",
 						render: function(data, type, row) {
-							return `<a href="tel:${data ||
-								"..."}" data-toggle="tooltip" data-placement="top" data-original-title="${data ||
-								"..."}" class="text-inherit">${data || "..."}</a>`;
+							if (data && data !== "")
+								return `<a href="tel:${data}" data-toggle="tooltip" data-placement="top" data-original-title="${data}" class="text-inherit">${data}</a>`;
+							else return "&mdash;";
 						}
 					},
 					{
 						data: "email",
 						render: function(data, type, row) {
-							return `<a href="mailto:${data ||
-								"..."}" data-toggle="tooltip" data-placement="top" data-original-title="${data ||
-								"..."}" class="text-truncate w-9 d-block text-inherit">${data || "..."}</a>`;
+							if (data && data !== "")
+								return `<a href="mailto:${data}" data-toggle="tooltip" data-placement="top" data-original-title="${data}" class="text-truncate w-9 d-block text-inherit">${data}</a>`;
+							else return "&mdash;";
 						}
 					},
 					{
@@ -404,7 +404,7 @@ class Table extends Component {
 								return data;
 							} else {
 								var convert = typeof data === "number" ? data.format() : data;
-								convert = convert ? convert + " ₺" : "...";
+								convert = convert ? convert + " ₺" : "&mdash;";
 								return convert;
 							}
 						}

@@ -6,7 +6,9 @@ import "../../assets/css/c3.min.css";
 import sc from "../../assets/js/sc";
 import "../../assets/js/core";
 import ep from "../../assets/js/urls";
-import { fatalSwal } from "../Alert.jsx";
+import { fatalSwal, errorSwal } from "../Alert.jsx";
+import ReactDOM from "react-dom";
+import { BrowserRouter, Link } from "react-router-dom";
 
 const $ = require("jquery");
 $.DataTable = require("datatables.net");
@@ -199,210 +201,279 @@ const datatable_turkish = {
 
 class Table extends Component {
 	componentDidMount() {
-		const UID = localStorage.getItem("UID");
-		$("#player-list").DataTable({
-			responsive: true,
-			order: [0, "desc"],
-			stateSave: false, // change true
-			language: {
-				...datatable_turkish,
-				decimal: ",",
-				thousands: "."
-			},
-			columnDefs: [
-				{
-					targets: [0, 1],
-					visible: false
+		try {
+			const UID = localStorage.getItem("UID");
+			$("#player-list").DataTable({
+				responsive: true,
+				order: [0, "desc"],
+				stateSave: false, // change true
+				language: {
+					...datatable_turkish,
+					decimal: ",",
+					thousands: "."
 				},
-				{
-					targets: "no-sort",
-					orderable: false
-				}
-			],
-			ajax: {
-				url: ep.LIST_PLAYER,
-				type: "POST",
-				datatype: "json",
-				data: function(d) {
-					return JSON.stringify({
-						uid: UID
-					});
-				},
-				contentType: "application/json",
-				complete: function(res) {
-					console.log(res);
-					if (res.status !== 200 && !res.responseJSON) fatalSwal();
-				}
-			},
-			columns: [
-				{
-					data: "uid"
-				},
-				{
-					data: "security_id"
-				},
-				{
-					data: "image",
-					class: "text-center",
-					render: function(data, type, row) {
-						var status = row.status;
-						var bg_class_type = {
-							"0": "secondary",
-							"1": "success",
-							"2": "warning",
-							"3": "danger",
-							"4": "info"
-						};
-						if (data === null) {
-							return (
-								'<span class="avatar avatar-placeholder">' +
-								'<span class="avatar-status bg-' +
-								bg_class_type[status] +
-								'"></span></span>'
+				columnDefs: [
+					{
+						targets: [0, 1],
+						visible: false
+					},
+					{
+						targets: "no-sort",
+						orderable: false
+					},
+					{
+						targets: "name",
+						createdCell: (td, cellData, rowData) => {
+							const fullname = cellData + " " + rowData.surname;
+							ReactDOM.render(
+								<BrowserRouter>
+									<Link
+										onClick={() => this.props.history.push("/app/players/detail/" + rowData.uid)}
+										to={"/app/players/detail/" + rowData.uid}
+										className="text-truncate d-block text-inherit"
+										style={{ maxWidth: "160px" }}
+										data-toggle="tooltip"
+										data-placement="top"
+										data-original-title={fullname}>
+										{fullname}
+									</Link>
+								</BrowserRouter>,
+								td
 							);
-						} else {
-							return (
-								'<div class="avatar" style="background-image: url(' +
-								data +
-								')">' +
-								'<span class="avatar-status bg-' +
-								bg_class_type[status] +
-								'"></span></div>'
+						}
+					},
+					{
+						targets: "action",
+						createdCell: (td, cellData, rowData) => {
+							const fullname = rowData.name + " " + rowData.surname;
+							ReactDOM.render(
+								<div className="dropdown btn-block" id="action-dropdown">
+									<button
+										type="button"
+										id="player-action"
+										className="btn btn-sm btn-secondary btn-block dropdown-toggle"
+										data-toggle="dropdown"
+										aria-haspopup="true"
+										aria-expanded="false">
+										İşlem
+									</button>
+									<div
+										className="dropdown-menu dropdown-menu-right"
+										aria-labelledby="player-action"
+										x-placement="top-end">
+										<a className="dropdown-item disabled text-azure" href="javascript:void(0)">
+											<i className="dropdown-icon fa fa-user text-azure" />
+											{fullname}
+										</a>
+										<div role="separator" className="dropdown-divider" />
+										<a className="dropdown-item action-pay-salary" href="javascript:void(0)">
+											<i className="dropdown-icon fa fa-hand-holding-usd" /> Ödeme Al
+										</a>
+										<a className="dropdown-item action-warning" href="javascript:void(0)">
+											<i className="dropdown-icon fa fa-exclamation-triangle" /> Ödeme İkazı
+										</a>
+										<a className="dropdown-item action-change-password" href="javascript:void(0)">
+											<i className="dropdown-icon fa fa-hand-holding-heart" /> Burs Ver
+										</a>
+										<div role="separator" className="dropdown-divider" />
+										<a className="dropdown-item action-advance-payment" href="javascript:void(0)">
+											<i className="dropdown-icon fa fa-snowflake" /> Kaydı Dondur
+										</a>
+										<a className="dropdown-item action-advance-payment" href="javascript:void(0)">
+											<i className="dropdown-icon fa fa-sync-alt" /> Kaydı Yenile
+										</a>
+										<a className="dropdown-item action-salary-raise" href="javascript:void(0)">
+											<i className="dropdown-icon fa fa-user-times" /> Kaydı Sil
+										</a>
+										<div role="separator" className="dropdown-divider" />
+										<a className="dropdown-item action-day-off" href="javascript:void(0)">
+											<i className="dropdown-icon fa fa-coffee" /> İzin Yaz
+										</a>
+										<div role="separator" className="dropdown-divider" />
+										<a className="dropdown-item action-permission" href="javascript:void(0)">
+											<i className="dropdown-icon fa fa-notes-medical" /> Not (Puan) Ver
+										</a>
+										<div role="separator" className="dropdown-divider" />
+										<a className="dropdown-item action-send-message" href="javascript:void(0)">
+											<i className="dropdown-icon fa fa-paper-plane" /> Veliye Mesaj Gönder
+										</a>
+										<div role="separator" className="dropdown-divider" />
+										<a className="dropdown-item action-edit" href="javascript:void(0)">
+											<i className="dropdown-icon fa fa-pen" /> Düzenle
+										</a>
+										<a className="dropdown-item action-permission" href="javascript:void(0)">
+											<i className="dropdown-icon fa fa-user-cog" /> Grup Değişikliği
+										</a>
+										<a className="dropdown-item action-all-salary-info" href="javascript:void(0)">
+											<i className="dropdown-icon fa fa-id-card-alt" /> Öğrenci Belgesi
+										</a>
+										<a className="dropdown-item action-all-salary-info" href="javascript:void(0)">
+											<i className="dropdown-icon fa fa-receipt" /> Tüm Aidat Bilgisi
+										</a>
+										<a className="dropdown-item action-all-info" href="javascript:void(0)">
+											<i className="dropdown-icon fa fa-info-circle" /> Tüm Bilgileri
+										</a>
+									</div>
+								</div>,
+								td
 							);
 						}
 					}
-				},
-				{
-					data: "name",
-					render: function(data, type, row) {
-						var fullname = data + " " + (row.surname || "");
-						return `<a href="/app/players/detail/${
-							row.uid
-						}" style="max-width:160px;" data-toggle="tooltip" data-placement="top" data-original-title="${fullname}" class="text-truncate d-block text-inherit">${fullname}</a>`;
+				],
+				ajax: {
+					url: ep.LIST_PLAYER,
+					type: "POST",
+					datatype: "json",
+					data: function(d) {
+						return JSON.stringify({
+							uid: UID
+						});
+					},
+					contentType: "application/json",
+					complete: function(res) {
+						try {
+							console.log(res);
+							if (res.responseJSON.status.code !== 1020) {
+								if (res.status !== 200) fatalSwal();
+								else errorSwal(res.responseJSON.status);
+							}
+						} catch (e) {
+							fatalSwal();
+						}
+					},
+					dataSrc: function(d) {
+						console.log(d);
+						if (d.status.code !== 1020) {
+							fatalSwal(true);
+						}
+						return d.data;
 					}
 				},
-				{
-					data: "parent",
-					render: function(data, type, row) {
-						return `<a href="tel:${data ||
-							"..."}" data-toggle="tooltip" data-placement="top" data-original-title="${data ||
-							"..."}" class="text-inherit">${data || "..."}</a>`;
+				columns: [
+					{
+						data: "uid"
+					},
+					{
+						data: "security_id"
+					},
+					{
+						data: "image",
+						class: "text-center",
+						render: function(data, type, row) {
+							var status = row.status;
+							var bg_class_type = {
+								"0": "secondary",
+								"1": "success",
+								"2": "warning",
+								"3": "danger",
+								"4": "info"
+							};
+							if (data === null) {
+								return (
+									'<span class="avatar avatar-placeholder">' +
+									'<span class="avatar-status bg-' +
+									bg_class_type[status] +
+									'"></span></span>'
+								);
+							} else {
+								return (
+									'<div class="avatar" style="background-image: url(' +
+									data +
+									')">' +
+									'<span class="avatar-status bg-' +
+									bg_class_type[status] +
+									'"></span></div>'
+								);
+							}
+						}
+					},
+					{
+						data: "name"
+					},
+					{
+						data: "emergency",
+						render: function(data, type, row) {
+							var elem = "";
+							if (data) {
+								data.map(el => {
+									if (el.phone !== "" && el.name !== "" && el.kinship !== "")
+										elem += `<a href="tel:${
+											el.phone
+										}" data-toggle="tooltip" data-placement="left" data-original-title="${
+											el.kinship
+										}" class="text-inherit d-block">${el.phone}</a> `;
+									else elem = "&mdash;";
+								});
+								return elem;
+							} else {
+								return data;
+							}
+						}
+					},
+					{
+						data: "phone",
+						render: function(data, type, row) {
+							if (data && data !== "")
+								return `<a href="tel:${data}" data-toggle="tooltip" data-placement="top" data-original-title="${data}" class="text-inherit">${data}</a>`;
+							else return "&mdash;";
+						}
+					},
+					{
+						data: "fee",
+						render: function(data, type, row) {
+							if (type === "sort" || type === "type") {
+								return data;
+							}
+							if (data && data !== "") return data.format() + " ₺";
+							else return "&mdash;";
+						}
+					},
+					{
+						data: "point"
+					},
+					{
+						data: "birthday",
+						render: function(data) {
+							if (data && data !== "") return data;
+							else return "&mdash;";
+						}
+					},
+					{
+						data: "group",
+						render: () => "U-11"
+					},
+					{
+						data: "status",
+						render: function(data, type, row) {
+							var status_type = {
+								"0": ["Tanımsız", "secondary"],
+								"1": ["Çalışıyor", "success"],
+								"2": ["İzinli", "warning"],
+								"3": ["Gelmedi", "danger"],
+								"4": ["Raporlu", "info"],
+								"5": ["Raporlu", "info"]
+							};
+							return (
+								'<span class="status-icon bg-' +
+								status_type[data][1] +
+								'"></span>' +
+								status_type[data][0]
+							);
+						}
 					}
-				},
-				{
-					data: "phone_gsm",
-					render: function(data, type, row) {
-						return `<a href="tel:${data ||
-							"..."}" data-toggle="tooltip" data-placement="top" data-original-title="${data ||
-							"..."}" class="text-inherit">${data || "..."}</a>`;
-					}
-				},
-				{
-					data: "fee",
-					render: function(data, type, row) {
-						return "100 ₺";
-					}
-				},
-				{
-					data: "point"
-				},
-				{
-					data: "birthday"
-				},
-				{
-					data: "group_name",
-					render: () => "U-11"
-				},
-				{
-					data: "status",
-					render: function(data, type, row) {
-						var status_type = {
-							"0": ["Tanımsız", "secondary"],
-							"1": ["Çalışıyor", "success"],
-							"2": ["İzinli", "warning"],
-							"3": ["Gelmedi", "danger"],
-							"4": ["Raporlu", "info"],
-							"5": ["Raporlu", "info"]
-						};
-						return (
-							'<span class="status-icon bg-' + status_type[data][1] + '"></span>' + status_type[data][0]
-						);
-					}
-				},
-				{
-					data: "action",
-					render: function(data, type, row) {
-						var fullname = row["name"] + " " + (row["surname"] || "");
-						return `<div class="dropdown btn-block" id="action-dropdown">
-                            <button type="button" id="player-action" class="btn btn-sm btn-secondary btn-block dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                İşlem
-                            </button>
-                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="player-action" x-placement="top-end">
-                                <a class="dropdown-item disabled text-azure" href="javascript:void(0)">
-                                    <i class="dropdown-icon fa fa-user text-azure"></i>${fullname}
-                                </a>
-                                <div role="separator" class="dropdown-divider"></div>
-                                <a class="dropdown-item action-pay-salary" href="javascript:void(0)">
-                                    <i class="dropdown-icon fa fa-hand-holding-usd"></i> Ödeme Al
-                                </a>
-                                <a class="dropdown-item action-warning" href="javascript:void(0)">
-                                    <i class="dropdown-icon fa fa-exclamation-triangle"></i> Ödeme İkazı
-                                </a>
-                                <a class="dropdown-item action-change-password" href="javascript:void(0)">
-                                    <i class="dropdown-icon fa fa-hand-holding-heart"></i> Burs Ver
-                                </a>
-                                <div role="separator" class="dropdown-divider"></div>
-                                <a class="dropdown-item action-advance-payment" href="javascript:void(0)">
-                                    <i class="dropdown-icon fa fa-snowflake"></i> Kaydı Dondur
-                                </a>
-                                <a class="dropdown-item action-advance-payment" href="javascript:void(0)">
-                                    <i class="dropdown-icon fa fa-sync-alt"></i> Kaydı Yenile
-                                </a>
-                                <a class="dropdown-item action-salary-raise" href="javascript:void(0)">
-                                    <i class="dropdown-icon fa fa-user-times"></i> Kaydı Sil
-                                </a>
-                                <div role="separator" class="dropdown-divider"></div>
-                                <a class="dropdown-item action-day-off" href="javascript:void(0)">
-                                    <i class="dropdown-icon fa fa-coffee"></i> İzin Yaz
-                                </a>
-                                <div role="separator" class="dropdown-divider"></div>
-                                <a class="dropdown-item action-permission" href="javascript:void(0)">
-                                    <i class="dropdown-icon fa fa-notes-medical"></i> Not (Puan) Ver
-                                </a>
-                                <div role="separator" class="dropdown-divider"></div>
-                                <a class="dropdown-item action-send-message" href="javascript:void(0)">
-                                    <i class="dropdown-icon fa fa-paper-plane"></i> Veliye Mesaj Gönder
-                                </a>
-                                <div role="separator" class="dropdown-divider"></div>
-                                <a class="dropdown-item action-edit" href="javascript:void(0)">
-                                    <i class="dropdown-icon fa fa-pen"></i> Düzenle
-                                </a>
-                                <a class="dropdown-item action-permission" href="javascript:void(0)">
-                                    <i class="dropdown-icon fa fa-user-cog"></i> Grup Değişikliği
-                                </a>
-                                <a class="dropdown-item action-all-salary-info" href="javascript:void(0)">
-                                    <i class="dropdown-icon fa fa-id-card-alt"></i> Öğrenci Belgesi
-                                </a>
-                                <a class="dropdown-item action-all-salary-info" href="javascript:void(0)">
-                                    <i class="dropdown-icon fa fa-receipt"></i> Tüm Aidat Bilgisi
-                                </a>
-                                <a class="dropdown-item action-all-info" href="javascript:void(0)">
-                                    <i class="dropdown-icon fa fa-info-circle"></i> Tüm Bilgileri
-                                </a>
-                            </div>
-                        </div>`;
-					}
-				}
-			]
-		});
-		$.fn.DataTable.ext.errMode = "none";
-		$("#player-list").on("error.dt", function(e, settings, techNote, message) {
-			console.log("An error has been reported by DataTables: ", message, techNote);
-		});
+				]
+			});
+			$.fn.DataTable.ext.errMode = "none";
+			$("#player-list").on("error.dt", function(e, settings, techNote, message) {
+				console.log("An error has been reported by DataTables: ", message, techNote);
+			});
 
-		$("#player-list").on("draw.dt", function() {
-			$('[data-toggle="tooltip"]').tooltip();
-		});
+			$("#player-list").on("draw.dt", function() {
+				$('[data-toggle="tooltip"]').tooltip();
+			});
+		} catch (e) {
+			fatalSwal();
+		}
 	}
 	componentWillUnmount() {
 		$(".data-table-wrapper")
@@ -421,15 +492,14 @@ class Table extends Component {
 						<th>ID</th>
 						<th className="w-1 no-sort">T.C.</th>
 						<th className="w-1 text-center no-sort">#</th>
-						<th>AD SOYAD</th>
-						<th>VELİ TEL.</th>
-						<th>TELEFON</th>
-						<th>AİDAT</th>
-						<th>GENEL PUAN</th>
-						<th>YAŞ</th>
-						<th>GRUP</th>
-						<th>DURUM</th>
-						<th className="no-sort" />
+						<th className="name">AD SOYAD</th>
+						<th className="emergency">VELİ TEL.</th>
+						<th className="phone">TELEFON</th>
+						<th className="fee">AİDAT</th>
+						<th className="point">GENEL PUAN</th>
+						<th className="birthday">YAŞ</th>
+						<th className="group">GRUP</th>
+						<th className="no-sort action">DURUM</th>
 					</tr>
 				</thead>
 			</table>

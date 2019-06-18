@@ -11,17 +11,17 @@ export class Detail extends Component {
 		this.state = {
 			uid: localStorage.getItem("UID"),
 			to: props.match.params.uid,
-			name: "...",
-			email: "...",
-			phone: "...",
-			securityNo: "...",
-			position: "...",
-			branch: "...",
-			address: "...",
-			blood: "...",
-			gender: "...",
-			birthday: "...",
-			body: { height: "...", weight: "..." },
+			name: "—",
+			email: "—",
+			phone: "—",
+			securityNo: "—",
+			position: "—",
+			branch: "—",
+			address: "—",
+			blood: "—",
+			gender: "—",
+			birthday: "—",
+			body: { height: "—", weight: "—" },
 			image: "",
 			emergency: null,
 			certificate: null,
@@ -45,21 +45,21 @@ export class Detail extends Component {
 				if (status.code === 1020) {
 					const data = response.data;
 					stateData.name = `${data.name || ""} ${data.surname || ""}`;
-					stateData.position = data.position || "...";
-					stateData.securityNo = data.security_id || "...";
-					stateData.phone = data.phone || "...";
-					stateData.email = data.email || "...";
-					stateData.branch = data.branch || "...";
-					stateData.image = data.image || "...";
-					stateData.address = data.address || "...";
-					stateData.gender = data.gender !== null ? data.gender : "...";
-					stateData.birthday = data.birthday || "...";
-					stateData.blood = data.blood || "...";
+					stateData.position = data.position || "—";
+					stateData.securityNo = data.security_id || "—";
+					stateData.phone = data.phone || "—";
+					stateData.email = data.email || "—";
+					stateData.branch = data.branch || "—";
+					stateData.image = data.image || "—";
+					stateData.address = data.address || "—";
+					stateData.gender = data.gender !== null ? data.gender : "—";
+					stateData.birthday = data.birthday || "—";
+					stateData.blood = data.blood || "—";
 					stateData.emergency = data.emergency;
 					stateData.school = data.school_history;
 					stateData.certificate = data.certificates;
-					stateData.body.height = data.attributes.body_height ? data.attributes.body_height : "...";
-					stateData.body.weight = data.attributes.body_weight ? data.attributes.body_weight : "...";
+					stateData.body.height = data.attributes.body_height ? data.attributes.body_height : "—";
+					stateData.body.weight = data.attributes.body_weight ? data.attributes.body_weight : "—";
 					stateData.salary = data.salary ? "∙∙∙∙∙∙" : null;
 					stateData.secretSalary = data.salary
 						? CryptoJS.AES.encrypt(data.salary.format(), "scSecretSalary").toString()

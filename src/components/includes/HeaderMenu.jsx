@@ -8,9 +8,9 @@ class HeaderMenu extends Component {
 		super(props);
 
 		this.state = {
-			sName: localStorage.getItem("sName") || "...",
+			sName: localStorage.getItem("sName") || "—",
 			sImage: localStorage.getItem("sImage"),
-			sPosition: localStorage.getItem("sPosition") || "..."
+			sPosition: localStorage.getItem("sPosition") || "—"
 		};
 	}
 

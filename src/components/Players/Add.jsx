@@ -230,6 +230,9 @@ export class Add extends Component {
         if (image) {
             attributesData.image = image.toString();
         }
+        if (position) {
+            attributesData.position = position.toString();
+        }
 
         if (body_height) {
             attributesData.body_height = body_height.toString();
