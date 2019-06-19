@@ -5,6 +5,7 @@ import ResetPassword from "../views/Pages/ResetPassword.jsx";
 import Dashboard from "../views/Dashboard/Dashboard.jsx";
 import Employees from "../views/Employees/Employees.jsx";
 import Players from "../views/Players/Players.jsx";
+import Groups from "../views/Groups/Groups.jsx";
 import _404 from "../views/Pages/404.jsx";
 
 import AddEmployee from "../components/Employees/Add.jsx";
@@ -15,96 +16,103 @@ import AddPlayers from "../components/Players/Add.jsx";
 import DetailPlayer from "../components/Players/Detail.jsx";
 
 var indexRoutes = [
-    {
-        path: "/login",
-        name: "Login",
-        component: LoginPage,
-        layout: "/auth",
-        prop: {exact: true}
-    },
-    {
-        path: "/register",
-        name: "Register",
-        component: RegisterPage,
-        layout: "/auth",
-        prop: {exact: true}
-    },
-    {
-        path: "/forgot-password",
-        name: "Forgot Password",
-        component: ForgotPassword,
-        layout: "/auth",
-        prop: {exact: true}
-    },
-    {
-        path: "/reset-password/:uid",
-        name: "Reset Password",
-        component: ResetPassword,
-        layout: "/auth",
-        prop: {exact: true}
-    },
-    {
-        path: "/dashboard",
-        name: "Dashboard",
-        component: Dashboard,
-        layout: "/app",
-        prop: {exact: true}
-    },
-    {
-        path: "/employees",
-        name: "Employees",
-        component: Employees,
-        layout: "/app",
-        prop: {exact: true}
-    },
-    {
-        path: "/employees/add",
-        name: "Add Employees",
-        component: AddEmployee,
-        layout: "/app",
-        prop: {exact: true}
-    },
-    {
-        path: "/employees/detail/:uid",
-        name: "Detail Employee",
-        component: DetailEmployee,
-        layout: "/app",
-        prop: {exact: true}
-    },
-    {
-        path: "/employees/edit/:uid",
-        name: "Edit Employee",
-        component: EditEmployee,
-        layout: "/app",
-        prop: {exact: true}
-    },
-    {
-        path: "/players",
-        name: "Players",
-        component: Players,
-        layout: "/app",
-        prop: {exact: true}
-    },
-    {
-        path: "/players/add",
-        name: "Add Players",
-        component: AddPlayers,
-        layout: "/app",
-        prop: {exact: true}
-    },
-    {
-        path: "/players/detail/:uid",
-        name: "Detail Players",
-        component: DetailPlayer,
-        layout: "/app",
-        prop: {exact: true}
-    },
-    {
-        path: "*",
-        layout: "",
-        name: "404",
-        component: _404
-    }
+	{
+		path: "/login",
+		name: "Login",
+		component: LoginPage,
+		layout: "/auth",
+		prop: { exact: true }
+	},
+	{
+		path: "/register",
+		name: "Register",
+		component: RegisterPage,
+		layout: "/auth",
+		prop: { exact: true }
+	},
+	{
+		path: "/forgot-password",
+		name: "Forgot Password",
+		component: ForgotPassword,
+		layout: "/auth",
+		prop: { exact: true }
+	},
+	{
+		path: "/reset-password/:uid",
+		name: "Reset Password",
+		component: ResetPassword,
+		layout: "/auth",
+		prop: { exact: true }
+	},
+	{
+		path: "/dashboard",
+		name: "Dashboard",
+		component: Dashboard,
+		layout: "/app",
+		prop: { exact: true }
+	},
+	{
+		path: "/employees",
+		name: "Employees",
+		component: Employees,
+		layout: "/app",
+		prop: { exact: true }
+	},
+	{
+		path: "/employees/add",
+		name: "Add Employees",
+		component: AddEmployee,
+		layout: "/app",
+		prop: { exact: true }
+	},
+	{
+		path: "/employees/detail/:uid",
+		name: "Detail Employee",
+		component: DetailEmployee,
+		layout: "/app",
+		prop: { exact: true }
+	},
+	{
+		path: "/employees/edit/:uid",
+		name: "Edit Employee",
+		component: EditEmployee,
+		layout: "/app",
+		prop: { exact: true }
+	},
+	{
+		path: "/players",
+		name: "Players",
+		component: Players,
+		layout: "/app",
+		prop: { exact: true }
+	},
+	{
+		path: "/players/add",
+		name: "Add Players",
+		component: AddPlayers,
+		layout: "/app",
+		prop: { exact: true }
+	},
+	{
+		path: "/players/detail/:uid",
+		name: "Detail Players",
+		component: DetailPlayer,
+		layout: "/app",
+		prop: { exact: true }
+	},
+	{
+		path: "/groups",
+		name: "Groups",
+		component: Groups,
+		layout: "/app",
+		prop: { exact: true }
+	},
+	{
+		path: "*",
+		layout: "",
+		name: "404",
+		component: _404
+	}
 ];
 
 export default indexRoutes;
