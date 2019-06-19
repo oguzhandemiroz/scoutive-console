@@ -14,27 +14,27 @@ export class Groups extends Component {
 							Grup Ekle
 						</a>
 						<div className="list-group list-group-transparent mb-0">
-							<a href="#" class="list-group-item list-group-item-action active">
-								<span class="icon mr-3">
-									<i class="fe fe-grid" />
+							<a href="#" className="list-group-item list-group-item-action active">
+								<span className="icon mr-3">
+									<i className="fe fe-grid" />
 								</span>
 								U-17
 							</a>
-							<a href="#" class="list-group-item list-group-item-action">
-								<span class="icon mr-3">
-									<i class="fe fe-grid" />
+							<a href="#" className="list-group-item list-group-item-action">
+								<span className="icon mr-3">
+									<i className="fe fe-grid" />
 								</span>
 								U-11
 							</a>
-							<a href="#" class="list-group-item list-group-item-action">
-								<span class="icon mr-3">
-									<i class="fe fe-grid" />
+							<a href="#" className="list-group-item list-group-item-action">
+								<span className="icon mr-3">
+									<i className="fe fe-grid" />
 								</span>
 								U-15
 							</a>
-							<a href="#" class="list-group-item list-group-item-action">
-								<span class="icon mr-3">
-									<i class="fe fe-grid" />
+							<a href="#" className="list-group-item list-group-item-action">
+								<span className="icon mr-3">
+									<i className="fe fe-grid" />
 								</span>
 								U-13
 							</a>

@@ -7,6 +7,12 @@ const genderToText = {
 	1: "Kız"
 };
 
+const footToText = {
+	0: "Sağ & Sol",
+	1: "Sağ",
+	2: "Sol"
+};
+
 export class Detail extends Component {
 	constructor(props) {
 		super(props);
@@ -25,6 +31,13 @@ export class Detail extends Component {
 			group: "—",
 			fee: "—",
 			branch: "—",
+			gender: "—",
+			foot: "—",
+			foot_no: "—",
+			branch: "—",
+			body_measure: null,
+			emergency: null,
+
 			body: { height: "—", weight: "—" },
 			onLoadedData: false
 		};
@@ -47,15 +60,21 @@ export class Detail extends Component {
 					stateData.phone = data.phone || "—";
 					stateData.birthday = data.birthday || "—";
 					stateData.group = data.group || "—";
-					stateData.fee = data.fee || "—";
+					stateData.fee = data.fee ? data.fee.format() + " ₺" : "—";
 					stateData.position = data.position || "—";
 					stateData.branch = data.branch || "—";
 					stateData.point = data.point || "—";
-					stateData.gender = genderToText[data.gender] || "—";
+					stateData.gender = data.gender !== null ? genderToText[data.gender] : "—";
 					stateData.body.height = data.attributes.body_height || "—";
 					stateData.body.weight = data.attributes.body_weight || "—";
-					stateData.address = "—";
-					stateData.blood = "—";
+					stateData.address = data.address || "—";
+					stateData.blood = data.blood || "—";
+					stateData.foot = data.foot !== null ? footToText[data.foot] : "—";
+					stateData.foot_no = data.attributes.foot_no || "—";
+					stateData.emergency = data.emergency;
+					stateData.body_measure = data.attributes.body_measure
+						? JSON.parse(data.attributes.body_measure)
+						: null;
 					stateData.onLoadedData = true;
 				}
 			}
@@ -83,6 +102,9 @@ export class Detail extends Component {
 			gender,
 			blood,
 			emergency,
+			body_measure,
+			foot,
+			foot_no,
 
 			onLoadedData
 		} = this.state;
@@ -231,12 +253,16 @@ export class Detail extends Component {
 													<div className="form-control-plaintext">{blood}</div>
 												</div>
 												<div className="form-group">
-													<label className="form-label">Kullandığı Ayak</label>
-													<div className="form-control-plaintext">{blood}</div>
-												</div>
-												<div className="form-group">
-													<label className="form-label">Ayak Numarası</label>
-													<div className="form-control-plaintext">{blood}</div>
+													<div className="row gutters-xs">
+														<div className="col-6">
+															<label className="form-label">Kullandığı Ayak</label>
+															<div className="form-control-plaintext">{foot}</div>
+														</div>
+														<div className="col-6">
+															<label className="form-label">Ayak Numarası</label>
+															<div className="form-control-plaintext">{foot_no}</div>
+														</div>
+													</div>
 												</div>
 											</div>
 											<div className="col-12 mt-3">
@@ -250,7 +276,38 @@ export class Detail extends Component {
 																<th className="pl-0">Telefon</th>
 															</tr>
 														</thead>
-														<tbody />
+														<tbody>
+															{Array.isArray(emergency)
+																? emergency.map((el, key) => {
+																		if (
+																			el.kinship !== "" &&
+																			el.name !== "" &&
+																			el.phone !== ""
+																		)
+																			return (
+																				<tr key={key.toString()}>
+																					<td className="pl-0 pr-0">
+																						<div className="form-control-plaintext">
+																							{el.kinship}
+																						</div>
+																					</td>
+																					<td>
+																						<div className="form-control-plaintext">
+																							{el.name}
+																						</div>
+																					</td>
+																					<td className="pl-0">
+																						<div className="form-control-plaintext">
+																							<a href={"tel:" + el.phone}>
+																								{el.phone}
+																							</a>
+																						</div>
+																					</td>
+																				</tr>
+																			);
+																  })
+																: null}
+														</tbody>
 													</table>
 												</div>
 											</div>
@@ -264,7 +321,28 @@ export class Detail extends Component {
 																<th>Değer</th>
 															</tr>
 														</thead>
-														<tbody />
+														<tbody>
+															{Array.isArray(body_measure)
+																? body_measure.map((el, key) => {
+																		console.log(el);
+																		if (el.type !== "" && el.value !== "")
+																			return (
+																				<tr key={key.toString()}>
+																					<td className="pl-0 pr-0">
+																						<div className="form-control-plaintext">
+																							{el.type}
+																						</div>
+																					</td>
+																					<td>
+																						<div className="form-control-plaintext">
+																							{el.value}cm
+																						</div>
+																					</td>
+																				</tr>
+																			);
+																  })
+																: null}
+														</tbody>
 													</table>
 												</div>
 											</div>

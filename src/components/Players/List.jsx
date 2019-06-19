@@ -394,20 +394,24 @@ class Table extends Component {
 						data: "emergency",
 						render: function(data, type, row) {
 							var elem = "";
+							var j = 0;
 							if (data) {
 								data.map(el => {
-									if (el.phone !== "" && el.name !== "" && el.kinship !== "")
+									console.log(el);
+									if (el.phone !== "" && el.name !== "" && el.kinship !== "") {
+										j++;
 										elem += `<a href="tel:${
 											el.phone
 										}" data-toggle="tooltip" data-placement="left" data-original-title="${
 											el.kinship
 										}" class="text-inherit d-block">${el.phone}</a> `;
-									else elem = "&mdash;";
+									}
 								});
-								return elem;
 							} else {
-								return data;
+								elem = "&mdash;";
 							}
+							if (j === 0) elem = "&mdash;";
+							return elem;
 						}
 					},
 					{
@@ -429,7 +433,11 @@ class Table extends Component {
 						}
 					},
 					{
-						data: "point"
+						data: "point",
+						render: function(data) {
+							if (data && data !== "") return data;
+							else return "&mdash;";
+						}
 					},
 					{
 						data: "birthday",

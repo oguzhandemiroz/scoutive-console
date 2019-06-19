@@ -13,7 +13,6 @@ const CreatePlayer = data => {
 			.then(res => res.json())
 			.then(response => {
 				console.log(response);
-				const data = response.data;
 				const status = response.status;
 
 				if (status.code !== 1020) {
@@ -21,10 +20,11 @@ const CreatePlayer = data => {
 				} else {
 					Toast.fire({
 						type: "success",
-						title: "Başarıyla oluşturuldu..."
+						title: "Başarıyla oluşturuldu...",
+						timer: 3500
 					});
 
-					return status.code;
+					return response;
 				}
 			})
 			.catch(e => fatalSwal(true));

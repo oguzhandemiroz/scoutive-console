@@ -14,6 +14,7 @@ import EditEmployee from "../components/Employees/Edit.jsx";
 
 import AddPlayers from "../components/Players/Add.jsx";
 import DetailPlayer from "../components/Players/Detail.jsx";
+import EditPlayer from "../components/Players/Edit.jsx";
 
 var indexRoutes = [
 	{
@@ -97,6 +98,13 @@ var indexRoutes = [
 		path: "/players/detail/:uid",
 		name: "Detail Players",
 		component: DetailPlayer,
+		layout: "/app",
+		prop: { exact: true }
+	},
+	{
+		path: "/players/edit/:uid",
+		name: "Edit Players",
+		component: EditPlayer,
 		layout: "/app",
 		prop: { exact: true }
 	},

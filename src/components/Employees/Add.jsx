@@ -66,7 +66,6 @@ const initialState = {
     emergency: [],
     school_history: [],
     certificate: [],
-    image: null,
     imagePreview: null
 };
 
@@ -88,7 +87,6 @@ export class Add extends Component {
                 kinships: null
             },
             formErrors: {
-                image: "",
                 name: "",
                 surname: "",
                 securityNo: "",
@@ -177,17 +175,16 @@ export class Add extends Component {
             gender,
             address,
             salary,
-            image,
             day,
             month,
             year,
-            formErrors,
             body_height,
             body_weight,
             emergency,
             school_history,
             certificate,
-            addContinuously
+            formErrors,
+            addContinuously,imagePreview,file
         } = this.state;
 
         const requiredData = {};
@@ -221,10 +218,6 @@ export class Add extends Component {
             attributesData.phone = phone.toString();
         }
 
-        if (image) {
-            attributesData.image = image.toString();
-        }
-
         if (body_height) {
             attributesData.body_height = body_height.toString();
         }
@@ -243,7 +236,6 @@ export class Add extends Component {
            branch: ${branch}
            phone: ${phone}
            salary: ${salary}
-           image: ${image}
            address: ${address}
            gender: ${gender}
            blood: ${JSON.stringify(blood)}
@@ -256,7 +248,7 @@ export class Add extends Component {
         }
        `);
 
-        console.log(requiredData);
+        const checkBirthday = (year && month && day) ? `${year.value}-${month.value}-${day.value}` : null;
 
         if (formValid(requiredData)) {
             this.setState({loadingButton: "btn-loading"});
@@ -275,20 +267,51 @@ export class Add extends Component {
                 blood: blood ? blood.value : null,
                 branch: branch ? branch.value : null,
                 salary: salary.replace(",", "."),
-                birthday: `${year.value}-${month.value}-${day.value}`,
+                birthday: checkBirthday,
                 emergency: emergency,
                 school_history: school_history,
                 certificates: certificate,
                 attributes: attributesData
-            }).then(code => {
-                this.setState({loadingButton: ""});
+            }).then(response => {
                 setTimeout(() => {
-                    if (code === 1020) {
+                    if (response.status.code === 1020) {
                         if (addContinuously) {
-                            this.setState({...initialState});
+							if (imagePreview) {
+								const formData = new FormData();
+								formData.append("image", file);
+								formData.append("uid", localStorage.getItem("UID"));
+								formData.append("to", response.uid);
+								formData.append("type", "employee");
+								formData.append("update", true);
+								this.setState({ uploadedFile: false });
+								UploadFile(formData).then(response => {
+									if (response.status.code === 1020) {
+										this.setState({ uploadedFile: true});
+									}
+									this.setState({ loadingButton: "" });
+                                    this.setState({ ...initialState });
+								});
+							} else {
+                            this.setState({ ...initialState });
+                            }
                         } else {
-                            this.props.history.push("/app/employees");
-                        }
+							if (imagePreview) {
+								const formData = new FormData();
+								formData.append("image", file);
+								formData.append("uid", localStorage.getItem("UID"));
+								formData.append("to", response.uid);
+								formData.append("type", "employee");
+								formData.append("update", true);
+								this.setState({ uploadedFile: false });
+								UploadFile(formData).then(response => {
+									if (response.status.code === 1020) {
+										this.setState({ uploadedFile: true });
+										this.props.history.push("/app/employees");
+									}
+									this.setState({ loadingButton: "" });
+								});
+							} else this.props.history.push("/app/employees");
+						}
                     }
                 }, 1000);
             });
@@ -361,26 +384,17 @@ export class Add extends Component {
 
     handleImage = e => {
         try {
-            e.preventDefault();
-            const formData = new FormData();
-            let reader = new FileReader();
-            let file = e.target.files[0];
-            reader.onloadend = () => {
-                if (reader.result !== null) {
-                    this.setState({
-                        imagePreview: reader.result
-                    });
-                }
-                /*formData.append("image", file);
-                formData.append("uid", localStorage.getItem("UID"));
-                formData.append("to", this.state.to);
-                formData.append("type", "employee");
-                this.setState({uploadedFile: false});
-                UploadFile(formData).then(response => {
-                    if (response.status.code === 1020)
-                        this.setState({uploadedFile: true, image: response.data});
-                });*/
-            };
+			e.preventDefault();
+			let reader = new FileReader();
+			let file = e.target.files[0];
+			reader.onloadend = () => {
+				if (reader.result !== null) {
+					this.setState({
+						imagePreview: reader.result,
+						file: file
+					});
+				}
+			};
 
             reader.readAsDataURL(file);
         } catch (e) {}
@@ -421,6 +435,22 @@ export class Add extends Component {
 
     render() {
         const {
+            name,
+            surname,
+            securityNo,
+            email,
+            position,
+            branch,
+            blood,
+            phone,
+            gender,
+            address,
+            salary,
+            day,
+            month,
+            year,
+            body_height,
+            body_weight,
             loadingButton,
             addContinuously,
             select,
@@ -461,8 +491,9 @@ export class Add extends Component {
                                         <input
                                             type="file"
                                             name="image"
-                                            className="disabled"
-                                            hidden accept="image/*"
+                                            id="image"
+                                            hidden 
+                                            accept="image/*"
                                             onChange={this.handleImage}
                                         />
                                     </div>
@@ -479,6 +510,7 @@ export class Add extends Component {
                                         onChange={this.handleChange}
                                         placeholder="Adı"
                                         name="name"
+                                        value={name ||  ""}
                                     />
                                 </div>
 
@@ -493,6 +525,7 @@ export class Add extends Component {
                                         onChange={this.handleChange}
                                         placeholder="Soyadı"
                                         name="surname"
+                                        value={surname||  ""}
                                     />
                                 </div>
 
@@ -508,6 +541,7 @@ export class Add extends Component {
                                         placeholder="T.C. Kimlik No"
                                         name="securityNo"
                                         maxLength="11"
+                                        value={securityNo || ""}
                                     />
                                 </div>
 
@@ -517,6 +551,7 @@ export class Add extends Component {
                                         <span className="form-required">*</span>
                                     </label>
                                     <Select
+                                    value={position}
                                         onChange={val => this.handleSelect(val, "position")}
                                         options={select.positions}
                                         name="position"
@@ -541,6 +576,7 @@ export class Add extends Component {
                                         <span className="form-required">*</span>
                                     </label>
                                     <Select
+                                    value={branch}
                                         onChange={val => this.handleSelect(val, "branch")}
                                         options={select.branchs}
                                         name="branch"
@@ -570,6 +606,7 @@ export class Add extends Component {
                                         onChange={this.handleChange}
                                         placeholder="Maaş"
                                         name="salary"
+                                        value={salary || ""}
                                     />
                                 </div>
                             </div>
@@ -595,6 +632,7 @@ export class Add extends Component {
                                                 onChange={this.handleChange}
                                                 name="email"
                                                 placeholder="Email"
+                                                value={email || ""}
                                             />
                                         </div>
                                         <div className="form-group">
@@ -609,6 +647,7 @@ export class Add extends Component {
                                                 name="phone"
                                                 placeholder="Telefon (5xx)"
                                                 maxLength="10"
+                                                value={phone || ""}
                                             />
                                         </div>
                                         <div className="form-group">
@@ -616,6 +655,7 @@ export class Add extends Component {
                                             <div className="row gutters-xs">
                                                 <div className="col-4">
                                                     <Select
+                                                    value={day}
                                                         onChange={val =>
                                                             this.handleSelect(val, "day")
                                                         }
@@ -632,6 +672,7 @@ export class Add extends Component {
                                                 </div>
                                                 <div className="col-4">
                                                     <Select
+                                                    value={month}
                                                         onChange={val =>
                                                             this.handleSelect(val, "month")
                                                         }
@@ -648,6 +689,7 @@ export class Add extends Component {
                                                 </div>
                                                 <div className="col-4">
                                                     <Select
+                                                    value={year}
                                                         onChange={val =>
                                                             this.handleSelect(val, "year")
                                                         }
@@ -672,6 +714,7 @@ export class Add extends Component {
                                                 onChange={this.handleChange}
                                                 rows={6}
                                                 placeholder="Adres"
+                                                value={address || ""}
                                             />
                                         </div>
                                     </div>
@@ -689,6 +732,7 @@ export class Add extends Component {
                                                         name="body_height"
                                                         placeholder="Boy (cm)"
                                                         min={0}
+                                                        value={body_height || ""}
                                                     />
                                                 </div>
                                                 <div className="col-6">
@@ -700,6 +744,7 @@ export class Add extends Component {
                                                         placeholder="Kilo (kg)"
                                                         id="weight"
                                                         min={0}
+                                                        value={body_weight || ""}
                                                     />
                                                 </div>
                                             </div>
@@ -712,6 +757,7 @@ export class Add extends Component {
                                                         type="radio"
                                                         name="gender"
                                                         value="1"
+                                                        checked={gender === 1 ? true : false}
                                                         onChange={this.handleRadio}
                                                         className="selectgroup-input"
                                                     />
@@ -722,6 +768,7 @@ export class Add extends Component {
                                                         type="radio"
                                                         name="gender"
                                                         value="0"
+                                                        checked={gender === 0 ? true : false}
                                                         onChange={this.handleRadio}
                                                         className="selectgroup-input"
                                                     />
@@ -734,6 +781,7 @@ export class Add extends Component {
                                         <div className="form-group">
                                             <label className="form-label">Kan Grubu</label>
                                             <Select
+                                            value={blood}
                                                 onChange={val => this.handleSelect(val, "blood")}
                                                 options={select.bloods}
                                                 name="blood"
@@ -969,7 +1017,6 @@ export class Add extends Component {
                                         <button
                                             style={{width: 100}}
                                             type="submit"
-                                            disabled={!uploadedFile ? true : false}
                                             className={`btn btn-primary ml-3 ${loadingButton}`}>
                                             {addContinuously ? "Ekle" : "Ekle ve Bitir"}
                                         </button>
