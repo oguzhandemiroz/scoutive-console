@@ -29,3 +29,5 @@ yarn-error.log*
 dist
 *.log
 .vscode
+.htaccess
+.ftpquota
