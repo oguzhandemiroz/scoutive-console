@@ -23,6 +23,8 @@ var ep = {
     CREATE_PLAYER: host + api_version + "create/player",
     LIST_PLAYER: host + api_version + "list/players",
     GET_PLAYER: host + api_version + "get/player",
+    UPDATE_PLAYER: host + api_version + "update/player",
+    LIST_GROUP: host + api_version + "list/groups",
     CHECK_PERMISSION: host + api_version + "check/permission",
     UPLOAD_FILE: host + api_version + "upload/file"
 };

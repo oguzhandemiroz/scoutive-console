@@ -58,4 +58,36 @@ const DetailPlayer = data => {
 	}
 };
 
-export { CreatePlayer, DetailPlayer };
+const UpdatePlayer = data => {
+	try {
+		return fetch(ep.UPDATE_PLAYER, {
+			method: "POST",
+			body: JSON.stringify(data),
+			headers: new Headers({
+				"Content-Type": "application/json"
+			})
+		})
+			.then(res => res.json())
+			.then(response => {
+				console.log(response);
+				const data = response.data;
+				const status = response.status;
+
+				if (status.code !== 1020) {
+					errorSwal(status);
+				} else {
+					Toast.fire({
+						type: "success",
+						title: "Başarıyla güncellendi..."
+					});
+
+					return status.code;
+				}
+			})
+			.catch(e => fatalSwal(true));
+	} catch (e) {
+		fatalSwal(true);
+	}
+};
+
+export { CreatePlayer, DetailPlayer, UpdatePlayer };

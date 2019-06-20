@@ -266,7 +266,7 @@ export class Add extends Component {
                 gender: gender,
                 blood: blood ? blood.value : null,
                 branch: branch ? branch.value : null,
-                salary: salary.replace(",", "."),
+                salary: salary.toString().replace(",", "."),
                 birthday: checkBirthday,
                 emergency: emergency,
                 school_history: school_history,

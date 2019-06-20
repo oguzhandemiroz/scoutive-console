@@ -1,4 +1,10 @@
 import React, { Component } from "react";
+import List from "../../components/Groups/List";
+import { Link, withRouter } from "react-router-dom";
+
+const ComponentList = {
+	all: this.props.match.params.gid
+};
 
 export class Groups extends Component {
 	render() {
@@ -9,41 +15,16 @@ export class Groups extends Component {
 				</div>
 				<div className="row">
 					<div className="col-lg-3 mb-4">
-						<a href="#" className="btn btn-block btn-primary mb-6">
+						<Link to="create" className="btn btn-block btn-primary mb-6">
 							<i className="fe fe-plus-square mr-2" />
 							Grup Ekle
-						</a>
-						<div className="list-group list-group-transparent mb-0">
-							<a href="#" className="list-group-item list-group-item-action active">
-								<span className="icon mr-3">
-									<i className="fe fe-grid" />
-								</span>
-								U-17
-							</a>
-							<a href="#" className="list-group-item list-group-item-action">
-								<span className="icon mr-3">
-									<i className="fe fe-grid" />
-								</span>
-								U-11
-							</a>
-							<a href="#" className="list-group-item list-group-item-action">
-								<span className="icon mr-3">
-									<i className="fe fe-grid" />
-								</span>
-								U-15
-							</a>
-							<a href="#" className="list-group-item list-group-item-action">
-								<span className="icon mr-3">
-									<i className="fe fe-grid" />
-								</span>
-								U-13
-							</a>
-						</div>
+						</Link>
+						<List />
 					</div>
 
 					<div className="col-lg-9">
 						<div className="card">
-							<div className="card-body" />
+							<div className="card-body">{ComponentList[this.props.match.params.gid]}</div>
 						</div>
 					</div>
 				</div>
@@ -52,4 +33,4 @@ export class Groups extends Component {
 	}
 }
 
-export default Groups;
+export default withRouter(Groups);

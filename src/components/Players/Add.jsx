@@ -241,6 +241,9 @@ export class Add extends Component {
 		if (body_measure) {
 			attributesData.body_measure = JSON.stringify(body_measure);
 		}
+		if (group) {
+			attributesData.group = group.value.toString();
+		}
 
 		console.log(`
         ---SUBMITTING---
@@ -264,6 +267,8 @@ export class Add extends Component {
            body_measure: ${JSON.stringify(body_measure)}
        `);
 
+		const checkBirthday = year && month && day ? `${year.value}-${month.value}-${day.value}` : null;
+
 		console.log(requiredData);
 
 		if (formValid(requiredData)) {
@@ -285,9 +290,9 @@ export class Add extends Component {
 				address: address,
 				emergency: emergency,
 				point: point,
-				fee: fee ? fee.replace(",", ".") : null,
+				fee: fee ? fee.toString().replace(",", ".") : null,
 				foot: foot,
-				birthday: `${year.value}-${month.value}-${day.value}`,
+				birthday: checkBirthday,
 				attributes: attributesData
 			}).then(response => {
 				setTimeout(() => {
@@ -306,11 +311,11 @@ export class Add extends Component {
 										this.setState({ uploadedFile: true });
 									}
 									this.setState({ loadingButton: "" });
-                                    this.setState({ ...initialState });
+									this.setState({ ...initialState });
 								});
 							} else {
-                            this.setState({ ...initialState });
-                            }
+								this.setState({ ...initialState });
+							}
 						} else {
 							if (imagePreview) {
 								const formData = new FormData();
@@ -870,7 +875,7 @@ export class Add extends Component {
 														className={`custom-control-input ${formErrors.foot}`}
 														name="foot"
 														value="1"
-														checked={foot === 1 ? true : null}
+														checked={foot === 1 ? true : false}
 														onChange={this.handleRadio}
 													/>
 													<span className="custom-control-label">Sağ</span>
@@ -881,7 +886,7 @@ export class Add extends Component {
 														className={`custom-control-input ${formErrors.foot}`}
 														name="foot"
 														value="2"
-														checked={foot === 2 ? true : null}
+														checked={foot === 2 ? true : false}
 														onChange={this.handleRadio}
 													/>
 													<span className="custom-control-label">Sol</span>
@@ -892,7 +897,7 @@ export class Add extends Component {
 														className={`custom-control-input ${formErrors.foot}`}
 														name="foot"
 														value="0"
-														checked={foot === 0 ? true : null}
+														checked={foot === 0 ? true : false}
 														onChange={this.handleRadio}
 													/>
 													<span className="custom-control-label">Sağ & Sol</span>

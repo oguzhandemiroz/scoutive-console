@@ -109,7 +109,7 @@ var indexRoutes = [
 		prop: { exact: true }
 	},
 	{
-		path: "/groups",
+		path: "/groups/:gid",
 		name: "Groups",
 		component: Groups,
 		layout: "/app",
