@@ -113,7 +113,6 @@ var indexRoutes = [
 		name: "Groups",
 		component: Groups,
 		layout: "/app",
-		prop: { exact: true }
 	},
 	{
 		path: "*",

@@ -103,7 +103,7 @@ export class Edit extends Component {
 		};
 	}
 
-	componentWillMount() {
+	componentDidMount() {
 		const { uid, to } = this.state;
 		let select = { ...this.state.select };
 
@@ -211,7 +211,7 @@ export class Edit extends Component {
 
 		select.days = Days();
 		select.months = Months();
-		select.years = Years();
+		select.years = Years(true);
 		select.kinships = Kinship();
 
 		this.setState({ select });

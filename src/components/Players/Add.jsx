@@ -101,7 +101,7 @@ export class Add extends Component {
 		};
 	}
 
-	componentWillMount() {
+	componentDidMount() {
 		let select = { ...this.state.select };
 
 		Bloods().then(response => {
@@ -145,7 +145,7 @@ export class Add extends Component {
 
 		select.days = Days();
 		select.months = Months();
-		select.years = Years();
+		select.years = Years(true);
 		select.kinships = Kinship();
 		this.setState({ select });
 	}
@@ -339,7 +339,6 @@ export class Add extends Component {
 			});
 		} else {
 			console.error("FORM INVALID - DISPLAY ERROR");
-			const { value } = e.target;
 			let formErrors = { ...this.state.formErrors };
 
 			formErrors.name = name ? (name.length < 3 ? "is-invalid" : "") : "is-invalid";
