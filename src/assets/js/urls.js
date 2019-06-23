@@ -8,7 +8,7 @@ var ep = {
     EMPLOYEE_POSITION_TYPE: host + api_version + "get/positions/employee",
     GROUP: host + api_version + "get/groups",
     BRANCH: host + api_version + "get/branchs",
-    CLUB: host + api_version + "get/all/clubs",
+    CLUB: host + api_version + "get/clubs",
     SCHOOL_INFO: host + api_version + "get/school",
     SCHOOL_UPDATE: host + api_version + "update/school",
     ACCOUNT_CREATE: host + api_version + "create/school",
@@ -28,6 +28,7 @@ var ep = {
     UPDATE_PLAYER: host + api_version + "update/player",
     LIST_GROUP: host + api_version + "list/groups",
     CREATE_GROUP: host + api_version + "create/group",
+    UPDATE_GROUP: host + api_version + "update/group",
     CHECK_PERMISSION: host + api_version + "check/permission",
     UPLOAD_FILE: host + api_version + "upload/file"
 };

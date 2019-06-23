@@ -397,7 +397,6 @@ class Table extends Component {
 							var j = 0;
 							if (data) {
 								data.map(el => {
-									console.log(el);
 									if (el.phone !== "" && el.name !== "" && el.kinship !== "") {
 										j++;
 										elem += `<a href="tel:${
@@ -448,7 +447,10 @@ class Table extends Component {
 					},
 					{
 						data: "group",
-						render: () => "U-11"
+						render: function(data) {
+							if (data && data !== "") return data;
+							else return "&mdash;";
+						}
 					},
 					{
 						data: "status",

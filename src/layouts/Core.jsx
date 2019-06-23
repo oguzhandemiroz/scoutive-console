@@ -2,6 +2,7 @@ import React, {Component} from "react";
 import {BrowserRouter as Router, Route, Switch, Redirect} from "react-router-dom";
 import Auth from "./Auth";
 import App from "./App";
+import Account from "./Account";
 import _404 from "../views/Pages/404.jsx";
 
 const auth = {
@@ -34,6 +35,7 @@ export class Core extends Component {
                     <Redirect strict exact from="/" to={auth.isAuthenticated ? "/app" : "/auth"} />
                     <PublicRoute path="/auth" component={Auth} />
                     <PrivateRoute path="/app" component={App} />
+                    <PrivateRoute path="/account" component={Account} />
                     <Route path="*" component={_404} />
                 </Switch>
             </Router>

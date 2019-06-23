@@ -1,8 +1,8 @@
 import React, {Component} from "react";
 import Select, {components} from "react-select";
-import {CreateGroup} from "../../services/Group";
+import {UpdateGroup, ListPlayers} from "../../services/Group";
 import {Hours, Minutes, DateRange, GetEmployees, GetPlayers} from "../../services/FillSelect";
-import {UploadFile} from "../../services/Others";
+import {getSelectValue, UploadFile} from "../../services/Others";
 import {Toast, showSwal} from "../../components/Alert";
 import {withRouter} from "react-router-dom";
 
@@ -51,7 +51,7 @@ const initialState = {
     players: null
 };
 
-export class Add extends Component {
+export class Edit extends Component {
     constructor(props) {
         super(props);
         const now = Date.now();
@@ -75,50 +75,15 @@ export class Add extends Component {
             group_id: null,
             uploadedFile: true,
             loadingButton: "",
-            players: [{key: now, player_id: ""}],
-            playerList: [
-                {
-                    id: now,
-                    select: states => {
-                        const {select} = states;
-                        return (
-                            <Select
-                                isSearchable={true}
-                                isDisabled={select.players ? false : true}
-                                onChange={val => this.handleSelect(val, "player", now, true)}
-                                placeholder="Seç..."
-                                name="player"
-                                autosize
-                                styles={customStyles}
-                                options={select.players}
-                                noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
-                                components={{Option: ImageOption}}
-                            />
-                        );
-                    },
-                    buttons: (
-                        <div>
-                            <button
-                                type="button"
-                                className="btn btn-sm btn-success"
-                                onClick={this.addItemList}>
-                                <i className="fe fe-plus" />
-                            </button>
-                            <button
-                                type="button"
-                                className="btn btn-sm btn-danger ml-2"
-                                onClick={() => this.removeItemList(now)}>
-                                <i className="fe fe-minus" />
-                            </button>
-                        </div>
-                    )
-                }
-            ]
+            onLoadedData: false,
+            players: [],
+            playerList: []
         };
     }
 
-    addItemList = () => {
+    addItemList = security_id => {
         try {
+            console.log(security_id);
             const {playerList, players} = this.state;
             console.log(this.state.playerList);
             const now = Date.now();
@@ -131,6 +96,7 @@ export class Add extends Component {
                             const {select} = states;
                             return (
                                 <Select
+                                    defaultValue={getSelectValue(select.players, security_id, "value")}
                                     isSearchable={true}
                                     isDisabled={select.players ? false : true}
                                     onChange={val => this.handleSelect(val, "player", now, true)}
@@ -149,7 +115,7 @@ export class Add extends Component {
                                 <button
                                     type="button"
                                     className="btn btn-sm btn-success"
-                                    onClick={this.addItemList}>
+                                    onClick={this.addItemList.bind(this, null)}>
                                     <i className="fe fe-plus" />
                                 </button>
                                 <button
@@ -162,7 +128,7 @@ export class Add extends Component {
                         )
                     }
                 ],
-                players: [...players, {key: now, player_id: ""}]
+                players: [...players, {key: now, player_id: security_id || ""}]
             });
         } catch (e) {}
     };
@@ -186,6 +152,9 @@ export class Add extends Component {
 
     componentDidMount() {
         const {select} = this.state;
+        const {detail, gid} = this.props;
+        const stateData = {};
+
         GetEmployees().then(response => {
             console.log(response);
             select.employees = response;
@@ -203,12 +172,53 @@ export class Add extends Component {
         select.ages = DateRange(1985, 2017, "reverse");
 
         this.setState({select});
+
+        setTimeout(() => {
+            stateData.name = detail.name;
+            stateData.hour = getSelectValue(select.hours, detail.time.slice(0, 2), "label");
+            stateData.minute = getSelectValue(select.minutes, detail.time.slice(3, -3), "label");
+            stateData.employee = getSelectValue(select.employees, detail.employee.employee_id, "value");
+            stateData.age = getSelectValue(select.ages, detail.age, "label");
+            stateData.imagePreview = detail.image ? detail.image : null;
+
+            this.setState({...stateData, onLoadedData: true});
+        }, 500);
+
+        this.renderFetch(gid);
+    }
+
+    renderFetch(gid) {
+        this.setState({loadingData: true});
+        ListPlayers({
+            uid: localStorage.getItem("UID"),
+            filter: {
+                group_id: parseInt(gid)
+            }
+        }).then(response => {
+            if (response) {
+                if (response) {
+                    const status = response.status;
+                    if (status.code === 1020) {
+                        const data = response.data;
+                        console.log("Öğrenciler", data);
+                        if (data.length > 0) {
+                            data.map(el => {
+                                this.addItemList(el.security_id);
+                            });
+                        } else this.addItemList();
+                    }
+                }
+
+                this.setState({loadingData: false});
+            }
+        });
     }
 
     handleSubmit = e => {
         try {
             e.preventDefault();
-            const {uid, name, hour, minute, employee, age, file, imagePreview, formErrors} = this.state;
+            const {uid, name, hour, minute, employee, age, image, formErrors} = this.state;
+            const {gid} = this.props;
 
             const requiredData = {};
 
@@ -231,54 +241,17 @@ export class Add extends Component {
 
             if (formValid(requiredData)) {
                 this.setState({loadingButton: "btn-loading"});
-                CreateGroup({
+                UpdateGroup({
+                    group_id: gid,
                     uid: uid,
                     name: name,
                     time: `${hour.value}:${minute.value}`,
                     employee_id: employee.value,
-                    age: age.value
+                    age: age.value,
+                    image: image
                 }).then(response => {
-                    if (response) {
-                        if (response.status.code === 1020) {
-                            if (imagePreview) {
-                                this.setState({group_id: response.group_id});
-                                const formData = new FormData();
-                                formData.append("image", file);
-                                formData.append("uid", uid);
-                                formData.append("to", response.group_id);
-                                formData.append("type", "group");
-                                formData.append("update", true);
-                                this.setState({uploadedFile: false});
-                                UploadFile(formData)
-                                    .then(response => {
-                                        if (response) {
-                                            if (response.status.code === 1020) {
-                                                Toast.fire({
-                                                    type: "success",
-                                                    title: "Başarıyla oluşturuldu..."
-                                                });
-                                                this.props.history.push("/app/groups/all"); //değişecek burası
-                                            } else {
-                                                Toast.fire({
-                                                    type: "error",
-                                                    title: "Görsel yüklenemedi..."
-                                                });
-                                            }
-                                            this.setState({uploadedFile: true});
-                                        }
-                                        this.setState({loadingButton: ""});
-                                    })
-                                    .catch(e => this.setState({uploadedFile: true}));
-                            } else {
-                                Toast.fire({
-                                    type: "success",
-                                    title: "Başarıyla oluşturuldu..."
-                                });
-                                this.props.history.push("/app/groups/all"); //değişecek burası
-                            }
-                        }
-                    }
                     this.setState({loadingButton: ""});
+                    this.forceUpdate();
                 });
             } else {
                 console.error("FORM INVALID - DISPLAY ERROR");
@@ -314,16 +287,37 @@ export class Add extends Component {
 
     handleImage = e => {
         try {
+            const {uid} = this.state;
             e.preventDefault();
+            const formData = new FormData();
             let reader = new FileReader();
             let file = e.target.files[0];
             reader.onloadend = () => {
                 if (reader.result !== null) {
                     this.setState({
-                        imagePreview: reader.result,
-                        file: file
+                        imagePreview: reader.result
                     });
                 }
+                formData.append("image", file);
+                formData.append("uid", uid);
+                formData.append("to", this.props.gid);
+                formData.append("type", "group");
+                this.setState({uploadedFile: false});
+                UploadFile(formData)
+                    .then(response => {
+                        if (response) {
+                            if (response.status.code === 1020) {
+                                this.setState({image: response.data});
+                            } else {
+                                Toast.fire({
+                                    type: "error",
+                                    title: "Görsel yüklenemedi..."
+                                });
+                            }
+                            this.setState({uploadedFile: true});
+                        }
+                    })
+                    .catch(e => this.setState({uploadedFile: true}));
             };
 
             reader.readAsDataURL(file);
@@ -335,9 +329,6 @@ export class Add extends Component {
         let formErrors = {...this.state.formErrors};
 
         if (arr) {
-            /*this.setState(prevState => {
-				return (prevState[name][extraData].kinship = value.label);
-            });*/
             const findPlayer = players.find(x => x.key === extraData);
             findPlayer.player_id = value.value;
         } else {
@@ -347,11 +338,24 @@ export class Add extends Component {
     };
 
     render() {
-        const {select, uploadedFile, imagePreview, playerList, loadingButton, formErrors} = this.state;
+        const {
+            name,
+            hour,
+            minute,
+            employee,
+            age,
+            select,
+            uploadedFile,
+            imagePreview,
+            playerList,
+            loadingButton,
+            formErrors,
+            onLoadedData
+        } = this.state;
         return (
             <form onSubmit={this.handleSubmit}>
                 <div className="card-header p-4">
-                    <div className="card-status bg-blue" />
+                    <div className="card-status bg-green" />
                     <h3 className="card-title">
                         <input
                             type="text"
@@ -360,11 +364,13 @@ export class Add extends Component {
                             placeholder="Grup Adı *"
                             name="name"
                             onChange={this.handleChange}
+                            value={name || ""}
                         />
                     </h3>
                     <div className="card-options mr-0">
                         <div style={{width: "5rem"}}>
                             <Select
+                                value={hour}
                                 isSearchable={true}
                                 isDisabled={select.hours ? false : true}
                                 onChange={val => this.handleSelect(val, "hour")}
@@ -383,6 +389,7 @@ export class Add extends Component {
                         </span>
                         <div style={{width: "5rem"}}>
                             <Select
+                                value={minute}
                                 isSearchable={true}
                                 isDisabled={select.minutes ? false : true}
                                 onChange={val => this.handleSelect(val, "minute")}
@@ -397,89 +404,102 @@ export class Add extends Component {
                     </div>
                 </div>
                 <div className="card-body">
-                    <div className="row">
-                        <div className="col-auto">
-                            <label
-                                htmlFor="image"
-                                className={`avatar ${
-                                    uploadedFile ? "" : "btn-loading"
-                                } avatar-xxxl cursor-pointer disabled`}
-                                style={{
-                                    border: "none",
-                                    outline: "none",
-                                    fontSize: ".875rem",
-                                    backgroundImage: `url(${imagePreview})`
-                                }}>
-                                {!imagePreview ? "Fotoğraf ekle" : ""}
-                            </label>
-                            <input
-                                type="file"
-                                accept="image/*"
-                                name="image"
-                                id="image"
-                                hidden
-                                onChange={this.handleImage}
-                            />
-                        </div>
-                        <div className="col d-flex flex-column justify-content-center">
-                            <div className="form-group">
-                                <label className="form-label">
-                                    Öğrenci Yaşı:
-                                    <span className="form-required">*</span>
-                                </label>
-                                <Select
-                                    isSearchable={true}
-                                    isDisabled={select.ages ? false : true}
-                                    placeholder="Doğum yılı..."
-                                    onChange={val => this.handleSelect(val, "age")}
-                                    name="age"
-                                    autosize
-                                    styles={formErrors.age === true ? customStylesError : customStyles}
-                                    options={select.ages}
-                                    noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
-                                />
+                    <div className={`dimmer ${!onLoadedData ? "active" : ""}`}>
+                        <div className="loader" />
+                        <div className="dimmer-content">
+                            <div className="row">
+                                <div className="col-auto">
+                                    <label
+                                        htmlFor="image"
+                                        className={`avatar ${
+                                            uploadedFile ? "" : "btn-loading"
+                                        } avatar-xxxl cursor-pointer disabled`}
+                                        style={{
+                                            border: "none",
+                                            outline: "none",
+                                            fontSize: ".875rem",
+                                            backgroundImage: `url(${imagePreview})`
+                                        }}>
+                                        {!imagePreview ? "Fotoğraf ekle" : ""}
+                                    </label>
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        name="image"
+                                        id="image"
+                                        hidden
+                                        onChange={this.handleImage}
+                                    />
+                                </div>
+                                <div className="col d-flex flex-column justify-content-center">
+                                    <div className="form-group">
+                                        <label className="form-label">
+                                            Öğrenci Yaşı:
+                                            <span className="form-required">*</span>
+                                        </label>
+                                        <Select
+                                            value={age}
+                                            isSearchable={true}
+                                            isDisabled={select.ages ? false : true}
+                                            placeholder="Doğum yılı..."
+                                            onChange={val => this.handleSelect(val, "age")}
+                                            name="age"
+                                            autosize
+                                            styles={
+                                                formErrors.age === true ? customStylesError : customStyles
+                                            }
+                                            options={select.ages}
+                                            noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
+                                        />
+                                    </div>
+                                </div>
+                                <div className="col d-flex flex-column justify-content-center">
+                                    <div className="form-group">
+                                        <label className="form-label">
+                                            Sorumlu Antrenör:
+                                            <span className="form-required">*</span>
+                                        </label>
+                                        <Select
+                                            value={employee}
+                                            isSearchable={true}
+                                            isDisabled={select.employees ? false : true}
+                                            placeholder="Seç..."
+                                            onChange={val => this.handleSelect(val, "employee")}
+                                            name="employee"
+                                            autosize
+                                            styles={
+                                                formErrors.employee === true
+                                                    ? customStylesError
+                                                    : customStyles
+                                            }
+                                            options={select.employees}
+                                            noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
+                                            components={{Option: ImageOption}}
+                                        />
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        <div className="col d-flex flex-column justify-content-center">
-                            <div className="form-group">
-                                <label className="form-label">
-                                    Sorumlu Antrenör:
-                                    <span className="form-required">*</span>
-                                </label>
-                                <Select
-                                    isSearchable={true}
-                                    isDisabled={select.employees ? false : true}
-                                    placeholder="Seç..."
-                                    onChange={val => this.handleSelect(val, "employee")}
-                                    name="employee"
-                                    autosize
-                                    styles={formErrors.employee === true ? customStylesError : customStyles}
-                                    options={select.employees}
-                                    noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
-                                    components={{Option: ImageOption}}
-                                />
-                            </div>
-                        </div>
-                    </div>
-                    <div className="row">
-                        <div className="col-12 mt-5">
-                            <label className="form-label" style={{fontSize: "1.15rem"}}>
-                                Öğrenci Ekle
-                            </label>
-                            <div>
-                                <table className="table table-vcenter text-nowrap table-outline mb-0">
-                                    <tbody>
-                                        {Array.isArray(playerList)
-                                            ? playerList.map((el, key) => (
-                                                  <tr key={el.id.toString()}>
-                                                      <td className="w-4 text-muted">#{key + 1}</td>
-                                                      <td>{el.select(this.state)}</td>
-                                                      <td className="w-1 pl-0">{el.buttons}</td>
-                                                  </tr>
-                                              ))
-                                            : null}
-                                    </tbody>
-                                </table>
+                            <div className="row">
+                                <div className="col-12 mt-5">
+                                    <label className="form-label" style={{fontSize: "1.15rem"}}>
+                                        Öğrenciler
+                                    </label>
+                                    <div>
+                                        <table className="table table-vcenter text-nowrap table-outline mb-0">
+                                            <tbody>
+                                                {Array.isArray(playerList)
+                                                    ? playerList.map((el, key) => (
+                                                          <tr key={el.id.toString()}>
+                                                              <td className="w-4 text-muted">#{key + 1}</td>
+                                                              <td>{el.select(this.state)}</td>
+                                                              <td className="w-1 pl-0">{el.buttons}</td>
+                                                          </tr>
+                                                      ))
+                                                    : null}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -511,7 +531,7 @@ export class Add extends Component {
                                 type="submit"
                                 disabled={!uploadedFile ? true : false}
                                 className={`btn btn-primary ml-3 ${loadingButton}`}>
-                                Ekle
+                                Kaydet
                             </button>
                         </div>
                     </div>
@@ -521,4 +541,4 @@ export class Add extends Component {
     }
 }
 
-export default withRouter(Add);
+export default withRouter(Edit);

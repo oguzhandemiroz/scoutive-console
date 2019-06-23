@@ -1,5 +1,7 @@
 import ep from "../assets/js/urls";
 import {fatalSwal, errorSwal} from "../components/Alert.jsx";
+import moment from "moment";
+import "moment/locale/tr";
 
 const SplitBirthday = date => {
     try {
@@ -61,27 +63,33 @@ const AttributeDataChecker = (data, attr) => {
     } catch (e) {}
 };
 
-function ObjectIsEqual(objA, objB) {     
-    // Create arrays of property names     
-    var aProps = Object.getOwnPropertyNames(objA);     
-    var bProps = Object.getOwnPropertyNames(objB);
-    // If count of properties is different,     
-    // objects are not equivalent     
-    if (aProps.length != bProps.length) {         
-        return false;     
-    }      
-    for (var i = 0; i < aProps.length; i++) {         
-         
-         var propName = aProps[i];          
-          // If values of same property are not equal,         
-          // objects are not equivalent         
-         if (objA[propName] !== objB[propName]) {             
-             return false;         
-         }     
-    }
-    // If we made it this far, objects     
-    // are considered equivalent     
-    return true; 
-    } 
+const systemClock = () => {
+    try {
+        var clock = moment().format("LTS");
+        return clock;
+    } catch (e) {}
+};
 
-export {SplitBirthday, UploadFile, getSelectValue, AttributeDataChecker, ObjectIsEqual};
+function ObjectIsEqual(objA, objB) {
+    // Create arrays of property names
+    var aProps = Object.getOwnPropertyNames(objA);
+    var bProps = Object.getOwnPropertyNames(objB);
+    // If count of properties is different,
+    // objects are not equivalent
+    if (aProps.length != bProps.length) {
+        return false;
+    }
+    for (var i = 0; i < aProps.length; i++) {
+        var propName = aProps[i];
+        // If values of same property are not equal,
+        // objects are not equivalent
+        if (objA[propName] !== objB[propName]) {
+            return false;
+        }
+    }
+    // If we made it this far, objects
+    // are considered equivalent
+    return true;
+}
+
+export {SplitBirthday, UploadFile, getSelectValue, AttributeDataChecker, ObjectIsEqual, systemClock};
