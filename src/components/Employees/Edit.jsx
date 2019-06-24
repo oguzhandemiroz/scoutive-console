@@ -282,6 +282,7 @@ export class Edit extends Component {
 			attributesData.body_weight = body_weight;
 		}
 
+		const checkBirthday = year && month && day ? `${year.value}-${month.value}-${day.value}` : null;
 		console.log(`
             ---SUBMITTING---
             name: ${name}
@@ -297,10 +298,8 @@ export class Edit extends Component {
             school_history: ${JSON.stringify(school_history)}
             blood: ${JSON.stringify(blood)}
             gender: ${gender}
-            birthday: ${year.value}-${month.value}-${day.value}
+            birthday: ${checkBirthday}
         `);
-
-		const checkBirthday = year && month && day ? `${year.value}-${month.value}-${day.value}` : null;
 
 		console.log(requiredData);
 
@@ -725,7 +724,7 @@ export class Edit extends Component {
 														onChange={this.handleChange}
 														rows={6}
 														placeholder="Adres"
-														value={address}
+														value={address || ""}
 													/>
 												</div>
 											</div>

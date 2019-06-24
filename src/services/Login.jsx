@@ -50,11 +50,11 @@ const Logout = () => {
 		const localeStorageList = ["sImage", "sName", "UID", "sID", "sType", "sPosition"];
 		localeStorageList.map(el => localStorage.removeItem(el));
 		setTimeout(() => {
-			window.location.reload();
+			window.location.pathname = "/auth/login";
 		}, 100);
 	} catch (e) {
 		fatalSwal();
 	}
 };
 
-export { RequestLogin, Logout};
+export { RequestLogin, Logout };
