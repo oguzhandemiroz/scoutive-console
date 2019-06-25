@@ -768,7 +768,7 @@ export class Edit extends Component {
 																checked={gender === 1 ? true : false}
 																className="selectgroup-input"
 															/>
-															<span className="selectgroup-button">Kız</span>
+															<span className="selectgroup-button">Kadın</span>
 														</label>
 														<label className="selectgroup-item">
 															<input

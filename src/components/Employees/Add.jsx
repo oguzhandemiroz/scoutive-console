@@ -761,7 +761,7 @@ export class Add extends Component {
                                                         onChange={this.handleRadio}
                                                         className="selectgroup-input"
                                                     />
-                                                    <span className="selectgroup-button">Kız</span>
+                                                    <span className="selectgroup-button">Kadın</span>
                                                 </label>
                                                 <label className="selectgroup-item">
                                                     <input

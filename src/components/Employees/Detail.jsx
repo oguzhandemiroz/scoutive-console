@@ -253,7 +253,7 @@ export class Detail extends Component {
 												<div className="form-group">
 													<label className="form-label">Cinsiyeti</label>
 													<div className="form-control-plaintext">
-														{gender === 0 ? "Erkek" : "Kız"}
+														{gender === 0 ? "Erkek" : "Kadın"}
 													</div>
 												</div>
 												<div className="form-group">

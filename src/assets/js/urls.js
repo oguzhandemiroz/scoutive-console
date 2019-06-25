@@ -26,6 +26,7 @@ var ep = {
     GET_PLAYER_NAME: host + api_version + "list/players/name",
     GET_PLAYER: host + api_version + "get/player",
     UPDATE_PLAYER: host + api_version + "update/player",
+    UPDATE_PLAYERS: host + api_version + "update/players",
     LIST_GROUP: host + api_version + "list/groups",
     CREATE_GROUP: host + api_version + "create/group",
     UPDATE_GROUP: host + api_version + "update/group",

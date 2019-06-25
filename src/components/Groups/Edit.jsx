@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import Select, { components } from "react-select";
 import { UpdateGroup, ListPlayers } from "../../services/Group";
+import { UpdatePlayers } from "../../services/Player";
 import { Hours, Minutes, DateRange, GetEmployees, GetPlayers } from "../../services/FillSelect";
 import { getSelectValue, UploadFile } from "../../services/Others";
 import { Toast, showSwal } from "../../components/Alert";
@@ -52,9 +53,9 @@ const initialState = {
 };
 
 export class Edit extends Component {
+	_isMounted = false;
 	constructor(props) {
 		super(props);
-		const now = Date.now();
 		this.state = {
 			uid: localStorage.getItem("UID"),
 			...initialState,
@@ -77,13 +78,15 @@ export class Edit extends Component {
 			loadingButton: "",
 			onLoadedData: false,
 			players: [],
-			playerList: []
+			playerList: [],
+			addGroup: [],
+			removeGroup: []
 		};
 	}
 
 	addItemList = security_id => {
 		try {
-			const { playerList, players } = this.state;
+			const { playerList, players, removeGroup } = this.state;
 			const now = Date.now();
 			this.setState({
 				playerList: [
@@ -97,6 +100,7 @@ export class Edit extends Component {
 									defaultValue={getSelectValue(select.players, security_id, "value")}
 									isSearchable={true}
 									isDisabled={select.players ? false : true}
+									isClearable={true}
 									onChange={val => this.handleSelect(val, "player", now, true)}
 									placeholder="Seç..."
 									name="player"
@@ -126,8 +130,11 @@ export class Edit extends Component {
 						)
 					}
 				],
-				players: [...players, { key: now, player_id: security_id || "" }]
+				players: [...players, { key: now, security_id: security_id || "" }]
 			});
+			if (security_id) {
+				this.setState({ removeGroup: [...removeGroup, security_id] });
+			}
 		} catch (e) {}
 	};
 
@@ -137,7 +144,10 @@ export class Edit extends Component {
 			if (playerList.length > 1) {
 				const filteredItems = playerList.filter(x => x.id !== key);
 				const filteredPlayers = players.filter(x => x.key !== key);
-				this.setState({ playerList: filteredItems, players: filteredPlayers });
+				this.setState({
+					playerList: filteredItems,
+					players: filteredPlayers
+				});
 			} else if (playerList.length === 1) {
 				Toast.fire({
 					type: "warning",
@@ -211,10 +221,23 @@ export class Edit extends Component {
 	handleSubmit = e => {
 		try {
 			e.preventDefault();
-			const { uid, name, hour, minute, employee, age, image, formErrors } = this.state;
+			const {
+				uid,
+				name,
+				hour,
+				minute,
+				employee,
+				age,
+				image,
+				players,
+				addGroup,
+				removeGroup,
+				formErrors
+			} = this.state;
 			const { gid } = this.props;
 
 			const requiredData = {};
+			const playersArr = [];
 
 			//required data
 			requiredData.name = name;
@@ -235,18 +258,58 @@ export class Edit extends Component {
 
 			if (formValid(requiredData)) {
 				this.setState({ loadingButton: "btn-loading" });
-				UpdateGroup({
-					group_id: gid,
-					uid: uid,
-					name: name,
-					time: `${hour.value}:${minute.value}`,
-					employee_id: employee.value,
-					age: age.value,
-					image: image
-				}).then(response => {
-					console.log(response);
-					this.setState({ loadingButton: "" });
-					this.forceUpdate();
+				players.map(el => {
+					if (el.security_id && el.security_id !== "") playersArr.push(el.security_id);
+				});
+
+				const diffPlayers = removeGroup.diff(playersArr);
+
+				Promise.all([
+					UpdateGroup({
+						group_id: gid,
+						uid: uid,
+						name: name,
+						time: `${hour.value}:${minute.value}`,
+						employee_id: employee.value,
+						age: age.value,
+						image: image
+					}),
+					UpdatePlayers({
+						uid: uid,
+						select: {
+							security_id__in: playersArr
+						},
+						update: {
+							group_id: gid
+						}
+					}),
+					UpdatePlayers({
+						uid: uid,
+						select: {
+							security_id__in: diffPlayers
+						},
+						update: {
+							group_id: null
+						}
+					})
+				]).then(([responseGroup, responsePlayers, responsePlayersRemove]) => {
+					console.log(responseGroup);
+					console.log(responsePlayers);
+					console.log(responsePlayersRemove);
+					if (responseGroup && responsePlayers && responsePlayersRemove) {
+						if (
+							responseGroup.status.code === 1020 &&
+							responsePlayers.status.code === 1020 &&
+							responsePlayersRemove.status.code === 1020
+						) {
+							Toast.fire({
+								type: "success",
+								title: "Başarıyla güncellendi..."
+							});
+							this.setState({ loadingButton: "" });
+							this.props.history.push("/app/groups/all");
+						}
+					}
 				});
 			} else {
 				console.error("FORM INVALID - DISPLAY ERROR");
@@ -325,7 +388,7 @@ export class Edit extends Component {
 
 		if (arr) {
 			const findPlayer = players.find(x => x.key === extraData);
-			findPlayer.player_id = value.value;
+			findPlayer.security_id = value ? value.value : "";
 		} else {
 			formErrors[name] = value ? false : true;
 			this.setState({ formErrors, [name]: value });
