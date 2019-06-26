@@ -85,7 +85,7 @@ class Menu extends Component {
 											Yoklamalar
 										</NavLink>
 										<div className="dropdown-menu dropdown-menu-arrow">
-											<NavLink to="/app/rollcalls/student" exact className="dropdown-item">
+											<NavLink to="/app/rollcalls/player" exact className="dropdown-item">
 												Öğrenci Yoklaması
 											</NavLink>
 											<NavLink to="/app/rollcalls/employee" exact className="dropdown-item">

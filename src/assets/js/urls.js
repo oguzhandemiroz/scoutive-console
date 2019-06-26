@@ -31,6 +31,8 @@ var ep = {
     CREATE_GROUP: host + api_version + "create/group",
     UPDATE_GROUP: host + api_version + "update/group",
     CHECK_PERMISSION: host + api_version + "check/permission",
+    COMPLETE_ROLLCALL: host + api_version + "complete/rollcall",
+    TAKE_ROLLCALL: host + api_version + "take/rollcall",
     UPLOAD_FILE: host + api_version + "upload/file"
 };
 

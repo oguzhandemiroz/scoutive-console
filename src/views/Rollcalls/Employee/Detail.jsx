@@ -1,7 +1,11 @@
 import React, { Component } from "react";
-import { getCookie, setCookie } from "../../assets/js/core";
-import { ListEmployee } from "../../services/Employee";
+import { getCookie, setCookie } from "../../../assets/js/core";
+import { ListEmployee } from "../../../services/Employee";
+import { CompleteRollcall, TakeRollcall } from "../../../services/Rollcalls";
 import { Link } from "react-router-dom";
+import { showSwal, Toast } from "../../../components/Alert";
+import moment from "moment";
+import "moment/locale/tr";
 const $ = require("jquery");
 
 const Modal = props => (
@@ -38,6 +42,12 @@ const Modal = props => (
 	</div>
 );
 
+const statusType = {
+	1: "check",
+	2: "alert-circle",
+	3: "btn-error"
+};
+
 export class EmployeesRollcalls extends Component {
 	constructor(props) {
 		super(props);
@@ -45,18 +55,10 @@ export class EmployeesRollcalls extends Component {
 		this.state = {
 			uid: localStorage.getItem("UID"),
 			employees: [],
-			onLoadedData: false
+			onLoadedData: false,
+			loadingButton: false
 		};
 	}
-
-	componentDidMount() {
-		if (getCookie("RollcallsAgree") !== "OK") $("#myModal").modal();
-		this.renderEmployeeList();
-	}
-
-	agree = () => {
-		setCookie("RollcallsAgree", "OK", 1, "D");
-	};
 
 	renderEmployeeList = () => {
 		const { uid, employees } = this.state;
@@ -72,7 +74,8 @@ export class EmployeesRollcalls extends Component {
 							name: el.name,
 							surname: el.surname,
 							position: el.position,
-							image: el.image
+							image: el.image,
+							status: el.status
 						});
 					});
 					this.setState({
@@ -84,12 +87,81 @@ export class EmployeesRollcalls extends Component {
 		});
 	};
 
+	componentDidMount() {
+		if (getCookie("RollcallsAgree") !== "OK") $("#myModal").modal();
+		this.renderEmployeeList();
+	}
+
+	agree = () => {
+		setCookie("RollcallsAgree", "OK", 1, "D");
+	};
+
+	takeRollcall = (to, type) => {
+		try {
+			const { uid } = this.state;
+			const data = {
+				status: parseInt(type),
+				uid: uid,
+				to: to
+			};
+
+			TakeRollcall(data).then(response => {
+				if (response) {
+					const status = response.status;
+					if (status.code === 1020) {
+						Toast.fire({
+							type: "success",
+							title: "İşlem başarılı..."
+						});
+					}
+				}
+			});
+		} catch (e) {}
+	};
+
+	completeRollcall = () => {
+		try {
+			const { uid } = this.state;
+			this.setState({ loadingButton: true });
+			showSwal({
+				type: "warning",
+				title: "Uyarı",
+				html: "Yoklamayı gün sonunda tamamlayınız. Tamamlanan yoklamalarda değişiklik <b><u>yapılamaz</u></b>",
+				showCancelButton: true,
+				cancelButtonColor: "#cd201f",
+				cancelButtonText: "İptal",
+				confirmButtonText: "Devam et",
+				allowEnterKey: false
+			}).then(result => {
+				if (result.value) {
+					CompleteRollcall(uid).then(response => {
+						if (response) {
+							const status = response.status;
+							if (status.code === 1020) {
+								showSwal({
+									title: "Başarılı",
+									html: `<b>${moment().format("LLL")}</b> tarihli yoklama tamamlanmıştır`,
+									type: "success",
+									confirmButtonText: "Tamam"
+								});
+							}
+						}
+					});
+				}
+
+				this.setState({ loadingButton: false });
+			});
+		} catch (e) {
+			this.setState({ loadingButton: false });
+		}
+	};
+
 	render() {
 		const { employees, onLoadedData } = this.state;
 		return (
 			<div className="container">
 				<div className="page-header">
-					<h1 className="page-title">Yoklamalar &mdash; Personel</h1>
+					<h1 className="page-title">Yoklamalar &mdash; Personel &mdash; Yoklama Al</h1>
 				</div>
 				<div className="row">
 					<div className="col-lg-12">
@@ -150,21 +222,51 @@ export class EmployeesRollcalls extends Component {
 																				</Link>
 																			</td>
 																			<td>{el.position}</td>
-																			<td>
-																				<a
-																					href="#"
-																					data-original-title="Geldi"
-																					data-toggle="tooltip"
-																					className="btn btn-icon btn-sm btn-success">
-																					<i className="fe fe-check" />
-																				</a>
-																				<a
-																					href="#"
-																					data-original-title="İzinli"
-																					data-toggle="tooltip"
-																					className="btn btn-icon btn-sm btn-warning ml-2">
-																					<i className="fe fe-alert-circle" />
-																				</a>
+																			<td className="text-center">
+																				{el.status === null ? (
+																					<div>
+																						<a
+																							href="#"
+																							onClick={() =>
+																								this.takeRollcall(
+																									el.uid,
+																									1
+																								)
+																							}
+																							data-original-title="Geldi"
+																							data-toggle="tooltip"
+																							className="btn btn-icon btn-sm btn-success">
+																							<i className="fe fe-check" />
+																						</a>
+																						<a
+																							href="#"
+																							onClick={() =>
+																								this.takeRollcall(
+																									el.uid,
+																									2
+																								)
+																							}
+																							data-original-title="İzinli"
+																							data-toggle="tooltip"
+																							className="btn btn-icon btn-sm btn-warning ml-2">
+																							<i className="fe fe-alert-circle" />
+																						</a>
+																					</div>
+																				) : (
+																					<div
+																						className={`text-${
+																							el.status === 1
+																								? "green"
+																								: "warning"
+																						}`}
+																						style={{ fontSize: 20 }}>
+																						<i
+																							className={`fe fe-${
+																								statusType[el.status]
+																							}`}
+																						/>
+																					</div>
+																				)}
 																			</td>
 																		</tr>
 																	);
@@ -175,16 +277,6 @@ export class EmployeesRollcalls extends Component {
 											</table>
 										</div>
 									</div>
-								</div>
-							</div>
-							<div className="card-footer">
-								<div className="d-flex justify-content-end align-items-center">
-									<button
-										type="submit"
-										onClick={() => console.log("click")}
-										className={`btn btn-primary ${!onLoadedData ? "btn-loading disabled" : ""}`}>
-										Yoklamalayı Tamamla
-									</button>
 								</div>
 							</div>
 						</div>
