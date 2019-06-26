@@ -90,4 +90,29 @@ const DetailEmployee = data => {
 	}
 };
 
-export { CreateEmployee, DetailEmployee, UpdateEmployee };
+const ListEmployee = uid => {
+	try {
+		return fetch(ep.LIST_EMPLOYEE, {
+			method: "POST",
+			body: JSON.stringify({
+				uid: uid
+			}),
+			headers: new Headers({
+				"Content-Type": "application/json"
+			})
+		})
+			.then(res => res.json())
+			.then(response => {
+				if (response) {
+					const status = response.status;
+					if (status.code !== 1020) errorSwal(status);
+
+					return response;
+				}
+			})
+			.catch(e => fatalSwal(true));
+	} catch (e) {
+		fatalSwal(true);
+	}
+};
+export { CreateEmployee, DetailEmployee, UpdateEmployee, ListEmployee };
