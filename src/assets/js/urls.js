@@ -30,6 +30,7 @@ var ep = {
     LIST_GROUP: host + api_version + "list/groups",
     CREATE_GROUP: host + api_version + "create/group",
     UPDATE_GROUP: host + api_version + "update/group",
+    GET_GROUP: host + api_version + "get/group",
     CHECK_PERMISSION: host + api_version + "check/permission",
     COMPLETE_ROLLCALL: host + api_version + "complete/rollcall",
     TAKE_ROLLCALL: host + api_version + "take/rollcall",

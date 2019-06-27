@@ -37,7 +37,7 @@ export class List extends Component {
 									return (
 										<Link
 											to={{
-												pathname: "/app/groups/" + el.group_id + "/detail",
+												pathname: "/app/rollcalls/player/detail/" + el.group_id,
 												state: {
 													type: "detail",
 													detailGroup: el
@@ -45,8 +45,7 @@ export class List extends Component {
 											}}
 											key={key.toString()}
 											className={`list-group-item list-group-item-action d-flex ${
-												//match.params.gid === el.group_id.toString() ? "active" :
-												""
+												match.params.gid === el.group_id.toString() ? "active" : ""
 											}`}>
 											<span className="icon mr-3">
 												<i className="fe fe-grid" />

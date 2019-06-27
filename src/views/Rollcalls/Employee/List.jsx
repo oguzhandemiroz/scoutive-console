@@ -29,9 +29,9 @@ export class List extends Component {
 									<Link
 										to="/app/rollcalls/employee/add"
 										onClick={this.completeRollcall}
-										className={`btn btn-sm btn-success ${loadingButton ? "btn-loading disabled" : ""} ${
-											!onLoadedData ? "btn-loading disabled" : ""
-										}`}>
+										className={`btn btn-sm btn-success ${
+											loadingButton ? "btn-loading disabled" : ""
+										} ${!onLoadedData ? "btn-loading disabled" : ""}`}>
 										Yoklama Oluştur
 									</Link>
 								</div>

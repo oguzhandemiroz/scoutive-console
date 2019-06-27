@@ -21,7 +21,7 @@ const Modal = props => (
 						Yoklama yapılırken, sisteme <b>"geldi"</b> veya <b>"izinli"</b> olarak giriş yapabilirsiniz.
 					</p>
 					<p>
-						İşaretlenmemiş olanlar, yoklama tamamlandığında sisteme otomatik olarak <b>"gelmedi"</b>{" "}
+						İşaretlenmemiş olanları, yoklama tamamlandığında sistem otomatik olarak <b>"gelmedi"</b>{" "}
 						şeklinde giriş yapar.
 					</p>
 					<p>
@@ -174,7 +174,7 @@ export class EmployeesRollcalls extends Component {
 										className="form-help bg-gray-dark text-white"
 										data-toggle="popover"
 										data-placement="bottom"
-										data-content='<p>Yoklama yapılırken, sisteme <b>"geldi"</b> veya <b>"izinli"</b> olarak giriş yapabilirsiniz.</p><p>İşaretlenmemiş olanlar, yoklama tamamlandığında sisteme otomatik olarak <b>"gelmedi"</b> şeklinde giriş yapar.</p><p><b class="text-red">Not:</b> Yoklamayı gün sonunda tamamlayınız. Tamamlanan yoklamalarda değişiklik <b><u><i>yapılamaz.</i></u></b></p>'>
+										data-content='<p>Yoklama yapılırken, sisteme <b>"geldi"</b> veya <b>"izinli"</b> olarak giriş yapabilirsiniz.</p><p>İşaretlenmemiş olanları, yoklama tamamlandığında sistem otomatik olarak <b>"gelmedi"</b> şeklinde giriş yapar.</p><p><b class="text-red">Not:</b> Yoklamayı gün sonunda tamamlayınız. Tamamlanan yoklamalarda değişiklik <b><u><i>yapılamaz.</i></u></b></p>'>
 										!
 									</span>
 									<Modal trigger={this.agree} />

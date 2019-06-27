@@ -33,23 +33,25 @@ export class Detail extends Component {
 	}
 
 	renderFetch(gid) {
-		this.setState({ loadingData: true });
-		ListPlayers({
-			uid: localStorage.getItem("UID"),
-			filter: {
-				group_id: parseInt(gid)
-			}
-		}).then(response => {
-			if (response) {
-				const status = response.status;
-				if (status.code === 1020) {
-					const data = response.data;
-					this.setState({ players: data });
+		try {
+			this.setState({ loadingData: true });
+			ListPlayers({
+				uid: localStorage.getItem("UID"),
+				filter: {
+					group_id: parseInt(gid)
 				}
+			}).then(response => {
+				if (response) {
+					const status = response.status;
+					if (status.code === 1020) {
+						const data = response.data;
+						this.setState({ players: data });
+					}
 
-				this.setState({ loadingData: false });
-			}
-		});
+					this.setState({ loadingData: false });
+				}
+			});
+		} catch (e) {}
 	}
 
 	render() {

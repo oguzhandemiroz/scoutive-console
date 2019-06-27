@@ -10,10 +10,10 @@ function getCookie(cname) {
     var ca = document.cookie.split(';');
     for (var i = 0; i < ca.length; i++) {
         var c = ca[i];
-        while (c.charAt(0) == ' ') {
+        while (c.charAt(0) === ' ') {
             c = c.substring(1);
         }
-        if (c.indexOf(name) == 0) {
+        if (c.indexOf(name) === 0) {
             return c.substring(name.length, c.length);
         }
     }
@@ -22,19 +22,19 @@ function getCookie(cname) {
 
 function setCookie(cname, cvalue, exdays, interval) {
     if (!exdays) {
-        var exdays = 0
+        exdays = 0
     }
     if (!interval) {
-        var interval = "D";
+        interval = "D";
     }
-    if (exdays == 0) {
+    if (exdays === 0) {
         document.cookie = cname + "=" + cvalue + ";path=/";
     } else {
         var d = new Date();
-        if (interval == "D") {
+        if (interval === "D") {
             d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
         }
-        if (interval == "M") {
+        if (interval === "M") {
             d.setTime(d.getTime() + (exdays * 60 * 1000));
         }
         var expires = "expires=" + d.toUTCString();
