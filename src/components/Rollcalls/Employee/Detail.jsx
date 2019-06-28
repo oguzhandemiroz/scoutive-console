@@ -2,8 +2,8 @@ import React, { Component } from "react";
 import { getCookie, setCookie } from "../../../assets/js/core";
 import { ListEmployee } from "../../../services/Employee";
 import { CompleteRollcall, TakeRollcall } from "../../../services/Rollcalls";
-import { Link, withRouter } from "react-router-dom";
-import { showSwal, Toast } from "../../../components/Alert";
+import { Link } from "react-router-dom";
+import { showSwal, Toast } from "../../Alert";
 import moment from "moment";
 import "moment/locale/tr";
 const $ = require("jquery");
@@ -21,8 +21,8 @@ const Modal = props => (
 						Yoklama yapılırken, sisteme <b>"geldi"</b> veya <b>"izinli"</b> olarak giriş yapabilirsiniz.
 					</p>
 					<p>
-						İşaretlenmemiş olanlar, yoklama tamamlandığında sisteme otomatik olarak <b>"gelmedi"</b>{" "}
-						şeklinde tanımlanır.
+						İşaretlenmemiş olanları, yoklama tamamlandığında sistem otomatik olarak <b>"gelmedi"</b>{" "}
+						şeklinde giriş yapar.
 					</p>
 					<p>
 						<b className="text-red">Not:</b> Yoklamayı gün sonunda tamamlayınız. Tamamlanan yoklamalarda
@@ -143,8 +143,6 @@ export class EmployeesRollcalls extends Component {
 									html: `<b>${moment().format("LLL")}</b> tarihli yoklama tamamlanmıştır`,
 									type: "success",
 									confirmButtonText: "Tamam"
-								}).then(result => {
-									this.props.history.push("/app/rollcalls/employee");
 								});
 							}
 						}
@@ -159,7 +157,7 @@ export class EmployeesRollcalls extends Component {
 	};
 
 	render() {
-		const { employees, onLoadedData, loadingButton } = this.state;
+		const { employees, onLoadedData } = this.state;
 		return (
 			<div className="container">
 				<div className="page-header">
@@ -176,7 +174,7 @@ export class EmployeesRollcalls extends Component {
 										className="form-help bg-gray-dark text-white"
 										data-toggle="popover"
 										data-placement="bottom"
-										data-content='<p>Yoklama yapılırken, sisteme <b>"geldi"</b> veya <b>"izinli"</b> olarak giriş yapabilirsiniz.</p><p>İşaretlenmemiş olanlar, yoklama tamamlandığında sisteme otomatik olarak <b>"gelmedi"</b> şeklinde tanımlanır.</p><p><b class="text-red">Not:</b> Yoklamayı gün sonunda tamamlayınız. Tamamlanan yoklamalarda değişiklik <b><u><i>yapılamaz.</i></u></b></p>'>
+										data-content='<p>Yoklama yapılırken, sisteme <b>"geldi"</b> veya <b>"izinli"</b> olarak giriş yapabilirsiniz.</p><p>İşaretlenmemiş olanları, yoklama tamamlandığında sistem otomatik olarak <b>"gelmedi"</b> şeklinde giriş yapar.</p><p><b class="text-red">Not:</b> Yoklamayı gün sonunda tamamlayınız. Tamamlanan yoklamalarda değişiklik <b><u><i>yapılamaz.</i></u></b></p>'>
 										!
 									</span>
 									<Modal trigger={this.agree} />
@@ -281,18 +279,6 @@ export class EmployeesRollcalls extends Component {
 									</div>
 								</div>
 							</div>
-							<div className="card-footer">
-								<div className="d-flex justify-content-end align-items-center">
-									<button
-										type="submit"
-										onClick={this.completeRollcall}
-										className={`btn btn-primary ${loadingButton ? "btn-loading disabled" : ""} ${
-											!onLoadedData ? "btn-loading disabled" : ""
-										}`}>
-										Yoklamayı Tamamla
-									</button>
-								</div>
-							</div>
 						</div>
 					</div>
 				</div>
@@ -301,4 +287,4 @@ export class EmployeesRollcalls extends Component {
 	}
 }
 
-export default withRouter(EmployeesRollcalls);
+export default EmployeesRollcalls;

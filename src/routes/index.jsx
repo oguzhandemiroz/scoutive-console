@@ -1,29 +1,35 @@
-import LoginPage from "../views/Pages/LoginPage.jsx";
-import RegisterPage from "../views/Pages/RegisterPage.jsx";
-import ForgotPassword from "../views/Pages/ForgotPassword.jsx";
-import ResetPassword from "../views/Pages/ResetPassword.jsx";
-import Dashboard from "../views/Dashboard/Dashboard.jsx";
-import Employees from "../views/Employees/Employees.jsx";
-import Players from "../views/Players/Players.jsx";
-import Groups from "../views/Groups/Groups.jsx";
-import _404 from "../views/Pages/404.jsx";
+import LoginPage from "../views/Pages/LoginPage";
+import RegisterPage from "../views/Pages/RegisterPage";
+import ForgotPassword from "../views/Pages/ForgotPassword";
+import ResetPassword from "../views/Pages/ResetPassword";
+import Dashboard from "../views/Dashboard/Dashboard";
+import Employees from "../views/Employees/Employees";
+import Players from "../views/Players/Players";
+import _404 from "../views/Pages/404";
 
-import AddEmployee from "../components/Employees/Add.jsx";
-import DetailEmployee from "../components/Employees/Detail.jsx";
-import EditEmployee from "../components/Employees/Edit.jsx";
+import AddEmployee from "../components/Employees/Add";
+import DetailEmployee from "../components/Employees/Detail";
+import EditEmployee from "../components/Employees/Edit";
 
-import AddPlayers from "../components/Players/Add.jsx";
-import DetailPlayer from "../components/Players/Detail.jsx";
-import EditPlayer from "../components/Players/Edit.jsx";
+import AddPlayers from "../components/Players/Add";
+import DetailPlayer from "../components/Players/Detail";
+import EditPlayer from "../components/Players/Edit";
 
-import Profile from "../views/Pages/Profile.jsx";
+import Groups from "../views/Groups/Groups";
+import GroupAdd from "../components/Groups/Add";
+import GroupDetail from "../components/Groups/Detail";
+import GroupEdit from "../components/Groups/Edit";
 
-import EmployeesRollcallAdd from "../views/Rollcalls/Employee/Add";
-import EmployeesRollcallList from "../views/Rollcalls/Employee/List";
-import EmployeesRollcallDetail from "../views/Rollcalls/Employee/Detail";
+import Profile from "../views/Pages/Profile";
 
-import PlayersRollcallList from "../views/Rollcalls/Player/List";
-import PlayersRollcallDetail from "../views/Rollcalls/Player/Detail";
+import EmployeesRollcallList from "../views/Rollcalls/Employee";
+import EmployeesRollcallAdd from "../components/Rollcalls/Employee/Add";
+import EmployeesRollcallDetail from "../components/Rollcalls/Employee/Detail";
+
+import PlayersRollcallList from "../views/Rollcalls/Player";
+import PlayersRollcallAdd from "../components/Rollcalls/Player/Add";
+import PlayersRollcallDetail from "../components/Rollcalls/Player/Detail";
+import PlayersRollcallPast from "../components/Rollcalls/Player/Past";
 
 var indexRoutes = [
 	{
@@ -118,10 +124,32 @@ var indexRoutes = [
 		prop: { exact: true }
 	},
 	{
-		path: "/groups/:gid",
+		path: "/groups",
 		name: "Groups",
 		component: Groups,
-		layout: "/app"
+		layout: "/app",
+		prop: { exact: true }
+	},
+	{
+		path: "/groups/add",
+		name: "Groups",
+		component: GroupAdd,
+		layout: "/app",
+		prop: { exact: true }
+	},
+	{
+		path: "/groups/detail/:gid",
+		name: "Groups",
+		component: GroupDetail,
+		layout: "/app",
+		prop: { exact: true }
+	},
+	{
+		path: "/groups/edit/:gid",
+		name: "Groups",
+		component: GroupEdit,
+		layout: "/app",
+		prop: { exact: true }
 	},
 	{
 		path: "/profile",
@@ -157,8 +185,22 @@ var indexRoutes = [
 		prop: { exact: true }
 	},
 	{
+		path: "/rollcalls/player/add/:gid",
+		name: "Players Rollcalls",
+		component: PlayersRollcallAdd,
+		layout: "/app",
+		prop: { exact: true }
+	},
+	{
 		path: "/rollcalls/player/detail/:gid",
 		name: "Players Rollcalls",
+		component: PlayersRollcallPast,
+		layout: "/app",
+		prop: { exact: true }
+	},
+	{
+		path: "/rollcalls/player/detail/:gid/:rid",
+		name: "Players Rollcalls Past",
 		component: PlayersRollcallDetail,
 		layout: "/app",
 		prop: { exact: true }

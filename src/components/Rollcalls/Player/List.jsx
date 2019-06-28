@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { ListGroups } from "../../services/Group";
+import { ListGroups } from "../../../services/Group";
 import { Link, withRouter } from "react-router-dom";
 
 export class List extends Component {

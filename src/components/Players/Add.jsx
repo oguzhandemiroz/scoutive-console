@@ -310,7 +310,6 @@ export class Add extends Component {
 									if (response.status.code === 1020) {
 										this.setState({ uploadedFile: true });
 									}
-									this.setState({ loadingButton: "" });
 									this.setState({ ...initialState });
 								});
 							} else {
@@ -330,12 +329,12 @@ export class Add extends Component {
 										this.setState({ uploadedFile: true });
 										this.props.history.push("/app/players");
 									}
-									this.setState({ loadingButton: "" });
 								});
 							} else this.props.history.push("/app/players");
 						}
 					}
 				}, 1000);
+				this.setState({ loadingButton: "" });
 			});
 		} else {
 			console.error("FORM INVALID - DISPLAY ERROR");

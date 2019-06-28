@@ -1,9 +1,11 @@
 import React, { Component } from "react";
-import List from "./List";
-import { DetailGroup, ListPlayers } from "../../services/Group";
+import { List as GroupList } from "./List";
+import { DetailGroup, ListPlayers } from "../../../services/Group";
 import { Link } from "react-router-dom";
+import { getCookie, setCookie } from "../../../assets/js/core";
 import moment from "moment";
 import "moment/locale/tr";
+const $ = require("jquery");
 
 const noRow = () => (
 	<tr>
@@ -11,6 +13,40 @@ const noRow = () => (
 			Kayıt bulunamadı...
 		</td>
 	</tr>
+);
+
+const Modal = props => (
+	<div className="modal fade" tabIndex="-1" role="dialog" id="myModal">
+		<div className="modal-dialog" role="document">
+			<div className="modal-content">
+				<div className="modal-header">
+					<h5 className="modal-title text-dark">Uyarı!</h5>
+					<button type="button" className="close" data-dismiss="modal" aria-label="Close" />
+				</div>
+				<div className="modal-body text-dark" style={{ fontSize: 16 }}>
+					<p>
+						Yoklama yapılırken, sisteme <b>"geldi"</b> veya <b>"izinli"</b> olarak giriş yapabilirsiniz.
+					</p>
+					<p>
+						İşaretlenmemiş olanlar, yoklama tamamlandığında sisteme otomatik olarak <b>"gelmedi"</b>{" "}
+						şeklinde tanımlanır.
+					</p>
+					<p>
+						<b className="text-red">Not:</b> Yoklamayı gün sonunda tamamlayınız. Tamamlanan yoklamalarda
+						değişiklik{" "}
+						<b>
+							<u>yapılamaz.</u>
+						</b>
+					</p>
+				</div>
+				<div className="modal-footer">
+					<button onClick={props.trigger} type="button" className="btn btn-primary" data-dismiss="modal">
+						Anladım
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
 );
 
 export class Detail extends Component {
@@ -33,6 +69,7 @@ export class Detail extends Component {
 	}
 
 	componentDidMount() {
+		if (getCookie("RollcallsAgree") !== "OK") $("#myModal").modal();
 		const { gid } = this.props.match.params;
 		this.renderGroupDetail(gid);
 		this.renderPlayerList(gid);
@@ -47,6 +84,10 @@ export class Detail extends Component {
 			this.renderPlayerList(nextProps.match.params.gid);
 		}
 	}
+
+	agree = () => {
+		setCookie("RollcallsAgree", "OK", 1, "D");
+	};
 
 	renderGroupDetail = gid => {
 		try {
@@ -89,38 +130,34 @@ export class Detail extends Component {
 	};
 
 	render() {
-		const { gid, rid } = this.props.match.params;
+		const { gid } = this.props.match.params;
 		const { detail, loadingData, players } = this.state;
 		return (
 			<div className="container">
+				<Modal trigger={this.agree} />
 				<div className="page-header">
-					<h1 className="page-title">Gruplar</h1>
+					<h1 className="page-title">Yoklamalar &mdash; Öğrenciler</h1>
 				</div>
 				<div className="row">
 					<div className="col-lg-3 mb-4">
-						<Link to="/app/groups/add" className="btn btn-block btn-secondary mb-6">
-							<i className="fe fe-plus-square mr-2" />
-							Grup Ekle
-						</Link>
-						<List match={this.props.match} />
-						<div className="d-none d-lg-block mt-6">
-							<Link to="/app/groups" className="text-muted float-right">
-								Başa dön
-							</Link>
+						<div className="card">
+							<div className="card-header justify-content-center" style={{ minHeight: 2 }}>
+								Gruplar
+							</div>
 						</div>
+						<GroupList match={this.props.match} />
 					</div>
-
 					<div className="col-lg-9">
 						<div className="card">
 							<div className="card-header">
 								<div className="card-status bg-teal" />
-								<h3 className="card-title">{detail.name || ""}</h3>
+								<h3 className="card-title">
+									<Link className="font-weight-600" to={`/app/groups/detail/${gid}`}>
+										{detail.name || ""}
+									</Link>{" "}
+									&mdash; Grup Yoklaması &mdash; {moment().format("LLL")}
+								</h3>
 								<div className="card-options">
-									<Link
-										className="btn btn-sm btn-success mr-2"
-										to={"/app/rollcalls/player/add/" + gid}>
-										Yoklama Oluştur
-									</Link>
 									<span
 										className="tag tag-gray-dark"
 										data-original-title="Antrenman Saati"
@@ -130,6 +167,7 @@ export class Detail extends Component {
 									</span>
 								</div>
 							</div>
+
 							<div className="card-body">
 								<div className={`dimmer ${loadingData ? "active" : ""}`}>
 									<div className="loader" />
@@ -177,78 +215,65 @@ export class Detail extends Component {
 															<tr>
 																<th className="pl-0 w-1" />
 																<th>Ad Soyad</th>
-																<th>Mevkii</th>
-																<th className="w-1 text-center">Genel Puan</th>
+																<th className="pr-3 w-1 text-center">İşlem</th>
 															</tr>
 														</thead>
 														<tbody>
-															{players
-																? players.length > 0
-																	? players.map((el, key) => (
-																			<tr key={key.toString()}>
-																				<td className="text-center">
-																					<div
-																						className="avatar d-block"
-																						style={{
-																							backgroundImage: `url(${
-																								el.image
-																							})`
-																						}}
-																					/>
-																				</td>
-																				<td>
-																					<div>
-																						<Link
-																							className="text-inherit"
-																							to={
-																								"/app/players/detail/" +
-																								el.uid
-																							}>
-																							{el.name + " " + el.surname}
-																						</Link>
-																					</div>
-																					<div className="small text-muted">
-																						Doğum Tarihi:
-																						{el.birthday
-																							? moment(
-																									el.birthday
-																							  ).format("LL")
-																							: "—"}
-																					</div>
-																				</td>
-																				<td>
-																					{el.position ? el.position : "—"}
-																				</td>
-																				<td className="text-center">
-																					{el.point ? el.point : "—"}
-																				</td>
-																			</tr>
-																	  ))
-																	: noRow()
+															{players.length > 0
+																? players.map((el, key) => (
+																		<tr key={key.toString()}>
+																			<td className="pl-3 text-center">
+																				<div
+																					className="avatar d-block"
+																					style={{
+																						backgroundImage: `url(${
+																							el.image
+																						})`
+																					}}
+																				/>
+																			</td>
+																			<td>
+																				<div>
+																					<Link
+																						className="text-inherit"
+																						to={
+																							"/app/players/detail/" +
+																							el.uid
+																						}>
+																						{el.name + " " + el.surname}
+																					</Link>
+																				</div>
+																				<div className="small text-muted">
+																					Doğum Tarihi:
+																					{el.birthday
+																						? moment(el.birthday).format(
+																								"LL"
+																						  )
+																						: "—"}
+																				</div>
+																			</td>
+																			<td className="pr-3 text-center">
+																				<button
+																					data-original-title="Geldi"
+																					data-toggle="tooltip"
+																					className="btn btn-icon btn-sm btn-success">
+																					<i className="fe fe-check" />
+																				</button>
+																				<button
+																					data-original-title="İzinli"
+																					data-toggle="tooltip"
+																					className="btn btn-icon btn-sm btn-warning ml-2">
+																					<i className="fe fe-alert-circle" />
+																				</button>
+																			</td>
+																		</tr>
+																  ))
 																: noRow()}
 														</tbody>
 													</table>
 												</div>
 											</div>
 										</div>
-									</div>
-								</div>
-							</div>
-							<div className="card-footer">
-								<div className="d-flex">
-									<Link
-										to={{
-											pathname: "/app/groups/edit/" + gid,
-											state: { type: "edit", detailGroup: detail }
-										}}
-										className="btn btn-link">
-										Düzenle
-									</Link>
-									<div className="ml-auto d-flex align-items-center">
-										Oluşturma tarihi:
-										<strong className="m-2 font-italic">
-											{moment(detail.created_date).format("LLL")}
-										</strong>
 									</div>
 								</div>
 							</div>

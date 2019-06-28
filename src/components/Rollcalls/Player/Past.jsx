@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-import List from "./List";
-import { DetailGroup, ListPlayers } from "../../services/Group";
+import { List as GroupList } from "./List";
+import { DetailGroup, ListPlayers } from "../../../services/Group";
 import { Link } from "react-router-dom";
 import moment from "moment";
 import "moment/locale/tr";
@@ -13,7 +13,7 @@ const noRow = () => (
 	</tr>
 );
 
-export class Detail extends Component {
+export class Past extends Component {
 	constructor(props) {
 		super(props);
 
@@ -27,15 +27,21 @@ export class Detail extends Component {
 				employee: {},
 				image: null
 			},
-			players: [],
-			loadingData: true
+			loadingData: true,
+			past: []
 		};
 	}
 
 	componentDidMount() {
 		const { gid } = this.props.match.params;
 		this.renderGroupDetail(gid);
-		this.renderPlayerList(gid);
+		this.setState({
+			past: [
+				{
+					date: "2019-06-21 19:06:57"
+				}
+			]
+		});
 	}
 
 	componentWillReceiveProps(nextProps) {
@@ -44,7 +50,6 @@ export class Detail extends Component {
 				loadingData: true
 			});
 			this.renderGroupDetail(nextProps.match.params.gid);
-			this.renderPlayerList(nextProps.match.params.gid);
 		}
 	}
 
@@ -68,53 +73,33 @@ export class Detail extends Component {
 		} catch (e) {}
 	};
 
-	renderPlayerList = gid => {
-		try {
-			const { uid } = this.state;
-			ListPlayers({
-				uid: uid,
-				filter: {
-					group_id: parseInt(gid)
-				}
-			}).then(response => {
-				if (response) {
-					const status = response.status;
-					if (status.code === 1020) {
-						const data = response.data;
-						this.setState({ players: data, loadingData: false });
-					}
-				}
-			});
-		} catch (e) {}
-	};
-
 	render() {
-		const { gid, rid } = this.props.match.params;
-		const { detail, loadingData, players } = this.state;
+		const { gid } = this.props.match.params;
+		const { detail, loadingData, past } = this.state;
 		return (
 			<div className="container">
 				<div className="page-header">
-					<h1 className="page-title">Gruplar</h1>
+					<h1 className="page-title">Yoklamalar &mdash; Öğrenciler</h1>
 				</div>
 				<div className="row">
 					<div className="col-lg-3 mb-4">
-						<Link to="/app/groups/add" className="btn btn-block btn-secondary mb-6">
-							<i className="fe fe-plus-square mr-2" />
-							Grup Ekle
-						</Link>
-						<List match={this.props.match} />
-						<div className="d-none d-lg-block mt-6">
-							<Link to="/app/groups" className="text-muted float-right">
-								Başa dön
-							</Link>
+						<div className="card">
+							<div className="card-header justify-content-center" style={{ minHeight: 2 }}>
+								Gruplar
+							</div>
 						</div>
+						<GroupList match={this.props.match} />
 					</div>
-
 					<div className="col-lg-9">
 						<div className="card">
 							<div className="card-header">
 								<div className="card-status bg-teal" />
-								<h3 className="card-title">{detail.name || ""}</h3>
+								<h3 className="card-title">
+									<Link className="font-weight-600" to={`/app/groups/detail/${gid}`}>
+										{detail.name || ""}
+									</Link>{" "}
+									&mdash; Geçmiş Yoklama Listesi
+								</h3>
 								<div className="card-options">
 									<Link
 										className="btn btn-sm btn-success mr-2"
@@ -130,6 +115,7 @@ export class Detail extends Component {
 									</span>
 								</div>
 							</div>
+
 							<div className="card-body">
 								<div className={`dimmer ${loadingData ? "active" : ""}`}>
 									<div className="loader" />
@@ -169,86 +155,64 @@ export class Detail extends Component {
 												<label
 													className="form-label text-center"
 													style={{ fontSize: "1.15rem" }}>
-													Öğrenciler
+													Geçmiş Yoklamalar
 												</label>
 												<div className="table-responsive">
 													<table className="table table-hover table-outline table-vcenter text-nowrap card-table mb-0">
 														<thead>
 															<tr>
 																<th className="pl-0 w-1" />
-																<th>Ad Soyad</th>
-																<th>Mevkii</th>
-																<th className="w-1 text-center">Genel Puan</th>
+																<th>Yoklama Adı</th>
+																<th className="text-center">
+																	Detay
+																	<span
+																		className="form-help ml-2"
+																		data-original-title="Gelen/Toplam"
+																		data-toggle="tooltip"
+																		data-placement="top">
+																		?
+																	</span>
+																</th>
+																<th className="pr-3 w-1 text-center">İncele</th>
 															</tr>
 														</thead>
 														<tbody>
-															{players
-																? players.length > 0
-																	? players.map((el, key) => (
-																			<tr key={key.toString()}>
-																				<td className="text-center">
-																					<div
-																						className="avatar d-block"
-																						style={{
-																							backgroundImage: `url(${
-																								el.image
-																							})`
-																						}}
-																					/>
-																				</td>
-																				<td>
-																					<div>
-																						<Link
-																							className="text-inherit"
-																							to={
-																								"/app/players/detail/" +
-																								el.uid
-																							}>
-																							{el.name + " " + el.surname}
-																						</Link>
-																					</div>
-																					<div className="small text-muted">
-																						Doğum Tarihi:
-																						{el.birthday
-																							? moment(
-																									el.birthday
-																							  ).format("LL")
-																							: "—"}
-																					</div>
-																				</td>
-																				<td>
-																					{el.position ? el.position : "—"}
-																				</td>
-																				<td className="text-center">
-																					{el.point ? el.point : "—"}
-																				</td>
-																			</tr>
-																	  ))
-																	: noRow()
+															{past.length > 0
+																? past.map((el, key) => (
+																		<tr key={key.toString()}>
+																			<td className="pl-3 text-center text-muted">
+																				#{key + 1}
+																			</td>
+																			<td>
+																				<div>
+																					<Link
+																						className="text-inherit"
+																						to={`/app/rollcalls/player/detail/${gid}/${
+																							el.date
+																						}`}>
+																						{moment(el.date).format("LLL")}
+																					</Link>
+																				</div>
+																			</td>
+																			<td className="text-center">15/19</td>
+																			<td className="pr-3 text-center">
+																				<Link
+																					className="btn btn-sm btn-info"
+																					to={`/app/rollcalls/player/detail/${gid}/${
+																						el.date
+																					}`}>
+																					İncele
+																					<i className="fe fe-arrow-right ml-2" />
+																				</Link>
+																			</td>
+																		</tr>
+																  ))
 																: noRow()}
 														</tbody>
 													</table>
 												</div>
 											</div>
 										</div>
-									</div>
-								</div>
-							</div>
-							<div className="card-footer">
-								<div className="d-flex">
-									<Link
-										to={{
-											pathname: "/app/groups/edit/" + gid,
-											state: { type: "edit", detailGroup: detail }
-										}}
-										className="btn btn-link">
-										Düzenle
-									</Link>
-									<div className="ml-auto d-flex align-items-center">
-										Oluşturma tarihi:
-										<strong className="m-2 font-italic">
-											{moment(detail.created_date).format("LLL")}
-										</strong>
 									</div>
 								</div>
 							</div>
@@ -260,4 +224,4 @@ export class Detail extends Component {
 	}
 }
 
-export default Detail;
+export default Past;

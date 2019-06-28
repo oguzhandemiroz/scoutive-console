@@ -329,6 +329,7 @@ export class Edit extends Component {
 					fee: fee ? fee.toString().replace(",", ".") : null,
 					foot: foot,
 					birthday: checkBirthday,
+					image: image,
 					attributes: attributesData
 				}).then(code => {
 					this.setState({ loadingButton: "" });

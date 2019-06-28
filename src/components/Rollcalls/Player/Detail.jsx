@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { List as GroupList } from "../../../components/Rollcalls/List";
+import { List as GroupList } from "./List";
 import { DetailGroup, ListPlayers } from "../../../services/Group";
 import { Link } from "react-router-dom";
 import moment from "moment";
@@ -89,7 +89,7 @@ export class Detail extends Component {
 	};
 
 	render() {
-		const { gid } = this.props.match.params;
+		const { gid, rid } = this.props.match.params;
 		const { detail, loadingData, players } = this.state;
 		return (
 			<div className="container">
@@ -110,8 +110,10 @@ export class Detail extends Component {
 							<div className="card-header">
 								<div className="card-status bg-teal" />
 								<h3 className="card-title">
-									<Link className="font-weight-600" to={`/app/groups/detail/${gid}`}>{detail.name || ""}</Link> &mdash; Grup
-									Yoklaması
+									<Link className="font-weight-600" to={`/app/groups/detail/${gid}`}>
+										{detail.name || ""}
+									</Link>{" "}
+									&mdash; Grup Yoklaması &mdash; {moment(rid).format("LLL")}
 								</h3>
 								<div className="card-options">
 									<span

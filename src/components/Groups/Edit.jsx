@@ -1,11 +1,12 @@
 import React, { Component } from "react";
 import Select, { components } from "react-select";
-import { UpdateGroup, ListPlayers } from "../../services/Group";
+import { withRouter, Link } from "react-router-dom";
+import { UpdateGroup, ListPlayers, DetailGroup } from "../../services/Group";
 import { UpdatePlayers } from "../../services/Player";
 import { Hours, Minutes, DateRange, GetEmployees, GetPlayers } from "../../services/FillSelect";
 import { getSelectValue, UploadFile } from "../../services/Others";
 import { Toast, showSwal } from "../../components/Alert";
-import { withRouter } from "react-router-dom";
+import List from "./List";
 
 const formValid = ({ formErrors, ...rest }) => {
 	let valid = true;
@@ -159,8 +160,8 @@ export class Edit extends Component {
 	};
 
 	componentDidMount() {
-		const { select } = this.state;
-		const { detail, gid } = this.props;
+		const { uid, select } = this.state;
+		const { gid } = this.props.match.params;
 		const stateData = {};
 
 		GetEmployees().then(response => {
@@ -179,44 +180,53 @@ export class Edit extends Component {
 
 		this.setState({ select });
 
-		setTimeout(() => {
-			stateData.name = detail.name;
-			stateData.hour = getSelectValue(select.hours, detail.time.slice(0, 2), "label");
-			stateData.minute = getSelectValue(select.minutes, detail.time.slice(3, -3), "label");
-			stateData.employee = getSelectValue(select.employees, detail.employee.employee_id, "value");
-			stateData.age = getSelectValue(select.ages, detail.age, "label");
-			stateData.imagePreview = detail.image ? detail.image : null;
+		DetailGroup({
+			uid: uid,
+			group_id: parseInt(gid)
+		}).then(response => {
+			if (response) {
+				const status = response.status;
+				if (status.code === 1020) {
+					const data = response.data;
+					stateData.name = data.name;
+					stateData.hour = getSelectValue(select.hours, data.time.slice(0, 2), "label");
+					stateData.minute = getSelectValue(select.minutes, data.time.slice(3, -3), "label");
+					stateData.employee = getSelectValue(select.employees, data.employee.employee_id, "value");
+					stateData.age = getSelectValue(select.ages, data.age, "label");
+					stateData.imagePreview = data.image ? data.image : null;
+					this.setState({ ...stateData, onLoadedData: true });
+				}
+			}
+		});
 
-			this.setState({ ...stateData, onLoadedData: true });
-			this.renderFetch(gid);
-		}, 500);
+		setTimeout(() => this.renderPlayerList(), 300);
 	}
 
-	renderFetch(gid) {
+	renderPlayerList = () => {
+		const { uid } = this.state;
+		const { gid } = this.props.match.params;
 		this.setState({ loadingData: true });
 		ListPlayers({
-			uid: localStorage.getItem("UID"),
+			uid: uid,
 			filter: {
 				group_id: parseInt(gid)
 			}
 		}).then(response => {
 			if (response) {
-				if (response) {
-					const status = response.status;
-					if (status.code === 1020) {
-						const data = response.data;
-						if (data.length > 0) {
-							data.map(el => {
-								this.addItemList(el.security_id);
-							});
-						} else this.addItemList();
-					}
+				const status = response.status;
+				if (status.code === 1020) {
+					const data = response.data;
+					if (data.length > 0) {
+						data.map(el => {
+							this.addItemList(el.security_id);
+						});
+					} else this.addItemList();
 				}
 
 				this.setState({ loadingData: false });
 			}
 		});
-	}
+	};
 
 	handleSubmit = e => {
 		try {
@@ -234,7 +244,7 @@ export class Edit extends Component {
 				removeGroup,
 				formErrors
 			} = this.state;
-			const { gid } = this.props;
+			const { gid } = this.props.match.params;
 
 			const requiredData = {};
 			const playersArr = [];
@@ -307,7 +317,7 @@ export class Edit extends Component {
 								title: "Başarıyla güncellendi..."
 							});
 							this.setState({ loadingButton: "" });
-							this.props.history.push("/app/groups/all");
+							this.props.history.push("/app/groups/detail/" + gid);
 						}
 					}
 				});
@@ -411,184 +421,214 @@ export class Edit extends Component {
 			onLoadedData
 		} = this.state;
 		return (
-			<form onSubmit={this.handleSubmit}>
-				<div className="card-header p-4">
-					<div className="card-status bg-green" />
-					<h3 className="card-title">
-						<input
-							type="text"
-							style={{ width: "13rem" }}
-							className={`form-control ${formErrors.name}`}
-							placeholder="Grup Adı *"
-							name="name"
-							onChange={this.handleChange}
-							value={name || ""}
-						/>
-					</h3>
-					<div className="card-options mr-0">
-						<div style={{ width: "5rem" }}>
-							<Select
-								value={hour}
-								isSearchable={true}
-								isDisabled={select.hours ? false : true}
-								onChange={val => this.handleSelect(val, "hour")}
-								placeholder="00"
-								name="hour"
-								autosize
-								styles={formErrors.hour === true ? customStylesError : customStyles}
-								options={select.hours}
-								noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
-							/>
-						</div>
-						<span
-							className="mx-2 font-weight-bold d-flex align-items-center"
-							style={{ fontSize: "1.3rem" }}>
-							:
-						</span>
-						<div style={{ width: "5rem" }}>
-							<Select
-								value={minute}
-								isSearchable={true}
-								isDisabled={select.minutes ? false : true}
-								onChange={val => this.handleSelect(val, "minute")}
-								placeholder="00"
-								name="minute"
-								autosize
-								styles={formErrors.minute === true ? customStylesError : customStyles}
-								options={select.minutes}
-								noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
-							/>
+			<div className="container">
+				<div className="page-header">
+					<h1 className="page-title">Gruplar</h1>
+				</div>
+				<div className="row">
+					<div className="col-lg-3 mb-4">
+						<Link to="/app/groups/add" className="btn btn-block btn-secondary mb-6">
+							<i className="fe fe-plus-square mr-2" />
+							Grup Ekle
+						</Link>
+						<List match={this.props.match} />
+						<div className="d-none d-lg-block mt-6">
+							<Link to="/app/groups" className="text-muted float-right">
+								Başa dön
+							</Link>
 						</div>
 					</div>
-				</div>
-				<div className="card-body">
-					<div className={`dimmer ${!onLoadedData ? "active" : ""}`}>
-						<div className="loader" />
-						<div className="dimmer-content">
-							<div className="row">
-								<div className="col-auto">
-									<label
-										htmlFor="image"
-										className={`avatar ${
-											uploadedFile ? "" : "btn-loading"
-										} avatar-xxxl cursor-pointer disabled`}
-										style={{
-											border: "none",
-											outline: "none",
-											fontSize: ".875rem",
-											backgroundImage: `url(${imagePreview})`
-										}}>
-										{!imagePreview ? "Fotoğraf ekle" : ""}
-									</label>
+
+					<div className="col-lg-9">
+						<form className="card" onSubmit={this.handleSubmit}>
+							<div className="card-header p-4">
+								<div className="card-status bg-green" />
+								<h3 className="card-title">
 									<input
-										type="file"
-										accept="image/*"
-										name="image"
-										id="image"
-										hidden
-										onChange={this.handleImage}
+										type="text"
+										style={{ width: "13rem" }}
+										className={`form-control ${formErrors.name}`}
+										placeholder="Grup Adı *"
+										name="name"
+										onChange={this.handleChange}
+										value={name || ""}
 									/>
-								</div>
-								<div className="col d-flex flex-column justify-content-center">
-									<div className="form-group">
-										<label className="form-label">
-											Öğrenci Yaşı:
-											<span className="form-required">*</span>
-										</label>
+								</h3>
+								<div className="card-options mr-0">
+									<div style={{ width: "5rem" }}>
 										<Select
-											value={age}
+											value={hour}
 											isSearchable={true}
-											isDisabled={select.ages ? false : true}
-											placeholder="Doğum yılı..."
-											onChange={val => this.handleSelect(val, "age")}
-											name="age"
+											isDisabled={select.hours ? false : true}
+											onChange={val => this.handleSelect(val, "hour")}
+											placeholder="00"
+											name="hour"
 											autosize
-											styles={formErrors.age === true ? customStylesError : customStyles}
-											options={select.ages}
+											styles={formErrors.hour === true ? customStylesError : customStyles}
+											options={select.hours}
+											noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
+										/>
+									</div>
+									<span
+										className="mx-2 font-weight-bold d-flex align-items-center"
+										style={{ fontSize: "1.3rem" }}>
+										:
+									</span>
+									<div style={{ width: "5rem" }}>
+										<Select
+											value={minute}
+											isSearchable={true}
+											isDisabled={select.minutes ? false : true}
+											onChange={val => this.handleSelect(val, "minute")}
+											placeholder="00"
+											name="minute"
+											autosize
+											styles={formErrors.minute === true ? customStylesError : customStyles}
+											options={select.minutes}
 											noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
 										/>
 									</div>
 								</div>
-								<div className="col d-flex flex-column justify-content-center">
-									<div className="form-group">
-										<label className="form-label">
-											Sorumlu Antrenör:
-											<span className="form-required">*</span>
-										</label>
-										<Select
-											value={employee}
-											isSearchable={true}
-											isDisabled={select.employees ? false : true}
-											placeholder="Seç..."
-											onChange={val => this.handleSelect(val, "employee")}
-											name="employee"
-											autosize
-											styles={formErrors.employee === true ? customStylesError : customStyles}
-											options={select.employees}
-											noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
-											components={{ Option: ImageOption }}
-										/>
+							</div>
+							<div className="card-body">
+								<div className={`dimmer ${!onLoadedData ? "active" : ""}`}>
+									<div className="loader" />
+									<div className="dimmer-content">
+										<div className="row">
+											<div className="col-auto">
+												<label
+													htmlFor="image"
+													className={`avatar ${
+														uploadedFile ? "" : "btn-loading"
+													} avatar-xxxl cursor-pointer disabled`}
+													style={{
+														border: "none",
+														outline: "none",
+														fontSize: ".875rem",
+														backgroundImage: `url(${imagePreview})`
+													}}>
+													{!imagePreview ? "Fotoğraf ekle" : ""}
+												</label>
+												<input
+													type="file"
+													accept="image/*"
+													name="image"
+													id="image"
+													hidden
+													onChange={this.handleImage}
+												/>
+											</div>
+											<div className="col d-flex flex-column justify-content-center">
+												<div className="form-group">
+													<label className="form-label">
+														Öğrenci Yaşı:
+														<span className="form-required">*</span>
+													</label>
+													<Select
+														value={age}
+														isSearchable={true}
+														isDisabled={select.ages ? false : true}
+														placeholder="Doğum yılı..."
+														onChange={val => this.handleSelect(val, "age")}
+														name="age"
+														autosize
+														styles={
+															formErrors.age === true ? customStylesError : customStyles
+														}
+														options={select.ages}
+														noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
+													/>
+												</div>
+											</div>
+											<div className="col d-flex flex-column justify-content-center">
+												<div className="form-group">
+													<label className="form-label">
+														Sorumlu Antrenör:
+														<span className="form-required">*</span>
+													</label>
+													<Select
+														value={employee}
+														isSearchable={true}
+														isDisabled={select.employees ? false : true}
+														placeholder="Seç..."
+														onChange={val => this.handleSelect(val, "employee")}
+														name="employee"
+														autosize
+														styles={
+															formErrors.employee === true
+																? customStylesError
+																: customStyles
+														}
+														options={select.employees}
+														noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
+														components={{ Option: ImageOption }}
+													/>
+												</div>
+											</div>
+										</div>
+										<div className="row">
+											<div className="col-12 mt-5">
+												<label className="form-label" style={{ fontSize: "1.15rem" }}>
+													Öğrenciler
+												</label>
+												<div>
+													<table className="table table-vcenter text-nowrap table-outline mb-0">
+														<tbody>
+															{Array.isArray(playerList)
+																? playerList.map((el, key) => (
+																		<tr key={el.id.toString()}>
+																			<td className="w-4 text-muted">
+																				#{key + 1}
+																			</td>
+																			<td>{el.select(this.state)}</td>
+																			<td className="w-1 pl-0">{el.buttons}</td>
+																		</tr>
+																  ))
+																: null}
+														</tbody>
+													</table>
+												</div>
+											</div>
+										</div>
 									</div>
 								</div>
 							</div>
-							<div className="row">
-								<div className="col-12 mt-5">
-									<label className="form-label" style={{ fontSize: "1.15rem" }}>
-										Öğrenciler
-									</label>
-									<div>
-										<table className="table table-vcenter text-nowrap table-outline mb-0">
-											<tbody>
-												{Array.isArray(playerList)
-													? playerList.map((el, key) => (
-															<tr key={el.id.toString()}>
-																<td className="w-4 text-muted">#{key + 1}</td>
-																<td>{el.select(this.state)}</td>
-																<td className="w-1 pl-0">{el.buttons}</td>
-															</tr>
-													  ))
-													: null}
-											</tbody>
-										</table>
+							<div className="card-footer">
+								<div className="d-flex" style={{ justifyContent: "space-between" }}>
+									<a
+										href="javascript:void(0)"
+										onClick={() => {
+											showSwal({
+												type: "info",
+												title: "Emin misiniz?",
+												text: "İşlemi iptal etmek istediğinize emin misiniz?",
+												confirmButtonText: "Evet",
+												cancelButtonText: "Hayır",
+												cancelButtonColor: "#cd201f",
+												showCancelButton: true,
+												reverseButtons: true
+											}).then(result => {
+												if (result.value) this.props.history.push("/app/groups");
+											});
+										}}
+										className="btn btn-link">
+										İptal
+									</a>
+									<div className="d-flex" style={{ alignItems: "center" }}>
+										<button
+											style={{ width: 100 }}
+											type="submit"
+											disabled={!uploadedFile ? true : false}
+											className={`btn btn-primary ml-3 ${loadingButton}`}>
+											Kaydet
+										</button>
 									</div>
 								</div>
 							</div>
-						</div>
+						</form>
 					</div>
 				</div>
-				<div className="card-footer">
-					<div className="d-flex" style={{ justifyContent: "space-between" }}>
-						<a
-							href="javascript:void(0)"
-							onClick={() => {
-								showSwal({
-									type: "info",
-									title: "Emin misiniz?",
-									text: "İşlemi iptal etmek istediğinize emin misiniz?",
-									confirmButtonText: "Evet",
-									cancelButtonText: "Hayır",
-									cancelButtonColor: "#cd201f",
-									showCancelButton: true,
-									reverseButtons: true
-								}).then(result => {
-									if (result.value) this.props.history.push("/app/groups");
-								});
-							}}
-							className="btn btn-link">
-							İptal
-						</a>
-						<div className="d-flex" style={{ alignItems: "center" }}>
-							<button
-								style={{ width: 100 }}
-								type="submit"
-								disabled={!uploadedFile ? true : false}
-								className={`btn btn-primary ml-3 ${loadingButton}`}>
-								Kaydet
-							</button>
-						</div>
-					</div>
-				</div>
-			</form>
+			</div>
 		);
 	}
 }

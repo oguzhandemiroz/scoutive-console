@@ -170,7 +170,7 @@ export class Detail extends Component {
 											<label className="form-label">Grup</label>
 											<div className="form-control-plaintext">
 												{typeof group === "object" ? (
-													<Link to={`/app/groups/${group.group_id}/all`}>
+													<Link to={`/app/groups/detail/${group.group_id}`}>
 														{group.name}
 													</Link>
 												) : (
