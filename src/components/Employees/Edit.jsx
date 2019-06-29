@@ -15,6 +15,7 @@ import { showSwal } from "../../components/Alert.jsx";
 import Select from "react-select";
 import { Link } from "react-router-dom";
 
+// eslint-disable-next-line
 const emailRegEx = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
 const securityNoRegEx = /^\d+$/;
 

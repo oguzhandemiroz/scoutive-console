@@ -9,6 +9,7 @@ class HeaderMenu extends Component {
 		super(props);
 
 		this.state = {
+			uid: localStorage.getItem("UID"),
 			sName: localStorage.getItem("sName") || "—",
 			sImage: localStorage.getItem("sImage"),
             sPosition: localStorage.getItem("sPosition") || "—",
@@ -23,7 +24,7 @@ class HeaderMenu extends Component {
 	}
 
 	render() {
-		const { systemClock } = this.state;
+		const { systemClock, uid } = this.state;
 		return (
 			<div id="header-menu">
 				<div className="header py-4">
@@ -105,7 +106,7 @@ class HeaderMenu extends Component {
 									<div className="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
 										<button
 											className="dropdown-item"
-											onClick={() => this.props.history.push("/account/profile")}>
+											onClick={() => this.props.history.push(`/account/profile/${uid}`)}>
 											<i className="dropdown-icon fe fe-user" /> Profil
 										</button>
 										<button className="dropdown-item" onClick={this.Logout}>

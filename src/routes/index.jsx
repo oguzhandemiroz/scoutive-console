@@ -68,6 +68,13 @@ var indexRoutes = [
 		prop: { exact: true }
 	},
 	{
+		path: "/profile/:uid",
+		name: "Profile",
+		component: Profile,
+		layout: "/account",
+		prop: { exact: true }
+	},
+	{
 		path: "/employees",
 		name: "Employees",
 		component: Employees,

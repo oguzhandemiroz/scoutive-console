@@ -211,7 +211,7 @@ export class Detail extends Component {
 																						Doğum Tarihi:
 																						{el.birthday
 																							? moment(
-																									el.birthday
+																									new Date(el.birthday)
 																							  ).format("LL")
 																							: "—"}
 																					</div>
@@ -247,7 +247,7 @@ export class Detail extends Component {
 									<div className="ml-auto d-flex align-items-center">
 										Oluşturma tarihi:
 										<strong className="m-2 font-italic">
-											{moment(detail.created_date).format("LLL")}
+											{moment(new Date(detail.created_date)).format("LLL")}
 										</strong>
 									</div>
 								</div>

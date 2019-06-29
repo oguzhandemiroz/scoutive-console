@@ -6,7 +6,6 @@ import {
     Months,
     Years,
     EmployeePositions,
-    DateRange,
     Kinship
 } from "../../services/FillSelect.jsx";
 import {CreateEmployee} from "../../services/Employee.jsx";
@@ -14,6 +13,7 @@ import {UploadFile} from "../../services/Others.jsx";
 import {showSwal} from "../../components/Alert.jsx";
 import Select from "react-select";
 
+// eslint-disable-next-line
 const emailRegEx = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
 const securityNoRegEx = /^\d+$/;
 

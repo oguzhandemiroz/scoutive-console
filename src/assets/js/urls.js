@@ -9,7 +9,7 @@ var ep = {
     GROUP: host + api_version + "get/groups",
     BRANCH: host + api_version + "get/branchs",
     CLUB: host + api_version + "get/clubs",
-    SCHOOL_INFO: host + api_version + "get/school",
+    GET_SCHOOL: host + api_version + "get/school",
     SCHOOL_UPDATE: host + api_version + "update/school",
     ACCOUNT_CREATE: host + api_version + "create/school",
     ACCOUNT_LOGIN: host + api_version + "login",

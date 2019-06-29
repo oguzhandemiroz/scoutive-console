@@ -3,6 +3,7 @@ import {Link} from "react-router-dom";
 import logo from "../../assets/images/logo.svg";
 import {Forgot} from "../../services/Password";
 
+// eslint-disable-next-line
 const emailRegEx = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
 const formValid = ({formErrors, ...rest}) => {
     let valid = true;

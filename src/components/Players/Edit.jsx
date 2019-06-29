@@ -6,6 +6,7 @@ import { SplitBirthday, getSelectValue, AttributeDataChecker, UploadFile } from 
 import { showSwal } from "../../components/Alert";
 import Select from "react-select";
 
+// eslint-disable-next-line
 const emailRegEx = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
 const securityNoRegEx = /^\d+$/;
 

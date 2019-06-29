@@ -3,6 +3,7 @@ import logo from "../../assets/images/logo.svg";
 import {Link} from "react-router-dom";
 import {RequestRegister} from "../../services/Register.jsx";
 
+// eslint-disable-next-line
 const emailRegEx = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
 const taxNoRegEx = /^\d+$/;
 
