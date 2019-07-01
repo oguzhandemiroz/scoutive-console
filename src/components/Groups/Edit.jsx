@@ -172,6 +172,8 @@ export class Edit extends Component {
 		GetPlayers().then(response => {
 			select.players = response;
 			this.setState({ select });
+
+			setTimeout(() => this.renderPlayerList(), 300);
 		});
 
 		select.hours = Hours();
@@ -198,8 +200,6 @@ export class Edit extends Component {
 				}
 			}
 		});
-
-		setTimeout(() => this.renderPlayerList(), 300);
 	}
 
 	renderPlayerList = () => {
@@ -356,6 +356,7 @@ export class Edit extends Component {
 	handleImage = e => {
 		try {
 			const { uid } = this.state;
+			const { gid } = this.props.match.params;
 			e.preventDefault();
 			const formData = new FormData();
 			let reader = new FileReader();
@@ -368,7 +369,7 @@ export class Edit extends Component {
 				}
 				formData.append("image", file);
 				formData.append("uid", uid);
-				formData.append("to", this.props.gid);
+				formData.append("to", gid);
 				formData.append("type", "group");
 				this.setState({ uploadedFile: false });
 				UploadFile(formData)
