@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import List from "./List";
 import { DetailGroup, ListPlayers } from "../../services/Group";
+import { CreateRollcall } from "../../services/Rollcalls";
+import { Toast, showSwal } from "../Alert";
 import { Link } from "react-router-dom";
 import moment from "moment";
 import "moment/locale/tr";
@@ -28,7 +30,9 @@ export class Detail extends Component {
 				image: null
 			},
 			players: [],
-			loadingData: true
+			loadingData: true,
+			onLoadedData: true,
+			loadingButton: false
 		};
 	}
 
@@ -88,9 +92,58 @@ export class Detail extends Component {
 		} catch (e) {}
 	};
 
+	createRollcall = () => {
+		try {
+			const { uid } = this.state;
+			const { gid } = this.props.match.params;
+			this.setState({
+				loadingButton: true
+			});
+			CreateRollcall({
+				uid: uid,
+				group_id: parseInt(gid),
+				type: 0
+			}).then(response => {
+				if (response) {
+					const status = response.status;
+					if (status.code === 1020) {
+						Toast.fire({
+							type: "success",
+							title: "İşlem başarılı..."
+						});
+						this.props.history.push({
+							pathname: `/app/rollcalls/player/add/${gid}`,
+							state: { rcid: response.rollcall_id }
+						});
+					} else if (status.code === 2010) {
+						showSwal({
+							type: "warning",
+							title: "Uyarı",
+							text: status.description,
+							reverseButtons: true,
+							showCancelButton: true,
+							confirmButtonText: "Yoklamaya devam et",
+							cancelButtonText: "Kapat"
+						}).then(result => {
+							if (result.value) {
+								this.props.history.push({
+									pathname: `/app/rollcalls/player/add/${gid}`,
+									state: { rcid: response.rollcall_id }
+								});
+							}
+						});
+					}
+				}
+				this.setState({
+					loadingButton: false
+				});
+			});
+		} catch (e) {}
+	};
+
 	render() {
-		const { gid, rid } = this.props.match.params;
-		const { detail, loadingData, players } = this.state;
+		const { gid } = this.props.match.params;
+		const { detail, loadingData, players, onLoadedData, loadingButton } = this.state;
 		return (
 			<div className="container">
 				<div className="page-header">
@@ -116,11 +169,13 @@ export class Detail extends Component {
 								<div className="card-status bg-teal" />
 								<h3 className="card-title">{detail.name || ""}</h3>
 								<div className="card-options">
-									<Link
-										className="btn btn-sm btn-success mr-2"
-										to={"/app/rollcalls/player/add/" + gid}>
+									<button
+										onClick={this.createRollcall}
+										className={`btn btn-sm btn-success mr-2 ${
+											loadingButton ? "btn-loading disabled" : ""
+										} ${!onLoadedData ? "btn-loading disabled" : ""}`}>
 										Yoklama Oluştur
-									</Link>
+									</button>
 									<span
 										className="tag tag-gray-dark"
 										data-original-title="Antrenman Saati"
@@ -211,7 +266,9 @@ export class Detail extends Component {
 																						Doğum Tarihi:
 																						{el.birthday
 																							? moment(
-																									new Date(el.birthday)
+																									new Date(
+																										el.birthday
+																									)
 																							  ).format("LL")
 																							: "—"}
 																					</div>

@@ -1,14 +1,23 @@
 import React, { Component } from "react";
 import { List as GroupList } from "./List";
 import { DetailGroup, ListPlayers } from "../../../services/Group";
+import { ListRollcall, CreateRollcall } from "../../../services/Rollcalls";
+import { Toast, showSwal } from "../../Alert";
 import { Link } from "react-router-dom";
 import moment from "moment";
 import "moment/locale/tr";
 
-const noRow = () => (
-	<tr>
+const noRow = loading => (
+	<tr style={{ height: 80 }}>
 		<td colSpan="4" className="text-center text-muted font-italic">
-			Kayıt bulunamadı...
+			{loading ? (
+				<div className={`dimmer active`}>
+					<div className="loader" />
+					<div className="dimmer-content" />
+				</div>
+			) : (
+				"Kayıt bulunamadı..."
+			)}
 		</td>
 	</tr>
 );
@@ -28,20 +37,16 @@ export class Past extends Component {
 				image: null
 			},
 			loadingData: true,
-			past: []
+			rollcallList: null,
+			onLoadedData: true,
+			loadingButton: false
 		};
 	}
 
 	componentDidMount() {
 		const { gid } = this.props.match.params;
 		this.renderGroupDetail(gid);
-		this.setState({
-			past: [
-				{
-					date: "2019-06-21 19:06:57"
-				}
-			]
-		});
+		this.renderRollcallList(gid);
 	}
 
 	componentWillReceiveProps(nextProps) {
@@ -50,8 +55,58 @@ export class Past extends Component {
 				loadingData: true
 			});
 			this.renderGroupDetail(nextProps.match.params.gid);
+			this.renderRollcallList(nextProps.match.params.gid);
 		}
 	}
+
+	createRollcall = () => {
+		try {
+			const { uid } = this.state;
+			const { gid } = this.props.match.params;
+			this.setState({
+				loadingButton: true
+			});
+			CreateRollcall({
+				uid: uid,
+				group_id: parseInt(gid),
+				type: 0
+			}).then(response => {
+				if (response) {
+					const status = response.status;
+					if (status.code === 1020) {
+						Toast.fire({
+							type: "success",
+							title: "İşlem başarılı..."
+						});
+						this.props.history.push({
+							pathname: `/app/rollcalls/player/add/${gid}`,
+							state: { rcid: response.rollcall_id }
+						});
+					} else if (status.code === 2010) {
+						showSwal({
+							type: "warning",
+							title: "Uyarı",
+							text: status.description,
+							reverseButtons: true,
+							showCancelButton: true,
+							confirmButtonText: "Yoklamaya devam et",
+							cancelButtonText: "Kapat"
+						}).then(result => {
+							if (result.value) {
+								this.props.history.push({
+									pathname: `/app/rollcalls/player/add/${gid}`,
+									state: { rcid: response.rollcall_id }
+								});
+							}
+						});
+					}
+				}
+				this.setState({
+					loadingButton: false
+				});
+			});
+		} catch (e) {}
+	};
 
 	renderGroupDetail = gid => {
 		try {
@@ -73,9 +128,30 @@ export class Past extends Component {
 		} catch (e) {}
 	};
 
+	renderRollcallList = gid => {
+		try {
+			const { uid } = this.state;
+			ListRollcall({
+				uid: uid,
+				group_id: gid,
+				type: 0
+			}).then(response => {
+				if (response) {
+					const status = response.status;
+					if (status.code === 1020) {
+						this.setState({ rollcallList: response.data.reverse() });
+					}
+				}
+				this.setState({
+					loadingButton: false
+				});
+			});
+		} catch (e) {}
+	};
+
 	render() {
 		const { gid } = this.props.match.params;
-		const { detail, loadingData, past } = this.state;
+		const { detail, loadingData, rollcallList, onLoadedData, loadingButton } = this.state;
 		return (
 			<div className="container">
 				<div className="page-header">
@@ -101,11 +177,13 @@ export class Past extends Component {
 									&mdash; Geçmiş Yoklama Listesi
 								</h3>
 								<div className="card-options">
-									<Link
-										className="btn btn-sm btn-success mr-2"
-										to={"/app/rollcalls/player/add/" + gid}>
+									<button
+										onClick={this.createRollcall}
+										className={`btn btn-sm btn-success mr-2 ${
+											loadingButton ? "btn-loading disabled" : ""
+										} ${!onLoadedData ? "btn-loading disabled" : ""}`}>
 										Yoklama Oluştur
-									</Link>
+									</button>
 									<span
 										className="tag tag-gray-dark"
 										data-original-title="Antrenman Saati"
@@ -162,7 +240,7 @@ export class Past extends Component {
 														<thead>
 															<tr>
 																<th className="pl-0 w-1" />
-																<th>Yoklama Adı</th>
+																<th>Yoklama Tarihi</th>
 																<th className="text-center">
 																	Detay
 																	<span
@@ -177,37 +255,61 @@ export class Past extends Component {
 															</tr>
 														</thead>
 														<tbody>
-															{past.length > 0
-																? past.map((el, key) => (
-																		<tr key={key.toString()}>
-																			<td className="pl-3 text-center text-muted">
-																				#{key + 1}
-																			</td>
-																			<td>
-																				<div>
-																					<Link
-																						className="text-inherit"
-																						to={`/app/rollcalls/player/detail/${gid}/${
-																							el.date
-																						}`}>
-																						{moment(el.date).format("LLL")}
-																					</Link>
-																				</div>
-																			</td>
-																			<td className="text-center">15/19</td>
-																			<td className="pr-3 text-center">
-																				<Link
-																					className="btn btn-sm btn-info"
-																					to={`/app/rollcalls/player/detail/${gid}/${
-																						el.date
-																					}`}>
-																					İncele
-																					<i className="fe fe-arrow-right ml-2" />
-																				</Link>
-																			</td>
-																		</tr>
-																  ))
-																: noRow()}
+															{rollcallList
+																? rollcallList.length > 0
+																	? rollcallList.map((el, key) => {
+																			const redirect =
+																				el.status === 2
+																					? {
+																							pathname:
+																								"/app/rollcalls/player/add/" +
+																								gid,
+																							state: {
+																								rcid: el.rollcall_id
+																							}
+																					  }
+																					: {
+																							pathname: `/app/rollcalls/player/detail/${gid}/${
+																								el.rollcall_id
+																							}`
+																					  };
+																			return (
+																				<tr key={key.toString()}>
+																					<td className="pl-3 text-center text-muted">
+																						#{el.rollcall_id}
+																					</td>
+																					<td>
+																						<span className="badge badge-danger mr-2">
+																							{el.status === 2
+																								? "Devam ediyor"
+																								: ""}
+																						</span>
+																						<Link
+																							className="text-inherit"
+																							to={redirect}>
+																							{moment(
+																								el.created_date
+																							).format("LLL")}
+																						</Link>
+																					</td>
+																					<td className="text-center">
+																						{el.came + "/" + el.total}
+																					</td>
+																					<td className="pr-3 text-center">
+																						<Link
+																							className="btn btn-sm btn-info"
+																							to={`/app/rollcalls/player/detail/${gid}/${
+																								el.rollcall_id
+																							}`}>
+																							İncele
+																							<i className="fe fe-arrow-right ml-2" />
+																						</Link>
+																					</td>
+																				</tr>
+																			);
+																	  })
+																	: noRow()
+																: noRow(true)}
 														</tbody>
 													</table>
 												</div>

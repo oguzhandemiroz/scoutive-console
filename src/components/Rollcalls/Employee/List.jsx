@@ -1,32 +1,123 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
+import { Link, withRouter } from "react-router-dom";
+import { CreateRollcall, ListRollcall } from "../../../services/Rollcalls";
+import { Toast, showSwal } from "../../Alert";
+import moment from "moment";
+import "moment/locale/tr";
+
+const noRow = loading => (
+	<tr style={{ height: 80 }}>
+		<td colSpan="3" className="text-center text-muted font-italic">
+			{loading ? (
+				<div className={`dimmer active`}>
+					<div className="loader" />
+					<div className="dimmer-content" />
+				</div>
+			) : (
+				"Kayıt bulunamadı..."
+			)}
+		</td>
+	</tr>
+);
 
 export class List extends Component {
 	constructor(props) {
 		super(props);
 
 		this.state = {
+			uid: localStorage.getItem("UID"),
+			rollcallList: null,
 			onLoadedData: true,
 			loadingButton: false
 		};
 	}
 
+	componentDidMount() {
+		this.renderRollcallList();
+	}
+
+	renderRollcallList = () => {
+		try {
+			const { uid } = this.state;
+			ListRollcall({
+				uid: uid,
+				type: 1
+			}).then(response => {
+				if (response) {
+					const status = response.status;
+					if (status.code === 1020) {
+						this.setState({ rollcallList: response.data.reverse() });
+					}
+				}
+				this.setState({
+					loadingButton: false
+				});
+			});
+		} catch (e) {}
+	};
+
+	createRollcall = () => {
+		try {
+			const { uid } = this.state;
+			this.setState({
+				loadingButton: true
+			});
+			CreateRollcall({
+				uid: uid,
+				type: 1
+			}).then(response => {
+				if (response) {
+					const status = response.status;
+					if (status.code === 1020) {
+						Toast.fire({
+							type: "success",
+							title: "İşlem başarılı..."
+						});
+						this.props.history.push({
+							pathname: `/app/rollcalls/employee/add`,
+							state: { rcid: response.rollcall_id }
+						});
+					} else if (status.code === 2010) {
+						showSwal({
+							type: "warning",
+							title: "Uyarı",
+							text: status.description,
+							reverseButtons: true,
+							showCancelButton: true,
+							confirmButtonText: "Yoklamaya devam et",
+							cancelButtonText: "Kapat"
+						}).then(result => {
+							if (result.value) {
+								this.props.history.push({
+									pathname: `/app/rollcalls/employee/add`,
+									state: { rcid: response.rollcall_id }
+								});
+							}
+						});
+					}
+				}
+				this.setState({
+					loadingButton: false
+				});
+			});
+		} catch (e) {}
+	};
+
 	render() {
-		const { onLoadedData, loadingButton } = this.state;
+		const { rollcallList, onLoadedData, loadingButton } = this.state;
 		return (
 			<div className="card">
 				<div className="card-header">
 					<div className="card-status bg-azure" />
 					<h3 className="card-title">Geçmiş Yoklama Listesi</h3>
 					<div className="card-options">
-						<Link
-							to="/app/rollcalls/employee/add"
-							onClick={this.completeRollcall}
+						<button
+							onClick={this.createRollcall}
 							className={`btn btn-sm btn-success ${loadingButton ? "btn-loading disabled" : ""} ${
 								!onLoadedData ? "btn-loading disabled" : ""
 							}`}>
 							Yoklama Oluştur
-						</Link>
+						</button>
 					</div>
 				</div>
 
@@ -39,7 +130,7 @@ export class List extends Component {
 									<thead>
 										<tr>
 											<th className="pl-0 w-1" />
-											<th>Yoklama Adı</th>
+											<th>Yoklama Tarihi</th>
 											<th className="text-center">
 												Detay
 												<span
@@ -53,15 +144,41 @@ export class List extends Component {
 										</tr>
 									</thead>
 									<tbody>
-										<tr>
-											<td className="text-center text-muted">#1</td>
-											<td>
-												<Link className="text-inherit" to={`/app/rollcalls/employee/detail/1`}>
-													26 Haziran 2019
-												</Link>
-											</td>
-											<td className="text-center">32/35</td>
-										</tr>
+										{rollcallList
+											? rollcallList.length > 0
+												? rollcallList.map((el, key) => {
+														const redirect =
+															el.status === 2
+																? {
+																		pathname: "/app/rollcalls/employee/add",
+																		state: { rcid: el.rollcall_id }
+																  }
+																: {
+																		pathname:
+																			"/app/rollcalls/employee/detail/" +
+																			el.rollcall_id
+																  };
+														return (
+															<tr key={key.toString()}>
+																<td className="text-center text-muted">
+																	#{el.rollcall_id}
+																</td>
+																<td>
+																	<span className="badge badge-danger mr-2">
+																		{el.status === 2 ? "Devam ediyor" : ""}
+																	</span>
+																	<Link className="text-inherit" to={redirect}>
+																		{moment(el.created_date).format("LLL")}
+																	</Link>
+																</td>
+																<td className="text-center">
+																	{el.came + "/" + el.total}
+																</td>
+															</tr>
+														);
+												  })
+												: noRow()
+											: noRow(true)}
 									</tbody>
 								</table>
 							</div>
@@ -73,4 +190,4 @@ export class List extends Component {
 	}
 }
 
-export default List;
+export default withRouter(List);

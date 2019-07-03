@@ -432,7 +432,9 @@ export class Edit extends Component {
 				formData.append("type", "player");
 				this.setState({ uploadedFile: false });
 				UploadFile(formData).then(response => {
-					if (response.status.code === 1020) this.setState({ uploadedFile: true, image: response.data });
+					if (response) if (response.status.code === 1020) this.setState({ image: response.data });
+
+					this.setState({ uploadedFile: true });
 				});
 			};
 

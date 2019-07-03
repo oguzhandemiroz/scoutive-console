@@ -9,10 +9,10 @@ var ep = {
     GROUP: host + api_version + "get/groups",
     BRANCH: host + api_version + "get/branchs",
     CLUB: host + api_version + "get/clubs",
-    GET_SCHOOL: host + api_version + "get/school",
-    SCHOOL_UPDATE: host + api_version + "update/school",
-    ACCOUNT_CREATE: host + api_version + "create/school",
     ACCOUNT_LOGIN: host + api_version + "login",
+    SCHOOL_CREATE: host + api_version + "create/school",
+    SCHOOL_GET: host + api_version + "get/school",
+    SCHOOL_UPDATE: host + api_version + "update/school",
     FORGOT_PASSWORD: host + api_version + "password/forgot",
     RESET_PASSWORD: host + api_version + "password/reset",
     ACCOUNT_ACTIVATION: host + api_version + "activation",
@@ -33,7 +33,8 @@ var ep = {
     GET_GROUP: host + api_version + "get/group",
     CHECK_PERMISSION: host + api_version + "check/permission",
     COMPLETE_ROLLCALL: host + api_version + "complete/rollcall",
-    TAKE_ROLLCALL: host + api_version + "take/rollcall",
+    CREATE_ROLLCALL: host + api_version + "create/rollcall",
+    LIST_ROLLCALL: host + api_version + "list/rollcalls",
     UPLOAD_FILE: host + api_version + "upload/file"
 };
 

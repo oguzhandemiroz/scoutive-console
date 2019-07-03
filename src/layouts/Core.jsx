@@ -37,6 +37,7 @@ export class Core extends Component {
                     <PrivateRoute path="/app" component={App} />
                     <PrivateRoute path="/account" component={Account} />
                     <Route path="*" component={_404} />
+                    <Route path="/reload" component={null} key="reload" />
                 </Switch>
             </Router>
         );

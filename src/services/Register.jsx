@@ -5,7 +5,7 @@ import Swal from "sweetalert2";
 
 const RequestRegister = data => {
 	try {
-		return fetch(ep.ACCOUNT_CREATE, {
+		return fetch(ep.SCHOOL_CREATE, {
 			method: "POST",
 			body: JSON.stringify(data),
 			headers: new Headers({

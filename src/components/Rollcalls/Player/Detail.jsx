@@ -89,7 +89,7 @@ export class Detail extends Component {
 	};
 
 	render() {
-		const { gid, rid } = this.props.match.params;
+		const { gid, rcid } = this.props.match.params;
 		const { detail, loadingData, players } = this.state;
 		return (
 			<div className="container">
@@ -113,7 +113,7 @@ export class Detail extends Component {
 									<Link className="font-weight-600" to={`/app/groups/detail/${gid}`}>
 										{detail.name || ""}
 									</Link>{" "}
-									&mdash; Grup Yoklaması &mdash; {moment(rid).format("LLL")}
+									&mdash; Grup Yoklaması &mdash; {moment(rcid).format("LLL")}
 								</h3>
 								<div className="card-options">
 									<span

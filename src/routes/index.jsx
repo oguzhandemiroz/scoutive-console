@@ -178,7 +178,7 @@ var indexRoutes = [
 		prop: { exact: true }
 	},
 	{
-		path: "/rollcalls/employee/detail/:rid",
+		path: "/rollcalls/employee/detail/:rcid",
 		name: "Employees Rollcalls",
 		component: EmployeesRollcallDetail,
 		layout: "/app",
@@ -206,7 +206,7 @@ var indexRoutes = [
 		prop: { exact: true }
 	},
 	{
-		path: "/rollcalls/player/detail/:gid/:rid",
+		path: "/rollcalls/player/detail/:gid/:rcid",
 		name: "Players Rollcalls Past",
 		component: PlayersRollcallDetail,
 		layout: "/app",

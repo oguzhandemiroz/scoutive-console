@@ -12,6 +12,7 @@ const showSwal = options => {
 	try {
 		return Swal.fire({
 			heightAuto: false,
+			allowEnterKey: false,
 			confirmButtonText: "Tamam",
 			...options
 		});
@@ -30,7 +31,7 @@ const errorSwal = (data, options) => {
 	} catch (e) {}
 };
 
-const fatalSwal = (logout) => {
+const fatalSwal = logout => {
 	try {
 		showSwal({
 			allowOutsideClick: false,

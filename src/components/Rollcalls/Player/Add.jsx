@@ -1,11 +1,10 @@
 import React, { Component } from "react";
 import { List as GroupList } from "./List";
 import { DetailGroup, ListPlayers } from "../../../services/Group";
+import { WarningModal as Modal } from "../WarningModal";
 import { Link } from "react-router-dom";
-import { getCookie, setCookie } from "../../../assets/js/core";
 import moment from "moment";
 import "moment/locale/tr";
-const $ = require("jquery");
 
 const noRow = () => (
 	<tr>
@@ -13,40 +12,6 @@ const noRow = () => (
 			Kayıt bulunamadı...
 		</td>
 	</tr>
-);
-
-const Modal = props => (
-	<div className="modal fade" tabIndex="-1" role="dialog" id="myModal">
-		<div className="modal-dialog" role="document">
-			<div className="modal-content">
-				<div className="modal-header">
-					<h5 className="modal-title text-dark">Uyarı!</h5>
-					<button type="button" className="close" data-dismiss="modal" aria-label="Close" />
-				</div>
-				<div className="modal-body text-dark" style={{ fontSize: 16 }}>
-					<p>
-						Yoklama yapılırken, sisteme <b>"geldi"</b> veya <b>"izinli"</b> olarak giriş yapabilirsiniz.
-					</p>
-					<p>
-						İşaretlenmemiş olanlar, yoklama tamamlandığında sisteme otomatik olarak <b>"gelmedi"</b>{" "}
-						şeklinde tanımlanır.
-					</p>
-					<p>
-						<b className="text-red">Not:</b> Yoklamayı gün sonunda tamamlayınız. Tamamlanan yoklamalarda
-						değişiklik{" "}
-						<b>
-							<u>yapılamaz.</u>
-						</b>
-					</p>
-				</div>
-				<div className="modal-footer">
-					<button onClick={props.trigger} type="button" className="btn btn-primary" data-dismiss="modal">
-						Anladım
-					</button>
-				</div>
-			</div>
-		</div>
-	</div>
 );
 
 export class Detail extends Component {
@@ -69,7 +34,6 @@ export class Detail extends Component {
 	}
 
 	componentDidMount() {
-		if (getCookie("RollcallsAgree") !== "OK") $("#myModal").modal();
 		const { gid } = this.props.match.params;
 		this.renderGroupDetail(gid);
 		this.renderPlayerList(gid);
@@ -84,10 +48,6 @@ export class Detail extends Component {
 			this.renderPlayerList(nextProps.match.params.gid);
 		}
 	}
-
-	agree = () => {
-		setCookie("RollcallsAgree", "OK", 1, "D");
-	};
 
 	renderGroupDetail = gid => {
 		try {
@@ -134,7 +94,7 @@ export class Detail extends Component {
 		const { detail, loadingData, players } = this.state;
 		return (
 			<div className="container">
-				<Modal trigger={this.agree} />
+				<Modal />
 				<div className="page-header">
 					<h1 className="page-title">Yoklamalar &mdash; Öğrenciler</h1>
 				</div>
@@ -254,16 +214,42 @@ export class Detail extends Component {
 																			</td>
 																			<td className="pr-3 text-center">
 																				<button
-																					data-original-title="Geldi"
+																					onClick={() =>
+																						this.takeRollcall(el.uid, 1)
+																					}
+																					title="Geldi"
 																					data-toggle="tooltip"
 																					className="btn btn-icon btn-sm btn-success">
 																					<i className="fe fe-check" />
 																				</button>
+
 																				<button
-																					data-original-title="İzinli"
-																					data-toggle="tooltip"
+																					data-toggle="dropdown"
+																					title="İzinli"
 																					className="btn btn-icon btn-sm btn-warning ml-2">
 																					<i className="fe fe-alert-circle" />
+																				</button>
+																				<div className="dropdown-menu">
+																					<a
+																						className="dropdown-item"
+																						href="#">
+																						Tam Gün
+																					</a>
+																					<a
+																						className="dropdown-item"
+																						href="#">
+																						Yarım Gün
+																					</a>
+																				</div>
+
+																				<button
+																					onClick={() =>
+																						this.takeRollcall(el.uid, 0)
+																					}
+																					title="Gelmedi"
+																					data-toggle="tooltip"
+																					className="btn btn-icon btn-sm btn-danger ml-2">
+																					<i className="fe fe-x" />
 																				</button>
 																			</td>
 																		</tr>
