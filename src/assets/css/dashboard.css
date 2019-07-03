@@ -12768,7 +12768,7 @@ button.bg-dark:focus {
 }
 
 .font-weight-600 {
-	font-weight: 600 !important;	
+	font-weight: 600 !important;
 }
 
 .font-weight-bold {
@@ -16663,6 +16663,7 @@ a.icon:hover {
 	color: #9aa0ac;
 	-ms-flex-item-align: center;
 	align-self: center;
+	align-items: center;
 }
 
 .card-options a:not(.btn) {
