@@ -35,7 +35,8 @@ var ep = {
     COMPLETE_ROLLCALL: host + api_version + "complete/rollcall",
     CREATE_ROLLCALL: host + api_version + "create/rollcall",
     LIST_ROLLCALL: host + api_version + "list/rollcalls",
-    UPLOAD_FILE: host + api_version + "upload/file"
+    UPLOAD_FILE: host + api_version + "upload/file",
+    VACATION_CREATE: host + api_version + "create/vacation/"
 };
 
 export default ep;

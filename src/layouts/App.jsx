@@ -11,6 +11,11 @@ class App extends Component {
 		if ($(".tooltip.show")) {
 			$(".tooltip.show").remove();
 		}
+		if ($(".modal-backdrop.show")) {
+			$(".modal-backdrop.show").remove();
+			$("body").removeClass("modal-open");
+			$("body").removeAttr("style");
+		}
 		$('[data-toggle="popover"]').popover({
 			html: true,
 			trigger: "hover"

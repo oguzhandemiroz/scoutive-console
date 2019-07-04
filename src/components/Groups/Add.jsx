@@ -415,7 +415,7 @@ export class Add extends Component {
 											isSearchable={true}
 											isDisabled={select.hours ? false : true}
 											onChange={val => this.handleSelect(val, "hour")}
-											placeholder="00"
+											placeholder="Sa."
 											name="hour"
 											autosize
 											styles={formErrors.hour === true ? customStylesError : customStyles}
@@ -433,7 +433,7 @@ export class Add extends Component {
 											isSearchable={true}
 											isDisabled={select.minutes ? false : true}
 											onChange={val => this.handleSelect(val, "minute")}
-											placeholder="00"
+											placeholder="Dk."
 											name="minute"
 											autosize
 											styles={formErrors.minute === true ? customStylesError : customStyles}

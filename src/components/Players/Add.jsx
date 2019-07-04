@@ -297,41 +297,43 @@ export class Add extends Component {
 				attributes: attributesData
 			}).then(response => {
 				setTimeout(() => {
-					if (response.status.code === 1020) {
-						if (addContinuously) {
-							if (imagePreview) {
-								const formData = new FormData();
-								formData.append("image", file);
-								formData.append("uid", localStorage.getItem("UID"));
-								formData.append("to", response.uid);
-								formData.append("type", "player");
-								formData.append("update", true);
-								this.setState({ uploadedFile: false });
-								UploadFile(formData).then(response => {
-									if (response.status.code === 1020) {
-										this.setState({ uploadedFile: true });
-									}
+					if (response) {
+						if (response.status.code === 1020) {
+							if (addContinuously) {
+								if (imagePreview) {
+									const formData = new FormData();
+									formData.append("image", file);
+									formData.append("uid", localStorage.getItem("UID"));
+									formData.append("to", response.uid);
+									formData.append("type", "player");
+									formData.append("update", true);
+									this.setState({ uploadedFile: false });
+									UploadFile(formData).then(response => {
+										if (response.status.code === 1020) {
+											this.setState({ uploadedFile: true });
+										}
+										this.setState({ ...initialState });
+									});
+								} else {
 									this.setState({ ...initialState });
-								});
+								}
 							} else {
-								this.setState({ ...initialState });
+								if (imagePreview) {
+									const formData = new FormData();
+									formData.append("image", file);
+									formData.append("uid", localStorage.getItem("UID"));
+									formData.append("to", response.uid);
+									formData.append("type", "player");
+									formData.append("update", true);
+									this.setState({ uploadedFile: false });
+									UploadFile(formData).then(response => {
+										if (response.status.code === 1020) {
+											this.setState({ uploadedFile: true });
+											this.props.history.push("/app/players");
+										}
+									});
+								} else this.props.history.push("/app/players");
 							}
-						} else {
-							if (imagePreview) {
-								const formData = new FormData();
-								formData.append("image", file);
-								formData.append("uid", localStorage.getItem("UID"));
-								formData.append("to", response.uid);
-								formData.append("type", "player");
-								formData.append("update", true);
-								this.setState({ uploadedFile: false });
-								UploadFile(formData).then(response => {
-									if (response.status.code === 1020) {
-										this.setState({ uploadedFile: true });
-										this.props.history.push("/app/players");
-									}
-								});
-							} else this.props.history.push("/app/players");
 						}
 					}
 				}, 1000);

@@ -9,6 +9,7 @@ import ep from "../../assets/js/urls";
 import { fatalSwal, errorSwal } from "../Alert.jsx";
 import ReactDOM from "react-dom";
 import { BrowserRouter, Link } from "react-router-dom";
+import Vacation from "../EmployeeAction/Vacation";
 const $ = require("jquery");
 $.DataTable = require("datatables.net");
 
@@ -199,6 +200,12 @@ const datatable_turkish = {
 };
 
 class Table extends Component {
+	constructor(props) {
+		super(props);
+
+		this.state = { data: {}, vacation: false };
+	}
+
 	componentDidMount() {
 		try {
 			const UID = localStorage.getItem("UID");
@@ -245,6 +252,7 @@ class Table extends Component {
 						targets: "action",
 						createdCell: (td, cellData, rowData) => {
 							const fullname = rowData.name + " " + rowData.surname;
+							const uid = rowData.uid;
 							ReactDOM.render(
 								<div className="dropdown btn-block" id="action-dropdown">
 									<button
@@ -275,9 +283,13 @@ class Table extends Component {
 											<i className="dropdown-icon fa fa-coins" /> Zam Yap
 										</a>
 										<div role="separator" className="dropdown-divider" />
-										<a className="dropdown-item action-day-off" href="javascript:void(0)">
+										<button
+											className="dropdown-item action-day-off"
+											onClick={() =>
+												this.setState({ vacation: true, data: { name: fullname, uid: uid } })
+											}>
 											<i className="dropdown-icon fa fa-coffee" /> İzin Yaz
-										</a>
+										</button>
 										<div role="separator" className="dropdown-divider" />
 										<a className="dropdown-item action-send-message" href="javascript:void(0)">
 											<i className="dropdown-icon fa fa-paper-plane" /> Mesaj Gönder
@@ -446,33 +458,38 @@ class Table extends Component {
 			fatalSwal();
 		}
 	}
+
 	componentWillUnmount() {
 		$(".data-table-wrapper")
 			.find("table")
 			.DataTable()
 			.destroy(true);
 	}
-	shouldComponentUpdate() {
-		return false;
-	}
+
 	render() {
+		const { vacation, data } = this.state;
 		return (
-			<table id="employee-list" className="table card-table table-vcenter table-striped text-nowrap datatable">
-				<thead>
-					<tr>
-						<th>ID</th>
-						<th className="w-1 no-sort">T.C.</th>
-						<th className="w-1 text-center no-sort">#</th>
-						<th className="name">AD SOYAD</th>
-						<th className="phone">TELEFON</th>
-						<th className="email">EMAIL</th>
-						<th className="position">POZİSYON</th>
-						<th className="salary">MAAŞ</th>
-						<th className="status">DURUM</th>
-						<th className="no-sort action" />
-					</tr>
-				</thead>
-			</table>
+			<div>
+				<table
+					id="employee-list"
+					className="table card-table table-vcenter table-striped text-nowrap datatable">
+					<thead>
+						<tr>
+							<th>ID</th>
+							<th className="w-1 no-sort">T.C.</th>
+							<th className="w-1 text-center no-sort">#</th>
+							<th className="name">AD SOYAD</th>
+							<th className="phone">TELEFON</th>
+							<th className="email">EMAIL</th>
+							<th className="position">POZİSYON</th>
+							<th className="salary">MAAŞ</th>
+							<th className="status">DURUM</th>
+							<th className="no-sort action" />
+						</tr>
+					</thead>
+				</table>
+				{<Vacation data={data} visible={vacation} />}
+			</div>
 		);
 	}
 }

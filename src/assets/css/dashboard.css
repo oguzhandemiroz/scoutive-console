@@ -22426,3 +22426,8 @@ figure span.player-number {
 .cursor-pointer {
 	cursor: pointer !important;
 }
+
+.react-datepicker-wrapper,
+.react-datepicker__input-container {
+	display: block !important;
+}
