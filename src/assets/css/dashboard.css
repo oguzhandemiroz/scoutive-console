@@ -22427,7 +22427,30 @@ figure span.player-number {
 	cursor: pointer !important;
 }
 
+.react-datepicker-popper {
+	z-index: 9999 !important;
+}
+
 .react-datepicker-wrapper,
 .react-datepicker__input-container {
 	display: block !important;
+}
+
+.employeeActionNav {
+	margin-bottom: -1px;
+}
+
+.employeeActionNav .nav-tabs {
+	margin: 0;
+}
+
+.employeeActionNav .nav-item {
+	margin-right: 20px;
+}
+
+.employeeActionModal .modal-header {
+	padding: 0 1rem;
+}
+.employeeActionModal .modal-header .close {
+	margin-top: 0;
 }

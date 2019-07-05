@@ -117,4 +117,28 @@ const UpdatePlayers = data => {
 	}
 };
 
-export { CreatePlayer, DetailPlayer, UpdatePlayer, UpdatePlayers };
+const DeletePlayer = data => {
+	try {
+		return fetch(ep.PLAYER_DELETE, {
+			method: "POST",
+			body: JSON.stringify(data),
+			headers: new Headers({
+				"Content-Type": "application/json"
+			})
+		})
+			.then(res => res.json())
+			.then(response => {
+				if (response) {
+					const status = response.status;
+					if (status.code !== 1020) errorSwal(status);
+
+					return response;
+				}
+			})
+			.catch(e => fatalSwal(true));
+	} catch (e) {
+		fatalSwal(true);
+	}
+};
+
+export { CreatePlayer, DetailPlayer, UpdatePlayer, UpdatePlayers, DeletePlayer };

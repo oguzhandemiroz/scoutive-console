@@ -1,6 +1,7 @@
 import React, { Component } from "react";
-import { DetailEmployee } from "../../services/Employee.jsx";
+import { DetailEmployee, DeleteEmployee } from "../../services/Employee.jsx";
 import { Link } from "react-router-dom";
+import { showSwal, Toast } from "../Alert.jsx";
 
 const CryptoJS = require("crypto-js");
 
@@ -81,6 +82,41 @@ export class Detail extends Component {
 			const plaintext = decryptSalary.toString(CryptoJS.enc.Utf8);
 			this.setState({ salary: plaintext + " ₺" });
 		} else this.setState({ salary: "∙∙∙∙∙∙" });
+	};
+
+	deleteEmployee = () => {
+		try {
+			const { uid, to, name } = this.state;
+			showSwal({
+				type: "warning",
+				title: "Emin misiniz?",
+				html: `<b>${name}</b> adlı personeli işten çıkarmak istediğinize emin misiniz?`,
+				confirmButtonText: "Evet",
+				cancelButtonText: "Hayır",
+				cancelButtonColor: "#cd201f",
+				confirmButtonColor: "#868e96",
+				showCancelButton: true,
+				reverseButtons: true
+			}).then(result => {
+				if (result.value) {
+					DeleteEmployee({
+						uid: uid,
+						to: to
+					}).then(response => {
+						if (response) {
+							const status = response.status;
+							if (status.code === 1020) {
+								Toast.fire({
+									type: "success",
+									title: "İşlem başarılı..."
+								});
+								setTimeout(() => this.props.history.push("/app/employees"), 1000);
+							}
+						}
+					});
+				}
+			});
+		} catch (e) {}
 	};
 
 	render() {
@@ -193,13 +229,25 @@ export class Detail extends Component {
 									</div>
 								</div>
 							</div>
-							<div className="card-footer">
+							<div className="card-footer" style={{ padding: ".5rem 1.5rem" }}>
 								<div className="d-flex justify-content-center">
 									<Link
 										to={`/app/employees/edit/${to}`}
 										className={`btn ${!onLoadedData ? "disabled" : ""} btn-link btn-block`}>
 										Bilgileri Düzenle
 									</Link>
+								</div>
+							</div>
+							<div className="card-footer" style={{ padding: ".5rem 1.5rem" }}>
+								<div className="d-flex justify-content-center">
+									<button
+										onClick={this.deleteEmployee}
+										className={`btn ${
+											!onLoadedData ? "disabled" : ""
+										} text-danger btn-link btn-block`}>
+										<i className="fe fe-alert-octagon mr-1"></i>
+										İşten Çıkar
+									</button>
 								</div>
 							</div>
 						</div>

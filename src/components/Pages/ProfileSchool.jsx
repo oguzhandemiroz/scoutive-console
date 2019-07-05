@@ -8,7 +8,6 @@ import Select from "react-select";
 const socialMedia = ["Facebook", "Twitter", "Instagram", "LinkedIn"];
 
 // eslint-disable-next-line
-const emailRegEx = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
 const securityNoRegEx = /^\d+$/;
 
 const formValid = ({ formErrors, ...rest }) => {
@@ -154,7 +153,6 @@ export class Profile extends Component {
 			requiredData.name = name;
 			requiredData.tax_no = tax_no;
 			requiredData.tax_office = tax_office;
-			requiredData.email = email;
 			requiredData.phone_tel = phone_tel;
 			requiredData.formErrors = formErrors;
 
@@ -217,7 +215,6 @@ export class Profile extends Component {
 						? "is-invalid"
 						: ""
 					: "is-invalid";
-				formErrors.email = email ? (!emailRegEx.test(email) ? "is-invalid" : "") : "is-invalid";
 				formErrors.phone_tel = phone_tel ? (phone_tel.length !== 10 ? "is-invalid" : "") : "is-invalid";
 
 				this.setState({ formErrors });
@@ -239,9 +236,6 @@ export class Profile extends Component {
 				break;
 			case "tax_no":
 				formErrors.tax_no = value.length < 9 ? "is-invalid" : !securityNoRegEx.test(value) ? "is-invalid" : "";
-				break;
-			case "email":
-				formErrors.email = value.length < 3 ? "is-invalid" : !emailRegEx.test(value) ? "is-invalid" : "";
 				break;
 			case "phone_tel":
 				formErrors.phone_tel = value.length !== 10 ? "is-invalid" : "";
@@ -407,17 +401,8 @@ export class Profile extends Component {
 											/>
 										</div>
 										<div className="form-group">
-											<label className="form-label">
-												Email<span className="form-required">*</span>
-											</label>
-											<input
-												type="text"
-												className={`form-control ${formErrors.email}`}
-												placeholder="Okul Adı"
-												name="email"
-												value={email || ""}
-												onChange={this.handleChange}
-											/>
+											<label className="form-label">Email</label>
+											<div className="form-plaintextform-control-plaintext">{email || ""}</div>
 										</div>
 
 										<div className="form-group">

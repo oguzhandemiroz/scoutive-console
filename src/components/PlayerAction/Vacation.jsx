@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import DatePicker, { registerLocale } from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import tr from "date-fns/locale/tr";
-import { CreateVacation, UpdateVacation, ListVacations } from "../../services/EmployeeAction";
+import { CreateVacation, UpdateVacation, ListVacations } from "../../services/PlayerAction";
 import { fullnameGenerator } from "../../services/Others";
 import { Toast, showSwal } from "../Alert";
 import moment from "moment";
@@ -28,8 +28,7 @@ const formValid = ({ formErrors, ...rest }) => {
 const initialState = {
 	startDate: new Date(),
 	endDate: null,
-	day: null,
-	no_cost: 0
+	day: null
 };
 
 const vacationStatus = {
@@ -98,7 +97,7 @@ export class Vacation extends Component {
 
 	handleSubmit = e => {
 		e.preventDefault();
-		const { uid, day, startDate, endDate, formErrors, no_cost } = this.state;
+		const { uid, day, startDate, endDate, formErrors } = this.state;
 		const { data } = this.props;
 		const requiredData = {};
 
@@ -117,9 +116,9 @@ export class Vacation extends Component {
 					start: moment(startDate).format("YYYY-MM-DD"),
 					end: endDate ? moment(endDate).format("YYYY-MM-DD") : moment(startDate).format("YYYY-MM-DD"),
 					day: day ? parseFloat(day) : 1,
-					no_cost: no_cost
+					no_cost: null
 				},
-				"employee"
+				"player"
 			).then(response => {
 				if (response) {
 					const status = response.status;
@@ -159,20 +158,6 @@ export class Vacation extends Component {
 												<span class="text-muted">${response.data.day}</span>
 											</td>
 										</tr>
-										<tr>
-											<td>Ücretli/Ücretsiz</td>
-											<td class="text-right">
-												<span class="badge badge-${response.data.no_cost === 0 ? "success" : "danger"}">${
-								response.data.no_cost === 0 ? "Ücretli" : "Ücretsiz"
-							}</span>
-											</td>
-										</tr>
-										<tr>
-											<td>İşlemi yapan</td>
-											<td class="text-right">
-												<span class="text-muted">${fullnameGenerator(response.data.creator.name, response.data.creator.surname)}</span>
-											</td>
-										</tr>
 									</tbody>
 								</table>
 							</div>`,
@@ -191,7 +176,7 @@ export class Vacation extends Component {
 											? moment(endDate).format("YYYY-MM-DD")
 											: moment(startDate).format("YYYY-MM-DD"),
 										day: day ? parseFloat(day) : 1,
-										no_cost: no_cost
+										no_cost: null
 									}
 								}).then(response => {
 									if (response) {
@@ -279,7 +264,7 @@ export class Vacation extends Component {
 					uid: uid,
 					to: to
 				},
-				"employee"
+				"player"
 			).then(response => {
 				console.log(response);
 				if (response) {
@@ -293,7 +278,7 @@ export class Vacation extends Component {
 	};
 
 	render() {
-		const { startDate, endDate, day, no_cost, data, loadingButton, list, loadingData, formErrors } = this.state;
+		const { startDate, endDate, day, data, loadingButton, list, loadingData, formErrors } = this.state;
 		return (
 			<div
 				className="modal fade employeeActionModal"
@@ -347,7 +332,7 @@ export class Vacation extends Component {
 											<div className="loader" />
 											<div className="dimmer-content">
 												<div className="form-group">
-													<label className="form-label">Personel Bilgisi:</label>
+													<label className="form-label">Öğrenci Bilgisi:</label>
 													<div className="form-control-plaintext">
 														<Link to={`/app/employees/detail/${data.uid}`}>
 															{data.name}
@@ -409,46 +394,6 @@ export class Vacation extends Component {
 														value={day || ""}
 														onChange={this.handleChange}
 													/>
-												</div>
-												<div className="form-group">
-													<label className="form-label">
-														Ücretli/Ücretsiz
-														<span className="form-required">*</span>
-														<span
-															className="form-help ml-1"
-															data-toggle="popover"
-															data-placement="top"
-															data-content="<p><b>Ücretli İzin: </b>Personel çalışmadığı halde kendisine normal ücreti ödenir.</p>
-														<p><b>Ücretsiz İzin: </b>Personel izinli olduğu süre için kendisine herhangi bir ücret ödemesi yapılmaz.</p>"
-															data-original-title=""
-															title="">
-															?
-														</span>
-													</label>
-													<div className="selectgroup w-100">
-														<label className="selectgroup-item">
-															<input
-																type="radio"
-																name="no_cost"
-																value="0"
-																className="selectgroup-input"
-																checked={no_cost === 0 ? true : false}
-																onChange={this.handleRadio}
-															/>
-															<span className="selectgroup-button">Ücretli</span>
-														</label>
-														<label className="selectgroup-item">
-															<input
-																type="radio"
-																name="no_cost"
-																value="1"
-																className="selectgroup-input"
-																checked={no_cost === 1 ? true : false}
-																onChange={this.handleRadio}
-															/>
-															<span className="selectgroup-button">Ücretsiz</span>
-														</label>
-													</div>
 												</div>
 											</div>
 										</div>

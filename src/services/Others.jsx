@@ -70,6 +70,24 @@ const systemClock = () => {
 	} catch (e) {}
 };
 
+const nullCheck = (data, instead) => {
+	try {
+		if (!instead) instead = "";
+		return data ? data : instead;
+	} catch (e) {
+		return data;
+	}
+};
+
+const fullnameGenerator = (name, surname) => {
+	try {
+		const fullname = nullCheck(name) + " " + nullCheck(surname);
+		return fullname;
+	} catch (e) {
+		return nullCheck(name) + " " + nullCheck(surname);
+	}
+};
+
 function ObjectIsEqual(objA, objB) {
 	// Create arrays of property names
 	var aProps = Object.getOwnPropertyNames(objA);
@@ -92,4 +110,13 @@ function ObjectIsEqual(objA, objB) {
 	return true;
 }
 
-export { SplitBirthday, UploadFile, getSelectValue, AttributeDataChecker, ObjectIsEqual, systemClock };
+export {
+	SplitBirthday,
+	UploadFile,
+	getSelectValue,
+	AttributeDataChecker,
+	ObjectIsEqual,
+	systemClock,
+	nullCheck,
+	fullnameGenerator
+};

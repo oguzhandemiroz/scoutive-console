@@ -17,11 +17,13 @@ var ep = {
     RESET_PASSWORD: host + api_version + "password/reset",
     ACCOUNT_ACTIVATION: host + api_version + "activation",
     CREATE_EMPLOYEE: host + api_version + "create/employee",
+    EMPLOYEE_DELETE: host + api_version + "delete/employee",
     UPDATE_EMPLOYEE: host + api_version + "update/employee",
     LIST_EMPLOYEE: host + api_version + "list/employees",
     GET_EMPLOYEE_NAME: host + api_version + "list/employees/name",
     GET_EMPLOYEE: host + api_version + "get/employee",
     CREATE_PLAYER: host + api_version + "create/player",
+    PLAYER_DELETE: host + api_version + "delete/player",
     LIST_PLAYER: host + api_version + "list/players",
     GET_PLAYER_NAME: host + api_version + "list/players/name",
     GET_PLAYER: host + api_version + "get/player",
@@ -36,7 +38,9 @@ var ep = {
     CREATE_ROLLCALL: host + api_version + "create/rollcall",
     LIST_ROLLCALL: host + api_version + "list/rollcalls",
     UPLOAD_FILE: host + api_version + "upload/file",
-    VACATION_CREATE: host + api_version + "create/vacation/"
+    VACATION_CREATE: host + api_version + "create/vacation/",
+    VACATION_UPDATE: host + api_version + "update/vacation",
+    VACATION_LIST: host + api_version + "list/vacations/"
 };
 
 export default ep;

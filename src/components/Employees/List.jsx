@@ -254,67 +254,84 @@ class Table extends Component {
 							const fullname = rowData.name + " " + rowData.surname;
 							const uid = rowData.uid;
 							ReactDOM.render(
-								<div className="dropdown btn-block" id="action-dropdown">
-									<button
-										type="button"
-										id="employee-action"
-										className="btn btn-sm btn-secondary btn-block dropdown-toggle"
-										data-toggle="dropdown"
-										aria-haspopup="true"
-										aria-expanded="false">
-										İşlem
-									</button>
-									<div
-										className="dropdown-menu dropdown-menu-right"
-										aria-labelledby="employee-action"
-										x-placement="top-end">
-										<a className="dropdown-item disabled text-azure" href="javascript:void(0)">
-											<i className="dropdown-icon fa fa-user text-azure" />
-											{fullname}
-										</a>
-										<div role="separator" className="dropdown-divider" />
-										<a className="dropdown-item action-pay-salary" href="javascript:void(0)">
-											<i className="dropdown-icon fa fa-money-bill-wave" /> Maaş Öde
-										</a>
-										<a className="dropdown-item action-advance-payment" href="javascript:void(0)">
-											<i className="dropdown-icon fa fa-hand-holding-usd" /> Avans Ver
-										</a>
-										<a className="dropdown-item action-salary-raise" href="javascript:void(0)">
-											<i className="dropdown-icon fa fa-coins" /> Zam Yap
-										</a>
-										<div role="separator" className="dropdown-divider" />
+								<BrowserRouter>
+									<div className="dropdown btn-block" id="action-dropdown">
 										<button
-											className="dropdown-item action-day-off"
-											onClick={() =>
-												this.setState({ vacation: true, data: { name: fullname, uid: uid } })
-											}>
-											<i className="dropdown-icon fa fa-coffee" /> İzin Yaz
+											type="button"
+											id="employee-action"
+											className="btn btn-sm btn-secondary btn-block dropdown-toggle"
+											data-toggle="dropdown"
+											aria-haspopup="true"
+											aria-expanded="false">
+											İşlem
 										</button>
-										<div role="separator" className="dropdown-divider" />
-										<a className="dropdown-item action-send-message" href="javascript:void(0)">
-											<i className="dropdown-icon fa fa-paper-plane" /> Mesaj Gönder
-										</a>
-										<a className="dropdown-item action-warning" href="javascript:void(0)">
-											<i className="dropdown-icon fa fa-exclamation-triangle" /> İkaz Et
-										</a>
-										<div role="separator" className="dropdown-divider" />
-										<a className="dropdown-item action-edit" href="javascript:void(0)">
-											<i className="dropdown-icon fa fa-pen" /> Düzenle
-										</a>
-										<a className="dropdown-item action-change-password" href="javascript:void(0)">
-											<i className="dropdown-icon fa fa-key" /> Şifre Değiştir
-										</a>
-										<a className="dropdown-item action-permission" href="javascript:void(0)">
-											<i className="dropdown-icon fa fa-user-cog" /> Yetkiledirme
-										</a>
-										<a className="dropdown-item action-all-salary-info" href="javascript:void(0)">
-											<i className="dropdown-icon fa fa-receipt" /> Tüm Maaş Bilgisi
-										</a>
-										<a className="dropdown-item action-all-info" href="javascript:void(0)">
-											<i className="dropdown-icon fa fa-info-circle" /> Tüm Bilgileri
-										</a>
+										<div
+											className="dropdown-menu dropdown-menu-right"
+											aria-labelledby="employee-action"
+											x-placement="top-end">
+											<a className="dropdown-item disabled text-azure" href="javascript:void(0)">
+												<i className="dropdown-icon fa fa-user text-azure" />
+												{fullname}
+											</a>
+											<div role="separator" className="dropdown-divider" />
+											<a className="dropdown-item action-pay-salary" href="javascript:void(0)">
+												<i className="dropdown-icon fa fa-money-bill-wave" /> Maaş Öde
+											</a>
+											<a
+												className="dropdown-item action-advance-payment"
+												href="javascript:void(0)">
+												<i className="dropdown-icon fa fa-hand-holding-usd" /> Avans Ver
+											</a>
+											<a className="dropdown-item action-salary-raise" href="javascript:void(0)">
+												<i className="dropdown-icon fa fa-coins" /> Zam Yap
+											</a>
+											<div role="separator" className="dropdown-divider" />
+											<button
+												className="dropdown-item action-day-off"
+												onClick={() =>
+													this.setState({
+														vacation: true,
+														data: { name: fullname, uid: uid }
+													})
+												}>
+												<i className="dropdown-icon fa fa-coffee" /> İzin Yaz
+											</button>
+											<div role="separator" className="dropdown-divider" />
+											<a className="dropdown-item action-send-message" href="javascript:void(0)">
+												<i className="dropdown-icon fa fa-paper-plane" /> Mesaj Gönder
+											</a>
+											<a className="dropdown-item action-warning" href="javascript:void(0)">
+												<i className="dropdown-icon fa fa-exclamation-triangle" /> İkaz Et
+											</a>
+											<div role="separator" className="dropdown-divider" />
+											<Link
+												onClick={() => this.props.history.push(`/app/employees/edit/${uid}`)}
+												className="dropdown-item action-edit"
+												to={`/app/employees/edit/${uid}`}>
+												<i className="dropdown-icon fa fa-pen" /> Düzenle
+											</Link>
+											<a
+												className="dropdown-item action-change-password"
+												href="javascript:void(0)">
+												<i className="dropdown-icon fa fa-key" /> Şifre Değiştir
+											</a>
+											<a className="dropdown-item action-permission" href="javascript:void(0)">
+												<i className="dropdown-icon fa fa-user-cog" /> Yetkiledirme
+											</a>
+											<a
+												className="dropdown-item action-all-salary-info"
+												href="javascript:void(0)">
+												<i className="dropdown-icon fa fa-receipt" /> Tüm Maaş Bilgisi
+											</a>
+											<Link
+												onClick={() => this.props.history.push(`/app/employees/detail/${uid}`)}
+												to={`/app/employees/detail/${uid}`}
+												className="dropdown-item action-all-info">
+												<i className="dropdown-icon fa fa-info-circle" /> Tüm Bilgileri
+											</Link>
+										</div>
 									</div>
-								</div>,
+								</BrowserRouter>,
 								td
 							);
 						}

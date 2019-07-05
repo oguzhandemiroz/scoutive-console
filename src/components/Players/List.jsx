@@ -9,6 +9,9 @@ import ep from "../../assets/js/urls";
 import { fatalSwal, errorSwal } from "../Alert.jsx";
 import ReactDOM from "react-dom";
 import { BrowserRouter, Link } from "react-router-dom";
+import { showSwal, Toast } from "../Alert";
+import { DeletePlayer } from "../../services/Player";
+import Vacation from "../PlayerAction/Vacation";
 
 const $ = require("jquery");
 $.DataTable = require("datatables.net");
@@ -200,6 +203,59 @@ const datatable_turkish = {
 };
 
 class Table extends Component {
+	constructor(props) {
+		super(props);
+
+		this.state = {
+			uid: localStorage.getItem("UID"),
+			data: {},
+			vacation: false
+		};
+	}
+
+	reload = () => {
+		const current = this.props.history.location.pathname;
+		this.props.history.replace(`/`);
+		setTimeout(() => {
+			this.props.history.replace(current);
+		});
+	};
+
+	deletePlayer = (to, name) => {
+		try {
+			const { uid } = this.state;
+			showSwal({
+				type: "warning",
+				title: "Emin misiniz?",
+				html: `<b>${name}</b> adlı öğrencinin kaydını silmek istediğinize emin misiniz?`,
+				confirmButtonText: "Evet",
+				cancelButtonText: "Hayır",
+				cancelButtonColor: "#cd201f",
+				confirmButtonColor: "#868e96",
+				showCancelButton: true,
+				reverseButtons: true
+			}).then(result => {
+				if (result.value) {
+					DeletePlayer({
+						uid: uid,
+						to: to
+					}).then(response => {
+						if (response) {
+							const status = response.status;
+							if (status.code === 1020) {
+								Toast.fire({
+									type: "success",
+									title: "İşlem başarılı..."
+								});
+								setTimeout(() => this.reload(), 1000);
+							}
+						}
+					});
+				}
+			});
+		} catch (e) {}
+	};
+
 	componentDidMount() {
 		try {
 			const UID = localStorage.getItem("UID");
@@ -246,75 +302,103 @@ class Table extends Component {
 						targets: "action",
 						createdCell: (td, cellData, rowData) => {
 							const fullname = rowData.name + " " + rowData.surname;
+							const uid = rowData.uid;
 							ReactDOM.render(
-								<div className="dropdown btn-block" id="action-dropdown">
-									<button
-										type="button"
-										id="player-action"
-										className="btn btn-sm btn-secondary btn-block dropdown-toggle"
-										data-toggle="dropdown"
-										aria-haspopup="true"
-										aria-expanded="false">
-										İşlem
-									</button>
-									<div
-										className="dropdown-menu dropdown-menu-right"
-										aria-labelledby="player-action"
-										x-placement="top-end">
-										<a className="dropdown-item disabled text-azure" href="javascript:void(0)">
-											<i className="dropdown-icon fa fa-user text-azure" />
-											{fullname}
-										</a>
-										<div role="separator" className="dropdown-divider" />
-										<a className="dropdown-item action-pay-salary" href="javascript:void(0)">
-											<i className="dropdown-icon fa fa-hand-holding-usd" /> Ödeme Al
-										</a>
-										<a className="dropdown-item action-warning" href="javascript:void(0)">
-											<i className="dropdown-icon fa fa-exclamation-triangle" /> Ödeme İkazı
-										</a>
-										<a className="dropdown-item action-change-password" href="javascript:void(0)">
-											<i className="dropdown-icon fa fa-hand-holding-heart" /> Burs Ver
-										</a>
-										<div role="separator" className="dropdown-divider" />
-										<a className="dropdown-item action-advance-payment" href="javascript:void(0)">
-											<i className="dropdown-icon fa fa-snowflake" /> Kaydı Dondur
-										</a>
-										<a className="dropdown-item action-advance-payment" href="javascript:void(0)">
-											<i className="dropdown-icon fa fa-sync-alt" /> Kaydı Yenile
-										</a>
-										<a className="dropdown-item action-salary-raise" href="javascript:void(0)">
-											<i className="dropdown-icon fa fa-user-times" /> Kaydı Sil
-										</a>
-										<div role="separator" className="dropdown-divider" />
-										<a className="dropdown-item action-day-off" href="javascript:void(0)">
-											<i className="dropdown-icon fa fa-coffee" /> İzin Yaz
-										</a>
-										<div role="separator" className="dropdown-divider" />
-										<a className="dropdown-item action-permission" href="javascript:void(0)">
-											<i className="dropdown-icon fa fa-notes-medical" /> Not (Puan) Ver
-										</a>
-										<div role="separator" className="dropdown-divider" />
-										<a className="dropdown-item action-send-message" href="javascript:void(0)">
-											<i className="dropdown-icon fa fa-paper-plane" /> Veliye Mesaj Gönder
-										</a>
-										<div role="separator" className="dropdown-divider" />
-										<a className="dropdown-item action-edit" href="javascript:void(0)">
-											<i className="dropdown-icon fa fa-pen" /> Düzenle
-										</a>
-										<a className="dropdown-item action-permission" href="javascript:void(0)">
-											<i className="dropdown-icon fa fa-user-cog" /> Grup Değişikliği
-										</a>
-										<a className="dropdown-item action-all-salary-info" href="javascript:void(0)">
-											<i className="dropdown-icon fa fa-id-card-alt" /> Öğrenci Belgesi
-										</a>
-										<a className="dropdown-item action-all-salary-info" href="javascript:void(0)">
-											<i className="dropdown-icon fa fa-receipt" /> Tüm Aidat Bilgisi
-										</a>
-										<a className="dropdown-item action-all-info" href="javascript:void(0)">
-											<i className="dropdown-icon fa fa-info-circle" /> Tüm Bilgileri
-										</a>
+								<BrowserRouter>
+									<div className="dropdown btn-block" id="action-dropdown">
+										<button
+											type="button"
+											id="player-action"
+											className="btn btn-sm btn-secondary btn-block dropdown-toggle"
+											data-toggle="dropdown"
+											aria-haspopup="true"
+											aria-expanded="false">
+											İşlem
+										</button>
+										<div
+											className="dropdown-menu dropdown-menu-right"
+											aria-labelledby="player-action"
+											x-placement="top-end">
+											<a className="dropdown-item disabled text-azure" href="javascript:void(0)">
+												<i className="dropdown-icon fa fa-user text-azure" />
+												{fullname}
+											</a>
+											<div role="separator" className="dropdown-divider" />
+											<a className="dropdown-item action-pay-salary" href="javascript:void(0)">
+												<i className="dropdown-icon fa fa-hand-holding-usd" /> Ödeme Al
+											</a>
+											<a className="dropdown-item action-warning" href="javascript:void(0)">
+												<i className="dropdown-icon fa fa-exclamation-triangle" /> Ödeme İkazı
+											</a>
+											<a
+												className="dropdown-item action-change-password"
+												href="javascript:void(0)">
+												<i className="dropdown-icon fa fa-hand-holding-heart" /> Burs Ver
+											</a>
+											<div role="separator" className="dropdown-divider" />
+											<a
+												className="dropdown-item action-advance-payment"
+												href="javascript:void(0)">
+												<i className="dropdown-icon fa fa-snowflake" /> Kaydı Dondur
+											</a>
+											<a
+												className="dropdown-item action-advance-payment"
+												href="javascript:void(0)">
+												<i className="dropdown-icon fa fa-sync-alt" /> Kaydı Yenile
+											</a>
+											<button
+												className="dropdown-item action-salary-raise"
+												onClick={() => this.deletePlayer(uid, fullname)}>
+												<i className="dropdown-icon fa fa-user-times" /> Kaydı Sil
+											</button>
+											<div role="separator" className="dropdown-divider" />
+											<button
+												className="dropdown-item action-day-off"
+												onClick={() =>
+													this.setState({
+														vacation: true,
+														data: { name: fullname, uid: uid }
+													})
+												}>
+												<i className="dropdown-icon fa fa-coffee" /> İzin Yaz
+											</button>
+											<div role="separator" className="dropdown-divider" />
+											<a className="dropdown-item action-permission" href="javascript:void(0)">
+												<i className="dropdown-icon fa fa-notes-medical" /> Not (Puan) Ver
+											</a>
+											<div role="separator" className="dropdown-divider" />
+											<a className="dropdown-item action-send-message" href="javascript:void(0)">
+												<i className="dropdown-icon fa fa-paper-plane" /> Veliye Mesaj Gönder
+											</a>
+											<div role="separator" className="dropdown-divider" />
+											<Link
+												onClick={() => this.props.history.push(`/app/players/edit/${uid}`)}
+												className="dropdown-item action-edit"
+												to={`/app/players/edit/${uid}`}>
+												<i className="dropdown-icon fa fa-pen" /> Düzenle
+											</Link>
+											<a className="dropdown-item action-permission" href="javascript:void(0)">
+												<i className="dropdown-icon fa fa-user-cog" /> Grup Değişikliği
+											</a>
+											<a
+												className="dropdown-item action-all-salary-info"
+												href="javascript:void(0)">
+												<i className="dropdown-icon fa fa-id-card-alt" /> Öğrenci Belgesi
+											</a>
+											<a
+												className="dropdown-item action-all-salary-info"
+												href="javascript:void(0)">
+												<i className="dropdown-icon fa fa-receipt" /> Tüm Aidat Bilgisi
+											</a>
+											<Link
+												onClick={() => this.props.history.push(`/app/players/detail/${uid}`)}
+												to={`/app/players/detail/${uid}`}
+												className="dropdown-item action-all-info">
+												<i className="dropdown-icon fa fa-info-circle" /> Tüm Bilgileri
+											</Link>
+										</div>
 									</div>
-								</div>,
+								</BrowserRouter>,
 								td
 							);
 						}
@@ -399,11 +483,7 @@ class Table extends Component {
 								data.map(el => {
 									if (el.phone !== "" && el.name !== "" && el.kinship !== "") {
 										j++;
-										elem += `<a href="tel:${
-											el.phone
-										}" data-toggle="tooltip" data-placement="left" data-original-title="${
-											el.kinship
-										}" class="text-inherit d-block">${el.phone}</a> `;
+										elem += `<a href="tel:${el.phone}" data-toggle="tooltip" data-placement="left" data-original-title="${el.kinship}" class="text-inherit d-block">${el.phone}</a> `;
 									}
 								});
 							} else {
@@ -491,28 +571,30 @@ class Table extends Component {
 			.DataTable()
 			.destroy(true);
 	}
-	shouldComponentUpdate() {
-		return false;
-	}
+
 	render() {
+		const { vacation, data } = this.state;
 		return (
-			<table id="player-list" className="table card-table table-vcenter table-striped text-nowrap datatable">
-				<thead>
-					<tr>
-						<th>ID</th>
-						<th className="w-1 no-sort">T.C.</th>
-						<th className="w-1 text-center no-sort">#</th>
-						<th className="name">AD SOYAD</th>
-						<th className="emergency">VELİ TEL.</th>
-						<th className="phone">TELEFON</th>
-						<th className="fee">AİDAT</th>
-						<th className="point">GENEL PUAN</th>
-						<th className="birthday">YAŞ</th>
-						<th className="group">GRUP</th>
-						<th className="no-sort action">DURUM</th>
-					</tr>
-				</thead>
-			</table>
+			<div>
+				<table id="player-list" className="table card-table table-vcenter table-striped text-nowrap datatable">
+					<thead>
+						<tr>
+							<th>ID</th>
+							<th className="w-1 no-sort">T.C.</th>
+							<th className="w-1 text-center no-sort">#</th>
+							<th className="name">AD SOYAD</th>
+							<th className="emergency">VELİ TEL.</th>
+							<th className="phone">TELEFON</th>
+							<th className="fee">AİDAT</th>
+							<th className="point">GENEL PUAN</th>
+							<th className="birthday">YAŞ</th>
+							<th className="group">GRUP</th>
+							<th className="no-sort action">DURUM</th>
+						</tr>
+					</thead>
+				</table>
+				{<Vacation data={data} visible={vacation} />}
+			</div>
 		);
 	}
 }
