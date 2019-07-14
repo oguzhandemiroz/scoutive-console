@@ -58,7 +58,7 @@ export class Detail extends Component {
                     stateData.branch = data.branch || "—";
                     stateData.image = data.image || "—";
                     stateData.address = data.address || "—";
-                    stateData.gender = data.gender !== null ? genderToText(data.gender) : "—";
+                    stateData.gender = data.gender !== null ? genderToText[data.gender] : "—";
                     stateData.birthday = data.birthday || "—";
                     stateData.blood = data.blood || "—";
                     stateData.emergency = data.emergency;
