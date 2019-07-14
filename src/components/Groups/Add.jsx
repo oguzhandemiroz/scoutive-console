@@ -471,7 +471,7 @@ export class Add extends Component {
 									<div className="col d-flex flex-column justify-content-center">
 										<div className="form-group">
 											<label className="form-label">
-												Öğrenci Yaşı:
+												Grup Yaşı:
 												<span className="form-required">*</span>
 											</label>
 											<Select
