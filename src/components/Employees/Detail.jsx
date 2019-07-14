@@ -5,6 +5,12 @@ import { showSwal, Toast } from "../Alert.jsx";
 
 const CryptoJS = require("crypto-js");
 
+
+const genderToText = {
+    0: "Erkek",
+    1: "Kız"
+};
+
 export class Detail extends Component {
 	constructor(props) {
 		super(props);
@@ -53,7 +59,7 @@ export class Detail extends Component {
 					stateData.branch = data.branch || "—";
 					stateData.image = data.image || "—";
 					stateData.address = data.address || "—";
-					stateData.gender = data.gender !== null ? data.gender : "—";
+					stateData.gender = data.gender !== null ? genderToText(data.gender) : "—";
 					stateData.birthday = data.birthday || "—";
 					stateData.blood = data.blood || "—";
 					stateData.emergency = data.emergency;
@@ -301,7 +307,7 @@ export class Detail extends Component {
 												<div className="form-group">
 													<label className="form-label">Cinsiyeti</label>
 													<div className="form-control-plaintext">
-														{gender === 0 ? "Erkek" : "Kadın"}
+														{gender}
 													</div>
 												</div>
 												<div className="form-group">
