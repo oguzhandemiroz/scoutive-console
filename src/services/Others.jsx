@@ -50,10 +50,10 @@ const UploadFile = formData => {
 						return response;
 					}
 				})
-				.catch(e => fatalSwal());
+				.catch(e => fatalSwal(true));
 		}
 	} catch (e) {
-		fatalSwal();
+		fatalSwal(true);
 	}
 };
 
