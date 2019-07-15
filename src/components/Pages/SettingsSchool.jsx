@@ -1,5 +1,9 @@
 import React, {Component} from "react";
 import {Link} from "react-router-dom";
+import General from "../../components/Pages/Settings/General";
+import Notifications from "../../components/Pages/Settings/Notifications";
+import Permission from "../../components/Pages/Settings/Permission";
+import Membership from "../../components/Pages/Settings/Membership";
 
 const settingsMenu = [
     {
@@ -29,18 +33,10 @@ const settingsMenu = [
 ];
 
 const settingsComponentRender = {
-    general: (
-        <div className="card">
-            <div className="card-body">
-                <div className="card-status bg-gray" />
-                <div className="text-wrap p-lg-6">
-                    <h2 className="mt-0 mb-4">Genel</h2>
-                </div>
-            </div>
-        </div>
-    ),
-    notifications: <div>Notif</div>,
-    permission: <div>per</div>
+    general: <General />,
+    notifications: <Notifications />,
+    permission: <Permission />,
+    membership: <Membership/>
 };
 
 export class SettingsSchool extends Component {
