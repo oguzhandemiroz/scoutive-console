@@ -2,7 +2,7 @@ import React, {Component} from "react";
 import {DetailEmployee, DeleteEmployee} from "../../services/Employee.jsx";
 import {Link} from "react-router-dom";
 import {showSwal, Toast} from "../Alert.jsx";
-
+import Tabs from "../../components/Employees/Tabs";
 const CryptoJS = require("crypto-js");
 
 const genderToText = {
@@ -13,7 +13,7 @@ const genderToText = {
 export class Detail extends Component {
     constructor(props) {
         super(props);
-
+        console.log(this.props, " <-");
         this.state = {
             uid: localStorage.getItem("UID"),
             to: props.match.params.uid,
@@ -146,13 +146,14 @@ export class Detail extends Component {
             to,
             onLoadedData
         } = this.state;
+        const {match} = this.props;
         return (
             <div className="container">
                 <div className="page-header">
                     <h1 className="page-title">Personel Detay</h1>
                     <div className="col" />
-                    <div className="col-4">
-                        <select name="user" id="select-employees" className="form-control custom-select" />
+                    <div className="col-auto px-0">
+                        <Tabs match={match} to={to} />
                     </div>
                 </div>
 

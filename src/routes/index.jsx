@@ -7,9 +7,12 @@ import Employees from "../views/Employees/Employees";
 import Players from "../views/Players/Players";
 import _404 from "../views/Pages/404";
 
+import Terms from "../views/Pages/Terms";
+
 import AddEmployee from "../components/Employees/Add";
 import DetailEmployee from "../components/Employees/Detail";
 import EditEmployee from "../components/Employees/Edit";
+import VacationEmployee from "../components/Employees/Vacation";
 
 import AddPlayers from "../components/Players/Add";
 import DetailPlayer from "../components/Players/Detail";
@@ -62,6 +65,13 @@ var indexRoutes = [
         prop: {exact: true}
     },
     {
+        path: "/terms",
+        name: "Terms",
+        component: Terms,
+        layout: "/auth",
+        prop: {exact: true}
+    },
+    {
         path: "/dashboard",
         name: "Dashboard",
         component: Dashboard,
@@ -93,6 +103,13 @@ var indexRoutes = [
         path: "/employees/detail/:uid",
         name: "Detail Employee",
         component: DetailEmployee,
+        layout: "/app",
+        prop: {exact: true}
+    },
+    {
+        path: "/employees/vacation/:uid",
+        name: "Vacation Employee",
+        component: VacationEmployee,
         layout: "/app",
         prop: {exact: true}
     },
