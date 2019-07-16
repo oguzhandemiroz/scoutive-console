@@ -2,13 +2,13 @@ import React, {Component} from "react";
 
 const list = [
     {
-        text: "Sistem güncellemeleri",
+        text: "Sistem güncellemelerini bildir",
         description: `<p class='mb-0'>Sistem üzerindeki yenilikleri, gelişmeleri ve sorun gidermeleri haberdar eder.</p>`,
         sms: "update-sms",
         email: "update-email"
     },
     {
-        text: "Şüpheli giriş bildirimleri",
+        text: "Şüpheli giriş bildir",
         description: `<p>Güvenli Bölge dışı giriş işlemleri yapıldığında uyarır.</p>
             <p>Bu ayarın çalışması için Güvenli Bölge<span class='text-red'>*</span> ayarı yapılmalıdır.</p>
             <p class='mb-0'><span class='text-red'>*</span>: Genel &mdash; "Güvenli Bölge" alanından ayarlanabilir. </p>`,

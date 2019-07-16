@@ -4,6 +4,7 @@ import "popper.js";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 import React from "react";
 import ReactDOM from "react-dom";
+import * as Sentry from '@sentry/browser';
 
 import * as serviceWorker from "./serviceWorker";
 import Core from "./layouts/Core.jsx";
@@ -26,6 +27,12 @@ Array.prototype.diff = function (a) {
         return a.indexOf(i) < 0;
     });
 };
+
+Sentry.init({
+    dsn: "https://c90b37e039fe47be999b38143129dd3d@sentry.io/1505918"
+});
+
+console.log(process.env.NODE_ENV)
 
 const rootElement = document.getElementById("root");
 

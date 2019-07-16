@@ -129,7 +129,7 @@ class HeaderMenu extends Component {
                                             </span>
                                             <i className="dropdown-icon fe fe-mail" /> Gelen Kutusu
                                         </button>
-                                        <button className="dropdown-item" onClick={this.Logout}>
+                                        <button className="dropdown-item">
                                             <i className="dropdown-icon fe fe-send" /> Mesaj
                                         </button>
                                         <div className="dropdown-divider" />
