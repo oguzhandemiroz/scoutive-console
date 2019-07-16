@@ -7,7 +7,8 @@ const CreateEmployee = data => {
 			method: "POST",
 			body: JSON.stringify(data),
 			headers: new Headers({
-				"Content-Type": "application/json"
+				"Content-Type": "application/json",
+				IPADDR: sessionStorage.getItem("IPADDR")
 			})
 		})
 			.then(res => res.json())
@@ -37,7 +38,8 @@ const UpdateEmployee = data => {
 			method: "POST",
 			body: JSON.stringify(data),
 			headers: new Headers({
-				"Content-Type": "application/json"
+				"Content-Type": "application/json",
+				IPADDR: sessionStorage.getItem("IPADDR")
 			})
 		})
 			.then(res => res.json())
@@ -65,12 +67,13 @@ const UpdateEmployee = data => {
 
 const DetailEmployee = data => {
 	try {
+		const h = new Headers();
+		h.append("Content-Type", "application/json");
+		h.append("XIP", sessionStorage.getItem("IPADDR"));
 		return fetch(ep.GET_EMPLOYEE, {
 			method: "POST",
 			body: JSON.stringify(data),
-			headers: new Headers({
-				"Content-Type": "application/json"
-			})
+			headers: h
 		})
 			.then(res => res.json())
 			.then(response => {
@@ -98,7 +101,8 @@ const ListEmployee = uid => {
 				uid: uid
 			}),
 			headers: new Headers({
-				"Content-Type": "application/json"
+				"Content-Type": "application/json",
+				IPADDR: sessionStorage.getItem("IPADDR")
 			})
 		})
 			.then(res => res.json())
@@ -122,7 +126,8 @@ const DeleteEmployee = data => {
 			method: "POST",
 			body: JSON.stringify(data),
 			headers: new Headers({
-				"Content-Type": "application/json"
+				"Content-Type": "application/json",
+				IPADDR: sessionStorage.getItem("IPADDR")
 			})
 		})
 			.then(res => res.json())

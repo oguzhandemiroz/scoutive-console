@@ -5,9 +5,9 @@ import "bootstrap/dist/js/bootstrap.bundle.min";
 import React from "react";
 import ReactDOM from "react-dom";
 import * as Sentry from '@sentry/browser';
-
 import * as serviceWorker from "./serviceWorker";
 import Core from "./layouts/Core.jsx";
+import ep from "./assets/js/urls";
 const $ = require("jquery");
 
 /** Initialize popovers */
@@ -28,11 +28,19 @@ Array.prototype.diff = function (a) {
     });
 };
 
-Sentry.init({
-    dsn: "https://c90b37e039fe47be999b38143129dd3d@sentry.io/1505918"
-});
+if (sessionStorage.getItem("IPADDR") === null) {
+    fetch(ep.GET_IP).then(res => res.json()).then(response => {
+        console.log("istek ip")
+        sessionStorage.setItem("IPADDR", response.ip);
+    });
+}
 
-console.log(process.env.NODE_ENV)
+
+if (process.env.NODE_ENV !== "development") {
+    Sentry.init({
+        dsn: "https://c90b37e039fe47be999b38143129dd3d@sentry.io/1505918"
+    });
+}
 
 const rootElement = document.getElementById("root");
 

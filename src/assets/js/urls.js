@@ -3,6 +3,7 @@ var host = "https://scoutive.online/";
 var api_version = "api/v1/";
 
 var ep = {
+    GET_IP: "https://api.ipify.org?format=json",
     BLOOD_TYPE: host + api_version + "get/bloods",
     PLAYER_POSITION_TYPE: host + api_version + "get/positions/players",
     EMPLOYEE_POSITION_TYPE: host + api_version + "get/positions/employee",
