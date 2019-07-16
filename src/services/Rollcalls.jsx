@@ -1,14 +1,17 @@
 import { fatalSwal, errorSwal } from "../components/Alert";
 import ep from "../assets/js/urls";
 
+const h = new Headers();
+h.append("Content-Type", "application/json");
+h.append("XIP", sessionStorage.getItem("IPADDR"));
+h.append("Authorization", localStorage.getItem("UID"));
+
 const ListRollcall = data => {
 	try {
 		return fetch(ep.LIST_ROLLCALL, {
 			method: "POST",
 			body: JSON.stringify(data),
-			headers: new Headers({
-				"Content-Type": "application/json"
-			})
+			headers: h
 		})
 			.then(res => res.json())
 			.then(response => {
@@ -31,9 +34,7 @@ const CompleteRollcall = uid => {
 			body: JSON.stringify({
 				uid: uid
 			}),
-			headers: new Headers({
-				"Content-Type": "application/json"
-			})
+			headers: h
 		})
 			.then(res => res.json())
 			.then(response => {
@@ -66,9 +67,7 @@ const CreateRollcall = data => {
 		return fetch(ep.CREATE_ROLLCALL, {
 			method: "POST",
 			body: JSON.stringify(data),
-			headers: new Headers({
-				"Content-Type": "application/json"
-			})
+			headers: h
 		})
 			.then(res => res.json())
 			.then(response => {

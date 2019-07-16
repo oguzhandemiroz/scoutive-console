@@ -1,14 +1,17 @@
 import { errorSwal, fatalSwal, Toast } from "../components/Alert";
 import ep from "../assets/js/urls";
 
+const h = new Headers();
+h.append("Content-Type", "application/json");
+h.append("XIP", sessionStorage.getItem("IPADDR"));
+h.append("Authorization", localStorage.getItem("UID"));
+
 const CreateGroup = data => {
 	try {
 		return fetch(ep.CREATE_GROUP, {
 			method: "POST",
 			body: JSON.stringify(data),
-			headers: new Headers({
-				"Content-Type": "application/json"
-			})
+			headers: h
 		})
 			.then(res => res.json())
 			.then(response => {
@@ -32,9 +35,7 @@ const DetailGroup = data => {
 		return fetch(ep.GET_GROUP, {
 			method: "POST",
 			body: JSON.stringify(data),
-			headers: new Headers({
-				"Content-Type": "application/json"
-			})
+			headers: h
 		})
 			.then(res => res.json())
 			.then(response => {
@@ -58,9 +59,7 @@ const ListGroups = uid => {
 			body: JSON.stringify({
 				uid: uid
 			}),
-			headers: new Headers({
-				"Content-Type": "application/json"
-			})
+			headers: h
 		})
 			.then(res => res.json())
 			.then(response => {
@@ -84,9 +83,7 @@ const ListPlayers = data => {
 		return fetch(ep.LIST_PLAYER, {
 			method: "POST",
 			body: JSON.stringify(data),
-			headers: new Headers({
-				"Content-Type": "application/json"
-			})
+			headers: h
 		})
 			.then(res => res.json())
 			.then(response => {
@@ -113,9 +110,7 @@ const UpdateGroup = data => {
 		return fetch(ep.UPDATE_GROUP, {
 			method: "POST",
 			body: JSON.stringify(data),
-			headers: new Headers({
-				"Content-Type": "application/json"
-			})
+			headers: h
 		})
 			.then(res => res.json())
 			.then(response => {

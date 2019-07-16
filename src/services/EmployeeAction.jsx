@@ -1,15 +1,18 @@
 import { errorSwal, fatalSwal, Toast } from "../components/Alert";
 import ep from "../assets/js/urls";
 
+const h = new Headers();
+h.append("Content-Type", "application/json");
+h.append("XIP", sessionStorage.getItem("IPADDR"));
+h.append("Authorization", localStorage.getItem("UID"));
+
 const CreateVacation = (data, type) => {
 	try {
 		console.log(data, type);
 		return fetch(ep.VACATION_CREATE + type, {
 			method: "POST",
 			body: JSON.stringify(data),
-			headers: new Headers({
-				"Content-Type": "application/json"
-			})
+			headers: h
 		})
 			.then(res => res.json())
 			.then(response => {
@@ -30,9 +33,7 @@ const UpdateVacation = data => {
 		return fetch(ep.VACATION_UPDATE, {
 			method: "POST",
 			body: JSON.stringify(data),
-			headers: new Headers({
-				"Content-Type": "application/json"
-			})
+			headers: h
 		})
 			.then(res => res.json())
 			.then(response => {
@@ -53,9 +54,7 @@ const ListVacations = (data, type) => {
 		return fetch(ep.VACATION_LIST + type, {
 			method: "POST",
 			body: JSON.stringify(data),
-			headers: new Headers({
-				"Content-Type": "application/json"
-			})
+			headers: h
 		})
 			.then(res => res.json())
 			.then(response => {

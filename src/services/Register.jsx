@@ -3,14 +3,17 @@ import { showSwal, errorSwal, fatalSwal } from "../components/Alert.jsx";
 import { RequestLogin } from "./Login";
 import Swal from "sweetalert2";
 
+const h = new Headers();
+h.append("Content-Type", "application/json");
+h.append("XIP", sessionStorage.getItem("IPADDR"));
+h.append("Authorization", localStorage.getItem("UID"));
+
 const RequestRegister = data => {
 	try {
 		return fetch(ep.SCHOOL_CREATE, {
 			method: "POST",
 			body: JSON.stringify(data),
-			headers: new Headers({
-				"Content-Type": "application/json"
-			})
+			headers: h
 		})
 			.then(res => {
 				return res.json();
@@ -64,9 +67,7 @@ const RequestRegister = data => {
 									uid: response.data.uid,
 									code: code
 								}),
-								headers: new Headers({
-									"Content-Type": "application/json"
-								})
+								headers: h
 							})
 								.then(function(res) {
 									if (!res.ok) {

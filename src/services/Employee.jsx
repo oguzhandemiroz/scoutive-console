@@ -1,15 +1,17 @@
 import { errorSwal, fatalSwal, Toast } from "../components/Alert.jsx";
 import ep from "../assets/js/urls.js";
 
+const h = new Headers();
+h.append("Content-Type", "application/json");
+h.append("XIP", sessionStorage.getItem("IPADDR"));
+h.append("Authorization", localStorage.getItem("UID"));
+
 const CreateEmployee = data => {
 	try {
 		return fetch(ep.CREATE_EMPLOYEE, {
 			method: "POST",
 			body: JSON.stringify(data),
-			headers: new Headers({
-				"Content-Type": "application/json",
-				IPADDR: sessionStorage.getItem("IPADDR")
-			})
+			headers: h
 		})
 			.then(res => res.json())
 			.then(response => {
@@ -37,10 +39,7 @@ const UpdateEmployee = data => {
 		return fetch(ep.UPDATE_EMPLOYEE, {
 			method: "POST",
 			body: JSON.stringify(data),
-			headers: new Headers({
-				"Content-Type": "application/json",
-				IPADDR: sessionStorage.getItem("IPADDR")
-			})
+			headers: h
 		})
 			.then(res => res.json())
 			.then(response => {
@@ -67,9 +66,6 @@ const UpdateEmployee = data => {
 
 const DetailEmployee = data => {
 	try {
-		const h = new Headers();
-		h.append("Content-Type", "application/json");
-		h.append("XIP", sessionStorage.getItem("IPADDR"));
 		return fetch(ep.GET_EMPLOYEE, {
 			method: "POST",
 			body: JSON.stringify(data),
@@ -100,10 +96,7 @@ const ListEmployee = uid => {
 			body: JSON.stringify({
 				uid: uid
 			}),
-			headers: new Headers({
-				"Content-Type": "application/json",
-				IPADDR: sessionStorage.getItem("IPADDR")
-			})
+			headers: h
 		})
 			.then(res => res.json())
 			.then(response => {
@@ -125,10 +118,7 @@ const DeleteEmployee = data => {
 		return fetch(ep.EMPLOYEE_DELETE, {
 			method: "POST",
 			body: JSON.stringify(data),
-			headers: new Headers({
-				"Content-Type": "application/json",
-				IPADDR: sessionStorage.getItem("IPADDR")
-			})
+			headers: h
 		})
 			.then(res => res.json())
 			.then(response => {

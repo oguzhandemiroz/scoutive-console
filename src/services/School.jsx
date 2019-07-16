@@ -1,14 +1,17 @@
 import { fatalSwal, errorSwal, Toast } from "../components/Alert";
 import ep from "../assets/js/urls";
 
+const h = new Headers();
+h.append("Content-Type", "application/json");
+h.append("XIP", sessionStorage.getItem("IPADDR"));
+h.append("Authorization", localStorage.getItem("UID"));
+
 const GetSchool = data => {
 	try {
 		return fetch(ep.SCHOOL_GET, {
 			method: "POST",
 			body: JSON.stringify(data),
-			headers: new Headers({
-				"Content-Type": "application/json"
-			})
+			headers: h
 		})
 			.then(res => res.json())
 			.then(response => {
@@ -30,9 +33,7 @@ const UpdateSchool = data => {
 		return fetch(ep.SCHOOL_UPDATE, {
 			method: "POST",
 			body: JSON.stringify(data),
-			headers: new Headers({
-				"Content-Type": "application/json"
-			})
+			headers: h
 		})
 			.then(res => res.json())
 			.then(response => {
