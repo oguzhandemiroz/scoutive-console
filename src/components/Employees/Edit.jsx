@@ -905,7 +905,7 @@ export class Edit extends Component {
 																				<td>
 																					<input
 																						type="number"
-																						min="1950"
+																						min={school_history[key].start || 1951}
 																						max="2030"
 																						className="w-9 form-control"
 																						name={`school_history.end.${key}`}
