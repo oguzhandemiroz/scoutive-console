@@ -854,6 +854,7 @@ export class Add extends Component {
                                                                 <td className="pl-0">
                                                                     <input
                                                                         type="text"
+                                                                        maxLength="10"
                                                                         name={`emergency.phone.${key}`}
                                                                         onChange={this.handleChange}
                                                                         className="form-control"
