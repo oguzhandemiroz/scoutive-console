@@ -10,6 +10,7 @@ import { fatalSwal, errorSwal } from "../Alert.jsx";
 import ReactDOM from "react-dom";
 import { BrowserRouter, Link } from "react-router-dom";
 import Vacation from "../EmployeeAction/Vacation";
+import { fullnameGenerator } from "../../services/Others";
 const $ = require("jquery");
 $.DataTable = require("datatables.net");
 
@@ -230,7 +231,7 @@ class Table extends Component {
 					{
 						targets: "name",
 						createdCell: (td, cellData, rowData) => {
-							const fullname = cellData + " " + rowData.surname;
+							const fullname = fullnameGenerator(cellData, rowData.surname);
 							ReactDOM.render(
 								<BrowserRouter>
 									<Link
@@ -251,7 +252,7 @@ class Table extends Component {
 					{
 						targets: "action",
 						createdCell: (td, cellData, rowData) => {
-							const fullname = rowData.name + " " + rowData.surname;
+							const fullname = fullnameGenerator(rowData.name, rowData.surname);
 							const uid = rowData.uid;
 							ReactDOM.render(
 								<BrowserRouter>
