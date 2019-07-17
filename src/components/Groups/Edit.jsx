@@ -355,9 +355,9 @@ export class Edit extends Component {
 
 	handleImage = e => {
 		try {
+			e.preventDefault();
 			const { uid } = this.state;
 			const { gid } = this.props.match.params;
-			e.preventDefault();
 			const formData = new FormData();
 			let reader = new FileReader();
 			let file = e.target.files[0];
@@ -366,27 +366,25 @@ export class Edit extends Component {
 					this.setState({
 						imagePreview: reader.result
 					});
+					this.setState({ uploadedFile: false, loadingButton: "btn-loading" });
 				}
 				formData.append("image", file);
 				formData.append("uid", uid);
 				formData.append("to", gid);
 				formData.append("type", "group");
-				this.setState({ uploadedFile: false });
 				UploadFile(formData)
 					.then(response => {
 						if (response) {
-							if (response.status.code === 1020) {
-								this.setState({ image: response.data });
-							} else {
+							if (response.status.code === 1020) this.setState({ image: response.data });
+							else
 								Toast.fire({
 									type: "error",
 									title: "Görsel yüklenemedi..."
 								});
-							}
-							this.setState({ uploadedFile: true });
 						}
+						this.setState({ uploadedFile: true, loadingButton: "" });
 					})
-					.catch(e => this.setState({ uploadedFile: true }));
+					.catch(e => this.setState({ uploadedFile: true, loadingButton: "" }));
 			};
 
 			reader.readAsDataURL(file);

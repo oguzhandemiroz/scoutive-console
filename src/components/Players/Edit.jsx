@@ -207,6 +207,7 @@ export class Edit extends Component {
 		try {
 			e.preventDefault();
 			const {
+				uid,
 				to,
 				name,
 				surname,
@@ -312,7 +313,7 @@ export class Edit extends Component {
 			if (formValid(requiredData)) {
 				this.setState({ loadingButton: "btn-loading" });
 				UpdatePlayer({
-					uid: localStorage.getItem("UID"),
+					uid: uid,
 					to: to,
 					name: name,
 					surname: surname,
@@ -417,6 +418,7 @@ export class Edit extends Component {
 	handleImage = e => {
 		try {
 			e.preventDefault();
+			const { uid, to } = this.state;
 			const formData = new FormData();
 			let reader = new FileReader();
 			let file = e.target.files[0];
@@ -425,16 +427,15 @@ export class Edit extends Component {
 					this.setState({
 						imagePreview: reader.result
 					});
+					this.setState({ uploadedFile: false, loadingButton: "btn-loading" });
 				}
 				formData.append("image", file);
-				formData.append("uid", localStorage.getItem("UID"));
-				formData.append("to", this.state.to);
+				formData.append("uid", uid);
+				formData.append("to", to);
 				formData.append("type", "player");
-				this.setState({ uploadedFile: false });
 				UploadFile(formData).then(response => {
-					if (response) if (response.status.code === 1020) this.setState({ image: response.data });
-
-					this.setState({ uploadedFile: true });
+					if (response) this.setState({ image: response.data });
+					this.setState({ uploadedFile: true, loadingButton: "" });
 				});
 			};
 

@@ -25,8 +25,8 @@ const CreateEmployee = data => {
 						type: "success",
 						title: "Başarıyla oluşturuldu..."
 					});
+					return response;
 				}
-				return response;
 			})
 			.catch(e => fatalSwal(true));
 	} catch (e) {

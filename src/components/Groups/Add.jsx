@@ -228,12 +228,11 @@ export class Add extends Component {
            `);
 
 			if (formValid(requiredData)) {
-				this.setState({ loadingButton: "btn-loading" });
-
 				players.map(el => {
 					if (el.security_id && el.security_id !== "") playersArr.push(el.security_id);
 				});
 
+				this.setState({ loadingButton: "btn-loading" });
 				CreateGroup({
 					uid: uid,
 					name: name,
@@ -354,7 +353,6 @@ export class Add extends Component {
 					});
 				}
 			};
-
 			reader.readAsDataURL(file);
 		} catch (e) {}
 	};

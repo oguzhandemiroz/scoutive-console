@@ -75,6 +75,7 @@ export class Add extends Component {
 		super(props);
 
 		this.state = {
+			uid: localStorage.getItem("UID"),
 			...initialState,
 			select: {
 				bloods: null,
@@ -159,6 +160,7 @@ export class Add extends Component {
 	handleSubmit = e => {
 		e.preventDefault();
 		const {
+			uid,
 			name,
 			surname,
 			securityNo,
@@ -200,7 +202,6 @@ export class Add extends Component {
 		requiredData.month = month ? month.value : null;
 		requiredData.year = year ? year.value : null;
 		requiredData.foot = foot;
-		requiredData.foot_no = foot_no;
 		requiredData.formErrors = formErrors;
 
 		//attributes data
@@ -276,7 +277,7 @@ export class Add extends Component {
 			this.setState({ loadingButton: "btn-loading" });
 
 			CreatePlayer({
-				uid: localStorage.getItem("UID"),
+				uid: uid,
 				name: name,
 				surname: surname,
 				password: "0000",
@@ -296,48 +297,26 @@ export class Add extends Component {
 				birthday: checkBirthday,
 				attributes: attributesData
 			}).then(response => {
-				setTimeout(() => {
-					if (response) {
-						if (response.status.code === 1020) {
-							if (addContinuously) {
-								if (imagePreview) {
-									const formData = new FormData();
-									formData.append("image", file);
-									formData.append("uid", localStorage.getItem("UID"));
-									formData.append("to", response.uid);
-									formData.append("type", "player");
-									formData.append("update", true);
-									this.setState({ uploadedFile: false });
-									UploadFile(formData).then(response => {
-										if (response.status.code === 1020) {
-											this.setState({ uploadedFile: true });
-										}
-										this.setState({ ...initialState });
-									});
-								} else {
-									this.setState({ ...initialState });
-								}
-							} else {
-								if (imagePreview) {
-									const formData = new FormData();
-									formData.append("image", file);
-									formData.append("uid", localStorage.getItem("UID"));
-									formData.append("to", response.uid);
-									formData.append("type", "player");
-									formData.append("update", true);
-									this.setState({ uploadedFile: false });
-									UploadFile(formData).then(response => {
-										if (response.status.code === 1020) {
-											this.setState({ uploadedFile: true });
-											this.props.history.push("/app/players");
-										}
-									});
-								} else this.props.history.push("/app/players");
-							}
-						}
-					}
-				}, 1000);
-				this.setState({ loadingButton: "" });
+				const formData = new FormData();
+				var imageUploading = false;
+				if (response) {
+					if (imagePreview) {
+						this.setState({ uploadedFile: false });
+						imageUploading = true;
+						formData.append("image", file);
+						formData.append("uid", uid);
+						formData.append("to", response.uid);
+						formData.append("type", "player");
+						formData.append("update", true);
+						UploadFile(formData).then(response => {
+							this.setState({ uploadedFile: true, loadingButton: "" });
+							if (response)
+								if (!addContinuously) this.props.history.push("/app/players");
+								else this.setState({ ...initialState });
+						});
+					} else if (addContinuously) this.setState({ ...initialState, loadingButton: "" });
+					else this.props.history.push("/app/players");
+				} else this.setState({ loadingButton: "" });
 			});
 		} else {
 			console.error("FORM INVALID - DISPLAY ERROR");
@@ -356,7 +335,6 @@ export class Add extends Component {
 			formErrors.phone = phone ? (phone.length !== 10 ? "is-invalid" : "") : "";
 			formErrors.fee = fee ? "" : "is-invalid";
 			formErrors.foot = foot !== null ? "" : "is-invalid";
-			formErrors.foot_no = foot_no ? "" : "is-invalid";
 			//formErrors.point = point ? "" : "is-invalid-iconless";
 			//select
 			formErrors.position = position ? "" : true;
@@ -396,9 +374,6 @@ export class Add extends Component {
 			/*case "point":
                 formErrors.point = value ? "" : "is-invalid-iconless";
                 break;*/
-			case "foot_no":
-				formErrors.foot_no = value ? "" : "is-invalid";
-				break;
 			default:
 				break;
 		}
@@ -910,11 +885,10 @@ export class Add extends Component {
 										<div className="form-group">
 											<label className="form-label">
 												Ayak Numarası
-												<span className="form-required">*</span>
 											</label>
 											<input
 												type="number"
-												className={`form-control ${formErrors.foot_no}`}
+												className="form-control"
 												onChange={this.handleChange}
 												placeholder="Ayak Numarası"
 												name="foot_no"

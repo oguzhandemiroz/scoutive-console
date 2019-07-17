@@ -262,7 +262,8 @@ class Table extends Component {
 			const UID = localStorage.getItem("UID");
 			$("#player-list").DataTable({
 				responsive: true,
-				order: [0, "desc"],
+				order: [3, "asc"],
+				aLengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "Tümü"]],
 				stateSave: false, // change true
 				language: {
 					...datatable_turkish,
