@@ -7,7 +7,7 @@ const CryptoJS = require("crypto-js");
 
 const genderToText = {
     0: "Erkek",
-    1: "Kız"
+    1: "Kadın"
 };
 
 export class Detail extends Component {
