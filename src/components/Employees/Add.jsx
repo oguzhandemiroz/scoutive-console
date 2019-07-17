@@ -730,7 +730,8 @@ export class Add extends Component {
                                                         onChange={this.handleChange}
                                                         name="body_height"
                                                         placeholder="Boy (cm)"
-                                                        min={0}
+                                                        min="0"
+                                                        max="250"
                                                         value={body_height || ""}
                                                     />
                                                 </div>
@@ -742,7 +743,8 @@ export class Add extends Component {
                                                         name="body_weight"
                                                         placeholder="Kilo (kg)"
                                                         id="weight"
-                                                        min={0}
+                                                        min="0"
+                                                        max="250"
                                                         value={body_weight || ""}
                                                     />
                                                 </div>

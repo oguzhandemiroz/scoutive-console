@@ -841,7 +841,8 @@ export class Edit extends Component {
 																onChange={this.handleChange}
 																name="body_height"
 																placeholder="Boy (cm)"
-																min={0}
+																min="0"
+																max="250"
 																value={body_height || ""}
 															/>
 														</div>
@@ -852,8 +853,8 @@ export class Edit extends Component {
 																onChange={this.handleChange}
 																name="body_weight"
 																placeholder="Kilo (kg)"
-																id="weight"
-																min={0}
+																min="0"
+																max="250"
 																value={body_weight || ""}
 															/>
 														</div>
@@ -1003,9 +1004,7 @@ export class Edit extends Component {
 																								: true
 																						}
 																						noOptionsMessage={value =>
-																							`"${
-																								value.inputValue
-																							}" bulunamadı`
+																							`"${value.inputValue}" bulunamadı`
 																						}
 																						menuPlacement="top"
 																					/>
