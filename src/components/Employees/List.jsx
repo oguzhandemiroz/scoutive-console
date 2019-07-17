@@ -359,11 +359,11 @@ class Table extends Component {
 						}
 					},
 					dataSrc: function(d) {
-						console.log(d);
+						console.log("dataSrc", d);
 						if (d.status.code !== 1020) {
-							fatalSwal(true);
-						}
-						return d.data;
+							errorSwal(d.status);
+							return [];
+						} else return d.data;
 					}
 				},
 				columns: [

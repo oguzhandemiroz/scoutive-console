@@ -422,15 +422,15 @@ class Table extends Component {
 								else errorSwal(res.responseJSON.status);
 							}
 						} catch (e) {
-							fatalSwal();
+							fatalSwal(true);
 						}
 					},
 					dataSrc: function(d) {
 						console.log(d);
 						if (d.status.code !== 1020) {
-							fatalSwal(true);
-						}
-						return d.data;
+							errorSwal(d.status);
+							return [];
+						} else return d.data;
 					}
 				},
 				columns: [
