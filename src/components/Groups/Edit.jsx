@@ -4,7 +4,7 @@ import { withRouter, Link } from "react-router-dom";
 import { UpdateGroup, ListPlayers, DetailGroup } from "../../services/Group";
 import { UpdatePlayers } from "../../services/Player";
 import { Hours, Minutes, DateRange, GetEmployees, GetPlayers } from "../../services/FillSelect";
-import { getSelectValue, UploadFile } from "../../services/Others";
+import { getSelectValue, UploadFile, groupAgeSplit } from "../../services/Others";
 import { Toast, showSwal } from "../../components/Alert";
 import List from "./List";
 
@@ -47,7 +47,6 @@ const initialState = {
 	name: null,
 	hour: null,
 	minute: null,
-	age: null,
 	employee: null,
 	imagePreview: null,
 	players: null
@@ -63,7 +62,6 @@ export class Edit extends Component {
 			select: {
 				hours: null,
 				minutes: null,
-				ages: null,
 				employees: null,
 				players: null
 			},
@@ -71,7 +69,8 @@ export class Edit extends Component {
 				name: "",
 				hours: "",
 				minutes: "",
-				age: "",
+				start_age: "",
+				end_age: "",
 				employee: ""
 			},
 			group_id: null,
@@ -178,7 +177,6 @@ export class Edit extends Component {
 
 		select.hours = Hours();
 		select.minutes = Minutes();
-		select.ages = DateRange(1985, 2017, "reverse");
 
 		this.setState({ select });
 
@@ -194,7 +192,8 @@ export class Edit extends Component {
 					stateData.hour = getSelectValue(select.hours, data.time.slice(0, 2), "label");
 					stateData.minute = getSelectValue(select.minutes, data.time.slice(3, -3), "label");
 					stateData.employee = getSelectValue(select.employees, data.employee.employee_id, "value");
-					stateData.age = getSelectValue(select.ages, data.age, "label");
+					stateData.start_age = groupAgeSplit(data.age).start;
+					stateData.end_age = groupAgeSplit(data.age).end;
 					stateData.imagePreview = data.image ? data.image : null;
 					this.setState({ ...stateData, onLoadedData: true });
 				}
@@ -237,10 +236,11 @@ export class Edit extends Component {
 				hour,
 				minute,
 				employee,
-				age,
 				image,
 				players,
 				addGroup,
+				start_age,
+				end_age,
 				removeGroup,
 				formErrors
 			} = this.state;
@@ -254,7 +254,8 @@ export class Edit extends Component {
 			requiredData.hour = hour;
 			requiredData.minute = minute;
 			requiredData.employee = employee;
-			requiredData.age = age;
+			requiredData.start_age = start_age;
+			requiredData.end_age = end_age;
 			requiredData.formErrors = formErrors;
 
 			console.log(`
@@ -263,7 +264,7 @@ export class Edit extends Component {
                hour: ${hour}
                minute: ${minute}
                employee: ${employee}
-               age: ${age}
+               age: ${start_age}-${end_age}
            `);
 
 			if (formValid(requiredData)) {
@@ -281,7 +282,7 @@ export class Edit extends Component {
 						name: name,
 						time: `${hour.value}:${minute.value}`,
 						employee_id: employee.value,
-						age: age.value,
+						age: `${start_age}-${end_age}`,
 						image: image
 					}),
 					UpdatePlayers({
@@ -329,7 +330,8 @@ export class Edit extends Component {
 				formErrors.hour = hour ? "" : true;
 				formErrors.minute = minute ? "" : true;
 				formErrors.employee = employee ? "" : true;
-				formErrors.age = age ? "" : true;
+				formErrors.start_age = start_age ? "" : "is-invalid";
+				formErrors.end_age = end_age ? "" : "is-invalid";
 
 				this.setState({ formErrors });
 			}
@@ -410,7 +412,8 @@ export class Edit extends Component {
 			hour,
 			minute,
 			employee,
-			age,
+			start_age,
+			end_age,
 			select,
 			uploadedFile,
 			imagePreview,
@@ -520,23 +523,40 @@ export class Edit extends Component {
 											<div className="col d-flex flex-column justify-content-center">
 												<div className="form-group">
 													<label className="form-label">
-														Öğrenci Yaşı:
+														Grup Yaş Aralığı
 														<span className="form-required">*</span>
 													</label>
-													<Select
-														value={age}
-														isSearchable={true}
-														isDisabled={select.ages ? false : true}
-														placeholder="Doğum yılı..."
-														onChange={val => this.handleSelect(val, "age")}
-														name="age"
-														autosize
-														styles={
-															formErrors.age === true ? customStylesError : customStyles
-														}
-														options={select.ages}
-														noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
-													/>
+													<div className="row gutters-xs">
+														<div className="col">
+															<input
+																placeholder="Başlangıç"
+																type="number"
+																min="1980"
+																max="2019"
+																className={`form-control ${formErrors.start_age}`}
+																name="start_age"
+																onChange={this.handleChange}
+																value={start_age || ""}
+															/>
+														</div>
+														<span
+															className="mx-1 font-weight-bold d-flex align-items-center"
+															style={{ fontSize: ".75rem", color: "#6e7687" }}>
+															&mdash;
+														</span>
+														<div className="col">
+															<input
+																placeholder="Bitiş"
+																type="number"
+																min={start_age || "1981"}
+																max="2019"
+																className={`form-control ${formErrors.end_age}`}
+																name="end_age"
+																onChange={this.handleChange}
+																value={end_age || ""}
+															/>
+														</div>
+													</div>
 												</div>
 											</div>
 											<div className="col d-flex flex-column justify-content-center">

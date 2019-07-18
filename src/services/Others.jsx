@@ -90,6 +90,25 @@ const fullnameGenerator = (name, surname) => {
 	}
 };
 
+const groupAgeSplit = age => {
+	try {
+		var result = {};
+		const __split = age.indexOf("-") > -1 ? age.split("-") : null;
+		if (__split) {
+			const start = parseInt(__split[0]);
+			const end = parseInt(__split[1]);
+			result = {
+				start: start,
+				end: end,
+				diff: end - start
+			};
+		} else {
+			result = { start: age, end: age, diff: age - age };
+		}
+		return result;
+	} catch (e) {}
+};
+
 function ObjectIsEqual(objA, objB) {
 	// Create arrays of property names
 	var aProps = Object.getOwnPropertyNames(objA);
@@ -120,5 +139,6 @@ export {
 	ObjectIsEqual,
 	systemClock,
 	nullCheck,
-	fullnameGenerator
+	fullnameGenerator,
+	groupAgeSplit
 };

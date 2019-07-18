@@ -266,7 +266,7 @@ export class Edit extends Component {
 			attributesData.salary = salary;
 		}
 		if (AttributeDataChecker(responseData.position, position ? position.label : null)) {
-			attributesData.position = position.value;
+			attributesData.position = position ? position.value : "";
 		}
 		if (AttributeDataChecker(responseData.email, email)) {
 			attributesData.email = email;

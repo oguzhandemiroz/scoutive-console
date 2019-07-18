@@ -47,6 +47,8 @@ const initialState = {
 	name: null,
 	hour: null,
 	minute: null,
+	start_age: null,
+	end_age: null,
 	age: null,
 	employee: null,
 	imagePreview: null,
@@ -63,7 +65,6 @@ export class Add extends Component {
 			select: {
 				hours: null,
 				minutes: null,
-				ages: null,
 				employees: null,
 				players: null
 			},
@@ -71,7 +72,8 @@ export class Add extends Component {
 				name: "",
 				hours: "",
 				minutes: "",
-				age: "",
+				start_age: "",
+				end_age: "",
 				employee: ""
 			},
 			group_id: null,
@@ -196,7 +198,6 @@ export class Add extends Component {
 
 		select.hours = Hours();
 		select.minutes = Minutes();
-		select.ages = DateRange(1985, 2017, "reverse");
 
 		this.setState({ select });
 	}
@@ -204,7 +205,19 @@ export class Add extends Component {
 	handleSubmit = e => {
 		try {
 			e.preventDefault();
-			const { uid, name, hour, minute, employee, age, file, imagePreview, players, formErrors } = this.state;
+			const {
+				uid,
+				name,
+				hour,
+				minute,
+				employee,
+				start_age,
+				end_age,
+				file,
+				imagePreview,
+				players,
+				formErrors
+			} = this.state;
 
 			const requiredData = {};
 			const playersArr = [];
@@ -215,7 +228,8 @@ export class Add extends Component {
 			requiredData.hour = hour;
 			requiredData.minute = minute;
 			requiredData.employee = employee;
-			requiredData.age = age;
+			requiredData.start_age = start_age;
+			requiredData.end_age = end_age;
 			requiredData.formErrors = formErrors;
 
 			console.log(`
@@ -224,7 +238,7 @@ export class Add extends Component {
                hour: ${hour}
                minute: ${minute}
                employee: ${employee}
-               age: ${age}
+               age: ${start_age}-${end_age}
            `);
 
 			if (formValid(requiredData)) {
@@ -238,7 +252,7 @@ export class Add extends Component {
 					name: name,
 					time: `${hour.value}:${minute.value}`,
 					employee_id: employee.value,
-					age: age.value
+					age: `${start_age}-${end_age}`
 				}).then(response => {
 					if (response) {
 						if (response.status.code === 1020) {
@@ -316,7 +330,8 @@ export class Add extends Component {
 				formErrors.hour = hour ? "" : true;
 				formErrors.minute = minute ? "" : true;
 				formErrors.employee = employee ? "" : true;
-				formErrors.age = age ? "" : true;
+				formErrors.start_age = start_age ? "" : "is-invalid";
+				formErrors.end_age = end_age ? "" : "is-invalid";
 
 				this.setState({ formErrors });
 			}
@@ -374,7 +389,7 @@ export class Add extends Component {
 	};
 
 	render() {
-		const { select, uploadedFile, imagePreview, playerList, loadingButton, formErrors } = this.state;
+		const { select, start_age, uploadedFile, imagePreview, playerList, loadingButton, formErrors } = this.state;
 		return (
 			<div className="container">
 				<div className="page-header">
@@ -469,20 +484,38 @@ export class Add extends Component {
 									<div className="col d-flex flex-column justify-content-center">
 										<div className="form-group">
 											<label className="form-label">
-												Grup Yaşı:
+												Grup Yaş Aralığı:
 												<span className="form-required">*</span>
 											</label>
-											<Select
-												isSearchable={true}
-												isDisabled={select.ages ? false : true}
-												placeholder="Doğum yılı..."
-												onChange={val => this.handleSelect(val, "age")}
-												name="age"
-												autosize
-												styles={formErrors.age === true ? customStylesError : customStyles}
-												options={select.ages}
-												noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
-											/>
+											<div className="row gutters-xs">
+												<div className="col">
+													<input
+														placeholder="Başlangıç"
+														type="number"
+														min="1980"
+														max="2019"
+														className={`form-control ${formErrors.start_age}`}
+														name="start_age"
+														onChange={this.handleChange}
+													/>
+												</div>
+												<span
+													className="mx-1 font-weight-bold d-flex align-items-center"
+													style={{ fontSize: ".75rem", color: "#6e7687" }}>
+													&mdash;
+												</span>
+												<div className="col">
+													<input
+														placeholder="Bitiş"
+														type="number"
+														min={start_age || "1981"}
+														max="2019"
+														className={`form-control ${formErrors.end_age}`}
+														name="end_age"
+														onChange={this.handleChange}
+													/>
+												</div>
+											</div>
 										</div>
 									</div>
 									<div className="col d-flex flex-column justify-content-center">

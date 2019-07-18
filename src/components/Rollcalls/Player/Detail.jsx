@@ -145,7 +145,7 @@ export class Detail extends Component {
 											</div>
 											<div className="col d-flex flex-column justify-content-center">
 												<div className="form-inline">
-													<label className="form-label">Öğrenci Yaşı: </label>
+													<label className="form-label">Grup Yaş Aralığı: </label>
 													<div className="ml-2">{detail.age}</div>
 												</div>
 												<div className="form-inline">
