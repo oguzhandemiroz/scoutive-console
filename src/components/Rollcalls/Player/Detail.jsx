@@ -173,6 +173,8 @@ export class Detail extends Component {
 															<tr>
 																<th className="pl-0 w-1" />
 																<th>Ad Soyad</th>
+																<th>Telefon</th>
+																<th>Veli İletişim</th>
 																<th className="w-1 text-center">İşlem</th>
 															</tr>
 														</thead>
@@ -185,9 +187,7 @@ export class Detail extends Component {
 																					<div
 																						className="avatar d-block"
 																						style={{
-																							backgroundImage: `url(${
-																								el.image
-																							})`
+																							backgroundImage: `url(${el.image})`
 																						}}
 																					/>
 																				</td>
@@ -203,13 +203,48 @@ export class Detail extends Component {
 																						</Link>
 																					</div>
 																					<div className="small text-muted">
-																						Doğum Tarihi:
+																						Doğum Tarihi:{" "}
 																						{el.birthday
 																							? moment(
 																									el.birthday
 																							  ).format("LL")
 																							: "—"}
 																					</div>
+																				</td>
+																				<td>
+																					{el.phone ? (
+																						<a
+																							href={`tel:${el.phone}`}
+																							title={el.phone}>
+																							{el.phone}
+																						</a>
+																					) : (
+																						"—"
+																					)}
+																				</td>
+																				<td>
+																					{el.emergency.map((el,key) => {
+																						if (
+																							el.phone !== "" &&
+																							el.name !== "" &&
+																							el.kinship !== ""
+																						)
+																							return (
+																								<div
+																									key={key.toString()}>
+																									<div className="small text-muted">
+																										{el.kinship
+																											? el.kinship
+																											: "—"}
+																									</div>
+																									<a
+																										href={`tel:${el.phone}`}
+																										title={`${el.kinship}`}>
+																										{el.phone}
+																									</a>
+																								</div>
+																							);
+																					})}
 																				</td>
 																				<td
 																					className="text-center text-green"

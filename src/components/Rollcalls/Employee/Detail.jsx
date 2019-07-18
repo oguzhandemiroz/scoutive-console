@@ -53,6 +53,7 @@ export class EmployeesRollcalls extends Component {
 							name: el.name,
 							surname: el.surname,
 							position: el.position,
+							phone: el.phone,
 							image: el.image,
 							status: el.status
 						});
@@ -93,7 +94,7 @@ export class EmployeesRollcalls extends Component {
 		} catch (e) {}
 	};
 
-	completeRollcall = () => {
+	/*completeRollcall = () => {
 		try {
 			const { uid } = this.state;
 			this.setState({ loadingButton: true });
@@ -128,14 +129,16 @@ export class EmployeesRollcalls extends Component {
 		} catch (e) {
 			this.setState({ loadingButton: false });
 		}
-	};
+	};*/
 
 	render() {
 		const { employees, onLoadedData } = this.state;
 		return (
 			<div className="container">
 				<div className="page-header">
-					<h1 className="page-title">Yoklamalar &mdash; Personel &mdash; Yoklama Geçmişi (#{this.props.match.params.rcid || 0})</h1>
+					<h1 className="page-title">
+						Yoklamalar &mdash; Personel &mdash; Yoklama Geçmişi (#{this.props.match.params.rcid || 0})
+					</h1>
 				</div>
 				<div className="row">
 					<div className="col-lg-12">
@@ -161,6 +164,7 @@ export class EmployeesRollcalls extends Component {
 												<th className="pl-0 w-1" />
 												<th>Ad Soyad</th>
 												<th>Pozisyon</th>
+												<th>Telefon</th>
 												<th className="w-1">İşlem</th>
 											</tr>
 										</thead>
@@ -168,6 +172,7 @@ export class EmployeesRollcalls extends Component {
 											{employees
 												? employees.length > 0
 													? employees.map((el, key) => {
+															console.log(el);
 															const name = el.name || "";
 															const surname = el.surname || "";
 															return (
@@ -188,45 +193,29 @@ export class EmployeesRollcalls extends Component {
 																		</Link>
 																	</td>
 																	<td>{el.position}</td>
-																	<td className="text-center">
-																		{el.status === null ? (
-																			<div>
-																				<a
-																					href="#"
-																					onClick={() =>
-																						this.takeRollcall(el.uid, 1)
-																					}
-																					data-original-title="Geldi"
-																					data-toggle="tooltip"
-																					className="btn btn-icon btn-sm btn-success">
-																					<i className="fe fe-check" />
-																				</a>
-																				<a
-																					href="#"
-																					onClick={() =>
-																						this.takeRollcall(el.uid, 2)
-																					}
-																					data-original-title="İzinli"
-																					data-toggle="tooltip"
-																					className="btn btn-icon btn-sm btn-warning ml-2">
-																					<i className="fe fe-alert-circle" />
-																				</a>
-																			</div>
+																	<td>
+																		{el.phone ? (
+																			<a
+																				href={`tel:${el.phone}`}
+																				title={el.phone}>
+																				{el.phone}
+																			</a>
 																		) : (
-																			<div
-																				className={`text-${
-																					el.status === 1
-																						? "green"
-																						: "warning"
-																				}`}
-																				style={{ fontSize: 20 }}>
-																				<i
-																					className={`fe fe-${
-																						statusType[el.status]
-																					}`}
-																				/>
-																			</div>
+																			"—"
 																		)}
+																	</td>
+																	<td className="text-center">
+																		<div
+																			className={`text-${
+																				el.status === 1 ? "green" : "warning"
+																			}`}
+																			style={{ fontSize: 20 }}>
+																			<i
+																				className={`fe fe-${
+																					statusType[el.status]
+																				}`}
+																			/>
+																		</div>
 																	</td>
 																</tr>
 															);

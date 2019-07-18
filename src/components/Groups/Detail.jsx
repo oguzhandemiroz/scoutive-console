@@ -261,7 +261,7 @@ export class Detail extends Component {
 																						</Link>
 																					</div>
 																					<div className="small text-muted">
-																						Doğum Tarihi:
+																						Doğum Tarihi:{" "}
 																						{el.birthday
 																							? moment(
 																									new Date(
