@@ -1,9 +1,9 @@
 import React, { Component } from "react";
-import { ListEmployee } from "../../../services/Employee";
-import { CompleteRollcall, CreateRollcall } from "../../../services/Rollcalls";
+import { ListRollcallType } from "../../../services/Rollcalls";
+import { MakeRollcall } from "../../../services/Rollcalls";
+import { CreateVacation } from "../../../services/EmployeeAction";
 import { WarningModal as Modal } from "../WarningModal";
 import { Link, withRouter } from "react-router-dom";
-import { showSwal, Toast } from "../../Alert";
 import moment from "moment";
 import "moment/locale/tr";
 
@@ -15,7 +15,7 @@ const statusType = {
 
 const noRow = loading => (
 	<tr style={{ height: 80 }}>
-		<td colSpan="4" className="text-center text-muted font-italic">
+		<td colSpan="5" className="text-center text-muted font-italic">
 			{loading ? (
 				<div className={`dimmer active`}>
 					<div className="loader" />
@@ -35,18 +35,28 @@ export class EmployeesRollcalls extends Component {
 		this.state = {
 			uid: localStorage.getItem("UID"),
 			employees: null,
+			statuses: [],
 			onLoadedData: false,
-			loadingButton: false
+			loadingButton: "",
+			loadingButtons: []
 		};
 	}
 
 	renderEmployeeList = () => {
-		const { uid, employees } = this.state;
-		ListEmployee(uid).then(response => {
+		const { uid } = this.state;
+		const { rcid } = this.props.location.state;
+		ListRollcallType(
+			{
+				uid: uid,
+				rollcall_id: rcid
+			},
+			"employees"
+		).then(response => {
 			if (response) {
 				const data = response.data;
 				const status = response.status;
 				const dataList = [];
+				const statusList = [];
 				if (status.code === 1020) {
 					data.map(el => {
 						dataList.push({
@@ -58,9 +68,14 @@ export class EmployeesRollcalls extends Component {
 							image: el.image,
 							status: el.status
 						});
+						statusList.push({
+							uid: el.uid,
+							status: el.status
+						});
 					});
 					this.setState({
 						employees: dataList,
+						statuses: statusList,
 						onLoadedData: true
 					});
 				}
@@ -74,66 +89,85 @@ export class EmployeesRollcalls extends Component {
 
 	takeRollcall = (to, type) => {
 		try {
-			/*const { uid } = this.state;
-			CreateRollcall({
-				type: parseInt(type),
+			/*
+				- type 0 -> gelmedi
+				- type 1 -> geldi
+				- type 2 -> izinli
+			*/
+			const { uid, loadingButtons } = this.state;
+			const { rcid } = this.props.location.state;
+			console.log({
 				uid: uid,
-				to: to
-			}).then(response => {
-				if (response) {
-					const status = response.status;
-					if (status.code === 1020) {
-						Toast.fire({
-							type: "success",
-							title: "İşlem başarılı..."
-						});
+				to: to,
+				status: parseInt(type),
+				rollcall_id: parseInt(rcid)
+			});
+			this.setState({ loadingButtons: [...loadingButtons, to] });
+			if (type === 2 || type === 3) {
+				Promise.all([
+					CreateVacation(
+						{
+							uid: uid,
+							to: to,
+							start: moment(new Date()).format("YYYY-MM-DD"),
+							end: moment(new Date()).format("YYYY-MM-DD"),
+							day: type === 2 ? 1 : 0.5,
+							no_cost: 0
+						},
+						"employee"
+					),
+					MakeRollcall(
+						{
+							uid: uid,
+							to: to,
+							status: parseInt(type),
+							rollcall_id: parseInt(rcid)
+						},
+						"employee"
+					)
+				]).then(([responseVacation, responseRollcall]) => {
+					if (responseVacation && responseRollcall) {
+						this.removeButtonLoading(to);
+						this.changeStatus(to, type);
 					}
-				}
-			});*/
+				});
+			} else {
+				MakeRollcall(
+					{
+						uid: uid,
+						to: to,
+						status: parseInt(type),
+						rollcall_id: parseInt(rcid)
+					},
+					"employee"
+				).then(response => {
+					if (response) {
+						this.removeButtonLoading(to);
+						this.changeStatus(to, type);
+					}
+				});
+			}
 		} catch (e) {}
 	};
 
-	completeRollcall = () => {
-		try {
-			const { uid } = this.state;
-			this.setState({ loadingButton: true });
-			showSwal({
-				type: "warning",
-				title: "Uyarı",
-				html: "Yoklamayı gün sonunda tamamlayınız. Tamamlanan yoklamalarda değişiklik <b><u>yapılamaz</u></b>",
-				showCancelButton: true,
-				cancelButtonColor: "#cd201f",
-				cancelButtonText: "İptal",
-				confirmButtonText: "Devam et",
-				allowEnterKey: false
-			}).then(result => {
-				if (result.value) {
-					CompleteRollcall(uid).then(response => {
-						if (response) {
-							const status = response.status;
-							if (status.code === 1020) {
-								showSwal({
-									title: "Başarılı",
-									html: `<b>${moment().format("LLL")}</b> tarihli yoklama tamamlanmıştır`,
-									type: "success",
-									confirmButtonText: "Tamam"
-								}).then(result => {
-									this.props.history.push("/app/rollcalls/employee");
-								});
-							}
-						}
-					});
-				}
+	removeButtonLoading = key => {
+		const { loadingButtons } = this.state;
+		const filteredButtons = loadingButtons.filter(x => x !== key);
+		this.setState({ loadingButtons: filteredButtons });
+	};
 
-				this.setState({ loadingButton: false });
-			});
-		} catch (e) {
-			this.setState({ loadingButton: false });
-		}
+	changeStatus = (uid, type) => {
+		const { statuses } = this.state;
+		const filteredStatuses = statuses.filter(x => x.uid !== uid);
+		filteredStatuses.push({
+			uid: uid,
+			status: type
+		});
+		this.setState({ statuses: filteredStatuses });
 	};
 
 	render() {
-		const { employees, onLoadedData, loadingButton } = this.state;
+		const { employees, onLoadedData, statuses, loadingButtons } = this.state;
 		return (
 			<div className="container">
 				<div className="page-header">
@@ -213,21 +247,55 @@ export class EmployeesRollcalls extends Component {
 																				}
 																				title="Geldi"
 																				data-toggle="tooltip"
-																				className="btn btn-icon btn-sm btn-success">
+																				className={`btn btn-icon btn-sm ${
+																					statuses.find(x => x.uid === el.uid)
+																						.status === 1
+																						? "disable-overlay btn-success"
+																						: "btn-secondary"
+																				} ${
+																					loadingButtons.find(
+																						x => x === el.uid
+																					)
+																						? "btn-loading"
+																						: ""
+																				}`}>
 																				<i className="fe fe-check" />
 																			</button>
 
 																			<button
 																				data-toggle="dropdown"
 																				title="İzinli"
-																				className="btn btn-icon btn-sm btn-warning ml-2">
+																				className={`btn btn-icon btn-sm ${
+																					statuses.find(x => x.uid === el.uid)
+																						.status === 2 ||
+																					statuses.find(x => x.uid === el.uid)
+																						.status === 3
+																						? "disable-overlay btn-warning"
+																						: "btn-secondary"
+																				} mx-2 ${
+																					loadingButtons.find(
+																						x => x === el.uid
+																					)
+																						? "btn-loading"
+																						: ""
+																				}`}>
 																				<i className="fe fe-alert-circle" />
 																			</button>
 																			<div className="dropdown-menu">
-																				<a className="dropdown-item">Tam Gün</a>
-																				<a className="dropdown-item">
+																				<button
+																					onClick={() =>
+																						this.takeRollcall(el.uid, 2)
+																					}
+																					className="dropdown-item">
+																					Tam Gün
+																				</button>
+																				<button
+																					onClick={() =>
+																						this.takeRollcall(el.uid, 3)
+																					}
+																					className="dropdown-item">
 																					Yarım Gün
-																				</a>
+																				</button>
 																			</div>
 
 																			<button
@@ -236,7 +304,18 @@ export class EmployeesRollcalls extends Component {
 																				}
 																				title="Gelmedi"
 																				data-toggle="tooltip"
-																				className="btn btn-icon btn-sm btn-danger ml-2">
+																				className={`btn btn-icon btn-sm ${
+																					statuses.find(x => x.uid === el.uid)
+																						.status === 0
+																						? "disable-overlay btn-danger"
+																						: "btn-secondary"
+																				} ${
+																					loadingButtons.find(
+																						x => x === el.uid
+																					)
+																						? "btn-loading"
+																						: ""
+																				}`}>
 																				<i className="fe fe-x" />
 																			</button>
 																		</div>

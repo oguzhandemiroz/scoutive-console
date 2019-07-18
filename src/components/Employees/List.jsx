@@ -14,6 +14,14 @@ import { fullnameGenerator } from "../../services/Others";
 const $ = require("jquery");
 $.DataTable = require("datatables.net");
 
+var statusType = {
+	"-1": ["Tanımsız", "secondary"],
+	"0": ["Gelmedi", "danger"],
+	"1": ["Geldi", "success"],
+	"2": ["İzinli", "warning"],
+	"3": ["İzinli", "warning"]
+};
+
 const chartOptions = {
 	axis: {},
 	legend: {
@@ -213,10 +221,7 @@ class Table extends Component {
 			$("#employee-list").DataTable({
 				responsive: true,
 				order: [3, "asc"],
-				aLengthMenu: [
-					[10, 25, 50, 100, -1],
-					[10, 25, 50, 100, "Tümü"]
-				],
+				aLengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "Tümü"]],
 				stateSave: false, // change true
 				language: {
 					...datatable_turkish,
@@ -444,21 +449,11 @@ class Table extends Component {
 						}
 					},
 					{
-						data: "status",
+						data: "daily",
 						render: function(data, type, row) {
-							var status_type = {
-								"0": ["Tanımsız", "secondary"],
-								"1": ["Çalışıyor", "success"],
-								"2": ["İzinli", "warning"],
-								"3": ["Gelmedi", "danger"],
-								"4": ["Raporlu", "info"],
-								"5": ["Raporlu", "info"]
-							};
+							console.log(data);
 							return (
-								'<span class="status-icon bg-' +
-								status_type[data][1] +
-								'"></span>' +
-								status_type[data][0]
+								'<span class="status-icon bg-' + statusType[data][1] + '"></span>' + statusType[data][0]
 							);
 						}
 					},

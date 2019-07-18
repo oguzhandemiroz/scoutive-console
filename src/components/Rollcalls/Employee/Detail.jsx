@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { ListEmployee } from "../../../services/Employee";
+import { ListRollcallType } from "../../../services/Rollcalls";
 import { CompleteRollcall, CreateRollcall } from "../../../services/Rollcalls";
 import { Link } from "react-router-dom";
 import { showSwal, Toast } from "../../Alert";
@@ -7,14 +8,16 @@ import moment from "moment";
 import "moment/locale/tr";
 
 const statusType = {
-	1: "check",
-	2: "alert-circle",
-	3: "btn-error"
+	"-1": { icon: "x", color: "danger" },
+	"0": { icon: "x", color: "danger" },
+	"1": { icon: "check", color: "success" },
+	"2": { icon: "alert-circle", color: "warning" },
+	"3": { icon: "alert-circle", color: "warning" }
 };
 
 const noRow = loading => (
 	<tr style={{ height: 80 }}>
-		<td colSpan="4" className="text-center text-muted font-italic">
+		<td colSpan="5" className="text-center text-muted font-italic">
 			{loading ? (
 				<div className={`dimmer active`}>
 					<div className="loader" />
@@ -41,7 +44,14 @@ export class EmployeesRollcalls extends Component {
 
 	renderEmployeeList = () => {
 		const { uid, employees } = this.state;
-		ListEmployee(uid).then(response => {
+		const { rcid } = this.props.match.params;
+		ListRollcallType(
+			{
+				uid: uid,
+				rollcall_id: rcid
+			},
+			"employees"
+		).then(response => {
 			if (response) {
 				const data = response.data;
 				const status = response.status;
@@ -158,7 +168,7 @@ export class EmployeesRollcalls extends Component {
 							</div>
 							<div className="card-body">
 								<div className="table-responsive">
-									<table className="table table-hover table-outline table-vcenter text-nowrap card-table mb-0">
+									<table className="table table-hover table-striped table-outline table-vcenter text-nowrap card-table mb-0">
 										<thead>
 											<tr>
 												<th className="pl-0 w-1" />
@@ -206,14 +216,10 @@ export class EmployeesRollcalls extends Component {
 																	</td>
 																	<td className="text-center">
 																		<div
-																			className={`text-${
-																				el.status === 1 ? "green" : "warning"
-																			}`}
+																			className={`text-${statusType[el.status].color}`}
 																			style={{ fontSize: 20 }}>
 																			<i
-																				className={`fe fe-${
-																					statusType[el.status]
-																				}`}
+																				className={`fe fe-${statusType[el.status].icon}`}
 																			/>
 																		</div>
 																	</td>

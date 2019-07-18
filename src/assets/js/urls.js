@@ -38,6 +38,8 @@ var ep = {
     COMPLETE_ROLLCALL: host + api_version + "complete/rollcall",
     CREATE_ROLLCALL: host + api_version + "create/rollcall",
     LIST_ROLLCALL: host + api_version + "list/rollcalls",
+    ROLLCALL_MAKE: host + api_version + "create/rollcall/",
+    ROLLCALL_LIST_TYPE: host + api_version + "list/rollcall/",
     UPLOAD_FILE: host + api_version + "upload/file",
     VACATION_CREATE: host + api_version + "create/vacation/",
     VACATION_UPDATE: host + api_version + "update/vacation",
