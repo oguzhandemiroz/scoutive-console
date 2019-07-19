@@ -325,9 +325,6 @@ class Table extends Component {
 												href="javascript:void(0)">
 												<i className="dropdown-icon fa fa-key" /> Şifre Değiştir
 											</a>
-											<a className="dropdown-item action-permission" href="javascript:void(0)">
-												<i className="dropdown-icon fa fa-user-cog" /> Yetkiledirme
-											</a>
 											<a
 												className="dropdown-item action-all-salary-info"
 												href="javascript:void(0)">
@@ -451,7 +448,6 @@ class Table extends Component {
 					{
 						data: "daily",
 						render: function(data, type, row) {
-							console.log(data);
 							return (
 								'<span class="status-icon bg-' + statusType[data][1] + '"></span>' + statusType[data][0]
 							);
