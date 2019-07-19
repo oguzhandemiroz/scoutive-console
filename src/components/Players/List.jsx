@@ -409,18 +409,28 @@ class Table extends Component {
 												{fullname}
 											</a>
 											<div role="separator" className="dropdown-divider" />
-											<a className="dropdown-item action-pay-salary" href="javascript:void(0)">
-												<i className="dropdown-icon fa fa-hand-holding-usd" /> Ödeme Al
-											</a>
-											<a className="dropdown-item action-warning" href="javascript:void(0)">
-												<i className="dropdown-icon fa fa-exclamation-triangle" /> Ödeme İkazı
-											</a>
-											<a
-												className="dropdown-item action-change-password"
-												href="javascript:void(0)">
-												<i className="dropdown-icon fa fa-hand-holding-heart" /> Burs Ver
-											</a>
-											<div role="separator" className="dropdown-divider" />
+											{status === 1 ? (
+												<div>
+													<a
+														className="dropdown-item action-pay-salary"
+														href="javascript:void(0)">
+														<i className="dropdown-icon fa fa-hand-holding-usd" /> Ödeme Al
+													</a>
+													<a
+														className="dropdown-item action-warning"
+														href="javascript:void(0)">
+														<i className="dropdown-icon fa fa-exclamation-triangle" /> Ödeme
+														İkazı
+													</a>
+													<a
+														className="dropdown-item action-change-password"
+														href="javascript:void(0)">
+														<i className="dropdown-icon fa fa-hand-holding-heart" /> Burs
+														Ver
+													</a>
+													<div role="separator" className="dropdown-divider" />
+												</div>
+											) : null}
 											{status === 1 ? (
 												<button
 													className="dropdown-item action-advance-payment"
@@ -440,43 +450,55 @@ class Table extends Component {
 												<i className="dropdown-icon fa fa-user-times" /> Kaydı Sil
 											</button>
 											<div role="separator" className="dropdown-divider" />
-											<button
-												className="dropdown-item action-day-off"
-												onClick={() =>
-													this.setState({
-														...initialState,
-														vacation: true,
-														data: { name: fullname, uid: uid }
-													})
-												}>
-												<i className="dropdown-icon fa fa-coffee" /> İzin Yaz
-											</button>
-											<div role="separator" className="dropdown-divider" />
-											<a className="dropdown-item action-permission" href="javascript:void(0)">
-												<i className="dropdown-icon fa fa-notes-medical" /> Not (Puan) Ver
-											</a>
-											<div role="separator" className="dropdown-divider" />
-											<a className="dropdown-item action-send-message" href="javascript:void(0)">
-												<i className="dropdown-icon fa fa-paper-plane" /> Veliye Mesaj Gönder
-											</a>
-											<div role="separator" className="dropdown-divider" />
-											<Link
-												onClick={() => this.props.history.push(`/app/players/edit/${uid}`)}
-												className="dropdown-item action-edit"
-												to={`/app/players/edit/${uid}`}>
-												<i className="dropdown-icon fa fa-pen" /> Düzenle
-											</Link>
-											<button
-												className="dropdown-item action-permission"
-												onClick={() =>
-													this.setState({
-														...initialState,
-														group_change: true,
-														data: { name: fullname, uid: uid, group: group }
-													})
-												}>
-												<i className="dropdown-icon fa fa-user-cog" /> Grup Değişikliği
-											</button>
+											{status === 1 ? (
+												<div>
+													<button
+														className="dropdown-item action-day-off"
+														onClick={() =>
+															this.setState({
+																...initialState,
+																vacation: true,
+																data: { name: fullname, uid: uid }
+															})
+														}>
+														<i className="dropdown-icon fa fa-coffee" /> İzin Yaz
+													</button>
+													<div role="separator" className="dropdown-divider" />
+													<a
+														className="dropdown-item action-permission"
+														href="javascript:void(0)">
+														<i className="dropdown-icon fa fa-notes-medical" /> Not (Puan)
+														Ver
+													</a>
+													<div role="separator" className="dropdown-divider" />
+													<a
+														className="dropdown-item action-send-message"
+														href="javascript:void(0)">
+														<i className="dropdown-icon fa fa-paper-plane" /> Veliye Mesaj
+														Gönder
+													</a>
+													<div role="separator" className="dropdown-divider" />
+													<Link
+														onClick={() =>
+															this.props.history.push(`/app/players/edit/${uid}`)
+														}
+														className="dropdown-item action-edit"
+														to={`/app/players/edit/${uid}`}>
+														<i className="dropdown-icon fa fa-pen" /> Düzenle
+													</Link>
+													<button
+														className="dropdown-item action-permission"
+														onClick={() =>
+															this.setState({
+																...initialState,
+																group_change: true,
+																data: { name: fullname, uid: uid, group: group }
+															})
+														}>
+														<i className="dropdown-icon fa fa-user-cog" /> Grup Değişikliği
+													</button>
+												</div>
+											) : null}
 											<a
 												className="dropdown-item action-all-salary-info"
 												href="javascript:void(0)">

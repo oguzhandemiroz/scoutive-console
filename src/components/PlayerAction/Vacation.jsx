@@ -421,6 +421,7 @@ export class Vacation extends Component {
 													<th className="text-center w-1">#</th>
 													<th>Başlangıç Tarihi</th>
 													<th>Bitiş Tarihi</th>
+													<th className="w-1">Gün Sayısı</th>
 													<th className="text-center">Durum</th>
 												</tr>
 											</thead>
@@ -432,12 +433,9 @@ export class Vacation extends Component {
 																	<td className="text-center text-muted">
 																		#{key + 1}
 																	</td>
-																	<td>
-																		<div>{el.start}</div>
-																	</td>
-																	<td>
-																		<div>{el.end}</div>
-																	</td>
+																	<td>{el.start}</td>
+																	<td>{el.end}</td>
+																	<td>{el.day}</td>
 																	<td className="text-center">
 																		<span
 																			className={`badge badge-${vacationStatus[el.status].type}`}>
