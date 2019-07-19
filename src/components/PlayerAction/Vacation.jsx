@@ -4,7 +4,6 @@ import DatePicker, { registerLocale } from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import tr from "date-fns/locale/tr";
 import { CreateVacation, UpdateVacation, ListVacations } from "../../services/PlayerAction";
-import { fullnameGenerator } from "../../services/Others";
 import { Toast, showSwal } from "../Alert";
 import moment from "moment";
 const $ = require("jquery");

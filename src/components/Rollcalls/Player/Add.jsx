@@ -224,27 +224,30 @@ export class Detail extends Component {
 																				)}
 																			</td>
 																			<td>
-																				{el.emergency.map((el, key) => {
-																					if (
-																						el.phone !== "" &&
-																						el.name !== "" &&
-																						el.kinship !== ""
-																					)
-																						return (
-																							<div key={key.toString()}>
-																								<div className="small text-muted">
-																									{el.kinship
-																										? el.kinship
-																										: "—"}
-																								</div>
-																								<a
-																									href={`tel:${el.phone}`}
-																									title={`${el.kinship}`}>
-																									{el.phone}
-																								</a>
-																							</div>
-																						);
-																				})}
+																				{el.emergency
+																					? el.emergency.map((el, key) => {
+																							if (
+																								el.phone !== "" &&
+																								el.name !== "" &&
+																								el.kinship !== ""
+																							)
+																								return (
+																									<div
+																										key={key.toString()}>
+																										<div className="small text-muted">
+																											{el.kinship
+																												? el.kinship
+																												: "—"}
+																										</div>
+																										<a
+																											href={`tel:${el.phone}`}
+																											title={`${el.kinship}`}>
+																											{el.phone}
+																										</a>
+																									</div>
+																								);
+																					  })
+																					: "—"}
 																			</td>
 																			<td className="pr-3 text-center">
 																				<button

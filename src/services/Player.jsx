@@ -136,4 +136,48 @@ const DeletePlayer = data => {
 	}
 };
 
-export { CreatePlayer, DetailPlayer, UpdatePlayer, UpdatePlayers, DeletePlayer };
+const FreezePlayer = data => {
+	try {
+		return fetch(ep.PLAYER_FREEZE, {
+			method: "POST",
+			body: JSON.stringify(data),
+			headers: h
+		})
+			.then(res => res.json())
+			.then(response => {
+				if (response) {
+					const status = response.status;
+					if (status.code !== 1020) errorSwal(status);
+
+					return response;
+				}
+			})
+			.catch(e => fatalSwal(true));
+	} catch (e) {
+		fatalSwal(true);
+	}
+};
+
+const RefreshPlayer = data => {
+	try {
+		return fetch(ep.PLAYER_REFRESH, {
+			method: "POST",
+			body: JSON.stringify(data),
+			headers: h
+		})
+			.then(res => res.json())
+			.then(response => {
+				if (response) {
+					const status = response.status;
+					if (status.code !== 1020) errorSwal(status);
+
+					return response;
+				}
+			})
+			.catch(e => fatalSwal(true));
+	} catch (e) {
+		fatalSwal(true);
+	}
+};
+
+export { CreatePlayer, DetailPlayer, UpdatePlayer, UpdatePlayers, DeletePlayer, FreezePlayer, RefreshPlayer };

@@ -244,7 +244,7 @@ export class Add extends Component {
 			attributesData.body_measure = JSON.stringify(body_measure);
 		}
 		if (group) {
-			attributesData.group = group.value.toString();
+			attributesData.group_id = group.value.toString();
 		}
 
 		console.log(`

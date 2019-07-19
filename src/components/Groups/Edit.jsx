@@ -292,6 +292,9 @@ export class Edit extends Component {
 						},
 						update: {
 							group_id: gid
+						},
+						attributes: {
+							group_id: gid
 						}
 					}),
 					UpdatePlayers({

@@ -10,12 +10,21 @@ import { fatalSwal, errorSwal } from "../Alert.jsx";
 import ReactDOM from "react-dom";
 import { BrowserRouter, Link } from "react-router-dom";
 import { showSwal, Toast } from "../Alert";
-import { DeletePlayer } from "../../services/Player";
+import { DeletePlayer, FreezePlayer, RefreshPlayer } from "../../services/Player";
 import { fullnameGenerator } from "../../services/Others";
 import Vacation from "../PlayerAction/Vacation";
+import GroupChange from "../PlayerAction/GroupChange";
 
 const $ = require("jquery");
 $.DataTable = require("datatables.net");
+
+var statusType = {
+	"-1": ["Tanımsız", "secondary"],
+	"0": ["Gelmedi", "danger"],
+	"1": ["Geldi", "success"],
+	"2": ["İzinli", "warning"],
+	"3": ["İzinli", "warning"]
+};
 
 const chartOptions = {
 	axis: {},
@@ -203,6 +212,10 @@ const datatable_turkish = {
 	}
 };
 
+const initialState = {
+	vacation: false,
+	group_change: false
+};
 class Table extends Component {
 	constructor(props) {
 		super(props);
@@ -210,7 +223,7 @@ class Table extends Component {
 		this.state = {
 			uid: localStorage.getItem("UID"),
 			data: {},
-			vacation: false
+			...initialState
 		};
 	}
 
@@ -228,7 +241,7 @@ class Table extends Component {
 			showSwal({
 				type: "warning",
 				title: "Emin misiniz?",
-				html: `<b>${name}</b> adlı öğrencinin kaydını silmek istediğinize emin misiniz?`,
+				html: `<b>${name}</b> adlı öğrencinin <b>kaydını silmek</b> istediğinize emin misiniz?`,
 				confirmButtonText: "Evet",
 				cancelButtonText: "Hayır",
 				cancelButtonColor: "#cd201f",
@@ -238,6 +251,76 @@ class Table extends Component {
 			}).then(result => {
 				if (result.value) {
 					DeletePlayer({
+						uid: uid,
+						to: to
+					}).then(response => {
+						if (response) {
+							const status = response.status;
+							if (status.code === 1020) {
+								Toast.fire({
+									type: "success",
+									title: "İşlem başarılı..."
+								});
+								setTimeout(() => this.reload(), 1000);
+							}
+						}
+					});
+				}
+			});
+		} catch (e) {}
+	};
+
+	freezePlayer = (to, name) => {
+		try {
+			const { uid } = this.state;
+			showSwal({
+				type: "warning",
+				title: "Emin misiniz?",
+				html: `<b>${name}</b> adlı öğrencinin <b>kaydını dondurmak</b> istediğinize emin misiniz?`,
+				confirmButtonText: "Evet",
+				cancelButtonText: "Hayır",
+				cancelButtonColor: "#cd201f",
+				confirmButtonColor: "#868e96",
+				showCancelButton: true,
+				reverseButtons: true
+			}).then(result => {
+				if (result.value) {
+					FreezePlayer({
+						uid: uid,
+						to: to
+					}).then(response => {
+						if (response) {
+							const status = response.status;
+							if (status.code === 1020) {
+								Toast.fire({
+									type: "success",
+									title: "İşlem başarılı..."
+								});
+								setTimeout(() => this.reload(), 1000);
+							}
+						}
+					});
+				}
+			});
+		} catch (e) {}
+	};
+
+	refreshPlayer = (to, name) => {
+		try {
+			const { uid } = this.state;
+			showSwal({
+				type: "warning",
+				title: "Emin misiniz?",
+				html: `<b>${name}</b> adlı öğrencinin <b>kaydını yenilemek</b> istediğinize emin misiniz?`,
+				confirmButtonText: "Evet",
+				cancelButtonText: "Hayır",
+				cancelButtonColor: "#cd201f",
+				confirmButtonColor: "#868e96",
+				showCancelButton: true,
+				reverseButtons: true
+			}).then(result => {
+				if (result.value) {
+					RefreshPlayer({
 						uid: uid,
 						to: to
 					}).then(response => {
@@ -304,7 +387,7 @@ class Table extends Component {
 						targets: "action",
 						createdCell: (td, cellData, rowData) => {
 							const fullname = fullnameGenerator(rowData.name, rowData.surname);
-							const uid = rowData.uid;
+							const { uid, group, status } = rowData;
 							ReactDOM.render(
 								<BrowserRouter>
 									<div className="dropdown btn-block" id="action-dropdown">
@@ -338,16 +421,19 @@ class Table extends Component {
 												<i className="dropdown-icon fa fa-hand-holding-heart" /> Burs Ver
 											</a>
 											<div role="separator" className="dropdown-divider" />
-											<a
-												className="dropdown-item action-advance-payment"
-												href="javascript:void(0)">
-												<i className="dropdown-icon fa fa-snowflake" /> Kaydı Dondur
-											</a>
-											<a
-												className="dropdown-item action-advance-payment"
-												href="javascript:void(0)">
-												<i className="dropdown-icon fa fa-sync-alt" /> Kaydı Yenile
-											</a>
+											{status === 1 ? (
+												<button
+													className="dropdown-item action-advance-payment"
+													onClick={() => this.freezePlayer(uid, fullname)}>
+													<i className="dropdown-icon fa fa-snowflake" /> Kaydı Dondur
+												</button>
+											) : status === 2 ? (
+												<button
+													className="dropdown-item action-advance-payment"
+													onClick={() => this.refreshPlayer(uid, fullname)}>
+													<i className="dropdown-icon fa fa-sync-alt" /> Kaydı Yenile
+												</button>
+											) : null}
 											<button
 												className="dropdown-item action-salary-raise"
 												onClick={() => this.deletePlayer(uid, fullname)}>
@@ -358,6 +444,7 @@ class Table extends Component {
 												className="dropdown-item action-day-off"
 												onClick={() =>
 													this.setState({
+														...initialState,
 														vacation: true,
 														data: { name: fullname, uid: uid }
 													})
@@ -379,9 +466,17 @@ class Table extends Component {
 												to={`/app/players/edit/${uid}`}>
 												<i className="dropdown-icon fa fa-pen" /> Düzenle
 											</Link>
-											<a className="dropdown-item action-permission" href="javascript:void(0)">
+											<button
+												className="dropdown-item action-permission"
+												onClick={() =>
+													this.setState({
+														...initialState,
+														group_change: true,
+														data: { name: fullname, uid: uid, group: group }
+													})
+												}>
 												<i className="dropdown-icon fa fa-user-cog" /> Grup Değişikliği
-											</a>
+											</button>
 											<a
 												className="dropdown-item action-all-salary-info"
 												href="javascript:void(0)">
@@ -448,11 +543,9 @@ class Table extends Component {
 						render: function(data, type, row) {
 							var status = row.status;
 							var bg_class_type = {
-								"0": "secondary",
+								"0": "gray",
 								"1": "success",
-								"2": "warning",
-								"3": "danger",
-								"4": "info"
+								"2": "azure"
 							};
 							if (data === null) {
 								return (
@@ -535,23 +628,15 @@ class Table extends Component {
 						}
 					},
 					{
-						data: "status",
+						data: "daily",
 						render: function(data, type, row) {
-							var status_type = {
-								"0": ["Tanımsız", "secondary"],
-								"1": ["Çalışıyor", "success"],
-								"2": ["İzinli", "warning"],
-								"3": ["Gelmedi", "danger"],
-								"4": ["Raporlu", "info"],
-								"5": ["Raporlu", "info"]
-							};
 							return (
-								'<span class="status-icon bg-' +
-								status_type[data][1] +
-								'"></span>' +
-								status_type[data][0]
+								'<span class="status-icon bg-' + statusType[data][1] + '"></span>' + statusType[data][0]
 							);
 						}
+					},
+					{
+						data: null
 					}
 				]
 			});
@@ -575,7 +660,7 @@ class Table extends Component {
 	}
 
 	render() {
-		const { vacation, data } = this.state;
+		const { vacation, group_change, data } = this.state;
 		return (
 			<div>
 				<table id="player-list" className="table card-table table-vcenter table-striped text-nowrap datatable">
@@ -591,11 +676,13 @@ class Table extends Component {
 							<th className="point">GENEL PUAN</th>
 							<th className="birthday">YAŞ</th>
 							<th className="group">GRUP</th>
-							<th className="no-sort action">DURUM</th>
+							<th className="status">DURUM</th>
+							<th className="no-sort action" />
 						</tr>
 					</thead>
 				</table>
 				{<Vacation data={data} visible={vacation} />}
+				{<GroupChange data={data} visible={group_change} history={this.props.history} />}
 			</div>
 		);
 	}

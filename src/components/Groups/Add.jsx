@@ -272,6 +272,9 @@ export class Add extends Component {
 										},
 										update: {
 											group_id: group_id
+										},
+										attributes: {
+											group_id: group_id
 										}
 									}),
 									UploadFile(formData)
@@ -304,6 +307,9 @@ export class Add extends Component {
 										security_id__in: playersArr
 									},
 									update: {
+										group_id: group_id
+									},
+									attributes: {
 										group_id: group_id
 									}
 								})

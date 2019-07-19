@@ -262,7 +262,7 @@ export class Edit extends Component {
 			if (AttributeDataChecker(responseData.fee, fee)) {
 				attributesData.fee = fee.toString();
 			}
-			if (AttributeDataChecker(responseData.position, position ? position.label : "")) {
+			if (AttributeDataChecker(responseData.position, position ? position.label : null)) {
 				attributesData.position = position.value.toString();
 			}
 			if (AttributeDataChecker(responseData.phone, phone)) {
@@ -289,8 +289,13 @@ export class Edit extends Component {
 			if (AttributeDataChecker(responseData.attributes.body_weight, body_weight)) {
 				attributesData.body_weight = body_weight.toString();
 			}
-			if (AttributeDataChecker(responseData.group ? responseData.group.group_id : "", group ? group.value : "")) {
-				attributesData.group = group.value.toString();
+			if (
+				AttributeDataChecker(
+					responseData.group ? responseData.group.group_id : null,
+					group ? group.value : null
+				)
+			) {
+				attributesData.group_id = group.value.toString();
 			}
 
 			console.log(`
@@ -369,7 +374,9 @@ export class Edit extends Component {
 
 				this.setState({ formErrors });
 			}
-		} catch (e) {}
+		} catch (e) {
+			console.log(e);
+		}
 	};
 
 	handleChange = e => {
