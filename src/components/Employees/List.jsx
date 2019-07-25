@@ -10,6 +10,7 @@ import { fatalSwal, errorSwal } from "../Alert.jsx";
 import ReactDOM from "react-dom";
 import { BrowserRouter, Link } from "react-router-dom";
 import Vacation from "../EmployeeAction/Vacation";
+import Password from "../EmployeeAction/Password";
 import { fullnameGenerator } from "../../services/Others";
 const $ = require("jquery");
 $.DataTable = require("datatables.net");
@@ -208,11 +209,16 @@ const datatable_turkish = {
 	}
 };
 
+const initialState = {
+	vacation: false,
+	password: false
+};
+
 class Table extends Component {
 	constructor(props) {
 		super(props);
 
-		this.state = { data: {}, vacation: false };
+		this.state = { data: {}, ...initialState };
 	}
 
 	componentDidMount() {
@@ -300,6 +306,7 @@ class Table extends Component {
 												className="dropdown-item action-day-off"
 												onClick={() =>
 													this.setState({
+														...initialState,
 														vacation: true,
 														data: { name: fullname, uid: uid }
 													})
@@ -320,11 +327,18 @@ class Table extends Component {
 												to={`/app/employees/edit/${uid}`}>
 												<i className="dropdown-icon fa fa-pen" /> Düzenle
 											</Link>
-											<a
-												className="dropdown-item action-change-password"
-												href="javascript:void(0)">
+											<button
+												onClick={() =>
+													this.setState({
+														...initialState,
+														...initialState,
+														password: true,
+														data: { name: fullname, uid: uid }
+													})
+												}
+												className="dropdown-item action-change-password">
 												<i className="dropdown-icon fa fa-key" /> Şifre Değiştir
-											</a>
+											</button>
 											<a
 												className="dropdown-item action-all-salary-info"
 												href="javascript:void(0)">
@@ -485,7 +499,7 @@ class Table extends Component {
 	}
 
 	render() {
-		const { vacation, data } = this.state;
+		const { vacation, password, data } = this.state;
 		return (
 			<div>
 				<table
@@ -507,6 +521,7 @@ class Table extends Component {
 					</thead>
 				</table>
 				{<Vacation data={data} visible={vacation} />}
+				{<Password data={data} visible={password} />}
 			</div>
 		);
 	}

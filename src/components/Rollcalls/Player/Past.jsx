@@ -295,12 +295,12 @@ export class Past extends Component {
 																					</td>
 																					<td className="pr-3">
 																						<Link
+																							to={redirect}
 																							className={`btn btn-sm btn-block btn-${
 																								el.status === 1
 																									? "secondary"
 																									: "info"
-																							}`}
-																							to={redirect}>
+																							}`}>
 																							{el.status === 1
 																								? "İncele"
 																								: "Devam et"}
