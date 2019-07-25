@@ -8,11 +8,11 @@ import moment from "moment";
 import "moment/locale/tr";
 
 const statusType = {
-	"-1": { icon: "x", color: "danger" },
-	"0": { icon: "x", color: "danger" },
-	"1": { icon: "check", color: "success" },
-	"2": { icon: "alert-circle", color: "warning" },
-	"3": { icon: "alert-circle", color: "warning" }
+	"-1": { icon: "x", color: "danger", text: "Gelmedi" },
+	"0": { icon: "x", color: "danger", text: "Gelmedi" },
+	"1": { icon: "check", color: "success", text: "Geldi" },
+	"2": { icon: "alert-circle", color: "warning", text: "İzinli" },
+	"3": { icon: "alert-circle", color: "warning", text: "İzinli" }
 };
 
 const noRow = loading => (
@@ -104,43 +104,6 @@ export class EmployeesRollcalls extends Component {
 		} catch (e) {}
 	};
 
-	/*completeRollcall = () => {
-		try {
-			const { uid } = this.state;
-			this.setState({ loadingButton: true });
-			showSwal({
-				type: "warning",
-				title: "Uyarı",
-				html: "Yoklamayı gün sonunda tamamlayınız. Tamamlanan yoklamalarda değişiklik <b><u>yapılamaz</u></b>",
-				showCancelButton: true,
-				cancelButtonColor: "#cd201f",
-				cancelButtonText: "İptal",
-				confirmButtonText: "Devam et",
-				allowEnterKey: false
-			}).then(result => {
-				if (result.value) {
-					CompleteRollcall(uid).then(response => {
-						if (response) {
-							const status = response.status;
-							if (status.code === 1020) {
-								showSwal({
-									title: "Başarılı",
-									html: `<b>${moment().format("LLL")}</b> tarihli yoklama tamamlanmıştır`,
-									type: "success",
-									confirmButtonText: "Tamam"
-								});
-							}
-						}
-					});
-				}
-
-				this.setState({ loadingButton: false });
-			});
-		} catch (e) {
-			this.setState({ loadingButton: false });
-		}
-	};*/
-
 	render() {
 		const { employees, onLoadedData } = this.state;
 		return (
@@ -175,7 +138,7 @@ export class EmployeesRollcalls extends Component {
 												<th>Ad Soyad</th>
 												<th>Pozisyon</th>
 												<th>Telefon</th>
-												<th className="w-1">İşlem</th>
+												<th className="w-1">Durum</th>
 											</tr>
 										</thead>
 										<tbody>
@@ -216,6 +179,8 @@ export class EmployeesRollcalls extends Component {
 																	</td>
 																	<td className="text-center">
 																		<div
+																			data-toggle="tooltip"
+																			title={statusType[el.status].text}
 																			className={`text-${statusType[el.status].color}`}
 																			style={{ fontSize: 20 }}>
 																			<i

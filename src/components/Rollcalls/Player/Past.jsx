@@ -293,12 +293,17 @@ export class Past extends Component {
 																					<td className="text-center">
 																						{el.came + "/" + el.total}
 																					</td>
-																					<td className="pr-3 text-center">
+																					<td className="pr-3">
 																						<Link
-																							className="btn btn-sm btn-info"
-																							to={`/app/rollcalls/player/detail/${gid}/${el.rollcall_id}`}>
-																							İncele
-																							<i className="fe fe-arrow-right ml-2" />
+																							className={`btn btn-sm btn-block btn-${
+																								el.status === 1
+																									? "secondary"
+																									: "info"
+																							}`}
+																							to={redirect}>
+																							{el.status === 1
+																								? "İncele"
+																								: "Devam et"}
 																						</Link>
 																					</td>
 																				</tr>

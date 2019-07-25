@@ -1,14 +1,30 @@
 import React, { Component } from "react";
 import { List as GroupList } from "./List";
-import { DetailGroup, ListPlayers } from "../../../services/Group";
+import { DetailGroup } from "../../../services/Group";
+import { ListRollcallType } from "../../../services/Rollcalls";
 import { Link } from "react-router-dom";
 import moment from "moment";
 import "moment/locale/tr";
 
-const noRow = () => (
-	<tr>
-		<td colSpan="4" className="text-center text-muted font-italic">
-			Kayıt bulunamadı...
+const statusType = {
+	"-1": { icon: "x", color: "danger", text: "Gelmedi" },
+	"0": { icon: "x", color: "danger", text: "Gelmedi" },
+	"1": { icon: "check", color: "success", text: "Geldi" },
+	"2": { icon: "alert-circle", color: "warning", text: "İzinli" },
+	"3": { icon: "alert-circle", color: "warning", text: "İzinli" }
+};
+
+const noRow = loading => (
+	<tr style={{ height: 80 }}>
+		<td colSpan="5" className="text-center text-muted font-italic">
+			{loading ? (
+				<div className={`dimmer active`}>
+					<div className="loader" />
+					<div className="dimmer-content" />
+				</div>
+			) : (
+				"Kayıt bulunamadı..."
+			)}
 		</td>
 	</tr>
 );
@@ -27,7 +43,7 @@ export class Detail extends Component {
 				employee: {},
 				image: null
 			},
-			players: [],
+			players: null,
 			loadingData: true
 		};
 	}
@@ -35,7 +51,7 @@ export class Detail extends Component {
 	componentDidMount() {
 		const { gid } = this.props.match.params;
 		this.renderGroupDetail(gid);
-		this.renderPlayerList(gid);
+		this.renderPlayerList();
 	}
 
 	componentWillReceiveProps(nextProps) {
@@ -44,7 +60,7 @@ export class Detail extends Component {
 				loadingData: true
 			});
 			this.renderGroupDetail(nextProps.match.params.gid);
-			this.renderPlayerList(nextProps.match.params.gid);
+			this.renderPlayerList();
 		}
 	}
 
@@ -68,20 +84,31 @@ export class Detail extends Component {
 		} catch (e) {}
 	};
 
-	renderPlayerList = gid => {
+	renderPlayerList = () => {
 		try {
 			const { uid } = this.state;
-			ListPlayers({
-				uid: uid,
-				filter: {
-					group_id: parseInt(gid)
-				}
-			}).then(response => {
+			const { rcid } = this.props.match.params;
+			console.log(rcid);
+			ListRollcallType(
+				{
+					uid: uid,
+					rollcall_id: rcid
+				},
+				"players"
+			).then(response => {
 				if (response) {
+					const data = response.data;
 					const status = response.status;
+					const dataList = [];
+					const statusList = [];
 					if (status.code === 1020) {
-						const data = response.data;
-						this.setState({ players: data, loadingData: false });
+						data.map(el => {
+							statusList.push({
+								uid: el.uid,
+								status: el.status
+							});
+						});
+						this.setState({ players: data, statuses: statusList, loadingData: false });
 					}
 				}
 			});
@@ -175,7 +202,7 @@ export class Detail extends Component {
 																<th>Ad Soyad</th>
 																<th>Telefon</th>
 																<th>Veli İletişim</th>
-																<th className="w-1 text-center">İşlem</th>
+																<th className="w-1 text-center">Durum</th>
 															</tr>
 														</thead>
 														<tbody>
@@ -223,7 +250,7 @@ export class Detail extends Component {
 																					)}
 																				</td>
 																				<td>
-																					{el.emergency.map((el,key) => {
+																					{el.emergency.map((el, key) => {
 																						if (
 																							el.phone !== "" &&
 																							el.name !== "" &&
@@ -246,15 +273,23 @@ export class Detail extends Component {
 																							);
 																					})}
 																				</td>
-																				<td
-																					className="text-center text-green"
-																					style={{ fontSize: 20 }}>
-																					<i className="fe fe-check" />
+																				<td className="text-center">
+																					<div
+																						data-toggle="tooltip"
+																						title={
+																							statusType[el.status].text
+																						}
+																						className={`text-${statusType[el.status].color}`}
+																						style={{ fontSize: 20 }}>
+																						<i
+																							className={`fe fe-${statusType[el.status].icon}`}
+																						/>
+																					</div>
 																				</td>
 																			</tr>
 																	  ))
 																	: noRow()
-																: noRow()}
+																: noRow(true)}
 														</tbody>
 													</table>
 												</div>

@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { ListRollcallType } from "../../../services/Rollcalls";
 import { MakeRollcall } from "../../../services/Rollcalls";
-import { CreateVacation } from "../../../services/EmployeeAction";
+import { CreateVacation, UpdateVacation } from "../../../services/EmployeeAction";
 import { WarningModal as Modal } from "../WarningModal";
 import { Link, withRouter } from "react-router-dom";
 import moment from "moment";
@@ -37,9 +37,12 @@ export class EmployeesRollcalls extends Component {
 			employees: null,
 			statuses: [],
 			onLoadedData: false,
-			loadingButton: "",
 			loadingButtons: []
 		};
+	}
+
+	componentDidMount() {
+		this.renderEmployeeList();
 	}
 
 	renderEmployeeList = () => {
@@ -83,10 +86,6 @@ export class EmployeesRollcalls extends Component {
 		});
 	};
 
-	componentDidMount() {
-		this.renderEmployeeList();
-	}
-
 	takeRollcall = (to, type) => {
 		try {
 			/*
@@ -127,8 +126,24 @@ export class EmployeesRollcalls extends Component {
 					)
 				]).then(([responseVacation, responseRollcall]) => {
 					if (responseVacation && responseRollcall) {
+						const vacationStatus = responseVacation.status;
+						const rollcallStatus = responseRollcall.status;
+						if (rollcallStatus.code === 1020) {
+							if (vacationStatus.code === 1037) {
+								UpdateVacation({
+									uid: uid,
+									vacation_id: responseVacation.data.vacation_id,
+									update: {
+										start: moment(new Date()).format("YYYY-MM-DD"),
+										end: moment(new Date()).format("YYYY-MM-DD"),
+										day: type === 2 ? 1 : 0.5,
+										no_cost: 0
+									}
+								});
+							}
+							this.changeStatus(to, type);
+						}
 						this.removeButtonLoading(to);
-						this.changeStatus(to, type);
 					}
 				});
 			} else {
@@ -201,7 +216,7 @@ export class EmployeesRollcalls extends Component {
 												<th>Ad Soyad</th>
 												<th>Pozisyon</th>
 												<th>Telefon</th>
-												<th className="w-1">İşlem</th>
+												<th className="w-1">Durum</th>
 											</tr>
 										</thead>
 										<tbody>
@@ -270,7 +285,7 @@ export class EmployeesRollcalls extends Component {
 																						.status === 2 ||
 																					statuses.find(x => x.uid === el.uid)
 																						.status === 3
-																						? "disable-overlay btn-warning"
+																						? "btn-warning"
 																						: "btn-secondary"
 																				} mx-2 ${
 																					loadingButtons.find(
