@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { DetailEmployee, DeleteEmployee } from "../../services/Employee.jsx";
-import { ListVacations } from "../../services/EmployeeAction";
+import { ListVacations, DeleteVacation } from "../../services/EmployeeAction";
+import { Vacation as ModalVacation } from "../EmployeeAction/Vacation";
 import { Link } from "react-router-dom";
 import { showSwal, Toast } from "../Alert.jsx";
 import Tabs from "../../components/Employees/Tabs";
@@ -14,7 +15,7 @@ const vacationStatus = {
 
 const noRow = loading => (
 	<tr style={{ height: 80 }}>
-		<td colSpan="5" className="text-center text-muted font-italic">
+		<td colSpan="6" className="text-center text-muted font-italic">
 			{loading ? (
 				<div className={`dimmer active`}>
 					<div className="loader" />
@@ -44,7 +45,9 @@ export class Vacation extends Component {
 			salary: null,
 			showSalary: false,
 			onLoadedData: false,
-			list: []
+			list: [],
+			data: {},
+			vacation: false
 		};
 	}
 
@@ -148,6 +151,51 @@ export class Vacation extends Component {
 		} catch (e) {}
 	};
 
+	reload = () => {
+		setTimeout(() => {
+			const current = this.props.history.location.pathname;
+			this.props.history.replace(`/`);
+			setTimeout(() => {
+				this.props.history.replace(current);
+			});
+		}, 1000);
+	};
+
+	deleteVacation = (vid, key) => {
+		try {
+			const { uid, name } = this.state;
+			showSwal({
+				type: "warning",
+				title: "Emin misiniz?",
+				html: `<b>${name}</b> adlı personelin <b>#${key}</b> nolu iznini iptal etmek istediğinize emin misiniz?`,
+				confirmButtonText: "Evet",
+				cancelButtonText: "Hayır",
+				cancelButtonColor: "#cd201f",
+				confirmButtonColor: "#868e96",
+				showCancelButton: true,
+				reverseButtons: true
+			}).then(result => {
+				if (result.value) {
+					DeleteVacation({
+						uid: uid,
+						vacation_id: vid
+					}).then(response => {
+						if (response) {
+							const status = response.status;
+							if (status.code === 1020) {
+								Toast.fire({
+									type: "success",
+									title: "İşlem başarılı..."
+								});
+								this.reload();
+							}
+						}
+					});
+				}
+			});
+		} catch (e) {}
+	};
+
 	render() {
 		const {
 			name,
@@ -161,7 +209,9 @@ export class Vacation extends Component {
 			showSalary,
 			to,
 			list,
-			onLoadedData
+			onLoadedData,
+			vacation,
+			data
 		} = this.state;
 		const { match } = this.props;
 		return (
@@ -279,17 +329,30 @@ export class Vacation extends Component {
 						<div className="card">
 							<div className="card-header">
 								<h3 className="card-title">İzin Geçmişi</h3>
+								<button
+									onClick={() =>
+										this.setState({
+											vacation: true,
+											data: { name: name, uid: to }
+										})
+									}
+									className="btn btn-sm btn-success ml-auto">
+									İzin Oluştur
+								</button>
+
+								{<ModalVacation data={data} visible={vacation} refresh={true} reload={this.reload} />}
 							</div>
 							<div className="card-body">
 								<div className="table-responsive">
-									<table className="table table-hover table-outline table-vcenter text-nowrap card-table">
+									<table className="table table-hover table-outline table-vcenter text-nowrap card-table text-center">
 										<thead>
 											<tr>
-												<th className="text-center w-1">#</th>
-												<th>Başlangıç Tarihi</th>
-												<th>Bitiş Tarihi</th>
+												<th className="w-1"></th>
+												<th className="w-1">Başlangıç Tarihi</th>
+												<th className="w-1">Bitiş Tarihi</th>
 												<th className="w-1">Gün Sayısı</th>
 												<th className="w-1">Durum</th>
+												<th className="w-1"></th>
 											</tr>
 										</thead>
 										<tbody>
@@ -297,15 +360,26 @@ export class Vacation extends Component {
 												? list.map((el, key) => {
 														return (
 															<tr key={key.toString()}>
-																<td className="text-center text-muted">{key + 1}.</td>
+																<td className="text-muted">#{key + 1}</td>
 																<td>{el.start}</td>
 																<td>{el.end}</td>
 																<td>{el.day}</td>
-																<td className="text-center">
+																<td>
 																	<span
 																		className={`badge badge-${vacationStatus[el.status].type}`}>
 																		{vacationStatus[el.status].text}
 																	</span>
+																</td>
+																<td className="text-right">
+																	<button
+																		className="btn btn-sm btn-icon btn-secondary"
+																		onClick={() =>
+																			this.deleteVacation(el.vacation_id, key + 1)
+																		}
+																		data-toggle="tooltip"
+																		title="İptal et">
+																		<i className="fe fe-x"></i>
+																	</button>
 																</td>
 															</tr>
 														);

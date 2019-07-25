@@ -38,7 +38,7 @@ const vacationStatus = {
 
 const noRow = loading => (
 	<tr style={{ height: 80 }}>
-		<td colSpan="4" className="text-center text-muted font-italic">
+		<td colSpan="5" className="text-center text-muted font-italic">
 			{loading ? (
 				<div className={`dimmer active`}>
 					<div className="loader" />

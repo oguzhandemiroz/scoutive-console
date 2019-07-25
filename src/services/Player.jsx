@@ -62,7 +62,7 @@ const DetailPlayer = data => {
 const UpdatePlayer = data => {
 	try {
 		return fetch(ep.UPDATE_PLAYER, {
-			method: "POST",
+			method: "PATCH",
 			body: JSON.stringify(data),
 			headers: h
 		})
@@ -92,7 +92,7 @@ const UpdatePlayer = data => {
 const UpdatePlayers = data => {
 	try {
 		return fetch(ep.UPDATE_PLAYERS, {
-			method: "POST",
+			method: "PATCH",
 			body: JSON.stringify(data),
 			headers: h
 		})
@@ -117,7 +117,7 @@ const UpdatePlayers = data => {
 const DeletePlayer = data => {
 	try {
 		return fetch(ep.PLAYER_DELETE, {
-			method: "POST",
+			method: "DELETE",
 			body: JSON.stringify(data),
 			headers: h
 		})

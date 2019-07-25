@@ -31,7 +31,7 @@ const CreateVacation = (data, type) => {
 const UpdateVacation = data => {
 	try {
 		return fetch(ep.VACATION_UPDATE, {
-			method: "POST",
+			method: "PATCH",
 			body: JSON.stringify(data),
 			headers: h
 		})
@@ -70,4 +70,23 @@ const ListVacations = (data, type) => {
 	}
 };
 
-export { CreateVacation, UpdateVacation, ListVacations };
+const DeleteVacation = data => {
+	try {
+		return fetch(ep.VACATION_DELETE, {
+			method: "DELETE",
+			body: JSON.stringify(data),
+			headers: h
+		})
+			.then(res => res.json())
+			.then(response => {
+				if (response) {
+					const status = response.status;
+					if (status.code !== 1020) errorSwal(status);
+					return response;
+				}
+			})
+			.catch(e => fatalSwal(true));
+	} catch (e) {}
+};
+
+export { CreateVacation, UpdateVacation, ListVacations, DeleteVacation };

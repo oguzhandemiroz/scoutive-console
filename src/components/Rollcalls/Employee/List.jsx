@@ -161,7 +161,7 @@ export class List extends Component {
 														return (
 															<tr key={key.toString()}>
 																<td className="text-center text-muted">
-																	#{el.rollcall_id}
+																	#{rollcallList.length - key}
 																</td>
 																<td>
 																	<span className="badge badge-danger mr-2">

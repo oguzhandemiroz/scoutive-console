@@ -45,7 +45,8 @@ var ep = {
     UPLOAD_FILE: host + api_version + "upload/file",
     VACATION_CREATE: host + api_version + "create/vacation/",
     VACATION_UPDATE: host + api_version + "update/vacation",
-    VACATION_LIST: host + api_version + "list/vacations/"
+    VACATION_LIST: host + api_version + "list/vacations/",
+    VACATION_DELETE: host + api_version + "delete/vacation"
 };
 
 export default ep;

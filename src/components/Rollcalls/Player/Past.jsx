@@ -269,14 +269,12 @@ export class Past extends Component {
 																							}
 																					  }
 																					: {
-																							pathname: `/app/rollcalls/player/detail/${gid}/${
-																								el.rollcall_id
-																							}`
+																							pathname: `/app/rollcalls/player/detail/${gid}/${el.rollcall_id}`
 																					  };
 																			return (
 																				<tr key={key.toString()}>
 																					<td className="pl-3 text-center text-muted">
-																						#{el.rollcall_id}
+																						#{rollcallList.length - key}
 																					</td>
 																					<td>
 																						<span className="badge badge-danger mr-2">
@@ -298,9 +296,7 @@ export class Past extends Component {
 																					<td className="pr-3 text-center">
 																						<Link
 																							className="btn btn-sm btn-info"
-																							to={`/app/rollcalls/player/detail/${gid}/${
-																								el.rollcall_id
-																							}`}>
+																							to={`/app/rollcalls/player/detail/${gid}/${el.rollcall_id}`}>
 																							İncele
 																							<i className="fe fe-arrow-right ml-2" />
 																						</Link>

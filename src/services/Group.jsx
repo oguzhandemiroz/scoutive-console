@@ -108,7 +108,7 @@ const ListPlayers = data => {
 const UpdateGroup = data => {
 	try {
 		return fetch(ep.UPDATE_GROUP, {
-			method: "POST",
+			method: "PATCH",
 			body: JSON.stringify(data),
 			headers: h
 		})

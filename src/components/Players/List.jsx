@@ -527,6 +527,11 @@ class Table extends Component {
 					url: ep.LIST_PLAYER,
 					type: "POST",
 					datatype: "json",
+					beforeSend: function(request) {
+						request.setRequestHeader("Content-Type", "application/json");
+						request.setRequestHeader("XIP", sessionStorage.getItem("IPADDR"));
+						request.setRequestHeader("Authorization", localStorage.getItem("UID"));
+					},
 					data: function(d) {
 						return JSON.stringify({
 							uid: UID

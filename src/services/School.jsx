@@ -31,7 +31,7 @@ const GetSchool = data => {
 const UpdateSchool = data => {
 	try {
 		return fetch(ep.SCHOOL_UPDATE, {
-			method: "POST",
+			method: "PATCH",
 			body: JSON.stringify(data),
 			headers: h
 		})

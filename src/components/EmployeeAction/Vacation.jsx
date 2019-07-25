@@ -99,7 +99,7 @@ export class Vacation extends Component {
 	handleSubmit = e => {
 		e.preventDefault();
 		const { uid, day, startDate, endDate, formErrors, no_cost } = this.state;
-		const { data } = this.props;
+		const { data, refresh, reload } = this.props;
 		const requiredData = {};
 
 		console.log(startDate, endDate, day);
@@ -129,6 +129,10 @@ export class Vacation extends Component {
 							type: "success",
 							title: "Başarıyla kaydedildi..."
 						});
+
+						if (refresh) {
+							reload();
+						}
 					} else if (status.code === 1037) {
 						showSwal({
 							type: "warning",
@@ -202,6 +206,9 @@ export class Vacation extends Component {
 												type: "success",
 												title: "Başarıyla güncellendi..."
 											});
+										}
+										if (refresh) {
+											reload();
 										}
 									}
 								});
@@ -471,14 +478,14 @@ export class Vacation extends Component {
 								aria-labelledby="vacation-past-tab">
 								<div className="modal-body">
 									<div className="table-responsive">
-										<table className="table table-hover table-outline table-vcenter text-nowrap card-table">
+										<table className="table table-hover table-outline table-vcenter text-nowrap card-table text-center">
 											<thead>
 												<tr>
-													<th className="text-center w-1">#</th>
-													<th>Başlangıç Tarihi</th>
-													<th>Bitiş Tarihi</th>
+													<th className="w-1"></th>
+													<th className="w-1">Başlangıç Tarihi</th>
+													<th className="w-1">Bitiş Tarihi</th>
 													<th className="w-1">Gün Sayısı</th>
-													<th className="text-center">Durum</th>
+													<th className="w-1">Durum</th>
 												</tr>
 											</thead>
 											<tbody>
@@ -486,13 +493,11 @@ export class Vacation extends Component {
 													? list.map((el, key) => {
 															return (
 																<tr key={key.toString()}>
-																	<td className="text-center text-muted">
-																		#{key + 1}
-																	</td>
+																	<td className="text-muted">#{key + 1}</td>
 																	<td>{el.start}</td>
 																	<td>{el.end}</td>
 																	<td>{el.day}</td>
-																	<td className="text-center">
+																	<td>
 																		<span
 																			className={`badge badge-${vacationStatus[el.status].type}`}>
 																			{vacationStatus[el.status].text}

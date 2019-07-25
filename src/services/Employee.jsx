@@ -37,7 +37,7 @@ const CreateEmployee = data => {
 const UpdateEmployee = data => {
 	try {
 		return fetch(ep.UPDATE_EMPLOYEE, {
-			method: "POST",
+			method: "PATCH",
 			body: JSON.stringify(data),
 			headers: h
 		})
@@ -116,7 +116,7 @@ const ListEmployee = uid => {
 const DeleteEmployee = data => {
 	try {
 		return fetch(ep.EMPLOYEE_DELETE, {
-			method: "POST",
+			method: "DELETE",
 			body: JSON.stringify(data),
 			headers: h
 		})

@@ -31,7 +31,7 @@ const CreateVacation = (data, type) => {
 const UpdateVacation = data => {
 	try {
 		return fetch(ep.VACATION_UPDATE, {
-			method: "POST",
+			method: "PATCH",
 			body: JSON.stringify(data),
 			headers: h
 		})

@@ -20,6 +20,7 @@ class App extends Component {
 			html: true,
 			trigger: "hover"
 		});
+
 		$('[data-toggle="tooltip"]').tooltip();
 	}
 	render() {
