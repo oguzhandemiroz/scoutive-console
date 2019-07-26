@@ -3,6 +3,20 @@ import { ChangeEmployee } from "../../services/Password";
 import { Link } from "react-router-dom";
 const $ = require("jquery");
 
+const formValid = ({ formErrors, ...rest }) => {
+	let valid = true;
+
+	Object.values(formErrors).forEach(val => {
+		val.length > 0 && (valid = false);
+	});
+
+	Object.values(rest).forEach(val => {
+		val === null && (valid = false);
+	});
+
+	return valid;
+};
+
 export class Password extends Component {
 	constructor(props) {
 		super(props);
@@ -11,13 +25,16 @@ export class Password extends Component {
 			uid: localStorage.getItem("UID"),
 			password: null,
 			data: {},
-			loadingButton: false
+			formErrors: {
+				password: ""
+			},
+			loadingButton: ""
 		};
 	}
 
 	componentDidMount() {
 		if (this.props.visible)
-			$("#groupChangeModal").modal({
+			$("#passwordModal").modal({
 				keyboard: false,
 				backdrop: "static"
 			});
@@ -26,7 +43,7 @@ export class Password extends Component {
 
 	componentWillReceiveProps(nextProps) {
 		if (nextProps.visible)
-			$("#groupChangeModal").modal({
+			$("#passwordModal").modal({
 				keyboard: false,
 				backdrop: "static"
 			});
@@ -34,16 +51,72 @@ export class Password extends Component {
 	}
 
 	handleSubmit = e => {
+		try {
+			e.preventDefault();
+			const { uid, password, data } = this.state;
+			if (formValid(this.state)) {
+				this.setState({ loadingButton: "btn-loading" });
+				ChangeEmployee({
+					uid: uid,
+					to: data.uid,
+					password: password
+				}).then(response => {
+					this.setState({ loadingButton: "" });
+				});
+			} else {
+				console.error("ERROR FORM");
+				let formErrors = { ...this.state.formErrors };
+				formErrors.password = password
+					? password.length < 4
+						? "is-invalid-iconless"
+						: ""
+					: "is-invalid-iconless";
+
+				this.setState({ formErrors });
+			}
+		} catch (e) {}
+	};
+
+	handleChange = e => {
+		try {
+			e.preventDefault();
+			const { value, name } = e.target;
+			let formErrors = { ...this.state.formErrors };
+
+			switch (name) {
+				case "password":
+					formErrors.password = value
+						? value.length < 4
+							? "is-invalid-iconless"
+							: ""
+						: "is-invalid-iconless";
+					break;
+				default:
+					break;
+			}
+
+			this.setState({ [name]: value, formErrors });
+		} catch (e) {}
+	};
+
+	generatePassword = e => {
 		e.preventDefault();
-		const { uid, password, data } = this.state;
+		let formErrors = { ...this.state.formErrors };
+		const pass = Math.random()
+			.toString(36)
+			.substring(7);
+
+		formErrors.password = "";
+
+		this.setState({ password: pass, formErrors });
 	};
 
 	render() {
-		const { password, loadingButton, data } = this.state;
+		const { password, loadingButton, formErrors, data } = this.state;
 		return (
 			<div
 				className="modal fade"
-				id="groupChangeModal"
+				id="passwordModal"
 				tabIndex="-1"
 				role="dialog"
 				aria-labelledby="exampleModalLabel"
@@ -68,21 +141,31 @@ export class Password extends Component {
 
 								<div className="form-group">
 									<label className="form-label">Yeni Şifre:</label>
-									<input
-										type="text"
-										className="form-control"
-										name="password"
-										placeholder="Yeni Şifre"
-										onChange={this.handleChange}
-									/>
+									<div className="input-group">
+										<input
+											type="text"
+											className={`form-control ${formErrors.password}`}
+											name="password"
+											placeholder="Yeni Şifre"
+											onChange={this.handleChange}
+											id="passwordEmployeeAction"
+											value={password || ""}
+										/>
+										<span className="input-group-append">
+											<button
+												data-toggle="tooltip"
+												title="Şifre Üret"
+												className="btn btn-sm btn-indigo"
+												onClick={this.generatePassword}
+												type="button">
+												<i className="fa fa-sync-alt"></i>
+											</button>
+										</span>
+									</div>
 								</div>
 							</div>
 							<div className="modal-footer">
-								<button
-									type="submit"
-									className={`ml-auto btn btn-success ${
-										loadingButton ? "btn-loading disabled" : ""
-									}`}>
+								<button type="submit" className={`ml-auto btn btn-success ${loadingButton}`}>
 									Güncelle
 								</button>
 							</div>

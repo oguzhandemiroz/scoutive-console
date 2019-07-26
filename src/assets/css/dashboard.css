@@ -22454,3 +22454,11 @@ figure span.player-number {
 .employeeActionModal .modal-header .close {
 	margin-top: 0;
 }
+
+#passwordEmployeeAction {
+	font-size: 30px;
+    height: 60px;
+    line-height: 1;
+	font-weight: 600;
+	text-align: center;
+}
