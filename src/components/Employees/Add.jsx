@@ -4,6 +4,33 @@ import { CreateEmployee } from "../../services/Employee.jsx";
 import { UploadFile } from "../../services/Others.jsx";
 import { showSwal } from "../../components/Alert.jsx";
 import Select from "react-select";
+import Inputmask from "inputmask";
+const $ = require("jquery");
+
+Inputmask.extendDefaults({
+	autoUnmask: true
+});
+
+Inputmask.extendAliases({
+	try: {
+		suffix: " ₺",
+		radixPoint: ",",
+		groupSeparator: ".",
+		alias: "numeric",
+		placeholder: ",00",
+		autoGroup: true,
+		digits: 2,
+		digitsOptional: false,
+		clearMaskOnLostFocus: false,
+		autoUnmask: true
+	}
+});
+
+const InputmaskDefaultOptions = {
+	showMaskOnHover: false,
+	showMaskOnFocus: false,
+	placeholder: ""
+};
 
 // eslint-disable-next-line
 const emailRegEx = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
@@ -17,7 +44,6 @@ const formValid = ({ formErrors, ...rest }) => {
 	});
 
 	Object.values(rest).forEach(val => {
-		console.log("rest: ", val);
 		val === null && (valid = false);
 	});
 
@@ -95,7 +121,32 @@ export class Add extends Component {
 		};
 	}
 
+	fieldMasked = () => {
+		try {
+			const elemArray = {
+				name: $("[name=name]"),
+				surname: $("[name=surname]"),
+				phone: $("[name=phone]"),
+				email: $("[name=email]"),
+				securityNo: $("[name=securityNo]"),
+				salary: $("[name=salary]"),
+				emergency_phone: $("[name*='emergency.phone.']")
+			};
+			Inputmask({ mask: "(999) 999 9999", ...InputmaskDefaultOptions }).mask(elemArray.phone);
+			Inputmask({ mask: "(999) 999 9999", ...InputmaskDefaultOptions }).mask(elemArray.emergency_phone);
+			Inputmask({ mask: "99999999999", ...InputmaskDefaultOptions }).mask(elemArray.securityNo);
+			Inputmask({ alias: "email", ...InputmaskDefaultOptions }).mask(elemArray.email);
+			Inputmask({ alias: "try", ...InputmaskDefaultOptions }).mask(elemArray.salary);
+			Inputmask({ regex: "[a-zA-Z-ğüşöçİĞÜŞÖÇı ]*", ...InputmaskDefaultOptions }).mask(elemArray.name);
+			Inputmask({ regex: "[a-zA-ZğüşöçİĞÜŞÖÇı]*", ...InputmaskDefaultOptions }).mask(elemArray.surname);
+		} catch (e) {}
+	};
+
 	componentDidMount() {
+		setTimeout(() => {
+			this.fieldMasked();
+		}, 500);
+
 		let select = { ...this.state.select };
 		Bloods().then(response => {
 			console.log(response);
@@ -145,7 +196,6 @@ export class Add extends Component {
 		select.kinships = Kinship();
 
 		this.setState({ select });
-		console.log(this.state.select);
 	}
 
 	componentWillUnmount() {
@@ -199,7 +249,7 @@ export class Add extends Component {
 
 		//attributes data
 		if (salary) {
-			attributesData.salary = salary.toString();
+			attributesData.salary = Inputmask.unmask(salary)
 		}
 
 		if (position) {
@@ -282,9 +332,9 @@ export class Add extends Component {
 							this.setState({ uploadedFile: true, loadingButton: "" });
 							if (response)
 								if (!addContinuously) this.props.history.push("/app/employees");
-								else this.setState({ ...initialState });
+								else this.reload();
 						});
-					} else if (addContinuously) this.setState({ ...initialState, loadingButton: "" });
+					} else if (addContinuously) this.reload();
 					else this.props.history.push("/app/employees");
 				} else this.setState({ loadingButton: "" });
 			});
@@ -296,7 +346,7 @@ export class Add extends Component {
 			formErrors.name = name ? (name.length < 3 ? "is-invalid" : "") : "is-invalid";
 			formErrors.surname = surname ? (surname.length < 3 ? "is-invalid" : "") : "is-invalid";
 			formErrors.securityNo = securityNo
-				? securityNo.length < 9
+				? securityNo.length !== 11
 					? "is-invalid"
 					: !securityNoRegEx.test(securityNo)
 					? "is-invalid"
@@ -327,7 +377,7 @@ export class Add extends Component {
 				break;
 			case "securityNo":
 				formErrors.securityNo =
-					value.length < 9 ? "is-invalid" : !securityNoRegEx.test(value) ? "is-invalid" : "";
+					value.length !== 11 ? "is-invalid" : !securityNoRegEx.test(value) ? "is-invalid" : "";
 				break;
 			case "email":
 				formErrors.email = value.length < 3 ? "is-invalid" : !emailRegEx.test(value) ? "is-invalid" : "";
@@ -341,8 +391,9 @@ export class Add extends Component {
 			default:
 				break;
 		}
-		if (name.indexOf(".") === -1) this.setState({ formErrors, [name]: value });
-		else {
+		if (name.indexOf(".") === -1) {
+			this.setState({ formErrors, [name]: value });
+		} else {
 			const splitName = name.split(".");
 			this.setState(prevState => {
 				return (prevState[splitName[0]][splitName[2]][splitName[1]] = value);
@@ -399,6 +450,14 @@ export class Add extends Component {
 	handleRadio = e => {
 		const { name, value } = e.target;
 		this.setState({ [name]: parseInt(value) });
+	};
+
+	reload = () => {
+		const current = this.props.history.location.pathname;
+		this.props.history.replace(`/`);
+		setTimeout(() => {
+			this.props.history.replace(current);
+		});
 	};
 
 	render() {
@@ -508,7 +567,6 @@ export class Add extends Component {
 										onChange={this.handleChange}
 										placeholder="T.C. Kimlik No"
 										name="securityNo"
-										maxLength="11"
 										value={securityNo || ""}
 									/>
 								</div>
@@ -601,8 +659,7 @@ export class Add extends Component {
 												className={`form-control ${formErrors.phone}`}
 												onChange={this.handleChange}
 												name="phone"
-												placeholder="Telefon (5xx)"
-												maxLength="10"
+												placeholder="(535) 123 4567"
 												value={phone || ""}
 											/>
 										</div>
@@ -787,10 +844,10 @@ export class Add extends Component {
 																<td className="pl-0">
 																	<input
 																		type="text"
-																		maxLength="10"
 																		name={`emergency.phone.${key}`}
 																		onChange={this.handleChange}
 																		className="form-control"
+																		placeholder="(535) 123 4567"
 																	/>
 																</td>
 															</tr>

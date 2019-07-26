@@ -4,6 +4,33 @@ import { UploadFile } from "../../services/Others";
 import { CreatePlayer } from "../../services/Player.jsx";
 import { showSwal } from "../../components/Alert.jsx";
 import Select from "react-select";
+import Inputmask from "inputmask";
+const $ = require("jquery");
+
+Inputmask.extendDefaults({
+	autoUnmask: true
+});
+
+Inputmask.extendAliases({
+	try: {
+		suffix: " ₺",
+		radixPoint: ",",
+		groupSeparator: ".",
+		alias: "numeric",
+		placeholder: ",00",
+		autoGroup: true,
+		digits: 2,
+		digitsOptional: false,
+		clearMaskOnLostFocus: false,
+		autoUnmask: true
+	}
+});
+
+const InputmaskDefaultOptions = {
+	showMaskOnHover: false,
+	showMaskOnFocus: false,
+	placeholder: ""
+};
 
 // eslint-disable-next-line
 const emailRegEx = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
@@ -103,7 +130,32 @@ export class Add extends Component {
 		};
 	}
 
+	fieldMasked = () => {
+		try {
+			const elemArray = {
+				name: $("[name=name]"),
+				surname: $("[name=surname]"),
+				phone: $("[name=phone]"),
+				email: $("[name=email]"),
+				securityNo: $("[name=securityNo]"),
+				fee: $("[name=fee]"),
+				emergency_phone: $("[name*='emergency.phone.']")
+			};
+			Inputmask({ mask: "(999) 999 9999", ...InputmaskDefaultOptions }).mask(elemArray.phone);
+			Inputmask({ mask: "(999) 999 9999", ...InputmaskDefaultOptions }).mask(elemArray.emergency_phone);
+			Inputmask({ mask: "99999999999", ...InputmaskDefaultOptions }).mask(elemArray.securityNo);
+			Inputmask({ alias: "email", ...InputmaskDefaultOptions }).mask(elemArray.email);
+			Inputmask({ alias: "try", ...InputmaskDefaultOptions }).mask(elemArray.fee);
+			Inputmask({ regex: "[a-zA-Z-ğüşöçİĞÜŞÖÇı ]*", ...InputmaskDefaultOptions }).mask(elemArray.name);
+			Inputmask({ regex: "[a-zA-ZğüşöçİĞÜŞÖÇı]*", ...InputmaskDefaultOptions }).mask(elemArray.surname);
+		} catch (e) {}
+	};
+
 	componentDidMount() {
+		setTimeout(() => {
+			this.fieldMasked();
+		}, 500);
+
 		let select = { ...this.state.select };
 
 		Bloods().then(response => {
@@ -312,9 +364,9 @@ export class Add extends Component {
 							this.setState({ uploadedFile: true, loadingButton: "" });
 							if (response)
 								if (!addContinuously) this.props.history.push("/app/players");
-								else this.setState({ ...initialState });
+								else this.reload();
 						});
-					} else if (addContinuously) this.setState({ ...initialState, loadingButton: "" });
+					} else if (addContinuously) this.reload();
 					else this.props.history.push("/app/players");
 				} else this.setState({ loadingButton: "" });
 			});
@@ -460,6 +512,14 @@ export class Add extends Component {
 		this.setState({ formErrors, [name]: parseInt(value) });
 	};
 
+	reload = () => {
+		const current = this.props.history.location.pathname;
+		this.props.history.replace(`/`);
+		setTimeout(() => {
+			this.props.history.replace(current);
+		});
+	};
+
 	render() {
 		const {
 			name,
@@ -570,7 +630,6 @@ export class Add extends Component {
 										onChange={this.handleChange}
 										placeholder="T.C. Kimlik No"
 										name="securityNo"
-										maxLength="11"
 										value={securityNo || ""}
 									/>
 								</div>
@@ -697,8 +756,7 @@ export class Add extends Component {
 												className={`form-control ${formErrors.phone}`}
 												onChange={this.handleChange}
 												name="phone"
-												placeholder="Telefon (5xx)"
-												maxLength="10"
+												placeholder="(535) 123 4567"
 												value={phone || ""}
 											/>
 										</div>
@@ -883,9 +941,7 @@ export class Add extends Component {
 										</div>
 
 										<div className="form-group">
-											<label className="form-label">
-												Ayak Numarası
-											</label>
+											<label className="form-label">Ayak Numarası</label>
 											<input
 												type="number"
 												className="form-control"
@@ -948,7 +1004,7 @@ export class Add extends Component {
 																		type="text"
 																		name={`emergency.phone.${key}`}
 																		onChange={this.handleChange}
-																		maxLength="10"
+																		placeholder="(535) 123 4567"
 																		className="form-control"
 																	/>
 																</td>

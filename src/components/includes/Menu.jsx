@@ -34,41 +34,14 @@ class Menu extends Component {
 										</NavLink>
 									</li>
 									<li className="nav-item">
-										<NavLink
-											to="/app/employees"
-											activeClassName="active"
-											className="nav-link"
-											data-toggle="dropdown">
+										<NavLink to="/app/employees" activeClassName="active" className="nav-link">
 											<i className="fe fe-briefcase" /> Personeller
 										</NavLink>
-										<div className="dropdown-menu dropdown-menu-arrow">
-											<NavLink to="/app/employees/add" exact className="dropdown-item">
-												Personel Ekle
-											</NavLink>
-											<NavLink to="/app/employees" exact className="dropdown-item">
-												Tümünü Görüntüle
-											</NavLink>
-										</div>
 									</li>
 									<li className="nav-item">
-										<NavLink
-											to="/app/players"
-											activeClassName="active"
-											className="nav-link"
-											data-toggle="dropdown">
+										<NavLink to="/app/players" activeClassName="active" className="nav-link">
 											<i className="fe fe-users" /> Öğrenciler
 										</NavLink>
-										<div className="dropdown-menu dropdown-menu-arrow">
-											<NavLink to="/app/players/add" exact className="dropdown-item">
-												Öğrenci Ekle
-											</NavLink>
-											<NavLink to="/app/players/add/trial" exact className="dropdown-item">
-												Deneme Öğrenci Ekle
-											</NavLink>
-											<NavLink to="/app/players" exact className="dropdown-item">
-												Tümünü Görüntüle
-											</NavLink>
-										</div>
 									</li>
 									<li className="nav-item">
 										<NavLink to="/app/groups" activeClassName="active" className="nav-link">

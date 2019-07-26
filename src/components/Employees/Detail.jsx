@@ -3,6 +3,8 @@ import {DetailEmployee, DeleteEmployee} from "../../services/Employee.jsx";
 import {Link} from "react-router-dom";
 import {showSwal, Toast} from "../Alert.jsx";
 import Tabs from "../../components/Employees/Tabs";
+import Inputmask from "inputmask";
+import moment from "moment";
 const CryptoJS = require("crypto-js");
 
 const genderToText = {
@@ -53,13 +55,13 @@ export class Detail extends Component {
                     stateData.name = `${data.name || ""} ${data.surname || ""}`;
                     stateData.position = data.position || "—";
                     stateData.securityNo = data.security_id || "—";
-                    stateData.phone = data.phone || "—";
+                    stateData.phone = data.phone ? Inputmask.format(data.phone, { mask: "(999) 999 9999"}) : "—";
                     stateData.email = data.email || "—";
                     stateData.branch = data.branch || "—";
                     stateData.image = data.image || "—";
                     stateData.address = data.address || "—";
                     stateData.gender = data.gender !== null ? genderToText[data.gender] : "—";
-                    stateData.birthday = data.birthday || "—";
+                    stateData.birthday = data.birthday ? moment(data.birthday).format("DD/MM/YYYY") : "—";
                     stateData.blood = data.blood || "—";
                     stateData.emergency = data.emergency;
                     stateData.school = data.school_history;
@@ -282,11 +284,15 @@ export class Detail extends Component {
                                                 </div>
                                                 <div className="form-group">
                                                     <label className="form-label">Telefonu</label>
-                                                    <div className="form-control-plaintext">{phone}</div>
+                                                    <div className="form-control-plaintext">
+                                                        {phone}
+                                                    </div>
                                                 </div>
                                                 <div className="form-group">
                                                     <label className="form-label">Doğum Tarihi</label>
-                                                    <div className="form-control-plaintext">{birthday}</div>
+                                                    <div className="form-control-plaintext">
+                                                    {birthday}
+                                                    </div>
                                                 </div>
                                                 <div className="form-group">
                                                     <label className="form-label">Adresi</label>
@@ -361,7 +367,7 @@ export class Detail extends Component {
                                                                                                   "tel:" +
                                                                                                   el.phone
                                                                                               }>
-                                                                                              {el.phone}
+                                                                                              {Inputmask.format(el.phone, { mask: "(999) 999 9999"})}
                                                                                           </a>
                                                                                       </div>
                                                                                   </td>

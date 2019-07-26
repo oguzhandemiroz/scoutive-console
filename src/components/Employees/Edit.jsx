@@ -1,19 +1,39 @@
 import React, { Component } from "react";
-import {
-	Bloods,
-	Branchs,
-	Days,
-	Months,
-	Years,
-	EmployeePositions,
-	DateRange,
-	Kinship
-} from "../../services/FillSelect.jsx";
+import { Bloods, Branchs, Days, Months, Years, EmployeePositions, Kinship } from "../../services/FillSelect.jsx";
 import { DetailEmployee, UpdateEmployee } from "../../services/Employee.jsx";
 import { SplitBirthday, UploadFile, getSelectValue, AttributeDataChecker } from "../../services/Others.jsx";
 import { showSwal } from "../../components/Alert.jsx";
 import Select from "react-select";
 import { Link } from "react-router-dom";
+import Inputmask from "inputmask";
+const $ = require("jquery");
+
+Inputmask.extendDefaults({
+	autoUnmask: true
+});
+
+Inputmask.extendAliases({
+	try: {
+		suffix: " ₺",
+		radixPoint: ",",
+		groupSeparator: ".",
+		alias: "numeric",
+		placeholder: "0",
+		autoGroup: true,
+		digits: 2,
+		digitsOptional: false,
+		clearMaskOnLostFocus: false,
+		autoUnmask: true,
+		allowMinus: false,
+		allowPlus: false
+	}
+});
+
+const InputmaskDefaultOptions = {
+	showMaskOnHover: false,
+	showMaskOnFocus: false,
+	placeholder: ""
+};
 
 // eslint-disable-next-line
 const emailRegEx = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
@@ -104,7 +124,32 @@ export class Edit extends Component {
 		};
 	}
 
+	fieldMasked = () => {
+		try {
+			const elemArray = {
+				name: $("[name=name]"),
+				surname: $("[name=surname]"),
+				phone: $("[name=phone]"),
+				email: $("[name=email]"),
+				securityNo: $("[name=securityNo]"),
+				salary: $("[name=salary]"),
+				emergency_phone: $("[name*='emergency.phone.']")
+			};
+			Inputmask({ mask: "(999) 999 9999", ...InputmaskDefaultOptions }).mask(elemArray.phone);
+			Inputmask({ mask: "(999) 999 9999", ...InputmaskDefaultOptions }).mask(elemArray.emergency_phone);
+			Inputmask({ mask: "99999999999", ...InputmaskDefaultOptions }).mask(elemArray.securityNo);
+			Inputmask({ alias: "email", ...InputmaskDefaultOptions }).mask(elemArray.email);
+			Inputmask({ alias: "try", ...InputmaskDefaultOptions }).mask(elemArray.salary);
+			Inputmask({ regex: "[a-zA-Z-ğüşöçİĞÜŞÖÇı ]*", ...InputmaskDefaultOptions }).mask(elemArray.name);
+			Inputmask({ regex: "[a-zA-ZğüşöçİĞÜŞÖÇı]*", ...InputmaskDefaultOptions }).mask(elemArray.surname);
+		} catch (e) {}
+	};
+
 	componentDidMount() {
+		setTimeout(() => {
+			this.fieldMasked();
+		}, 500);
+
 		const { uid, to } = this.state;
 		let select = { ...this.state.select };
 
@@ -143,7 +188,7 @@ export class Edit extends Component {
 					initialState.surname = data.surname;
 					initialState.securityNo = data.security_id;
 					initialState.phone = data.phone;
-					initialState.salary = data.salary;
+					initialState.salary = Inputmask.format(data.salary.toString(), { alias: "decimal" });
 					initialState.imagePreview = data.image;
 					initialState.image = data.image;
 					initialState.email = data.email;
@@ -196,14 +241,6 @@ export class Edit extends Component {
 					}
 					initialState.body_height = data.attributes.body_height;
 					initialState.body_weight = data.attributes.body_weight;
-					/*
-                initialState.body.height = data.body_metrics ? data.body_metrics.height : "...";
-                initialState.body.weight = data.body_metrics ? data.body_metrics.weight : "...";
-                
-                initialState.secretSalary = data.salary
-                    ? CryptoJS.AES.encrypt(data.salary.toString(), "scSecretSalary").toString()
-                    : null;
-*/
 					this.setState({ ...initialState });
 					this.setState({ onLoadedData: true });
 				}
@@ -250,6 +287,10 @@ export class Edit extends Component {
 		const requiredData = {};
 		const attributesData = {};
 
+		const formatSalary = salary.toString().indexOf("₺") > -1 ? salary.slice(0, -2) : salary;
+
+		console.log(Inputmask.unmask(salary), formatSalary);
+
 		// require data
 		requiredData.name = name;
 		requiredData.surname = surname;
@@ -258,12 +299,12 @@ export class Edit extends Component {
 		requiredData.phone = phone;
 		requiredData.position = position ? position.value : null;
 		requiredData.branch = branch ? branch.value : null;
-		requiredData.salary = salary;
+		requiredData.salary = formatSalary;
 		requiredData.formErrors = formErrors;
 
 		//attributes data
-		if (AttributeDataChecker(responseData.salary, salary)) {
-			attributesData.salary = salary;
+		if (AttributeDataChecker(responseData.salary, formatSalary)) {
+			attributesData.salary = Inputmask.unmask(salary);
 		}
 		if (AttributeDataChecker(responseData.position, position ? position.label : null)) {
 			attributesData.position = position ? position.value : "";
@@ -294,7 +335,7 @@ export class Edit extends Component {
             position: ${JSON.stringify(position)}
             branch: ${JSON.stringify(branch)}
             phone: ${phone}
-            salary: ${salary}
+            salary: ${formatSalary}
             image: ${image}
             emergency: ${JSON.stringify(emergency)}
             school_history: ${JSON.stringify(school_history)}
@@ -317,7 +358,7 @@ export class Edit extends Component {
 				permission_id: position ? position.value : null,
 				phone: phone,
 				image: image,
-				salary: salary.toString().replace(",", "."),
+				salary: formatSalary.toString().replace(",", "."),
 				address: address,
 				emergency: emergency,
 				blood_id: blood ? blood.value : null,
@@ -387,8 +428,9 @@ export class Edit extends Component {
 			default:
 				break;
 		}
-		if (name.indexOf(".") === -1) this.setState({ formErrors, [name]: value });
-		else {
+		if (name.indexOf(".") === -1) {
+			this.setState({ formErrors, [name]: value });
+		} else {
 			const splitName = name.split(".");
 			this.setState(prevState => {
 				return (prevState[splitName[0]][splitName[2]][splitName[1]] = value);
@@ -450,6 +492,14 @@ export class Edit extends Component {
 	handleRadio = e => {
 		const { name, value } = e.target;
 		this.setState({ [name]: parseInt(value) });
+	};
+
+	reload = () => {
+		const current = this.props.history.location.pathname;
+		this.props.history.replace(`/`);
+		setTimeout(() => {
+			this.props.history.replace(current);
+		});
 	};
 
 	render() {
@@ -569,7 +619,6 @@ export class Edit extends Component {
 												onChange={this.handleChange}
 												placeholder="T.C. Kimlik No"
 												name="securityNo"
-												maxLength="11"
 												value={securityNo || ""}
 											/>
 										</div>
@@ -664,8 +713,7 @@ export class Edit extends Component {
 														className={`form-control ${formErrors.phone}`}
 														onChange={this.handleChange}
 														name="phone"
-														placeholder="Telefon (5xx)"
-														maxLength="10"
+														placeholder="(535) 123 4567"
 														value={phone || ""}
 													/>
 												</div>
@@ -864,11 +912,11 @@ export class Edit extends Component {
 																				<td className="pl-0">
 																					<input
 																						type="text"
-																						maxLength="10"
 																						name={`emergency.phone.${key}`}
 																						onChange={this.handleChange}
 																						className="form-control"
 																						value={el.phone || ""}
+																						placeholder="(535) 123 4567"
 																					/>
 																				</td>
 																			</tr>
