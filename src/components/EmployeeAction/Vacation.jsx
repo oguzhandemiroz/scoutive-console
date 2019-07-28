@@ -7,7 +7,32 @@ import { CreateVacation, UpdateVacation, ListVacations } from "../../services/Em
 import { fullnameGenerator } from "../../services/Others";
 import { Toast, showSwal } from "../Alert";
 import moment from "moment";
+import Inputmask from "inputmask";
 const $ = require("jquery");
+
+Inputmask.extendDefaults({
+	autoUnmask: true
+});
+
+Inputmask.extendAliases({
+	try: {
+		suffix: " ₺",
+		radixPoint: ",",
+		groupSeparator: ".",
+		alias: "numeric",
+		autoGroup: true,
+		digits: 2,
+		digitsOptional: false,
+		clearMaskOnLostFocus: false
+	}
+});
+
+const InputmaskDefaultOptions = {
+	showMaskOnHover: false,
+	showMaskOnFocus: false,
+	placeholder: "0,00",
+	autoUnmask: true
+};
 
 registerLocale("tr", tr);
 
@@ -29,7 +54,9 @@ const initialState = {
 	startDate: new Date(),
 	endDate: null,
 	day: null,
-	no_cost: 0
+	no_cost: 0,
+	daily_amount: null,
+	note: null
 };
 
 const vacationStatus = {
@@ -67,10 +94,24 @@ export class Vacation extends Component {
 			formErrors: {
 				startDate: "",
 				endDate: "",
-				day: ""
+				day: "",
+				daily_amount: ""
 			}
 		};
 	}
+
+	fieldMasked = () => {
+		try {
+			console.log("e");
+			const elemArray = {
+				daily_amount: $("[name=daily_amount]")
+			};
+			Inputmask({
+				alias: "try",
+				...InputmaskDefaultOptions
+			}).mask(elemArray.daily_amount);
+		} catch (e) {}
+	};
 
 	componentDidMount() {
 		if (document.querySelectorAll("#vacation-past-tab.active").length > 0)
@@ -98,7 +139,7 @@ export class Vacation extends Component {
 
 	handleSubmit = e => {
 		e.preventDefault();
-		const { uid, day, startDate, endDate, formErrors, no_cost } = this.state;
+		const { uid, day, startDate, note, daily_amount, endDate, formErrors, no_cost } = this.state;
 		const { data, refresh, reload } = this.props;
 		const requiredData = {};
 
@@ -106,6 +147,7 @@ export class Vacation extends Component {
 		requiredData.startDate = startDate;
 		requiredData.endDate = endDate;
 		requiredData.day = day;
+		if (no_cost === 1) requiredData.daily_amount = daily_amount;
 		requiredData.formErrors = formErrors;
 
 		if (formValid(requiredData)) {
@@ -117,7 +159,9 @@ export class Vacation extends Component {
 					start: moment(startDate).format("YYYY-MM-DD"),
 					end: endDate ? moment(endDate).format("YYYY-MM-DD") : moment(startDate).format("YYYY-MM-DD"),
 					day: day ? parseFloat(day) : 1,
-					no_cost: no_cost
+					no_cost: no_cost,
+					note: note,
+					daily_amount: daily_amount ? daily_amount.replace(",", ".") : null
 				},
 				"employee"
 			).then(response => {
@@ -195,7 +239,9 @@ export class Vacation extends Component {
 											? moment(endDate).format("YYYY-MM-DD")
 											: moment(startDate).format("YYYY-MM-DD"),
 										day: day ? parseFloat(day) : 1,
-										no_cost: no_cost
+										no_cost: no_cost,
+										note: note,
+										daily_amount: daily_amount ? daily_amount.replace(",", ".") : null
 									}
 								}).then(response => {
 									if (response) {
@@ -224,6 +270,7 @@ export class Vacation extends Component {
 			formErrors.startDate = startDate ? "" : "is-invalid";
 			formErrors.endDate = endDate ? "" : "is-invalid";
 			formErrors.day = day ? "" : "is-invalid";
+			formErrors.daily_amount = no_cost === 1 ? (daily_amount ? "" : "is-invalid") : "";
 
 			this.setState({ formErrors });
 		}
@@ -231,15 +278,25 @@ export class Vacation extends Component {
 
 	handleChange = e => {
 		const { name, value } = e.target;
+		console.log(value);
 		let formErrors = { ...this.state.formErrors };
 		switch (name) {
 			case "day":
 				formErrors.day = value ? "" : "is-invalid";
 				break;
+			case "daily_amount":
+				formErrors.daily_amount = value ? "" : "is-invalid";
+				break;
 			default:
 				break;
 		}
-		this.setState({ formErrors, [name]: value });
+		if (name === "daily_amount") {
+			this.setState({ [name]: value === "0,00" ? null : value });
+		} else {
+			this.setState({ [name]: value });
+		}
+
+		this.setState({ formErrors });
 	};
 
 	handleDate = (date, name) => {
@@ -275,6 +332,10 @@ export class Vacation extends Component {
 	handleRadio = e => {
 		const { name, value } = e.target;
 		this.setState({ [name]: parseInt(value) });
+
+		if (value === "0") this.setState({ daily_amount: null });
+
+		this.fieldMasked();
 	};
 
 	renderVacationList = to => {
@@ -300,7 +361,19 @@ export class Vacation extends Component {
 	};
 
 	render() {
-		const { startDate, endDate, day, no_cost, data, loadingButton, list, loadingData, formErrors } = this.state;
+		const {
+			startDate,
+			endDate,
+			day,
+			no_cost,
+			note,
+			daily_amount,
+			data,
+			loadingButton,
+			list,
+			loadingData,
+			formErrors
+		} = this.state;
 		return (
 			<div
 				className="modal fade employeeActionModal"
@@ -456,6 +529,37 @@ export class Vacation extends Component {
 															<span className="selectgroup-button">Ücretsiz</span>
 														</label>
 													</div>
+												</div>
+
+												<div
+													className="form-group"
+													style={{ display: no_cost === 1 ? "block" : "none" }}>
+													<label htmlFor="daily_amount" className="form-label">
+														Günlük Kesinti Tutarı
+														<span className="form-required">*</span>
+													</label>
+													<input
+														id="daily_amount"
+														name="daily_amount"
+														className={`form-control ${formErrors.daily_amount}`}
+														type="text"
+														value={daily_amount || ""}
+														onChange={this.handleChange}
+													/>
+												</div>
+												<div className="form-group">
+													<label className="form-label">
+														Not
+														<span className="form-label-small">
+															{note ? note.length : 0}/255
+														</span>
+													</label>
+													<textarea
+														className="form-control"
+														name="note"
+														onChange={this.handleChange}
+														rows="3"
+														placeholder="Not.."></textarea>
 												</div>
 											</div>
 										</div>

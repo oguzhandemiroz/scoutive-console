@@ -21,9 +21,9 @@ Inputmask.extendAliases({
 		placeholder: "0",
 		autoGroup: true,
 		digits: 2,
+		autoUnmask: true,
 		digitsOptional: false,
 		clearMaskOnLostFocus: false,
-		autoUnmask: true,
 		allowMinus: false,
 		allowPlus: false
 	}
@@ -342,13 +342,14 @@ export class Edit extends Component {
             blood: ${JSON.stringify(blood)}
             gender: ${gender}
             birthday: ${checkBirthday}
+			attributes: ${JSON.stringify(attributesData)}
         `);
 
 		console.log(requiredData);
 
 		if (formValid(requiredData)) {
-			this.setState({ loadingButton: "btn-loading" });
-			UpdateEmployee({
+			//this.setState({ loadingButton: "btn-loading" });
+			/*UpdateEmployee({
 				uid: uid,
 				to: to,
 				name: name,
@@ -374,7 +375,7 @@ export class Edit extends Component {
 						this.props.history.push("/app/employees/detail/" + to);
 					}
 				}, 1000);
-			});
+			});*/
 		} else {
 			console.error("FORM INVALID - DISPLAY ERROR");
 			const { value } = e.target;

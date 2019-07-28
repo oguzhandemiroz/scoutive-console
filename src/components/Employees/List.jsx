@@ -11,6 +11,7 @@ import ReactDOM from "react-dom";
 import { BrowserRouter, Link } from "react-router-dom";
 import Vacation from "../EmployeeAction/Vacation";
 import Password from "../EmployeeAction/Password";
+import AdvancePayment from "../EmployeeAction/AdvancePayment";
 import { fullnameGenerator } from "../../services/Others";
 const $ = require("jquery");
 $.DataTable = require("datatables.net");
@@ -211,7 +212,8 @@ const datatable_turkish = {
 
 const initialState = {
 	vacation: false,
-	password: false
+	password: false,
+	advance: false
 };
 
 class Table extends Component {
@@ -293,11 +295,17 @@ class Table extends Component {
 											<a className="dropdown-item action-pay-salary" href="javascript:void(0)">
 												<i className="dropdown-icon fa fa-money-bill-wave" /> Maaş Öde
 											</a>
-											<a
-												className="dropdown-item action-advance-payment"
-												href="javascript:void(0)">
+											<button
+												onClick={() =>
+													this.setState({
+														...initialState,
+														advance: true,
+														data: { name: fullname, uid: uid }
+													})
+												}
+												className="dropdown-item action-advance-payment">
 												<i className="dropdown-icon fa fa-hand-holding-usd" /> Avans Ver
-											</a>
+											</button>
 											<a className="dropdown-item action-salary-raise" href="javascript:void(0)">
 												<i className="dropdown-icon fa fa-coins" /> Zam Yap
 											</a>
@@ -330,7 +338,6 @@ class Table extends Component {
 											<button
 												onClick={() =>
 													this.setState({
-														...initialState,
 														...initialState,
 														password: true,
 														data: { name: fullname, uid: uid }
@@ -499,7 +506,7 @@ class Table extends Component {
 	}
 
 	render() {
-		const { vacation, password, data } = this.state;
+		const { vacation, password, advance, data } = this.state;
 		return (
 			<div>
 				<table
@@ -522,6 +529,7 @@ class Table extends Component {
 				</table>
 				{<Vacation data={data} visible={vacation} />}
 				{<Password data={data} visible={password} />}
+				{advance ? <AdvancePayment data={data} visible={advance} /> : null}
 			</div>
 		);
 	}
