@@ -14,6 +14,7 @@ import AddEmployee from "../components/Employees/Add";
 import DetailEmployee from "../components/Employees/Detail";
 import EditEmployee from "../components/Employees/Edit";
 import VacationEmployee from "../components/Employees/Vacation";
+import Salary from "../components/Employees/Salary";
 
 import AddPlayers from "../components/Players/Add";
 import DetailPlayer from "../components/Players/Detail";
@@ -85,14 +86,14 @@ var indexRoutes = [
 		component: Profile,
 		layout: "/account",
 		prop: { exact: true }
-    },
+	},
 	{
 		path: "/password/change",
 		name: "Change Password",
 		component: ChangePassword,
 		layout: "/account",
 		prop: { exact: true }
-    },   
+	},
 	{
 		path: "/employees",
 		name: "Employees",
@@ -127,6 +128,13 @@ var indexRoutes = [
 		component: EditEmployee,
 		layout: "/app",
 		prop: { exact: true }
+	},
+	{
+		path: "/employees/salary/:uid?",
+		name: "Pay Salary",
+		component: Salary,
+		layout: "/app",
+		prop: { exact: false }
 	},
 	{
 		path: "/players",

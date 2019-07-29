@@ -366,8 +366,9 @@ const Kinship = () => {
 	} catch (e) {}
 };
 
-const GetEmployees = () => {
+const GetEmployees = errorMsg => {
 	try {
+		if (!errorMsg) errorMsg = "Antrenörler";
 		return fetch(ep.GET_EMPLOYEE_NAME, {
 			method: "POST",
 			body: JSON.stringify({
@@ -384,7 +385,7 @@ const GetEmployees = () => {
 					if (status.code !== 1020) {
 						Toast.fire({
 							type: "error",
-							title: '"Antrenörler" yüklenemedi'
+							title: `"${errorMsg}" yüklenemedi`
 						});
 					} else {
 						const data = response.data;

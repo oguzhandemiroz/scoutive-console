@@ -23,7 +23,10 @@ Inputmask.extendAliases({
 		autoGroup: true,
 		digits: 2,
 		digitsOptional: false,
-		clearMaskOnLostFocus: false
+		clearMaskOnLostFocus: false,
+		allowMinus: false,
+		allowPlus: false,
+		rightAlign: false
 	}
 });
 

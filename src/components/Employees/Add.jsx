@@ -21,6 +21,8 @@ Inputmask.extendAliases({
 		digits: 2,
 		digitsOptional: false,
 		clearMaskOnLostFocus: false,
+		allowMinus: false,
+		allowPlus: false,
 		rightAlign: false
 	}
 });
@@ -248,7 +250,7 @@ export class Add extends Component {
 
 		//attributes data
 		if (salary) {
-			attributesData.salary = Inputmask.unmask(salary);
+			attributesData.salary = parseFloat(salary.toString().replace(",", "."));
 		}
 
 		if (position) {

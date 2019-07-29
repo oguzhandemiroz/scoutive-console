@@ -17,12 +17,13 @@ Inputmask.extendAliases({
 		radixPoint: ",",
 		groupSeparator: ".",
 		alias: "numeric",
-		placeholder: ",00",
 		autoGroup: true,
 		digits: 2,
 		digitsOptional: false,
 		clearMaskOnLostFocus: false,
-		autoUnmask: true
+		allowMinus: false,
+		allowPlus: false,
+		rightAlign: false
 	}
 });
 
@@ -145,7 +146,7 @@ export class Add extends Component {
 			Inputmask({ mask: "(999) 999 9999", ...InputmaskDefaultOptions }).mask(elemArray.emergency_phone);
 			Inputmask({ mask: "99999999999", ...InputmaskDefaultOptions }).mask(elemArray.securityNo);
 			Inputmask({ alias: "email", ...InputmaskDefaultOptions }).mask(elemArray.email);
-			Inputmask({ alias: "try", ...InputmaskDefaultOptions }).mask(elemArray.fee);
+			Inputmask({ alias: "try", ...InputmaskDefaultOptions, placeholder: "0,00" }).mask(elemArray.fee);
 			Inputmask({ regex: "[a-zA-Z-ğüşöçİĞÜŞÖÇı ]*", ...InputmaskDefaultOptions }).mask(elemArray.name);
 			Inputmask({ regex: "[a-zA-ZğüşöçİĞÜŞÖÇı]*", ...InputmaskDefaultOptions }).mask(elemArray.surname);
 		} catch (e) {}
@@ -258,7 +259,7 @@ export class Add extends Component {
 
 		//attributes data
 		if (fee) {
-			attributesData.fee = fee.toString();
+			attributesData.fee = parseFloat(fee.toString().replace(",", "."));
 		}
 
 		if (position) {
@@ -344,7 +345,7 @@ export class Add extends Component {
 				address: address,
 				emergency: emergency,
 				point: point,
-				fee: fee ? fee.toString().replace(",", ".") : null,
+				fee: parseFloat(fee.toString().replace(",", ".")),
 				foot: foot,
 				birthday: checkBirthday,
 				attributes: attributesData
@@ -429,7 +430,9 @@ export class Add extends Component {
 			default:
 				break;
 		}
-		if (name.indexOf(".") === -1) this.setState({ formErrors, [name]: value });
+		if (name === "fee") {
+			this.setState({ formErrors, [name]: value === "0,00" ? null : value });
+		} else if (name.indexOf(".") === -1) this.setState({ formErrors, [name]: value });
 		else {
 			const splitName = name.split(".");
 			this.setState(prevState => {

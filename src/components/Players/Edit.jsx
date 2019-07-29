@@ -5,6 +5,34 @@ import { DetailPlayer, UpdatePlayer } from "../../services/Player";
 import { SplitBirthday, getSelectValue, AttributeDataChecker, UploadFile } from "../../services/Others";
 import { showSwal } from "../../components/Alert";
 import Select from "react-select";
+import Inputmask from "inputmask";
+const $ = require("jquery");
+
+Inputmask.extendDefaults({
+	autoUnmask: true
+});
+
+Inputmask.extendAliases({
+	try: {
+		suffix: " ₺",
+		radixPoint: ",",
+		groupSeparator: ".",
+		alias: "numeric",
+		autoGroup: true,
+		digits: 2,
+		digitsOptional: false,
+		clearMaskOnLostFocus: false,
+		allowMinus: false,
+		allowPlus: false,
+		rightAlign: false
+	}
+});
+
+const InputmaskDefaultOptions = {
+	showMaskOnHover: false,
+	showMaskOnFocus: false,
+	placeholder: ""
+};
 
 // eslint-disable-next-line
 const emailRegEx = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
@@ -103,7 +131,33 @@ export class Edit extends Component {
 			uploadedFile: true
 		};
 	}
-	componentWillMount() {
+
+	fieldMasked = () => {
+		try {
+			const elemArray = {
+				name: $("[name=name]"),
+				surname: $("[name=surname]"),
+				phone: $("[name=phone]"),
+				email: $("[name=email]"),
+				securityNo: $("[name=securityNo]"),
+				fee: $("[name=fee]"),
+				emergency_phone: $("[name*='emergency.phone.']")
+			};
+			Inputmask({ mask: "(999) 999 9999", ...InputmaskDefaultOptions }).mask(elemArray.phone);
+			Inputmask({ mask: "(999) 999 9999", ...InputmaskDefaultOptions }).mask(elemArray.emergency_phone);
+			Inputmask({ mask: "99999999999", ...InputmaskDefaultOptions }).mask(elemArray.securityNo);
+			Inputmask({ alias: "email", ...InputmaskDefaultOptions }).mask(elemArray.email);
+			Inputmask({ alias: "try", ...InputmaskDefaultOptions, placeholder: "0,00" }).mask(elemArray.fee);
+			Inputmask({ regex: "[a-zA-Z-ğüşöçİĞÜŞÖÇı ]*", ...InputmaskDefaultOptions }).mask(elemArray.name);
+			Inputmask({ regex: "[a-zA-ZğüşöçİĞÜŞÖÇı]*", ...InputmaskDefaultOptions }).mask(elemArray.surname);
+		} catch (e) {}
+	};
+
+	componentDidMount() {
+		setTimeout(() => {
+			this.fieldMasked();
+		}, 500);
+
 		const { uid, to } = this.state;
 		let select = { ...this.state.select };
 
@@ -150,7 +204,7 @@ export class Edit extends Component {
 					initialState.body_height = data.attributes.body_height;
 					initialState.body_weight = data.attributes.body_weight;
 					initialState.foot_no = data.attributes.foot_no;
-					initialState.fee = data.fee;
+					initialState.fee = Inputmask.format(data.fee.toString(), { alias: "decimal" });
 					initialState.point = data.point;
 					initialState.foot = data.foot;
 					initialState.position = getSelectValue(select.positions, data.position, "label");
@@ -252,15 +306,15 @@ export class Edit extends Component {
 			requiredData.day = day;
 			requiredData.month = month;
 			requiredData.year = year;
-			requiredData.foot = foot;
-			requiredData.foot_no = foot_no;
 			requiredData.position = position ? position.value : null;
 			requiredData.branch = branch ? branch.value : null;
 			requiredData.formErrors = formErrors;
 
+			const formatFee = fee ? parseFloat(fee.toString().replace(",", ".")) : null;
+
 			//attributes data
-			if (AttributeDataChecker(responseData.fee, fee)) {
-				attributesData.fee = fee.toString();
+			if (AttributeDataChecker(responseData.fee, formatFee)) {
+				attributesData.fee = formatFee;
 			}
 			if (AttributeDataChecker(responseData.position, position ? position.label : null)) {
 				attributesData.position = position.value.toString();
@@ -307,12 +361,13 @@ export class Edit extends Component {
                 position: ${JSON.stringify(position)}
                 branch: ${JSON.stringify(branch)}
                 phone: ${phone}
-                fee: ${fee}
+                fee: ${formatFee}
                 image: ${image}
                 emergency: ${JSON.stringify(emergency)}
                 blood: ${JSON.stringify(blood)}
                 gender: ${gender}
-                birthday: ${year.value}-${month.value}-${day.value}
+				birthday: ${year.value}-${month.value}-${day.value}
+				attributes: ${JSON.stringify(attributesData)}
             `);
 			const checkBirthday = year && month && day ? `${year.value}-${month.value}-${day.value}` : null;
 			if (formValid(requiredData)) {
@@ -333,7 +388,7 @@ export class Edit extends Component {
 					address: address,
 					emergency: emergency,
 					point: point,
-					fee: fee ? fee.toString().replace(",", ".") : null,
+					fee: formatFee,
 					foot: foot,
 					birthday: checkBirthday,
 					image: image,
@@ -362,9 +417,6 @@ export class Edit extends Component {
 				formErrors.email = email ? (!emailRegEx.test(email) ? "is-invalid" : "") : "";
 				formErrors.phone = phone ? (phone.length !== 10 ? "is-invalid" : "") : "";
 				formErrors.fee = fee ? "" : "is-invalid";
-				formErrors.foot = foot !== null ? "" : "is-invalid";
-				formErrors.foot_no = foot_no ? "" : "is-invalid";
-				//formErrors.point = point ? "" : "is-invalid-iconless";
 				//select
 				formErrors.position = position ? "" : true;
 				formErrors.branch = branch ? "" : true;
@@ -403,12 +455,6 @@ export class Edit extends Component {
 				break;
 			case "fee":
 				formErrors.fee = value ? "" : "is-invalid";
-				break;
-			/*case "point":
-                formErrors.point = value ? "" : "is-invalid-iconless";
-                break;*/
-			case "foot_no":
-				formErrors.foot_no = value ? "" : "is-invalid";
 				break;
 			default:
 				break;
@@ -494,14 +540,6 @@ export class Edit extends Component {
 		const { name, value } = e.target;
 
 		let formErrors = { ...this.state.formErrors };
-
-		switch (name) {
-			case "foot":
-				formErrors.foot = value ? false : true;
-				break;
-			default:
-				break;
-		}
 
 		this.setState({ formErrors, [name]: parseInt(value) });
 	};
@@ -626,7 +664,6 @@ export class Edit extends Component {
 												onChange={this.handleChange}
 												placeholder="T.C. Kimlik No"
 												name="securityNo"
-												maxLength="11"
 												value={securityNo || ""}
 											/>
 										</div>
@@ -756,8 +793,7 @@ export class Edit extends Component {
 														className={`form-control ${formErrors.phone}`}
 														onChange={this.handleChange}
 														name="phone"
-														placeholder="Telefon (5xx)"
-														maxLength="10"
+														placeholder="(535) 123 4567"
 														value={phone || ""}
 													/>
 												</div>
@@ -912,10 +948,7 @@ export class Edit extends Component {
 												</div>
 
 												<div className="form-group">
-													<label className="form-label">
-														Kullandığı Ayak
-														<span className="form-required">*</span>
-													</label>
+													<label className="form-label">Kullandığı Ayak</label>
 													<div className="custom-controls-stacked">
 														<label className="custom-control custom-radio custom-control-inline">
 															<input
@@ -954,10 +987,7 @@ export class Edit extends Component {
 												</div>
 
 												<div className="form-group">
-													<label className="form-label">
-														Ayak Numarası
-														<span className="form-required">*</span>
-													</label>
+													<label className="form-label">Ayak Numarası</label>
 													<input
 														type="number"
 														className={`form-control ${formErrors.foot_no}`}
@@ -1033,7 +1063,7 @@ export class Edit extends Component {
 																						onChange={this.handleChange}
 																						className="form-control"
 																						value={el.phone || ""}
-																						maxLength="10"
+																						placeholder="(535) 123 4567"
 																					/>
 																				</td>
 																			</tr>

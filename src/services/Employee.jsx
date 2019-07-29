@@ -89,7 +89,7 @@ const DetailEmployee = data => {
 	}
 };
 
-const ListEmployee = uid => {
+const ListEmployees = uid => {
 	try {
 		return fetch(ep.LIST_EMPLOYEE, {
 			method: "POST",
@@ -135,4 +135,4 @@ const DeleteEmployee = data => {
 	}
 };
 
-export { CreateEmployee, DetailEmployee, UpdateEmployee, ListEmployee, DeleteEmployee };
+export { CreateEmployee, DetailEmployee, UpdateEmployee, ListEmployees, DeleteEmployee };

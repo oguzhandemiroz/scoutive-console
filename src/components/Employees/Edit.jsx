@@ -18,14 +18,14 @@ Inputmask.extendAliases({
 		radixPoint: ",",
 		groupSeparator: ".",
 		alias: "numeric",
-		placeholder: "0",
 		autoGroup: true,
 		digits: 2,
 		autoUnmask: true,
 		digitsOptional: false,
 		clearMaskOnLostFocus: false,
 		allowMinus: false,
-		allowPlus: false
+		allowPlus: false,
+		rightAlign: false
 	}
 });
 
@@ -139,7 +139,7 @@ export class Edit extends Component {
 			Inputmask({ mask: "(999) 999 9999", ...InputmaskDefaultOptions }).mask(elemArray.emergency_phone);
 			Inputmask({ mask: "99999999999", ...InputmaskDefaultOptions }).mask(elemArray.securityNo);
 			Inputmask({ alias: "email", ...InputmaskDefaultOptions }).mask(elemArray.email);
-			Inputmask({ alias: "try", ...InputmaskDefaultOptions }).mask(elemArray.salary);
+			Inputmask({ alias: "try", ...InputmaskDefaultOptions, placeholder: "0,00" }).mask(elemArray.salary);
 			Inputmask({ regex: "[a-zA-Z-ğüşöçİĞÜŞÖÇı ]*", ...InputmaskDefaultOptions }).mask(elemArray.name);
 			Inputmask({ regex: "[a-zA-ZğüşöçİĞÜŞÖÇı]*", ...InputmaskDefaultOptions }).mask(elemArray.surname);
 		} catch (e) {}
@@ -188,7 +188,7 @@ export class Edit extends Component {
 					initialState.surname = data.surname;
 					initialState.securityNo = data.security_id;
 					initialState.phone = data.phone;
-					initialState.salary = Inputmask.format(data.salary.toString(), { alias: "decimal" });
+					initialState.salary = data.salary ? data.salary.toString().replace(".", ",") : null;
 					initialState.imagePreview = data.image;
 					initialState.image = data.image;
 					initialState.email = data.email;
@@ -287,10 +287,6 @@ export class Edit extends Component {
 		const requiredData = {};
 		const attributesData = {};
 
-		const formatSalary = salary.toString().indexOf("₺") > -1 ? salary.slice(0, -2) : salary;
-
-		console.log(Inputmask.unmask(salary), formatSalary);
-
 		// require data
 		requiredData.name = name;
 		requiredData.surname = surname;
@@ -299,12 +295,14 @@ export class Edit extends Component {
 		requiredData.phone = phone;
 		requiredData.position = position ? position.value : null;
 		requiredData.branch = branch ? branch.value : null;
-		requiredData.salary = formatSalary;
+		requiredData.salary = salary;
 		requiredData.formErrors = formErrors;
+
+		const formatSalary = salary ? parseFloat(salary.toString().replace(",", ".")) : null;
 
 		//attributes data
 		if (AttributeDataChecker(responseData.salary, formatSalary)) {
-			attributesData.salary = Inputmask.unmask(salary);
+			attributesData.salary = formatSalary;
 		}
 		if (AttributeDataChecker(responseData.position, position ? position.label : null)) {
 			attributesData.position = position ? position.value : "";
@@ -348,8 +346,8 @@ export class Edit extends Component {
 		console.log(requiredData);
 
 		if (formValid(requiredData)) {
-			//this.setState({ loadingButton: "btn-loading" });
-			/*UpdateEmployee({
+			this.setState({ loadingButton: "btn-loading" });
+			UpdateEmployee({
 				uid: uid,
 				to: to,
 				name: name,
@@ -359,7 +357,7 @@ export class Edit extends Component {
 				permission_id: position ? position.value : null,
 				phone: phone,
 				image: image,
-				salary: formatSalary.toString().replace(",", "."),
+				salary: formatSalary,
 				address: address,
 				emergency: emergency,
 				blood_id: blood ? blood.value : null,
@@ -375,7 +373,7 @@ export class Edit extends Component {
 						this.props.history.push("/app/employees/detail/" + to);
 					}
 				}, 1000);
-			});*/
+			});
 		} else {
 			console.error("FORM INVALID - DISPLAY ERROR");
 			const { value } = e.target;
@@ -429,7 +427,9 @@ export class Edit extends Component {
 			default:
 				break;
 		}
-		if (name.indexOf(".") === -1) {
+		if (name === "salary") {
+			this.setState({ formErrors, [name]: value === "0,00" ? null : value });
+		} else if (name.indexOf(".") === -1) {
 			this.setState({ formErrors, [name]: value });
 		} else {
 			const splitName = name.split(".");

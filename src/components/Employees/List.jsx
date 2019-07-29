@@ -292,9 +292,12 @@ class Table extends Component {
 												{fullname}
 											</a>
 											<div role="separator" className="dropdown-divider" />
-											<a className="dropdown-item action-pay-salary" href="javascript:void(0)">
+											<Link
+												onClick={() => this.props.history.push(`/app/employees/salary/${uid}`)}
+												className="dropdown-item action-pay-salary"
+												to={`/app/employees/salary/${uid}`}>
 												<i className="dropdown-icon fa fa-money-bill-wave" /> Maaş Öde
-											</a>
+											</Link>
 											<button
 												onClick={() =>
 													this.setState({

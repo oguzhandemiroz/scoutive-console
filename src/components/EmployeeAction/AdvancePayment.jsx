@@ -25,6 +25,8 @@ Inputmask.extendAliases({
 		digits: 2,
 		digitsOptional: false,
 		clearMaskOnLostFocus: false,
+		allowMinus: false,
+		allowPlus: false,
 		rightAlign: false
 	}
 });
