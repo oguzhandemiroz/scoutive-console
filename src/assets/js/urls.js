@@ -51,6 +51,7 @@ var ep = {
     VACATION_DELETE: host + api_version + "delete/vacation",
     ADVANCE_PAYMENT_CREATE: host + api_version + "create/advancepayment",
     ADVANCE_PAYMENT_LIST: host + api_version + "list/advancepayments",
+    BUDGET_LIST: host + api_version + "list/budgets",
 };
 
 export default ep;

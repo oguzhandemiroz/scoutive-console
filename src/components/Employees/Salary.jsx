@@ -3,6 +3,7 @@ import { Link, withRouter } from "react-router-dom";
 import DatePicker, { registerLocale } from "react-datepicker";
 import { ListEmployees } from "../../services/Employee";
 import { fullnameGenerator, getSelectValue } from "../../services/Others";
+import { GetBudgets } from "../../services/FillSelect";
 import { Toast } from "../Alert";
 import Select, { components } from "react-select";
 import "react-datepicker/dist/react-datepicker.css";
@@ -74,6 +75,17 @@ const ImageOption = props => (
 		{props.data.label}
 	</Option>
 );
+const IconOption = props => (
+	<Option {...props}>
+		<span>
+			<i
+				className={`mr-1 fa fa-${props.data.type === 0 ? "university" : "briefcase"}`}
+				style={{ backgroundImage: `url(${props.data.image})` }}
+			/>
+			{props.data.label}
+		</span>
+	</Option>
+);
 
 const noRow = loading => (
 	<tr style={{ height: 80 }}>
@@ -93,12 +105,14 @@ const noRow = loading => (
 const initialState = {
 	salary_date: new Date(),
 	salary: null,
+	payment_type: null,
 	employee: {
 		label: null,
 		value: null,
 		image: null,
 		salary: null
-	}
+	},
+	budget: null
 };
 
 export class Salary extends Component {
@@ -113,7 +127,8 @@ export class Salary extends Component {
 				salary_date: ""
 			},
 			select: {
-				employees: null
+				employees: null,
+				budgets: null
 			},
 
 			loadingData: false,
@@ -137,6 +152,7 @@ export class Salary extends Component {
 	componentDidMount() {
 		this.fieldMasked();
 		this.listEmployees();
+		this.listBudgets();
 	}
 
 	handleChange = e => {
@@ -184,6 +200,11 @@ export class Salary extends Component {
 		} catch (e) {}
 	};
 
+	handleRadio = e => {
+		const { name, value } = e.target;
+		this.setState({ [name]: parseInt(value) });
+	};
+
 	listEmployees = () => {
 		try {
 			const { uid } = this.state;
@@ -205,10 +226,12 @@ export class Salary extends Component {
 							});
 						});
 						select.employees = selectData;
+						const toSalary = getSelectValue(selectData, to, "value").salary;
 						this.setState({
-							select,
+							...select,
 							loadingData: false,
-							employee: to ? getSelectValue(selectData, to, "value") : initialState.employee
+							employee: to ? getSelectValue(selectData, to, "value") : initialState.employee,
+							salary: to ? (toSalary ? toSalary.toString().replace(".", ",") : null) : null
 						});
 					}
 				}
@@ -216,8 +239,31 @@ export class Salary extends Component {
 		} catch (e) {}
 	};
 
+	listBudgets = () => {
+		try {
+			let select = { ...this.state.select };
+			console.log(select);
+			GetBudgets().then(response => {
+				console.log(response);
+				select.budgets = response;
+				this.setState({ select });
+			});
+		} catch (e) {}
+	};
+
 	render() {
-		const { uid, salary, salary_date, formErrors, select, employee, loadingButton, loadingData } = this.state;
+		const {
+			uid,
+			budget,
+			salary,
+			salary_date,
+			payment_type,
+			formErrors,
+			select,
+			employee,
+			loadingButton,
+			loadingData
+		} = this.state;
 		console.log("Salary: ", this.props);
 		return (
 			<div className="container">
@@ -324,18 +370,21 @@ export class Salary extends Component {
 														<label className="selectgroup-item">
 															<input
 																type="radio"
-																name="value"
-																value="50"
+																name="payment_type"
+																value="0"
+																checked={payment_type === 0 ? true : false}
+																onChange={this.handleRadio}
 																className="selectgroup-input"
-																checked=""
 															/>
 															<span className="selectgroup-button">Ödendi</span>
 														</label>
 														<label className="selectgroup-item">
 															<input
 																type="radio"
-																name="value"
-																value="100"
+																name="payment_type"
+																value="1"
+																checked={payment_type === 1 ? true : false}
+																onChange={this.handleRadio}
 																className="selectgroup-input"
 															/>
 															<span className="selectgroup-button">Ödenecek</span>
@@ -362,6 +411,26 @@ export class Salary extends Component {
 														<label className="form-label">
 															Kasa Hesabı <span className="form-required">*</span>
 														</label>
+														<Select
+															value={budget}
+															onChange={val => this.handleSelect(val, "budget")}
+															options={select.budgets}
+															name="budget"
+															placeholder="Kasa Seç..."
+															styles={
+																formErrors.budget === true
+																	? customStylesError
+																	: customStyles
+															}
+															isClearable={true}
+															isSearchable={true}
+															autoSize
+															isDisabled={select.budgets ? false : true}
+															noOptionsMessage={value =>
+																`"${value.inputValue}" bulunamadı`
+															}
+															components={{ Option: IconOption }}
+														/>
 													</div>
 												</div>
 											</div>

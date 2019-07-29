@@ -449,6 +449,53 @@ const GetPlayers = () => {
 	} catch (e) {}
 };
 
+const GetBudgets = () => {
+	try {
+		return fetch(ep.BUDGET_LIST, {
+			method: "POST",
+			body: JSON.stringify({
+				uid: localStorage.getItem("UID")
+			}),
+			headers: h
+		})
+			.then(res => res.json())
+			.then(response => {
+				if (response) {
+					const selectData = [];
+					const status = response.status;
+
+					if (status.code !== 1020) {
+						Toast.fire({
+							type: "error",
+							title: '"Kasalar" yüklenemedi'
+						});
+					} else {
+						const data = response.data;
+						data.map(el => {
+							const value = el.budget_id;
+							const label = el.budget_name;
+							const type = el.budget_type;
+							const balance = el.balance;
+							selectData.push({
+								value: value,
+								label: label,
+								type: type,
+								balance: balance
+							});
+						});
+						return selectData;
+					}
+				}
+			})
+			.catch(e =>
+				Toast.fire({
+					type: "error",
+					title: '"Kasalar" yüklenemedi'
+				})
+			);
+	} catch (e) {}
+};
+
 export {
 	Clubs,
 	Bloods,
@@ -464,5 +511,6 @@ export {
 	Hours,
 	Minutes,
 	GetEmployees,
-	GetPlayers
+	GetPlayers,
+	GetBudgets
 };
