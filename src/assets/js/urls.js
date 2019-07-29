@@ -48,7 +48,9 @@ var ep = {
     VACATION_CREATE: host + api_version + "create/vacation/",
     VACATION_UPDATE: host + api_version + "update/vacation",
     VACATION_LIST: host + api_version + "list/vacations/",
-    VACATION_DELETE: host + api_version + "delete/vacation"
+    VACATION_DELETE: host + api_version + "delete/vacation",
+    ADVANCE_PAYMENT_CREATE: host + api_version + "create/advancepayment",
+    ADVANCE_PAYMENT_LIST: host + api_version + "list/advancepayments",
 };
 
 export default ep;

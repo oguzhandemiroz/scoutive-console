@@ -50,15 +50,6 @@ const formValid = ({ formErrors, ...rest }) => {
 	return valid;
 };
 
-const initialState = {
-	startDate: new Date(),
-	endDate: null,
-	day: null,
-	no_cost: 0,
-	daily_amount: null,
-	note: null
-};
-
 const vacationStatus = {
 	0: { type: "danger", text: "İptal" },
 	1: { type: "success", text: "Onaylandı" },
@@ -79,6 +70,15 @@ const noRow = loading => (
 		</td>
 	</tr>
 );
+
+const initialState = {
+	startDate: new Date(),
+	endDate: null,
+	day: null,
+	no_cost: 0,
+	daily_amount: null,
+	note: null
+};
 
 export class Vacation extends Component {
 	constructor(props) {
@@ -559,6 +559,7 @@ export class Vacation extends Component {
 														name="note"
 														onChange={this.handleChange}
 														rows="3"
+														maxLength="255"
 														placeholder="Not.."></textarea>
 												</div>
 											</div>

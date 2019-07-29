@@ -47,7 +47,7 @@ export class Password extends Component {
 				keyboard: false,
 				backdrop: "static"
 			});
-		this.setState({ ...nextProps });
+		this.setState({ ...nextProps, password: null });
 	}
 
 	handleSubmit = e => {

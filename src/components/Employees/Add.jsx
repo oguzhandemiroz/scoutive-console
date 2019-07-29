@@ -17,12 +17,11 @@ Inputmask.extendAliases({
 		radixPoint: ",",
 		groupSeparator: ".",
 		alias: "numeric",
-		placeholder: ",00",
 		autoGroup: true,
 		digits: 2,
 		digitsOptional: false,
 		clearMaskOnLostFocus: false,
-		autoUnmask: true
+		rightAlign: false
 	}
 });
 
@@ -136,7 +135,7 @@ export class Add extends Component {
 			Inputmask({ mask: "(999) 999 9999", ...InputmaskDefaultOptions }).mask(elemArray.emergency_phone);
 			Inputmask({ mask: "99999999999", ...InputmaskDefaultOptions }).mask(elemArray.securityNo);
 			Inputmask({ alias: "email", ...InputmaskDefaultOptions }).mask(elemArray.email);
-			Inputmask({ alias: "try", ...InputmaskDefaultOptions }).mask(elemArray.salary);
+			Inputmask({ alias: "try", ...InputmaskDefaultOptions, placeholder: "0,00" }).mask(elemArray.salary);
 			Inputmask({ regex: "[a-zA-Z-ğüşöçİĞÜŞÖÇı ]*", ...InputmaskDefaultOptions }).mask(elemArray.name);
 			Inputmask({ regex: "[a-zA-ZğüşöçİĞÜŞÖÇı]*", ...InputmaskDefaultOptions }).mask(elemArray.surname);
 		} catch (e) {}
@@ -249,7 +248,7 @@ export class Add extends Component {
 
 		//attributes data
 		if (salary) {
-			attributesData.salary = Inputmask.unmask(salary)
+			attributesData.salary = Inputmask.unmask(salary);
 		}
 
 		if (position) {
@@ -310,7 +309,7 @@ export class Add extends Component {
 				gender: gender,
 				blood: blood ? blood.value : null,
 				branch: branch ? branch.value : null,
-				salary: salary.toString().replace(",", "."),
+				salary: parseFloat(salary.toString().replace(",", ".")),
 				birthday: checkBirthday,
 				emergency: emergency,
 				school_history: school_history,
@@ -391,7 +390,9 @@ export class Add extends Component {
 			default:
 				break;
 		}
-		if (name.indexOf(".") === -1) {
+		if (name === "salary") {
+			this.setState({ formErrors, [name]: value === "0,00" ? null : value });
+		} else if (name.indexOf(".") === -1) {
 			this.setState({ formErrors, [name]: value });
 		} else {
 			const splitName = name.split(".");

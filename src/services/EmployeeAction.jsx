@@ -89,4 +89,40 @@ const DeleteVacation = data => {
 	} catch (e) {}
 };
 
-export { CreateVacation, UpdateVacation, ListVacations, DeleteVacation };
+const CreateAdvancePayment = data => {
+	try {
+		return fetch(ep.ADVANCE_PAYMENT_CREATE, {
+			method: "POST",
+			body: JSON.stringify(data),
+			headers: h
+		})
+			.then(res => res.json())
+			.then(response => {
+				if (response) {
+					const status = response.status;
+					if (status.code !== 1020) errorSwal(status);
+					return response;
+				}
+			})
+			.catch(e => fatalSwal(true));
+	} catch (e) {}
+};
+const ListAdvancePayments = data => {
+	try {
+		return fetch(ep.ADVANCE_PAYMENT_LIST, {
+			method: "POST",
+			body: JSON.stringify(data),
+			headers: h
+		})
+			.then(res => res.json())
+			.then(response => {
+				if (response) {
+					const status = response.status;
+					if (status.code !== 1020) errorSwal(status);
+					return response;
+				}
+			})
+			.catch(e => fatalSwal(true));
+	} catch (e) {}
+};
+export { CreateVacation, UpdateVacation, ListVacations, DeleteVacation, CreateAdvancePayment, ListAdvancePayments };
