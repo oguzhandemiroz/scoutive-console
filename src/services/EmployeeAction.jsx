@@ -164,6 +164,25 @@ const ListSalaries = data => {
 	} catch (e) {}
 };
 
+const PayVacation = data => {
+	try {
+		return fetch(ep.VACATION_PAY, {
+			method: "POST",
+			body: JSON.stringify(data),
+			headers: h
+		})
+			.then(res => res.json())
+			.then(response => {
+				if (response) {
+					const status = response.status;
+					if (status.code !== 1020) errorSwal(status);
+					return response;
+				}
+			})
+			.catch(e => fatalSwal(true));
+	} catch (e) {}
+};
+
 export {
 	CreateVacation,
 	UpdateVacation,
@@ -172,5 +191,6 @@ export {
 	CreateAdvancePayment,
 	ListAdvancePayments,
 	CreateSalary,
-	ListSalaries
+	ListSalaries,
+	PayVacation
 };

@@ -3,9 +3,16 @@ import { Link, withRouter } from "react-router-dom";
 import DatePicker, { registerLocale } from "react-datepicker";
 import { ListEmployees } from "../../services/Employee";
 import { fullnameGenerator, getSelectValue } from "../../services/Others";
-import { ListAdvancePayments, ListVacations, CreateSalary, ListSalaries } from "../../services/EmployeeAction";
+import {
+	ListAdvancePayments,
+	ListVacations,
+	CreateSalary,
+	ListSalaries,
+	PayVacation
+} from "../../services/EmployeeAction";
 import { GetBudgets } from "../../services/FillSelect";
 import { Toast, showSwal } from "../Alert";
+import Swal from "sweetalert2";
 import Select, { components } from "react-select";
 import "react-datepicker/dist/react-datepicker.css";
 import tr from "date-fns/locale/tr";
@@ -130,7 +137,9 @@ export class Salary extends Component {
 			loadingData: false,
 			loadingPast: false,
 			loadingButton: "",
-			tabData: null
+			tabData: null,
+			payVacations: [],
+			payAdvancePayments: []
 		};
 	}
 
@@ -154,10 +163,42 @@ export class Salary extends Component {
 		this.listBudgets(select);
 	}
 
+	paySalaryAlert = (employee, salary) => {
+		try {
+			return showSwal({
+				type: "warning",
+				title: "Uyarı",
+				html: `Maaş ödemesi yapmadan önce <b>Geçmiş İşlemler'i</b> kontrol et. 
+					Verilen "Avans" ve "İzinlerin" kesintisini yapman gerekebilir.
+					Kesintileri yaptıysan devam edebilirsin
+					<hr>
+					<b>${employee.label}</b> adlı personele <b>${parseFloat(salary.replace(",", ".")).format() + " ₺"}</b> maaş ödenecek`,
+				confirmButtonText: "Devam et",
+				cancelButtonText: "Kontrol et",
+				confirmButtonColor: "#cd201f",
+				cancelButtonColor: "#467fcf",
+				showCancelButton: true,
+				reverseButtons: true
+			});
+		} catch (e) {
+			console.log(e);
+		}
+	};
+
 	handleSubmit = e => {
 		try {
 			e.preventDefault();
-			const { uid, formErrors, salary, budget, employee, salary_date, paid_date } = this.state;
+			const {
+				uid,
+				formErrors,
+				salary,
+				budget,
+				employee,
+				salary_date,
+				paid_date,
+				payVacations,
+				payAdvancePayments
+			} = this.state;
 			const requiredData = {};
 			requiredData.salary = salary;
 			requiredData.employee = employee ? employee.value : null;
@@ -180,6 +221,23 @@ export class Salary extends Component {
 							if (response) {
 								const status = response.status;
 								if (status.code === 1020) {
+									if (payVacations.length > 0) {
+										/*PayVacation({
+											uid: uid,
+											vacation_id: vacation.vacation_id
+										}).then(response => {
+											if (response) {
+												const status = response.status;
+												if (status.code === 1020) {
+													Toast.fire({
+														type: "success",
+														title: "İşlem başarılı..."
+													});
+													this.renderVacationTab();
+												}
+											}
+										});*/
+									}
 									Toast.fire({
 										type: "success",
 										title: "İşlem başarılı..."
@@ -329,9 +387,8 @@ export class Salary extends Component {
 
 	renderSalaryTab = () => {
 		const { uid, employee } = this.state;
-		this.setState({ tabSelect: 0 });
+		this.setState({ tabData: null, tabSelect: 0 });
 		if (employee) {
-			this.setState({ tabData: null });
 			ListSalaries({
 				uid: uid,
 				to: employee.value
@@ -348,9 +405,8 @@ export class Salary extends Component {
 	renderAdvancePaymentTab = () => {
 		try {
 			const { uid, employee } = this.state;
-			this.setState({ tabSelect: 1 });
+			this.setState({ tabData: null, tabSelect: 1 });
 			if (employee) {
-				this.setState({ tabData: null });
 				ListAdvancePayments({
 					uid: uid,
 					to: employee.value
@@ -367,9 +423,8 @@ export class Salary extends Component {
 
 	renderVacationTab = () => {
 		const { uid, employee } = this.state;
-		this.setState({ tabSelect: 2 });
+		this.setState({ tabData: null, tabSelect: 2 });
 		if (employee) {
-			this.setState({ tabData: null });
 			ListVacations(
 				{
 					uid: uid,
@@ -386,22 +441,197 @@ export class Salary extends Component {
 		}
 	};
 
-	paySalaryAlert = (employee, salary) => {
+	salaryTabContent = (el, key) => {
+		return (
+			<li className="timeline-item" key={key.toString()}>
+				<div className={`timeline-badge ${el.is_future === 0 ? "bg-success" : ""}`} />
+				<div>
+					<strong>{el.amount ? el.amount.format() + " ₺" : null}</strong> maaş ödendi
+				</div>
+				<div className="timeline-time">{moment(el.payment_date).format("DD-MM-YYYY")}</div>
+
+				<div>
+					{el.is_future === 1 ? (
+						<button
+							type="button"
+							data-toggle="tooltip"
+							title="Maaşı Öde"
+							className="btn btn-sm btn-success btn-icon p-1">
+							<i className="fa fa-money-bill-wave"></i>
+						</button>
+					) : null}
+				</div>
+			</li>
+		);
+	};
+
+	advancePaymentTabContent = (el, key) => {
+		const { payAdvancePayments } = this.state;
+		const findAdvancePayment = payAdvancePayments.find(x => x === el.advance_payment_id);
+		return (
+			<li className="timeline-item" key={key.toString()}>
+				<div className={`timeline-badge ${el.paid_amount !== el.amount ? "" : "bg-primary"}`} />
+				<div>
+					<strong>{el.amount.format()} ₺</strong> avans verildi
+					{el.note ? <small className="d-block text-muted">Not: {el.note}</small> : null}
+				</div>
+				<div className="timeline-time">{moment(el.advance_date).format("DD-MM-YYYY")}</div>
+				<div className="ml-2">
+					{!findAdvancePayment ? (
+						el.paid_amount !== el.amount ? (
+							<button
+								onClick={() => this.payAdvancePayment(el)}
+								type="button"
+								data-toggle="tooltip"
+								title="Maaşından Düşür"
+								className="btn btn-sm btn-primary btn-icon p-1">
+								<i className="fe fe-arrow-down-circle"></i>
+							</button>
+						) : (
+							<i className="fa fa-check-circle text-primary"></i>
+						)
+					) : (
+						<i className="fa fa-check-circle text-primary"></i>
+					)}
+				</div>
+			</li>
+		);
+	};
+
+	vacationTabContent = (el, key) => {
+		const { payVacations } = this.state;
+		const findVacation = payVacations.find(x => x === el.vacation_id);
+		if (el.no_cost === 1) {
+			return (
+				<li className="timeline-item" key={key.toString()}>
+					<div className={`timeline-badge ${el.status === 1 ? "" : "bg-primary"}`} />
+					<div>
+						<strong>{el.day} günlük ücretsiz</strong> izin verildi
+						<small className="d-block text-muted">
+							Günlük Kesinti: <strong>{el.daily_amount ? el.daily_amount.format() + " ₺" : "—"}</strong>
+						</small>
+					</div>
+					<div className="ml-auto">
+						{!findVacation ? (
+							el.status === 1 ? (
+								<button
+									onClick={() => this.payVacation(el)}
+									type="button"
+									data-toggle="tooltip"
+									title="Maaşından Düşür"
+									className="btn btn-sm btn-primary btn-icon p-1">
+									<i className="fe fe-arrow-down-circle"></i>
+								</button>
+							) : (
+								<i className="fa fa-check-circle text-primary"></i>
+							)
+						) : (
+							<i className="fa fa-check-circle text-primary"></i>
+						)}
+					</div>
+				</li>
+			);
+		}
+	};
+
+	payVacation = vacation => {
 		try {
-			return showSwal({
-				type: "warning",
-				title: "Uyarı",
-				html: `Maaş ödemesi yapmadan önce <b>Geçmiş İşlemler'i</b> kontrol et. 
-					Verilen "Avans" ve "İzinlerin" kesintisini yapman gerekebilir.
-					Kesintileri yaptıysan devam edebilirsin
-					<hr>
-					<b>${employee.label}</b> adlı çalışana <b>${parseFloat(salary.replace(",", ".")).format() + " ₺"}</b> maaş ödenecek`,
-				confirmButtonText: "Devam et",
-				cancelButtonText: "Kontrol et",
-				confirmButtonColor: "#cd201f",
-				cancelButtonColor: "#467fcf",
+			const { uid, salary, employee, payVacations } = this.state;
+			if (salary === null) {
+				Toast.fire({
+					type: "error",
+					title: "Tanımsız maaş bilgisi..."
+				});
+
+				return null;
+			}
+
+			const totalDeduction = vacation.daily_amount * vacation.day;
+			const parseSalary = parseFloat(salary.replace(",", "."));
+			const totalSalary = parseSalary - totalDeduction;
+			const formatTotalSalary = totalSalary.format().replace(".", "");
+			console.log(totalDeduction, parseSalary, totalSalary);
+			showSwal({
+				type: "info",
+				title: "Bilgi",
+				html: `<b>${employee.label}</b> adlı personelin, <b>${
+					vacation.day
+				} günlük</b> ücretsiz izni için maaşına toplamda <b>${totalDeduction.format()} ₺</b> kesinti uygulanacaktır.<br>
+				Onaylıyor musunuz?`,
+				confirmButtonText: "Onaylıyorum",
+				cancelButtonText: "İptal",
+				confirmButtonColor: "#467fcf",
+				cancelButtonColor: "#868e96",
 				showCancelButton: true,
 				reverseButtons: true
+			}).then(re => {
+				if (re.value) {
+					this.setState({ payVacations: [...payVacations, vacation.vacation_id] });
+					this.setState({ salary: formatTotalSalary });
+				}
+			});
+		} catch (e) {
+			console.log(e);
+		}
+	};
+
+	payAdvancePayment = advance_payment => {
+		try {
+			const { uid, salary, employee, payAdvancePayments } = this.state;
+			if (salary === null) {
+				Toast.fire({
+					type: "error",
+					title: "Tanımsız maaş bilgisi..."
+				});
+
+				return null;
+			}
+			showSwal({
+				type: "question",
+				title: "Ödeme Tutarı",
+				html: `<b>${advance_payment.amount} ₺</b> tutarındaki avansın ne kadarını kesinti olarak uygulamak istiyorsunuz?`,
+				input: "number",
+				inputValue: advance_payment.amount,
+				inputAttributes: {
+					min: 0,
+					max: advance_payment.amount
+				},
+				inputValidator: value => {
+					return new Promise(resolve => {
+						if (value <= advance_payment.amount) {
+							console.log(value);
+							showSwal({
+								type: "info",
+								title: "Bilgi",
+								html: `<b>${
+									employee.label
+								}</b> adlı personelin, <b>${advance_payment.amount.format()} ₺</b> tutarındaki avansı için maaşına toplamda <b>${parseFloat(
+									value
+								).format()} ₺</b> kesinti uygulanacaktır.<br>
+				Onaylıyor musunuz?`,
+								confirmButtonText: "Onaylıyorum",
+								cancelButtonText: "İptal",
+								confirmButtonColor: "#467fcf",
+								cancelButtonColor: "#868e96",
+								showCancelButton: true,
+								reverseButtons: true
+							}).then(re => {
+								if (re.value) {
+									//const totalDeduction = advance_payment.amount - parseFloat(value);
+									const parseSalary = parseFloat(salary.replace(",", "."));
+									const totalSalary = parseSalary - parseFloat(value);
+									const formatTotalSalary = totalSalary.format().replace(".", "");
+									this.setState({
+										payAdvancePayments: [...payAdvancePayments, advance_payment.advance_payment_id]
+									});
+									this.setState({ salary: formatTotalSalary });
+								}
+							});
+						} else {
+							resolve("Hatalı değer!");
+						}
+					});
+				}
 			});
 		} catch (e) {
 			console.log(e);
@@ -617,100 +847,13 @@ export class Salary extends Component {
 											tabData.length > 0 ? (
 												<ul className="timeline mb-0">
 													{tabData.map((el, key) => {
-														if (tabSelect === 1) {
-															return (
-																<li className="timeline-item" key={key.toString()}>
-																	<div
-																		className={`timeline-badge ${
-																			el.paid_amount !== el.amount
-																				? ""
-																				: "bg-primary"
-																		}`}></div>
-																	<div>
-																		<strong>{el.amount.format()} ₺</strong> avans
-																		verildi
-																		{el.note ? (
-																			<small className="d-block text-muted">
-																				Not: {el.note}
-																			</small>
-																		) : null}
-																	</div>
-																	<div className="timeline-time">
-																		{moment(el.advance_date).format("DD-MM-YYYY")}
-																	</div>
-																	{el.paid_amount !== el.amount ? (
-																		<div className="ml-2">
-																			<button
-																				data-toggle="tooltip"
-																				title="Maaşından Düşür"
-																				className="btn btn-sm btn-primary btn-icon p-1">
-																				<i className="fe fe-arrow-down-circle"></i>
-																			</button>
-																		</div>
-																	) : null}
-																</li>
-															);
-														} else if (tabSelect === 2) {
-															if (el.no_cost === 1) {
-																return (
-																	<li className="timeline-item" key={key.toString()}>
-																		<div
-																			className={`timeline-badge ${
-																				el.status === 1 ? "" : "bg-primary"
-																			}`}></div>
-																		<div>
-																			<strong>{el.day} günlük ücretsiz</strong>{" "}
-																			izin verildi
-																			<small className="d-block text-muted">
-																				Günlük Kesinti:{" "}
-																				<strong>
-																					{el.daily_amount
-																						? el.daily_amount.format() +
-																						  " ₺"
-																						: "—"}
-																				</strong>
-																			</small>
-																		</div>
-																		<div className="timeline-time"></div>
-																		{el.status === 1 ? (
-																			<div className="ml-2">
-																				<button
-																					data-toggle="tooltip"
-																					title="Maaşından Düşür"
-																					className="btn btn-sm btn-primary btn-icon p-1">
-																					<i className="fe fe-arrow-down-circle"></i>
-																				</button>
-																			</div>
-																		) : null}
-																	</li>
-																);
-															}
-														} else if (tabSelect === 0) {
-															return (
-																<li className="timeline-item" key={key.toString()}>
-																	<div
-																		className={`timeline-badge ${
-																			el.is_future === 0 ? "bg-success" : ""
-																		}`}></div>
-																	<div>
-																		<strong>{el.amount.format() + " ₺"}</strong>{" "}
-																		maaş ödendi
-																	</div>
-																	<div className="timeline-time">
-																		{moment(el.payment_date).format("DD-MM-YYYY")}
-																	</div>
-																	{el.is_future === 1 ? (
-																		<div className="ml-2">
-																			<button
-																				data-toggle="tooltip"
-																				title="Maaşı Öde"
-																				className="btn btn-sm btn-primary btn-icon p-1">
-																				<i className="fa fa-money-bill-wave"></i>
-																			</button>
-																		</div>
-																	) : null}
-																</li>
-															);
+														switch (tabSelect) {
+															case 0:
+																return this.salaryTabContent(el, key);
+															case 1:
+																return this.advancePaymentTabContent(el, key);
+															case 2:
+																return this.vacationTabContent(el, key);
 														}
 													})}
 												</ul>
