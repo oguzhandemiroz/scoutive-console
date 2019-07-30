@@ -125,4 +125,52 @@ const ListAdvancePayments = data => {
 			.catch(e => fatalSwal(true));
 	} catch (e) {}
 };
-export { CreateVacation, UpdateVacation, ListVacations, DeleteVacation, CreateAdvancePayment, ListAdvancePayments };
+
+const CreateSalary = data => {
+	try {
+		return fetch(ep.SALARY_CREATE, {
+			method: "POST",
+			body: JSON.stringify(data),
+			headers: h
+		})
+			.then(res => res.json())
+			.then(response => {
+				if (response) {
+					const status = response.status;
+					if (status.code !== 1020) errorSwal(status);
+					return response;
+				}
+			})
+			.catch(e => fatalSwal(true));
+	} catch (e) {}
+};
+
+const ListSalaries = data => {
+	try {
+		return fetch(ep.SALARY_LIST, {
+			method: "POST",
+			body: JSON.stringify(data),
+			headers: h
+		})
+			.then(res => res.json())
+			.then(response => {
+				if (response) {
+					const status = response.status;
+					if (status.code !== 1020) errorSwal(status);
+					return response;
+				}
+			})
+			.catch(e => fatalSwal(true));
+	} catch (e) {}
+};
+
+export {
+	CreateVacation,
+	UpdateVacation,
+	ListVacations,
+	DeleteVacation,
+	CreateAdvancePayment,
+	ListAdvancePayments,
+	CreateSalary,
+	ListSalaries
+};

@@ -2,7 +2,9 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import DatePicker, { registerLocale } from "react-datepicker";
 import { CreateAdvancePayment, ListAdvancePayments } from "../../services/EmployeeAction";
+import { GetBudgets } from "../../services/FillSelect";
 import { Toast } from "../Alert";
+import Select, { components } from "react-select";
 import "react-datepicker/dist/react-datepicker.css";
 import tr from "date-fns/locale/tr";
 import moment from "moment";
@@ -67,10 +69,40 @@ const noRow = loading => (
 	</tr>
 );
 
+const customStyles = {
+	control: styles => ({ ...styles, borderColor: "rgba(0, 40, 100, 0.12)", borderRadius: 3 })
+};
+
+const customStylesError = {
+	control: styles => ({
+		...styles,
+		borderColor: "#cd201f",
+		borderRadius: 3,
+		":hover": { ...styles[":hover"], borderColor: "#cd201f" }
+	})
+};
+
+const { Option } = components;
+const IconOption = props => (
+	<Option {...props}>
+		<span>
+			<i
+				className={`mr-2 fa fa-${props.data.type === 1 ? "university" : "briefcase"}`}
+				style={{ backgroundImage: `url(${props.data.image})` }}
+			/>
+			{props.data.label}
+			<div className="small text-muted">
+				Bütçe: <b>{props.data.balance.format() + " ₺"}</b>
+			</div>
+		</span>
+	</Option>
+);
+
 const initialState = {
 	amount: null,
 	startDate: new Date(),
-	note: null
+	note: null,
+	budget: null
 };
 
 export class AdvancePayment extends Component {
@@ -84,6 +116,9 @@ export class AdvancePayment extends Component {
 			formErrors: {
 				startDate: "",
 				amount: ""
+			},
+			select: {
+				budgets: null
 			},
 			list: [],
 			loadingData: false,
@@ -105,6 +140,9 @@ export class AdvancePayment extends Component {
 	};
 
 	componentDidMount() {
+		let select = { ...this.state.select };
+		this.listBudgets(select);
+
 		if (document.querySelectorAll("#advance-payment-past-tab.active").length > 0)
 			this.renderAdvancePaymentList(this.props.data.uid);
 
@@ -118,6 +156,9 @@ export class AdvancePayment extends Component {
 	}
 
 	componentWillReceiveProps(nextProps) {
+		let select = { ...this.state.select };
+		this.listBudgets(select);
+
 		if (document.querySelectorAll("#advance-payment-past-tab.active").length > 0)
 			this.renderAdvancePaymentList(nextProps.data.uid);
 
@@ -130,12 +171,23 @@ export class AdvancePayment extends Component {
 		this.setState({ ...nextProps, ...initialState });
 	}
 
+	listBudgets = select => {
+		try {
+			GetBudgets().then(response => {
+				console.log(response);
+				select.budgets = response;
+				this.setState({ select });
+			});
+		} catch (e) {}
+	};
+
 	handleSubmit = e => {
 		e.preventDefault();
-		const { uid, amount, startDate, data, note, formErrors } = this.state;
+		const { uid, amount, budget, startDate, data, note, formErrors } = this.state;
 		const requiredData = {};
 		requiredData.amount = amount;
 		requiredData.startDate = startDate;
+		requiredData.budget = budget ? budget.value : null;
 		requiredData.formErrors = formErrors;
 
 		if (formValid(requiredData)) {
@@ -145,7 +197,8 @@ export class AdvancePayment extends Component {
 				to: data.uid,
 				amount: parseFloat(amount.replace(",", ".")),
 				advance_date: moment(startDate).format("YYYY-MM-DD"),
-				note: note
+				note: note,
+				budget_id: budget.value
 			}).then(response => {
 				if (response) {
 					const status = response.status;
@@ -162,6 +215,7 @@ export class AdvancePayment extends Component {
 			console.error("ERROR FORM");
 			let formErrors = { ...this.state.formErrors };
 			formErrors.amount = amount ? "" : "is-invalid";
+			formErrors.budget = budget ? false : true;
 			this.setState({ formErrors });
 		}
 	};
@@ -194,6 +248,15 @@ export class AdvancePayment extends Component {
 		this.setState({ formErrors, [name]: date });
 	};
 
+	handleSelect = (value, name) => {
+		try {
+			let formErrors = { ...this.state.formErrors };
+			formErrors[name] = value ? false : true;
+			console.log(value, name);
+			this.setState({ formErrors, [name]: value });
+		} catch (e) {}
+	};
+
 	renderAdvancePaymentList = to => {
 		try {
 			const { uid } = this.state;
@@ -214,7 +277,7 @@ export class AdvancePayment extends Component {
 	};
 
 	render() {
-		const { startDate, amount, note, loadingButton, list, data, formErrors } = this.state;
+		const { select, budget, startDate, amount, note, loadingButton, list, data, formErrors } = this.state;
 		return (
 			<div
 				className="modal fade employeeActionModal"
@@ -296,6 +359,27 @@ export class AdvancePayment extends Component {
 												type="text"
 												value={amount || ""}
 												onChange={this.handleChange}
+											/>
+										</div>
+
+										<div className="form-group">
+											<label className="form-label">
+												Kasa Hesabı
+												<span className="form-required">*</span>
+											</label>
+											<Select
+												value={budget}
+												onChange={val => this.handleSelect(val, "budget")}
+												options={select.budgets}
+												name="budget"
+												placeholder="Kasa Seç..."
+												styles={formErrors.budget === true ? customStylesError : customStyles}
+												isClearable={true}
+												isSearchable={true}
+												autoSize
+												isDisabled={select.budgets ? false : true}
+												noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
+												components={{ Option: IconOption }}
 											/>
 										</div>
 										<div className="form-group">

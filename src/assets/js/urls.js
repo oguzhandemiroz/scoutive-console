@@ -52,6 +52,8 @@ var ep = {
     ADVANCE_PAYMENT_CREATE: host + api_version + "create/advancepayment",
     ADVANCE_PAYMENT_LIST: host + api_version + "list/advancepayments",
     BUDGET_LIST: host + api_version + "list/budgets",
+    SALARY_CREATE: host + api_version + "create/salary",
+    SALARY_LIST: host + api_version + "list/employee/salaries",
 };
 
 export default ep;

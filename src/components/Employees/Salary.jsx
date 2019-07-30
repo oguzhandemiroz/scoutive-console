@@ -3,8 +3,9 @@ import { Link, withRouter } from "react-router-dom";
 import DatePicker, { registerLocale } from "react-datepicker";
 import { ListEmployees } from "../../services/Employee";
 import { fullnameGenerator, getSelectValue } from "../../services/Others";
+import { ListAdvancePayments, ListVacations, CreateSalary, ListSalaries } from "../../services/EmployeeAction";
 import { GetBudgets } from "../../services/FillSelect";
-import { Toast } from "../Alert";
+import { Toast, showSwal } from "../Alert";
 import Select, { components } from "react-select";
 import "react-datepicker/dist/react-datepicker.css";
 import tr from "date-fns/locale/tr";
@@ -79,37 +80,34 @@ const IconOption = props => (
 	<Option {...props}>
 		<span>
 			<i
-				className={`mr-1 fa fa-${props.data.type === 1 ? "university" : "briefcase"}`}
+				className={`mr-2 fa fa-${props.data.type === 1 ? "university" : "briefcase"}`}
 				style={{ backgroundImage: `url(${props.data.image})` }}
 			/>
 			{props.data.label}
+			<div className="small text-muted">
+				Bütçe: <b>{props.data.balance.format() + " ₺"}</b>
+			</div>
 		</span>
 	</Option>
 );
 
-const noRow = loading => (
-	<tr style={{ height: 80 }}>
-		<td colSpan="5" className="text-center text-muted font-italic">
-			{loading ? (
-				<div className={`dimmer active`}>
-					<div className="loader" />
-					<div className="dimmer-content" />
-				</div>
-			) : (
-				"Kayıt bulunamadı..."
-			)}
-		</td>
-	</tr>
-);
+const noRow = loading =>
+	loading ? (
+		<div className={`dimmer active p-3`}>
+			<div className="loader" />
+			<div className="dimmer-content" />
+		</div>
+	) : (
+		<div className="text-center text-muted font-italic">Kayıt bulunamadı...</div>
+	);
 
 const initialState = {
 	salary_date: new Date(),
 	paid_date: new Date(),
-	payment_date: new Date(),
-	payment_type: 0,
 	salary: null,
 	employee: null,
-	budget: null
+	budget: null,
+	tabSelect: 0
 };
 
 export class Salary extends Component {
@@ -122,7 +120,6 @@ export class Salary extends Component {
 			formErrors: {
 				employee: "",
 				salary_date: "",
-				payment_date: "",
 				paid_date: ""
 			},
 			select: {
@@ -131,7 +128,9 @@ export class Salary extends Component {
 			},
 
 			loadingData: false,
-			loadingButton: ""
+			loadingPast: false,
+			loadingButton: "",
+			tabData: null
 		};
 	}
 
@@ -158,29 +157,41 @@ export class Salary extends Component {
 	handleSubmit = e => {
 		try {
 			e.preventDefault();
-			const {
-				uid,
-				formErrors,
-				salary,
-				budget,
-				employee,
-				salary_date,
-				paid_date,
-				payment_date,
-				payment_type
-			} = this.state;
+			const { uid, formErrors, salary, budget, employee, salary_date, paid_date } = this.state;
 			const requiredData = {};
 			requiredData.salary = salary;
 			requiredData.employee = employee ? employee.value : null;
 			requiredData.salary_date = salary_date;
-			if (payment_type === 0) {
-				requiredData.paid_date = paid_date;
-				requiredData.budget = budget ? budget.value : null;
-			}
-			if (payment_type === 1) requiredData.payment_date = payment_date;
+			requiredData.paid_date = paid_date;
+			requiredData.budget = budget ? budget.value : null;
 			requiredData.formErrors = formErrors;
-			console.log("requiredData", requiredData);
+
 			if (formValid(requiredData)) {
+				this.paySalaryAlert(employee, salary).then(re => {
+					if (re.value) {
+						this.setState({ loadingButton: "btn-loading" });
+						CreateSalary({
+							uid: uid,
+							to: employee.value,
+							amount: parseFloat(salary.replace(",", ".")),
+							payment_date: moment(paid_date).format("YYYY-MM-DD"),
+							budget_id: budget.value
+						}).then(response => {
+							if (response) {
+								const status = response.status;
+								if (status.code === 1020) {
+									Toast.fire({
+										type: "success",
+										title: "İşlem başarılı..."
+									});
+									this.renderSalaryTab();
+								}
+							}
+
+							this.setState({ loadingButton: "" });
+						});
+					}
+				});
 			} else {
 				console.error("ERROR FORM");
 				let formErrors = { ...this.state.formErrors };
@@ -188,12 +199,8 @@ export class Salary extends Component {
 				formErrors.employee = employee ? "" : "is-invalid";
 				formErrors.salary_date = salary_date ? "" : "is-invalid";
 				formErrors.salary = salary ? "" : "is-invalid";
-				if (payment_type === 0) {
-					formErrors.paid_date = paid_date ? "" : "is-invalid";
-					formErrors.budget = budget ? false : true;
-				}
-				if (payment_type === 1) formErrors.payment_date = payment_date ? "" : "is-invalid";
-
+				formErrors.paid_date = paid_date ? "" : "is-invalid";
+				formErrors.budget = budget ? false : true;
 				this.setState({ formErrors });
 			}
 		} catch (e) {
@@ -228,9 +235,6 @@ export class Salary extends Component {
 			case "salary_date":
 				formErrors[name] = date ? "" : "is-invalid";
 				break;
-			case "payment_date":
-				formErrors[name] = date ? "" : "is-invalid";
-				break;
 			case "paid_date":
 				formErrors[name] = date ? "" : "is-invalid";
 				break;
@@ -250,12 +254,15 @@ export class Salary extends Component {
 				case "employee":
 					{
 						if (value) {
-							this.setState({
-								[name]: value,
-								salary: value.salary ? value.salary.toString().replace(".", ",") : null
-							});
+							this.setState(
+								{
+									[name]: value,
+									salary: value.salary ? value.salary.toString().replace(".", ",") : null
+								},
+								() => this.renderSalaryTab()
+							);
 						} else {
-							this.setState({ ...initialState });
+							this.setState({ ...initialState, tabData: [] });
 						}
 					}
 					break;
@@ -295,12 +302,15 @@ export class Salary extends Component {
 						});
 						select.employees = selectData;
 						const toSalary = to ? getSelectValue(selectData, to, "value").salary : null;
-						this.setState({
-							select,
-							loadingData: false,
-							employee: to ? getSelectValue(selectData, to, "value") : initialState.employee,
-							salary: to ? (toSalary ? toSalary.toString().replace(".", ",") : null) : null
-						});
+						this.setState(
+							{
+								select,
+								loadingData: false,
+								employee: to ? getSelectValue(selectData, to, "value") : initialState.employee,
+								salary: to ? (toSalary ? toSalary.toString().replace(".", ",") : null) : null
+							},
+							() => this.renderSalaryTab()
+						);
 					}
 				}
 			});
@@ -317,20 +327,102 @@ export class Salary extends Component {
 		} catch (e) {}
 	};
 
+	renderSalaryTab = () => {
+		const { uid, employee } = this.state;
+		this.setState({ tabSelect: 0 });
+		if (employee) {
+			this.setState({ tabData: null });
+			ListSalaries({
+				uid: uid,
+				to: employee.value
+			}).then(response => {
+				console.log(response);
+				if (response) {
+					const status = response.status;
+					if (status.code === 1020) this.setState({ tabData: response.data.reverse() });
+				}
+			});
+		}
+	};
+
+	renderAdvancePaymentTab = () => {
+		try {
+			const { uid, employee } = this.state;
+			this.setState({ tabSelect: 1 });
+			if (employee) {
+				this.setState({ tabData: null });
+				ListAdvancePayments({
+					uid: uid,
+					to: employee.value
+				}).then(response => {
+					console.log(response);
+					if (response) {
+						const status = response.status;
+						if (status.code === 1020) this.setState({ tabData: response.data.reverse() });
+					}
+				});
+			}
+		} catch (e) {}
+	};
+
+	renderVacationTab = () => {
+		const { uid, employee } = this.state;
+		this.setState({ tabSelect: 2 });
+		if (employee) {
+			this.setState({ tabData: null });
+			ListVacations(
+				{
+					uid: uid,
+					to: employee.value
+				},
+				"employee"
+			).then(response => {
+				console.log(response);
+				if (response) {
+					const status = response.status;
+					if (status.code === 1020) this.setState({ tabData: response.data.reverse() });
+				}
+			});
+		}
+	};
+
+	paySalaryAlert = (employee, salary) => {
+		try {
+			return showSwal({
+				type: "warning",
+				title: "Uyarı",
+				html: `Maaş ödemesi yapmadan önce <b>Geçmiş İşlemler'i</b> kontrol et. 
+					Verilen "Avans" ve "İzinlerin" kesintisini yapman gerekebilir.
+					Kesintileri yaptıysan devam edebilirsin
+					<hr>
+					<b>${employee.label}</b> adlı çalışana <b>${parseFloat(salary.replace(",", ".")).format() + " ₺"}</b> maaş ödenecek`,
+				confirmButtonText: "Devam et",
+				cancelButtonText: "Kontrol et",
+				confirmButtonColor: "#cd201f",
+				cancelButtonColor: "#467fcf",
+				showCancelButton: true,
+				reverseButtons: true
+			});
+		} catch (e) {
+			console.log(e);
+		}
+	};
+
 	render() {
 		const {
 			uid,
 			budget,
 			salary,
 			salary_date,
-			payment_type,
-			payment_date,
 			paid_date,
 			formErrors,
 			select,
 			employee,
+			tabSelect,
 			loadingButton,
-			loadingData
+			loadingData,
+			loadingPast,
+			tabData
 		} = this.state;
 		return (
 			<div className="container">
@@ -431,100 +523,49 @@ export class Salary extends Component {
 														onChange={this.handleChange}
 													/>
 												</div>
-
-												<div className="form-group">
-													<label className="form-label">
-														Ödeme Durumu
-														<span className="form-required">*</span>
-													</label>
-													<div className="selectgroup w-100">
-														<label className="selectgroup-item">
-															<input
-																type="radio"
-																name="payment_type"
-																value="0"
-																checked={payment_type === 0 ? true : false}
-																onChange={this.handleRadio}
-																className="selectgroup-input"
-															/>
-															<span className="selectgroup-button">Ödendi</span>
-														</label>
-														<label className="selectgroup-item">
-															<input
-																type="radio"
-																name="payment_type"
-																value="1"
-																checked={payment_type === 1 ? true : false}
-																onChange={this.handleRadio}
-																className="selectgroup-input"
-															/>
-															<span className="selectgroup-button">Ödenecek</span>
-														</label>
-													</div>
-												</div>
-
-												{payment_type === 1 ? (
-													<div className="form-group">
+												<div className="row">
+													<div className="form-group col-6">
 														<label className="form-label">
-															Ödeme Tarihi
+															Ödenen Tarih
 															<span className="form-required">*</span>
 														</label>
 														<DatePicker
-															selected={payment_date}
+															selected={paid_date}
 															selectsStart
-															startDate={payment_date}
-															name="payment_date"
+															startDate={paid_date}
+															name="paid_date"
 															locale="tr"
 															dateFormat="dd/MM/yyyy"
-															onChange={date => this.handleDate(date, "payment_date")}
-															className={`form-control ${formErrors.payment_date}`}
+															onChange={date => this.handleDate(date, "paid_date")}
+															className={`form-control ${formErrors.paid_date}`}
 														/>
 													</div>
-												) : (
-													<div className="row">
-														<div className="form-group col-6">
-															<label className="form-label">
-																Ödenen Tarih
-																<span className="form-required">*</span>
-															</label>
-															<DatePicker
-																selected={paid_date}
-																selectsStart
-																startDate={paid_date}
-																name="paid_date"
-																locale="tr"
-																dateFormat="dd/MM/yyyy"
-																onChange={date => this.handleDate(date, "paid_date")}
-																className={`form-control ${formErrors.paid_date}`}
-															/>
-														</div>
-														<div className="form-group col-6">
-															<label className="form-label">
-																Kasa Hesabı <span className="form-required">*</span>
-															</label>
-															<Select
-																value={budget}
-																onChange={val => this.handleSelect(val, "budget")}
-																options={select.budgets}
-																name="budget"
-																placeholder="Kasa Seç..."
-																styles={
-																	formErrors.budget === true
-																		? customStylesError
-																		: customStyles
-																}
-																isClearable={true}
-																isSearchable={true}
-																autoSize
-																isDisabled={select.budgets ? false : true}
-																noOptionsMessage={value =>
-																	`"${value.inputValue}" bulunamadı`
-																}
-																components={{ Option: IconOption }}
-															/>
-														</div>
+													<div className="form-group col-6">
+														<label className="form-label">
+															Kasa Hesabı <span className="form-required">*</span>
+														</label>
+														<Select
+															value={budget}
+															onChange={val => this.handleSelect(val, "budget")}
+															options={select.budgets}
+															name="budget"
+															placeholder="Kasa Seç..."
+															styles={
+																formErrors.budget === true
+																	? customStylesError
+																	: customStyles
+															}
+															isClearable={true}
+															isSearchable={true}
+															autoSize
+															isDisabled={select.budgets ? false : true}
+															noOptionsMessage={value =>
+																`"${value.inputValue}" bulunamadı`
+															}
+															components={{ Option: IconOption }}
+														/>
 													</div>
-												)}
+												</div>
 											</div>
 										</div>
 									</div>
@@ -543,10 +584,144 @@ export class Salary extends Component {
 					</div>
 					<div className="col-lg-5 col-sm-12 col-md-12">
 						<div className="card">
-							<div className="card-header">
+							<div className="card-header pr-3">
 								<h3 className="card-title">
 									<i className="fa fa-history mr-2" /> Geçmiş İşlemler
 								</h3>
+								<div className="btn-group ml-auto" role="group" aria-label="Salary History Tabs">
+									<button
+										onClick={this.renderSalaryTab}
+										type="button"
+										className={`btn btn-sm btn-secondary ${tabSelect === 0 ? "active" : ""}`}>
+										Maaş
+									</button>
+									<button
+										onClick={this.renderAdvancePaymentTab}
+										type="button"
+										className={`btn btn-sm btn-secondary ${tabSelect === 1 ? "active" : ""}`}>
+										Avans
+									</button>
+									<button
+										onClick={this.renderVacationTab}
+										type="button"
+										className={`btn btn-sm btn-secondary ${tabSelect === 2 ? "active" : ""}`}>
+										İzin
+									</button>
+								</div>
+							</div>
+							<div className="card-body">
+								<div className={`dimmer ${loadingPast ? "active" : ""}`}>
+									<div className="loader" />
+									<div className="dimmer-content">
+										{tabData ? (
+											tabData.length > 0 ? (
+												<ul className="timeline mb-0">
+													{tabData.map((el, key) => {
+														if (tabSelect === 1) {
+															return (
+																<li className="timeline-item" key={key.toString()}>
+																	<div
+																		className={`timeline-badge ${
+																			el.paid_amount !== el.amount
+																				? ""
+																				: "bg-primary"
+																		}`}></div>
+																	<div>
+																		<strong>{el.amount.format()} ₺</strong> avans
+																		verildi
+																		{el.note ? (
+																			<small className="d-block text-muted">
+																				Not: {el.note}
+																			</small>
+																		) : null}
+																	</div>
+																	<div className="timeline-time">
+																		{moment(el.advance_date).format("DD-MM-YYYY")}
+																	</div>
+																	{el.paid_amount !== el.amount ? (
+																		<div className="ml-2">
+																			<button
+																				data-toggle="tooltip"
+																				title="Maaşından Düşür"
+																				className="btn btn-sm btn-primary btn-icon p-1">
+																				<i className="fe fe-arrow-down-circle"></i>
+																			</button>
+																		</div>
+																	) : null}
+																</li>
+															);
+														} else if (tabSelect === 2) {
+															if (el.no_cost === 1) {
+																return (
+																	<li className="timeline-item" key={key.toString()}>
+																		<div
+																			className={`timeline-badge ${
+																				el.status === 1 ? "" : "bg-primary"
+																			}`}></div>
+																		<div>
+																			<strong>{el.day} günlük ücretsiz</strong>{" "}
+																			izin verildi
+																			<small className="d-block text-muted">
+																				Günlük Kesinti:{" "}
+																				<strong>
+																					{el.daily_amount
+																						? el.daily_amount.format() +
+																						  " ₺"
+																						: "—"}
+																				</strong>
+																			</small>
+																		</div>
+																		<div className="timeline-time"></div>
+																		{el.status === 1 ? (
+																			<div className="ml-2">
+																				<button
+																					data-toggle="tooltip"
+																					title="Maaşından Düşür"
+																					className="btn btn-sm btn-primary btn-icon p-1">
+																					<i className="fe fe-arrow-down-circle"></i>
+																				</button>
+																			</div>
+																		) : null}
+																	</li>
+																);
+															}
+														} else if (tabSelect === 0) {
+															return (
+																<li className="timeline-item" key={key.toString()}>
+																	<div
+																		className={`timeline-badge ${
+																			el.is_future === 0 ? "bg-success" : ""
+																		}`}></div>
+																	<div>
+																		<strong>{el.amount.format() + " ₺"}</strong>{" "}
+																		maaş ödendi
+																	</div>
+																	<div className="timeline-time">
+																		{moment(el.payment_date).format("DD-MM-YYYY")}
+																	</div>
+																	{el.is_future === 1 ? (
+																		<div className="ml-2">
+																			<button
+																				data-toggle="tooltip"
+																				title="Maaşı Öde"
+																				className="btn btn-sm btn-primary btn-icon p-1">
+																				<i className="fa fa-money-bill-wave"></i>
+																			</button>
+																		</div>
+																	) : null}
+																</li>
+															);
+														}
+													})}
+												</ul>
+											) : (
+												noRow()
+											)
+										) : (
+											noRow(true)
+										)}
+									</div>
+								</div>
 							</div>
 						</div>
 					</div>
