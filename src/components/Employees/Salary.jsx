@@ -12,7 +12,6 @@ import {
 } from "../../services/EmployeeAction";
 import { GetBudgets } from "../../services/FillSelect";
 import { Toast, showSwal } from "../Alert";
-import Swal from "sweetalert2";
 import Select, { components } from "react-select";
 import "react-datepicker/dist/react-datepicker.css";
 import tr from "date-fns/locale/tr";

@@ -449,7 +449,7 @@ const GetPlayers = () => {
 	} catch (e) {}
 };
 
-const GetBudgets = () => {
+const GetBudgets = extra => {
 	try {
 		return fetch(ep.BUDGET_LIST, {
 			method: "POST",
@@ -471,18 +471,30 @@ const GetBudgets = () => {
 						});
 					} else {
 						const data = response.data;
-						data.map(el => {
-							const value = el.budget_id;
-							const label = el.budget_name;
-							const type = el.budget_type;
-							const balance = el.balance;
-							selectData.push({
-								value: value,
-								label: label,
-								type: type,
-								balance: balance
+						if (extra) {
+							data.map(el => {
+								const value = el.budget_id;
+								const label = el.budget_name;
+								selectData.push({
+									value: value,
+									label: label,
+									...el
+								});
 							});
-						});
+						} else {
+							data.map(el => {
+								const value = el.budget_id;
+								const label = el.budget_name;
+								const type = el.budget_type;
+								const balance = el.balance;
+								selectData.push({
+									value: value,
+									label: label,
+									type: type,
+									balance: balance
+								});
+							});
+						}
 						return selectData;
 					}
 				}
