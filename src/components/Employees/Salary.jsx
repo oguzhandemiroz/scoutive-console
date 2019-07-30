@@ -79,7 +79,7 @@ const IconOption = props => (
 	<Option {...props}>
 		<span>
 			<i
-				className={`mr-1 fa fa-${props.data.type === 0 ? "university" : "briefcase"}`}
+				className={`mr-1 fa fa-${props.data.type === 1 ? "university" : "briefcase"}`}
 				style={{ backgroundImage: `url(${props.data.image})` }}
 			/>
 			{props.data.label}
@@ -104,14 +104,11 @@ const noRow = loading => (
 
 const initialState = {
 	salary_date: new Date(),
+	paid_date: new Date(),
+	payment_date: new Date(),
+	payment_type: 0,
 	salary: null,
-	payment_type: null,
-	employee: {
-		label: null,
-		value: null,
-		image: null,
-		salary: null
-	},
+	employee: null,
 	budget: null
 };
 
@@ -124,7 +121,9 @@ export class Salary extends Component {
 			...initialState,
 			formErrors: {
 				employee: "",
-				salary_date: ""
+				salary_date: "",
+				payment_date: "",
+				paid_date: ""
 			},
 			select: {
 				employees: null,
@@ -150,10 +149,57 @@ export class Salary extends Component {
 	};
 
 	componentDidMount() {
+		let select = { ...this.state.select };
 		this.fieldMasked();
-		this.listEmployees();
-		this.listBudgets();
+		this.listEmployees(select);
+		this.listBudgets(select);
 	}
+
+	handleSubmit = e => {
+		try {
+			e.preventDefault();
+			const {
+				uid,
+				formErrors,
+				salary,
+				budget,
+				employee,
+				salary_date,
+				paid_date,
+				payment_date,
+				payment_type
+			} = this.state;
+			const requiredData = {};
+			requiredData.salary = salary;
+			requiredData.employee = employee ? employee.value : null;
+			requiredData.salary_date = salary_date;
+			if (payment_type === 0) {
+				requiredData.paid_date = paid_date;
+				requiredData.budget = budget ? budget.value : null;
+			}
+			if (payment_type === 1) requiredData.payment_date = payment_date;
+			requiredData.formErrors = formErrors;
+			console.log("requiredData", requiredData);
+			if (formValid(requiredData)) {
+			} else {
+				console.error("ERROR FORM");
+				let formErrors = { ...this.state.formErrors };
+				formErrors.salary = salary ? "" : "is-invalid";
+				formErrors.employee = employee ? "" : "is-invalid";
+				formErrors.salary_date = salary_date ? "" : "is-invalid";
+				formErrors.salary = salary ? "" : "is-invalid";
+				if (payment_type === 0) {
+					formErrors.paid_date = paid_date ? "" : "is-invalid";
+					formErrors.budget = budget ? false : true;
+				}
+				if (payment_type === 1) formErrors.payment_date = payment_date ? "" : "is-invalid";
+
+				this.setState({ formErrors });
+			}
+		} catch (e) {
+			console.log(e);
+		}
+	};
 
 	handleChange = e => {
 		try {
@@ -178,8 +224,19 @@ export class Salary extends Component {
 
 	handleDate = (date, name) => {
 		let formErrors = { ...this.state.formErrors };
-
-		formErrors.startDate = date ? "" : "is-invalid";
+		switch (name) {
+			case "salary_date":
+				formErrors[name] = date ? "" : "is-invalid";
+				break;
+			case "payment_date":
+				formErrors[name] = date ? "" : "is-invalid";
+				break;
+			case "paid_date":
+				formErrors[name] = date ? "" : "is-invalid";
+				break;
+			default:
+				break;
+		}
 
 		this.setState({ formErrors, [name]: date });
 	};
@@ -188,13 +245,25 @@ export class Salary extends Component {
 		try {
 			let formErrors = { ...this.state.formErrors };
 			formErrors[name] = value ? false : true;
-			if (value) {
-				this.setState({
-					[name]: value,
-					salary: value.salary ? value.salary.toString().replace(".", ",") : null
-				});
-			} else {
-				this.setState({ ...initialState });
+			console.log(value, name);
+			switch (name) {
+				case "employee":
+					{
+						if (value) {
+							this.setState({
+								[name]: value,
+								salary: value.salary ? value.salary.toString().replace(".", ",") : null
+							});
+						} else {
+							this.setState({ ...initialState });
+						}
+					}
+					break;
+				default:
+					this.setState({
+						[name]: value
+					});
+					break;
 			}
 			this.setState({ formErrors });
 		} catch (e) {}
@@ -205,11 +274,10 @@ export class Salary extends Component {
 		this.setState({ [name]: parseInt(value) });
 	};
 
-	listEmployees = () => {
+	listEmployees = select => {
 		try {
 			const { uid } = this.state;
 			const to = this.props.match.params.uid;
-			let select = { ...this.state.select };
 			this.setState({ loadingData: true });
 			ListEmployees(uid).then(response => {
 				if (response) {
@@ -226,9 +294,9 @@ export class Salary extends Component {
 							});
 						});
 						select.employees = selectData;
-						const toSalary = getSelectValue(selectData, to, "value").salary;
+						const toSalary = to ? getSelectValue(selectData, to, "value").salary : null;
 						this.setState({
-							...select,
+							select,
 							loadingData: false,
 							employee: to ? getSelectValue(selectData, to, "value") : initialState.employee,
 							salary: to ? (toSalary ? toSalary.toString().replace(".", ",") : null) : null
@@ -239,10 +307,8 @@ export class Salary extends Component {
 		} catch (e) {}
 	};
 
-	listBudgets = () => {
+	listBudgets = select => {
 		try {
-			let select = { ...this.state.select };
-			console.log(select);
 			GetBudgets().then(response => {
 				console.log(response);
 				select.budgets = response;
@@ -258,13 +324,14 @@ export class Salary extends Component {
 			salary,
 			salary_date,
 			payment_type,
+			payment_date,
+			paid_date,
 			formErrors,
 			select,
 			employee,
 			loadingButton,
 			loadingData
 		} = this.state;
-		console.log("Salary: ", this.props);
 		return (
 			<div className="container">
 				<div className="page-header">
@@ -288,9 +355,9 @@ export class Salary extends Component {
 										<div className="row mb-4">
 											<div className="col-auto">
 												<span
-													className="avatar avatar-xl"
+													className="avatar avatar-xxl"
 													style={{
-														backgroundImage: `url(${employee.image})`
+														backgroundImage: `url(${employee ? employee.image : null})`
 													}}
 												/>
 											</div>
@@ -321,12 +388,16 @@ export class Salary extends Component {
 												</div>
 											</div>
 										</div>
-										<div className={`dimmer ${employee.value ? "" : "active"}`}>
+										<div className={`dimmer ${employee ? "" : "active"}`}>
 											<div className="dimmer-content">
 												<div className="form-group">
 													<label className="form-label">Maaş Bilgisi</label>
 													<div className="form-control-plaintext">
-														{employee.salary ? employee.salary.format() + " ₺" : "—"}
+														{employee
+															? employee.salary
+																? employee.salary.format() + " ₺"
+																: "—"
+															: "—"}
 													</div>
 												</div>
 
@@ -392,51 +463,81 @@ export class Salary extends Component {
 													</div>
 												</div>
 
-												<div className="form-group">
-													<label className="form-label">
-														Ödeme Tarihi
-														<span className="form-required">*</span>
-													</label>
-													<div className="form-control-plaintext"></div>
-												</div>
-
-												<div className="row">
-													<div className="form-group col-6">
+												{payment_type === 1 ? (
+													<div className="form-group">
 														<label className="form-label">
-															Ödenen Tarih
+															Ödeme Tarihi
 															<span className="form-required">*</span>
 														</label>
-													</div>
-													<div className="form-group col-6">
-														<label className="form-label">
-															Kasa Hesabı <span className="form-required">*</span>
-														</label>
-														<Select
-															value={budget}
-															onChange={val => this.handleSelect(val, "budget")}
-															options={select.budgets}
-															name="budget"
-															placeholder="Kasa Seç..."
-															styles={
-																formErrors.budget === true
-																	? customStylesError
-																	: customStyles
-															}
-															isClearable={true}
-															isSearchable={true}
-															autoSize
-															isDisabled={select.budgets ? false : true}
-															noOptionsMessage={value =>
-																`"${value.inputValue}" bulunamadı`
-															}
-															components={{ Option: IconOption }}
+														<DatePicker
+															selected={payment_date}
+															selectsStart
+															startDate={payment_date}
+															name="payment_date"
+															locale="tr"
+															dateFormat="dd/MM/yyyy"
+															onChange={date => this.handleDate(date, "payment_date")}
+															className={`form-control ${formErrors.payment_date}`}
 														/>
 													</div>
-												</div>
+												) : (
+													<div className="row">
+														<div className="form-group col-6">
+															<label className="form-label">
+																Ödenen Tarih
+																<span className="form-required">*</span>
+															</label>
+															<DatePicker
+																selected={paid_date}
+																selectsStart
+																startDate={paid_date}
+																name="paid_date"
+																locale="tr"
+																dateFormat="dd/MM/yyyy"
+																onChange={date => this.handleDate(date, "paid_date")}
+																className={`form-control ${formErrors.paid_date}`}
+															/>
+														</div>
+														<div className="form-group col-6">
+															<label className="form-label">
+																Kasa Hesabı <span className="form-required">*</span>
+															</label>
+															<Select
+																value={budget}
+																onChange={val => this.handleSelect(val, "budget")}
+																options={select.budgets}
+																name="budget"
+																placeholder="Kasa Seç..."
+																styles={
+																	formErrors.budget === true
+																		? customStylesError
+																		: customStyles
+																}
+																isClearable={true}
+																isSearchable={true}
+																autoSize
+																isDisabled={select.budgets ? false : true}
+																noOptionsMessage={value =>
+																	`"${value.inputValue}" bulunamadı`
+																}
+																components={{ Option: IconOption }}
+															/>
+														</div>
+													</div>
+												)}
 											</div>
 										</div>
 									</div>
 								</div>
+							</div>
+
+							<div className="card-footer text-right">
+								<button
+									className={`btn btn-success ${loadingButton} ${
+										employee ? "" : "disabled disable-overlay"
+									}`}>
+									Ödeme Yap
+								</button>
 							</div>
 						</div>
 					</div>

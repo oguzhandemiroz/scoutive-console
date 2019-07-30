@@ -497,6 +497,7 @@ export class Profile extends Component {
                                                         className="form-control"
                                                         name="address"
                                                         rows="6"
+                                                        maxLength="1000"
                                                         placeholder="Adres"
                                                         value={address || ""}
                                                         onChange={this.handleChange}

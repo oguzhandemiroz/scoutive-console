@@ -14,6 +14,7 @@ Inputmask.extendDefaults({
 
 Inputmask.extendAliases({
 	try: {
+		integerDigits: 12,
 		suffix: " ₺",
 		radixPoint: ",",
 		groupSeparator: ".",
@@ -133,15 +134,24 @@ export class Edit extends Component {
 				email: $("[name=email]"),
 				securityNo: $("[name=securityNo]"),
 				salary: $("[name=salary]"),
-				emergency_phone: $("[name*='emergency.phone.']")
+				emergency_phone: $("[name*='emergency.phone.']"),
+				emergency_name: $("[name*='emergency.name.']"),
+				school_history_name: $("[name*='school_history.name.']"),
+				certificate_type: $("[name*='certificate.type.']"),
+				certificate_corporation: $("[name*='certificate.corporation.']")
 			};
+			const onlyString = "[a-zA-Z-ğüşöçİĞÜŞÖÇı ]*";
 			Inputmask({ mask: "(999) 999 9999", ...InputmaskDefaultOptions }).mask(elemArray.phone);
 			Inputmask({ mask: "(999) 999 9999", ...InputmaskDefaultOptions }).mask(elemArray.emergency_phone);
 			Inputmask({ mask: "99999999999", ...InputmaskDefaultOptions }).mask(elemArray.securityNo);
 			Inputmask({ alias: "email", ...InputmaskDefaultOptions }).mask(elemArray.email);
 			Inputmask({ alias: "try", ...InputmaskDefaultOptions, placeholder: "0,00" }).mask(elemArray.salary);
-			Inputmask({ regex: "[a-zA-Z-ğüşöçİĞÜŞÖÇı ]*", ...InputmaskDefaultOptions }).mask(elemArray.name);
 			Inputmask({ regex: "[a-zA-ZğüşöçİĞÜŞÖÇı]*", ...InputmaskDefaultOptions }).mask(elemArray.surname);
+			Inputmask({ regex: onlyString, ...InputmaskDefaultOptions }).mask(elemArray.name);
+			Inputmask({ regex: onlyString, ...InputmaskDefaultOptions }).mask(elemArray.emergency_name);
+			Inputmask({ regex: onlyString, ...InputmaskDefaultOptions }).mask(elemArray.certificate_type);
+			Inputmask({ regex: onlyString, ...InputmaskDefaultOptions }).mask(elemArray.certificate_corporation);
+			Inputmask({ regex: onlyString, ...InputmaskDefaultOptions }).mask(elemArray.school_history_name);
 		} catch (e) {}
 	};
 
@@ -776,6 +786,7 @@ export class Edit extends Component {
 														name="address"
 														onChange={this.handleChange}
 														rows={6}
+														maxLength="1000"
 														placeholder="Adres"
 														value={address || ""}
 													/>

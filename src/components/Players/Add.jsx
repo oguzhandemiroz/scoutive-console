@@ -13,6 +13,7 @@ Inputmask.extendDefaults({
 
 Inputmask.extendAliases({
 	try: {
+		integerDigits: 12,
 		suffix: " ₺",
 		radixPoint: ",",
 		groupSeparator: ".",
@@ -140,15 +141,18 @@ export class Add extends Component {
 				email: $("[name=email]"),
 				securityNo: $("[name=securityNo]"),
 				fee: $("[name=fee]"),
-				emergency_phone: $("[name*='emergency.phone.']")
+				emergency_phone: $("[name*='emergency.phone.']"),
+				emergency_name: $("[name*='emergency.name.']")
 			};
+			const onlyString = "[a-zA-Z-ğüşöçİĞÜŞÖÇı ]*";
 			Inputmask({ mask: "(999) 999 9999", ...InputmaskDefaultOptions }).mask(elemArray.phone);
 			Inputmask({ mask: "(999) 999 9999", ...InputmaskDefaultOptions }).mask(elemArray.emergency_phone);
 			Inputmask({ mask: "99999999999", ...InputmaskDefaultOptions }).mask(elemArray.securityNo);
 			Inputmask({ alias: "email", ...InputmaskDefaultOptions }).mask(elemArray.email);
 			Inputmask({ alias: "try", ...InputmaskDefaultOptions, placeholder: "0,00" }).mask(elemArray.fee);
-			Inputmask({ regex: "[a-zA-Z-ğüşöçİĞÜŞÖÇı ]*", ...InputmaskDefaultOptions }).mask(elemArray.name);
 			Inputmask({ regex: "[a-zA-ZğüşöçİĞÜŞÖÇı]*", ...InputmaskDefaultOptions }).mask(elemArray.surname);
+			Inputmask({ regex: onlyString, ...InputmaskDefaultOptions }).mask(elemArray.name);
+			Inputmask({ regex: onlyString, ...InputmaskDefaultOptions }).mask(elemArray.emergency_name);
 		} catch (e) {}
 	};
 
@@ -823,6 +827,7 @@ export class Add extends Component {
 												name="address"
 												onChange={this.handleChange}
 												rows={6}
+												maxLength="1000"
 												placeholder="Adres"
 												value={address || ""}
 											/>
