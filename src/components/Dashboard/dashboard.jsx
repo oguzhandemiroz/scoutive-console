@@ -324,7 +324,7 @@ class Budgets extends Component {
 							<i className={`fa fa-${budget.type === 1 ? "university" : "briefcase"}`}></i>
 						</div>
 						<div className="text-muted text-uppercase">{budget.label}</div>
-						<h3 className="mb-1">{budget.balance.format() + " ₺"}</h3>
+						<h3 className="mb-1">{budget.balance.format() + " " + currencyType[budget.currency]}</h3>
 						<div className="text-muted">Bakiye</div>
 					</div>
 					<div className="card-chart-bg">

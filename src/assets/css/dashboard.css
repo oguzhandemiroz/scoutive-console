@@ -12743,6 +12743,10 @@ button.bg-dark:focus {
 	}
 }
 
+.text-line-through {
+	text-decoration: line-through !important;
+}
+
 .text-lowercase {
 	text-transform: lowercase !important;
 }

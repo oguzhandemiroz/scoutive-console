@@ -8,7 +8,8 @@ import {
 	ListVacations,
 	CreateSalary,
 	ListSalaries,
-	PayVacation
+	PayVacations,
+	PayAdvancePayments
 } from "../../services/EmployeeAction";
 import { GetBudgets } from "../../services/FillSelect";
 import { Toast, showSwal } from "../Alert";
@@ -210,42 +211,61 @@ export class Salary extends Component {
 				this.paySalaryAlert(employee, salary).then(re => {
 					if (re.value) {
 						this.setState({ loadingButton: "btn-loading" });
-						CreateSalary({
-							uid: uid,
-							to: employee.value,
-							amount: parseFloat(salary.replace(",", ".")),
-							payment_date: moment(paid_date).format("YYYY-MM-DD"),
-							budget_id: budget.value
-						}).then(response => {
-							if (response) {
-								const status = response.status;
+						var statusOkay = {
+							salary: false,
+							vacation: false,
+							advance_payment: false
+						};
+						Promise.all([
+							CreateSalary({
+								uid: uid,
+								to: employee.value,
+								amount: parseFloat(salary.replace(",", ".")),
+								payment_date: moment(paid_date).format("YYYY-MM-DD"),
+								budget_id: budget.value
+							}),
+							PayVacations({
+								uid: uid,
+								vacation_id_array: payVacations
+							}),
+							PayAdvancePayments({
+								uid: uid,
+								advance_payments: payAdvancePayments
+							})
+						]).then(([responseSalary, responseVacation, responseAdvancePayment]) => {
+							if (responseSalary) {
+								const status = responseSalary.status;
+								if (status.code === 1020) statusOkay.salary = true;
+							}
+							if (responseVacation) {
+								const status = responseVacation.status;
 								if (status.code === 1020) {
-									if (payVacations.length > 0) {
-										/*PayVacation({
-											uid: uid,
-											vacation_id: vacation.vacation_id
-										}).then(response => {
-											if (response) {
-												const status = response.status;
-												if (status.code === 1020) {
-													Toast.fire({
-														type: "success",
-														title: "İşlem başarılı..."
-													});
-													this.renderVacationTab();
-												}
-											}
-										});*/
-									}
-									Toast.fire({
-										type: "success",
-										title: "İşlem başarılı..."
-									});
-									this.renderSalaryTab();
+									statusOkay.vacation = true;
+									this.setState({ payVacations: [] });
 								}
 							}
 
-							this.setState({ loadingButton: "" });
+							if (responseAdvancePayment) {
+								const status = responseAdvancePayment.status;
+								if (status.code === 1020) {
+									statusOkay.advance_payment = true;
+									this.setState({ payAdvancePayments: [] });
+								}
+							}
+
+							if (statusOkay.salary && statusOkay.vacation && statusOkay.advance_payment) {
+								Toast.fire({
+									type: "success",
+									title: "İşlem başarılı..."
+								});
+								this.renderSalaryTab();
+							} else {
+								Toast.fire({
+									type: "warning",
+									title: "Bir sorun oluştu..."
+								});
+							}
+							this.setState({ loadingButton: "", salary: employee.salary.toString().replace(".", ",") });
 						});
 					}
 				});
@@ -465,14 +485,37 @@ export class Salary extends Component {
 	};
 
 	advancePaymentTabContent = (el, key) => {
+		if (el.status !== 1) return null;
 		const { payAdvancePayments } = this.state;
-		const findAdvancePayment = payAdvancePayments.find(x => x === el.advance_payment_id);
+		const findAdvancePayment = payAdvancePayments.filter(x => x.advance_payment_id === el.advance_payment_id);
+		console.log(el.advance_payment_id, findAdvancePayment);
+		var total = 0;
+		findAdvancePayment.map(el => (total += el.paid_amount));
 		return (
 			<li className="timeline-item" key={key.toString()}>
 				<div className={`timeline-badge ${el.paid_amount !== el.amount ? "" : "bg-primary"}`} />
 				<div>
-					<strong>{el.amount.format()} ₺</strong> avans verildi
+					<strong
+						className={`${
+							el.paid_amount !== 0 && el.amount !== el.paid_amount ? "text-line-through" : ""
+						}`}>
+						{el.amount.format() + " ₺"}
+					</strong>{" "}
+					avans verildi.{" "}
+					{el.paid_amount !== 0 && el.amount !== el.paid_amount ? (
+						<strong>
+							{(el.amount - el.paid_amount).format() + " ₺"}
+							<span className="font-weight-normal"> kaldı</span>
+						</strong>
+					) : null}
 					{el.note ? <small className="d-block text-muted">Not: {el.note}</small> : null}
+					{el.amount !== el.paid_amount ? (
+						<div>
+							<span className="text-red font-weight-600">{total.format() + " ₺"}</span> tutarında kesinti
+							uygulandı, <br /> kalan tutar:{" "}
+							<strong>{(el.amount - el.paid_amount - total).format() + " ₺"}</strong>
+						</div>
+					) : null}
 				</div>
 				<div className="timeline-time">{moment(el.advance_date).format("DD-MM-YYYY")}</div>
 				<div className="ml-2">
@@ -489,8 +532,17 @@ export class Salary extends Component {
 						) : (
 							<i className="fa fa-check-circle text-primary"></i>
 						)
-					) : (
+					) : total + el.paid_amount === el.amount ? (
 						<i className="fa fa-check-circle text-primary"></i>
+					) : (
+						<button
+							onClick={() => this.payAdvancePayment(el)}
+							type="button"
+							data-toggle="tooltip"
+							title="Maaşından Düşür"
+							className="btn btn-sm btn-primary btn-icon p-1">
+							<i className="fe fe-arrow-down-circle"></i>
+						</button>
 					)}
 				</div>
 			</li>
@@ -498,39 +550,38 @@ export class Salary extends Component {
 	};
 
 	vacationTabContent = (el, key) => {
+		if (el.status !== 1 || el.no_cost === 0) return null;
 		const { payVacations } = this.state;
 		const findVacation = payVacations.find(x => x === el.vacation_id);
-		if (el.no_cost === 1) {
-			return (
-				<li className="timeline-item" key={key.toString()}>
-					<div className={`timeline-badge ${el.status === 1 ? "" : "bg-primary"}`} />
-					<div>
-						<strong>{el.day} günlük ücretsiz</strong> izin verildi
-						<small className="d-block text-muted">
-							Günlük Kesinti: <strong>{el.daily_amount ? el.daily_amount.format() + " ₺" : "—"}</strong>
-						</small>
-					</div>
-					<div className="ml-auto">
-						{!findVacation ? (
-							el.status === 1 ? (
-								<button
-									onClick={() => this.payVacation(el)}
-									type="button"
-									data-toggle="tooltip"
-									title="Maaşından Düşür"
-									className="btn btn-sm btn-primary btn-icon p-1">
-									<i className="fe fe-arrow-down-circle"></i>
-								</button>
-							) : (
-								<i className="fa fa-check-circle text-primary"></i>
-							)
+		return (
+			<li className="timeline-item" key={key.toString()}>
+				<div className={`timeline-badge ${el.status === 1 ? "" : "bg-primary"}`} />
+				<div>
+					<strong>{el.day} günlük ücretsiz</strong> izin verildi
+					<small className="d-block text-muted">
+						Günlük Kesinti: <strong>{el.daily_amount ? el.daily_amount.format() + " ₺" : "—"}</strong>
+					</small>
+				</div>
+				<div className="ml-auto">
+					{!findVacation ? (
+						el.status === 1 ? (
+							<button
+								onClick={() => this.payVacation(el)}
+								type="button"
+								data-toggle="tooltip"
+								title="Maaşından Düşür"
+								className="btn btn-sm btn-primary btn-icon p-1">
+								<i className="fe fe-arrow-down-circle"></i>
+							</button>
 						) : (
 							<i className="fa fa-check-circle text-primary"></i>
-						)}
-					</div>
-				</li>
-			);
-		}
+						)
+					) : (
+						<i className="fa fa-check-circle text-primary"></i>
+					)}
+				</div>
+			</li>
+		);
 	};
 
 	payVacation = vacation => {
@@ -585,19 +636,27 @@ export class Salary extends Component {
 
 				return null;
 			}
+			const findAdvancePayment = payAdvancePayments.filter(
+				x => x.advance_payment_id === advance_payment.advance_payment_id
+			);
+			var total = 0;
+			findAdvancePayment.map(el => (total += el.paid_amount));
+			const totalDeduction = advance_payment.amount - advance_payment.paid_amount - total;
 			showSwal({
 				type: "question",
 				title: "Ödeme Tutarı",
-				html: `<b>${advance_payment.amount} ₺</b> tutarındaki avansın ne kadarını kesinti olarak uygulamak istiyorsunuz?`,
+				html: `<b>${advance_payment.amount.format()} ₺</b> tutarındaki avansın ne kadarını kesinti olarak uygulamak istiyorsunuz? <hr> Toplam kesinti tutarı: <b>${(
+					advance_payment.paid_amount + total
+				).format()} ₺</b>`,
 				input: "number",
-				inputValue: advance_payment.amount,
+				inputValue: totalDeduction,
 				inputAttributes: {
 					min: 0,
-					max: advance_payment.amount
+					max: totalDeduction
 				},
 				inputValidator: value => {
 					return new Promise(resolve => {
-						if (value <= advance_payment.amount) {
+						if (value <= totalDeduction) {
 							console.log(value);
 							showSwal({
 								type: "info",
@@ -621,7 +680,13 @@ export class Salary extends Component {
 									const totalSalary = parseSalary - parseFloat(value);
 									const formatTotalSalary = totalSalary.format().replace(".", "");
 									this.setState({
-										payAdvancePayments: [...payAdvancePayments, advance_payment.advance_payment_id]
+										payAdvancePayments: [
+											...payAdvancePayments,
+											{
+												advance_payment_id: advance_payment.advance_payment_id,
+												paid_amount: parseFloat(value)
+											}
+										]
 									});
 									this.setState({ salary: formatTotalSalary });
 								}

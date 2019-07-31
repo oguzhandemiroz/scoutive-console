@@ -85,8 +85,7 @@ class Menu extends Component {
 												<i className="fe fe-plus-square" /> Gelir
 											</NavLink>
 											<NavLink to="/app/accountings/expense" exact className="dropdown-item">
-												<i className="fe fe-minus-square" />
-												Gider
+												<i className="fe fe-minus-square" /> Gider
 											</NavLink>
 										</div>
 									</li>

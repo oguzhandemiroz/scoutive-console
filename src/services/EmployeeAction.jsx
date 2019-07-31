@@ -164,9 +164,28 @@ const ListSalaries = data => {
 	} catch (e) {}
 };
 
-const PayVacation = data => {
+const PayVacations = data => {
 	try {
 		return fetch(ep.VACATION_PAY, {
+			method: "POST",
+			body: JSON.stringify(data),
+			headers: h
+		})
+			.then(res => res.json())
+			.then(response => {
+				if (response) {
+					const status = response.status;
+					if (status.code !== 1020) errorSwal(status);
+					return response;
+				}
+			})
+			.catch(e => fatalSwal(true));
+	} catch (e) {}
+};
+
+const PayAdvancePayments = data => {
+	try {
+		return fetch(ep.ADVANCE_PAYMENT_PAY, {
 			method: "POST",
 			body: JSON.stringify(data),
 			headers: h
@@ -192,5 +211,6 @@ export {
 	ListAdvancePayments,
 	CreateSalary,
 	ListSalaries,
-	PayVacation
+	PayVacations,
+	PayAdvancePayments
 };
