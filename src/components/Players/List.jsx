@@ -409,13 +409,15 @@ class Table extends Component {
 												{fullname}
 											</a>
 											<div role="separator" className="dropdown-divider" />
+
+											<Link
+												onClick={() => this.props.history.push(`/app/players/payment/${uid}`)}
+												className="dropdown-item action-pay-salary"
+												to={`/app/players/payment/${uid}`}>
+												<i className="dropdown-icon fa fa-hand-holding-usd" /> Ödeme Al
+											</Link>
 											{status === 1 ? (
 												<div>
-													<a
-														className="dropdown-item action-pay-salary"
-														href="javascript:void(0)">
-														<i className="dropdown-icon fa fa-hand-holding-usd" /> Ödeme Al
-													</a>
 													<a
 														className="dropdown-item action-warning"
 														href="javascript:void(0)">
@@ -428,9 +430,9 @@ class Table extends Component {
 														<i className="dropdown-icon fa fa-hand-holding-heart" /> Burs
 														Ver
 													</a>
-													<div role="separator" className="dropdown-divider" />
 												</div>
 											) : null}
+											<div role="separator" className="dropdown-divider" />
 											{status === 1 ? (
 												<button
 													className="dropdown-item action-advance-payment"
@@ -524,7 +526,7 @@ class Table extends Component {
 					}
 				],
 				ajax: {
-					url: ep.LIST_PLAYER,
+					url: ep.PLAYER_LIST,
 					type: "POST",
 					datatype: "json",
 					beforeSend: function(request) {

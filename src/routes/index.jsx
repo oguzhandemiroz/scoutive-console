@@ -14,11 +14,12 @@ import AddEmployee from "../components/Employees/Add";
 import DetailEmployee from "../components/Employees/Detail";
 import EditEmployee from "../components/Employees/Edit";
 import VacationEmployee from "../components/Employees/Vacation";
-import Salary from "../components/Employees/Salary";
+import SalaryEmployee from "../components/Employees/Salary";
 
 import AddPlayers from "../components/Players/Add";
 import DetailPlayer from "../components/Players/Detail";
 import EditPlayer from "../components/Players/Edit";
+import PaymentPlayer from "../components/Players/Payment";
 
 import Groups from "../views/Groups/Groups";
 import GroupAdd from "../components/Groups/Add";
@@ -132,7 +133,7 @@ var indexRoutes = [
 	{
 		path: "/employees/salary/:uid?",
 		name: "Pay Salary",
-		component: Salary,
+		component: SalaryEmployee,
 		layout: "/app",
 		prop: { exact: false }
 	},
@@ -163,6 +164,12 @@ var indexRoutes = [
 		component: EditPlayer,
 		layout: "/app",
 		prop: { exact: true }
+	},
+	{
+		path: "/players/payment/:uid?",
+		name: "Receive Payment",
+		component: PaymentPlayer,
+		layout: "/app"
 	},
 	{
 		path: "/groups",

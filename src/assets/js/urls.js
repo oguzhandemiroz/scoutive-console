@@ -29,7 +29,7 @@ var ep = {
     PLAYER_DELETE: host + api_version + "delete/player",
     PLAYER_FREEZE: host + api_version + "freeze/player",
     PLAYER_REFRESH: host + api_version + "refresh/player",
-    LIST_PLAYER: host + api_version + "list/players",
+    PLAYER_LIST: host + api_version + "list/players",
     GET_PLAYER_NAME: host + api_version + "list/players/name",
     GET_PLAYER: host + api_version + "get/player",
     UPDATE_PLAYER: host + api_version + "update/player",

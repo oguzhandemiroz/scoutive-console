@@ -80,7 +80,7 @@ const ListGroups = uid => {
 
 const ListPlayers = data => {
 	try {
-		return fetch(ep.LIST_PLAYER, {
+		return fetch(ep.PLAYER_LIST, {
 			method: "POST",
 			body: JSON.stringify(data),
 			headers: h

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Link, withRouter } from "react-router-dom";
+import { withRouter } from "react-router-dom";
 import DatePicker, { registerLocale } from "react-datepicker";
 import { ListEmployees } from "../../services/Employee";
 import { fullnameGenerator, getSelectValue } from "../../services/Others";
@@ -145,7 +145,6 @@ export class Salary extends Component {
 
 	fieldMasked = () => {
 		try {
-			console.log("e");
 			const elemArray = {
 				salary: $("[name=salary]")
 			};

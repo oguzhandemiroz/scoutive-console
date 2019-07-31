@@ -180,4 +180,35 @@ const RefreshPlayer = data => {
 	}
 };
 
-export { CreatePlayer, DetailPlayer, UpdatePlayer, UpdatePlayers, DeletePlayer, FreezePlayer, RefreshPlayer };
+const ListPlayers = uid => {
+	try {
+		return fetch(ep.PLAYER_LIST, {
+			method: "POST",
+			body: JSON.stringify({
+				uid: uid
+			}),
+			headers: h
+		})
+			.then(res => res.json())
+			.then(response => {
+				if (response) {
+					const status = response.status;
+					if (status.code !== 1020) errorSwal(status);
+
+					return response;
+				}
+			})
+			.catch(e => fatalSwal(true));
+	} catch (e) {}
+};
+
+export {
+	CreatePlayer,
+	DetailPlayer,
+	UpdatePlayer,
+	UpdatePlayers,
+	DeletePlayer,
+	FreezePlayer,
+	RefreshPlayer,
+	ListPlayers
+};
