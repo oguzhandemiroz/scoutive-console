@@ -7,12 +7,12 @@ import sc from "../../assets/js/sc";
 import "../../assets/js/core";
 import ep from "../../assets/js/urls";
 import { fatalSwal, errorSwal } from "../Alert.jsx";
-import ReactDOM from "react-dom";
 import { BrowserRouter, Link } from "react-router-dom";
 import Vacation from "../EmployeeAction/Vacation";
 import Password from "../EmployeeAction/Password";
 import AdvancePayment from "../EmployeeAction/AdvancePayment";
 import { fullnameGenerator } from "../../services/Others";
+import ReactDOM from "react-dom";
 const $ = require("jquery");
 $.DataTable = require("datatables.net");
 

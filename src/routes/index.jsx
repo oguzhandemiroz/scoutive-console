@@ -26,6 +26,9 @@ import GroupAdd from "../components/Groups/Add";
 import GroupDetail from "../components/Groups/Detail";
 import GroupEdit from "../components/Groups/Edit";
 
+import Budgets from "../views/Budgets/Budgets";
+import BudgetDetail from "../components/Budgets/Detail";
+
 import Profile from "../views/Pages/Profile";
 import Settings from "../views/Pages/Settings";
 
@@ -257,6 +260,20 @@ var indexRoutes = [
 		path: "/rollcalls/player/detail/:gid/:rcid",
 		name: "Players Rollcalls Past",
 		component: PlayersRollcallDetail,
+		layout: "/app",
+		prop: { exact: true }
+	},
+	{
+		path: "/budgets",
+		name: "Budgets",
+		component: Budgets,
+		layout: "/app",
+		prop: { exact: true }
+	},
+	{
+		path: "/budgets/detail/:bid",
+		name: "Detail Budget",
+		component: BudgetDetail,
 		layout: "/app",
 		prop: { exact: true }
 	},

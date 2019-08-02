@@ -54,6 +54,7 @@ var ep = {
     ADVANCE_PAYMENT_LIST: host + api_version + "list/advancepayments",
     ADVANCE_PAYMENT_PAY: host + api_version + "pay/advancepayments",
     BUDGET_LIST: host + api_version + "list/budgets",
+    BUDGET_GET: host + api_version + "get/budget",
     SALARY_CREATE: host + api_version + "create/salary",
     SALARY_LIST: host + api_version + "list/employee/salaries",
 };

@@ -67,8 +67,8 @@ class Menu extends Component {
 										</div>
 									</li>
 									<li className="nav-item">
-										<NavLink to="/app/budgets" exact activeClassName="active" className="nav-link">
-											<i className="fa fa-coins" /> Bütçeler
+										<NavLink to="/app/budgets" activeClassName="active" className="nav-link">
+											<i className="fa fa-coins" /> Kasa ve Banka
 										</NavLink>
 									</li>
 									<li className="nav-item">

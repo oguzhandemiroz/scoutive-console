@@ -18441,7 +18441,7 @@ a.tag-addon:hover {
 
 .dataTables_wrapper thead .sorting:after {
 	position: absolute;
-	right: 0;
+	right: 10px;
 	bottom: 5px;
 	content: "\e92d";
 	font-family: "feather" !important;
@@ -18449,7 +18449,7 @@ a.tag-addon:hover {
 
 .dataTables_wrapper thead .sorting:before {
 	position: absolute;
-	right: 0;
+	right: 10px;
 	top: 5px;
 	content: "\e930";
 	font-family: "feather" !important;
@@ -18461,7 +18461,7 @@ a.tag-addon:hover {
 
 .dataTables_wrapper thead .sorting_desc:after {
 	position: absolute;
-	right: 0;
+	right: 10px;
 	bottom: 5px;
 	content: "\e92d";
 	font-family: "feather" !important;
@@ -18473,7 +18473,7 @@ a.tag-addon:hover {
 
 .dataTables_wrapper thead .sorting_asc:after {
 	position: absolute;
-	right: 0;
+	right: 10px;
 	top: 5px;
 	content: "\e930";
 	font-family: "feather" !important;
@@ -22388,6 +22388,10 @@ figure span.player-number {
 	font-size: 15px;
 	font-weight: 600;
 }
+
+#budget-report.c3-area {
+	opacity: 1 !important;
+  }
 
 .swal2-input.activation-input {
 	width: 150px;

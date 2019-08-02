@@ -464,12 +464,12 @@ const GetBudgets = extra => {
 					const selectData = [];
 					const status = response.status;
 
-					if (status.code !== 1020) {
+					if (status.code === 1050) {
 						Toast.fire({
 							type: "error",
 							title: '"Kasalar" yüklenemedi'
 						});
-					} else {
+					} else if(status.code === 1020) {
 						const data = response.data;
 						if (extra) {
 							data.map(el => {

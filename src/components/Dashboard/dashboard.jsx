@@ -4,6 +4,7 @@ import c3 from "c3";
 import "../../assets/css/c3.min.css";
 import Select, { components } from "react-select";
 import { GetBudgets } from "../../services/FillSelect";
+import { Link } from "react-router-dom";
 import moment from "moment";
 
 const customStyles = {
@@ -93,7 +94,6 @@ class Revenue extends Component {
 	shouldComponentUpdate() {
 		return false;
 	}
-
 	componentDidMount() {
 		this.renderChart();
 	}
@@ -263,6 +263,10 @@ class Budgets extends Component {
 		this.renderChart();
 	}
 
+	componentDidUpdate(){
+		this.renderChart();
+	}
+
 	handleSelect = (value, name) => {
 		try {
 			this.setState({ [name]: value });
@@ -272,9 +276,11 @@ class Budgets extends Component {
 	listBudgets = select => {
 		try {
 			GetBudgets(true).then(response => {
-				console.log(response);
-				select.budgets = response;
-				this.setState({ select, budget: response[0] });
+				if (response) {
+					console.log(response);
+					select.budgets = response;
+					this.setState({ select, budget: response[0] });
+				}
 			});
 		} catch (e) {}
 	};
@@ -298,12 +304,13 @@ class Budgets extends Component {
 
 	render() {
 		const { budget, select } = this.state;
+		if (!select.budgets) return null;
 		return (
 			<div className="col-sm-12 col-lg-4">
 				<div className="card">
 					<div className="card-header pr-2">
-						<h3 className="card-title mr-4">Bütçe</h3>
-						<div className="ml-auto w-50">
+						<h3 className="card-title mr-4">Hesap</h3>
+						<div className="ml-auto w-75">
 							<Select
 								value={budget}
 								onChange={val => this.handleSelect(val, "budget")}
@@ -324,7 +331,9 @@ class Budgets extends Component {
 							<i className={`fa fa-${budget.type === 1 ? "university" : "briefcase"}`}></i>
 						</div>
 						<div className="text-muted text-uppercase">{budget.label}</div>
-						<h3 className="mb-1">{budget.balance.format() + " " + currencyType[budget.currency]}</h3>
+						<h3 className="mb-1">
+							{budget.balance.format() + " " + (currencyType[budget.currency] || "")}
+						</h3>
 						<div className="text-muted">Bakiye</div>
 					</div>
 					<div className="card-chart-bg">
@@ -351,6 +360,15 @@ class Budgets extends Component {
 								</td>
 							</tr>
 						</tbody>
+						<tfoot>
+							<tr>
+								<td className="text-right" colSpan="3">
+									<Link to="/app/budgets" className="font-italic">
+										Kasayı Görüntüle <i className="fe fe-arrow-right"></i>
+									</Link>
+								</td>
+							</tr>
+						</tfoot>
 					</table>
 				</div>
 			</div>
