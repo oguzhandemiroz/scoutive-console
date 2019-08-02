@@ -5,6 +5,9 @@ import "jquery";
 import c3 from "c3";
 import "../../assets/css/c3.min.css";
 import sc from "../../assets/js/sc";
+import Inputmask from "inputmask";
+import moment from "moment";
+const $ = require("jquery");
 
 const budgetType = {
 	"-1": { icon: "", text: "—" },
@@ -194,7 +197,7 @@ export class Detail extends Component {
 							<div className="card-header">
 								<h3 className="card-title">
 									<i className={`fa fa-${getBudgetType.icon} mr-2`}></i>
-									{getBudgetType.text} Detay
+									{budget_name}
 								</h3>
 							</div>
 							<div className="card-body">
@@ -205,10 +208,6 @@ export class Detail extends Component {
 											<div class="card-value float-right text-blue">+5%</div>
 											<h3 class="mb-1">{balance.format() + " " + getCurrencyType.sign}</h3>
 											<div class="text-muted">Bakiye</div>
-										</div>
-										<div class="form-group">
-											<label class="form-label">Hesap Adı</label>
-											<div class="form-control-plaintext">{budget_name}</div>
 										</div>
 
 										<div class="form-group">
@@ -256,12 +255,17 @@ export class Detail extends Component {
 												</div>
 											</div>
 										) : null}
+										<hr className="my-5" />
+										<div class="form-group">
+											<label class="form-label">Son Güncellenme Tarihi</label>
+											<div class="form-control-plaintext">
+												{moment(last_update).format("LLL")}
+											</div>
+										</div>
 									</div>
 								</div>
 							</div>
-                            <div className="card-footer">
-                                
-                            </div>
+							<div className="card-footer"></div>
 						</div>
 					</div>
 				</div>
