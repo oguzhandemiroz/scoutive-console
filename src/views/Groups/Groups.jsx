@@ -12,7 +12,7 @@ export class Groups extends Component {
 				</div>
 				<div className="row">
 					<div className="col-lg-3 mb-4">
-						<Link to="/app/groups/add" className="btn btn-block btn-secondary mb-6">
+						<Link to="/app/groups/add" className="btn btn-block btn-success btn-icon mb-6">
 							<i className="fe fe-plus-square mr-2" />
 							Grup Ekle
 						</Link>

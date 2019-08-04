@@ -14,6 +14,7 @@ var ep = {
     SCHOOL_CREATE: host + api_version + "create/school",
     SCHOOL_GET: host + api_version + "get/school",
     SCHOOL_UPDATE: host + api_version + "update/school",
+    SCHOOL_EMPLOYEE_POSITIONS: host + api_version + "get/positions/employee",
     PASSWORD_FORGOT: host + api_version + "password/forgot",
     PASSWORD_RESET: host + api_version + "password/reset",
     PASSWORD_CHANGE: host + api_version + "password/change",
@@ -37,6 +38,7 @@ var ep = {
     LIST_GROUP: host + api_version + "list/groups",
     CREATE_GROUP: host + api_version + "create/group",
     UPDATE_GROUP: host + api_version + "update/group",
+    GROUP_DELETE: host + api_version + "delete/group",
     GET_GROUP: host + api_version + "get/group",
     CHECK_PERMISSION: host + api_version + "check/permission",
     COMPLETE_ROLLCALL: host + api_version + "complete/rollcall",
@@ -57,7 +59,7 @@ var ep = {
     BUDGET_GET: host + api_version + "get/budget",
     SALARY_CREATE: host + api_version + "create/salary",
     SALARY_LIST: host + api_version + "list/employee/salaries",
-    FEE_CREATE: host + api_version + "pay/player/fee",
+    FEE_CREATE: host + api_version + "pay/player/fee"
 };
 
 export default ep;
