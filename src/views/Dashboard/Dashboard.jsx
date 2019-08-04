@@ -10,8 +10,6 @@ class Dashboard extends Component {
 					<h1 className="page-title">Genel Durum</h1>
 				</div>
 				<div className="row row-cards">
-					<Revenue />
-					<Cost />
 					<Budgets />
 				</div>
 			</div>

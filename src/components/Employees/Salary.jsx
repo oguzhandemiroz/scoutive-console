@@ -267,7 +267,7 @@ export class Salary extends Component {
                             }
                             this.setState({
                                 loadingButton: "",
-                                salary: employee.salary.toString().replace(".", ",")
+                                salary: employee.salary.format().toString().split(".").join("")
                             });
                         });
                     }
@@ -337,7 +337,7 @@ export class Salary extends Component {
                             this.setState(
                                 {
                                     [name]: value,
-                                    salary: value.salary ? value.salary.toString().replace(".", ",") : null
+                                    salary: value.salary ? value.salary.format().toString().split(".").join("") : null
                                 },
                                 () => this.renderSalaryTab()
                             );
@@ -389,7 +389,7 @@ export class Salary extends Component {
                                 employee: to
                                     ? getSelectValue(selectData, to, "value")
                                     : initialState.employee,
-                                salary: to ? (toSalary ? toSalary.toString().replace(".", ",") : null) : null
+                                salary: to ? (toSalary ? toSalary.format().toString().split(".").join("") : null) : null
                             },
                             () => this.renderSalaryTab()
                         );
