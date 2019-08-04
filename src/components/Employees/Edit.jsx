@@ -181,6 +181,13 @@ export class Edit extends Component {
 			this.setState({ select });
 		});
 
+		select.days = Days();
+		select.months = Months();
+		select.years = Years(true);
+		select.kinships = Kinship();
+
+		this.setState({ select });
+
 		DetailEmployee({
 			uid: uid,
 			to: to
@@ -192,8 +199,6 @@ export class Edit extends Component {
 					const data = response.data;
 					this.setState({ responseData: data });
 					const getSplitBirthday = SplitBirthday(data.birthday);
-					console.log(getSplitBirthday);
-
 					initialState.name = data.name;
 					initialState.surname = data.surname;
 					initialState.securityNo = data.security_id;
@@ -202,14 +207,14 @@ export class Edit extends Component {
 					initialState.imagePreview = data.image;
 					initialState.image = data.image;
 					initialState.email = data.email;
-					initialState.position = getSelectValue(select.positions, data.position, "label");
-					initialState.branch = getSelectValue(select.branchs, data.branch, "label");
-					initialState.day = getSelectValue(select.days, getSplitBirthday.day, "value");
-					initialState.month = getSelectValue(select.months, getSplitBirthday.month, "value");
-					initialState.year = getSelectValue(select.years, getSplitBirthday.year, "value");
+					initialState.position = data.position;
+					initialState.branch = data.branch;
+					initialState.day = getSplitBirthday.day;
+					initialState.month = getSplitBirthday.month;
+					initialState.year = getSplitBirthday.year;
 					initialState.address = data.address;
 					initialState.gender = data.gender;
-					initialState.blood = getSelectValue(select.bloods, data.blood, "label");
+					initialState.blood = data.blood;
 					initialState.emergency = data.emergency || [];
 					initialState.school_history = data.school_history || [];
 					initialState.certificate = data.certificates || [];
@@ -256,14 +261,6 @@ export class Edit extends Component {
 				}
 			}
 		});
-
-		select.days = Days();
-		select.months = Months();
-		select.years = Years(true);
-		select.kinships = Kinship();
-
-		this.setState({ select });
-		console.log(this.state.select);
 	}
 
 	handleSubmit = e => {
@@ -292,6 +289,7 @@ export class Edit extends Component {
 			certificate,
 			formErrors,
 			to,
+			select,
 			responseData
 		} = this.state;
 		const requiredData = {};
@@ -333,7 +331,7 @@ export class Edit extends Component {
 			attributesData.body_weight = body_weight;
 		}
 
-		const checkBirthday = year && month && day ? `${year.value}-${month.value}-${day.value}` : null;
+		const checkBirthday = year && month && day ? `${year}-${month}-${day}` : null;
 		console.log(`
             ---SUBMITTING---
             name: ${name}
@@ -364,13 +362,14 @@ export class Edit extends Component {
 				surname: surname,
 				security_id: securityNo,
 				email: email,
-				permission_id: position ? position.value : null,
+				permission_id: getSelectValue(select.positions, position, "label").value,
 				phone: phone,
 				image: image,
 				salary: formatSalary,
 				address: address,
 				emergency: emergency,
-				blood_id: blood ? blood.value : null,
+				blood_id: blood ? getSelectValue(select.bloods, blood, "label").value : null,
+				branch_id: getSelectValue(select.branchs, branch, "label").value,
 				gender: gender,
 				birthday: checkBirthday,
 				school_history: school_history,
@@ -496,7 +495,7 @@ export class Edit extends Component {
 					break;
 			}
 
-			this.setState({ formErrors, [name]: value });
+			this.setState({ formErrors, [name]: value[extraData] });
 		}
 	};
 
@@ -639,8 +638,8 @@ export class Edit extends Component {
 												<span className="form-required">*</span>
 											</label>
 											<Select
-												value={position}
-												onChange={val => this.handleSelect(val, "position")}
+												value={getSelectValue(select.positions, position, "label")}
+												onChange={val => this.handleSelect(val, "position", "label")}
 												options={select.positions}
 												name="position"
 												placeholder="Seç..."
@@ -657,8 +656,8 @@ export class Edit extends Component {
 												<span className="form-required">*</span>
 											</label>
 											<Select
-												value={branch}
-												onChange={val => this.handleSelect(val, "branch")}
+												value={getSelectValue(select.branchs, branch, "label")}
+												onChange={val => this.handleSelect(val, "branch", "label")}
 												options={select.branchs}
 												name="branch"
 												placeholder="Seç..."
@@ -734,8 +733,8 @@ export class Edit extends Component {
 													<div className="row gutters-xs">
 														<div className="col-4">
 															<Select
-																value={day}
-																onChange={val => this.handleSelect(val, "day")}
+																value={getSelectValue(select.days, day, "value")}
+																onChange={val => this.handleSelect(val, "day", "value")}
 																options={select.days}
 																name="day"
 																placeholder="Gün"
@@ -749,8 +748,8 @@ export class Edit extends Component {
 														</div>
 														<div className="col-4">
 															<Select
-																value={month}
-																onChange={val => this.handleSelect(val, "month")}
+																value={getSelectValue(select.months, month, "value")}
+																onChange={val => this.handleSelect(val, "month", "value")}
 																options={select.months}
 																name="month"
 																placeholder="Ay"
@@ -764,8 +763,8 @@ export class Edit extends Component {
 														</div>
 														<div className="col-4">
 															<Select
-																value={year}
-																onChange={val => this.handleSelect(val, "year")}
+																value={getSelectValue(select.years, year, "value")}
+																onChange={val => this.handleSelect(val, "year", "value")}
 																options={select.years}
 																name="year"
 																placeholder="Yıl"
@@ -852,8 +851,8 @@ export class Edit extends Component {
 												<div className="form-group">
 													<label className="form-label">Kan Grubu</label>
 													<Select
-														value={blood}
-														onChange={val => this.handleSelect(val, "blood")}
+														value={getSelectValue(select.bloods, blood, "label")}
+														onChange={val => this.handleSelect(val, "blood", "label")}
 														options={select.bloods}
 														name="blood"
 														placeholder="Seç..."

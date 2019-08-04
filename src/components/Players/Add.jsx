@@ -258,7 +258,6 @@ export class Add extends Component {
 		requiredData.day = day ? day.value : null;
 		requiredData.month = month ? month.value : null;
 		requiredData.year = year ? year.value : null;
-		requiredData.foot = foot;
 		requiredData.formErrors = formErrors;
 
 		//attributes data
@@ -391,7 +390,6 @@ export class Add extends Component {
 			formErrors.email = email ? (!emailRegEx.test(email) ? "is-invalid" : "") : "";
 			formErrors.phone = phone ? (phone.length !== 10 ? "is-invalid" : "") : "";
 			formErrors.fee = fee ? "" : "is-invalid";
-			formErrors.foot = foot !== null ? "" : "is-invalid";
 			//formErrors.point = point ? "" : "is-invalid-iconless";
 			//select
 			formErrors.position = position ? "" : true;
@@ -507,14 +505,6 @@ export class Add extends Component {
 		const { name, value } = e.target;
 
 		let formErrors = { ...this.state.formErrors };
-
-		switch (name) {
-			case "foot":
-				formErrors.foot = value ? false : true;
-				break;
-			default:
-				break;
-		}
 
 		this.setState({ formErrors, [name]: parseInt(value) });
 	};
@@ -909,13 +899,12 @@ export class Add extends Component {
 										<div className="form-group">
 											<label className="form-label">
 												Kullandığı Ayak
-												<span className="form-required">*</span>
 											</label>
 											<div className="custom-controls-stacked">
 												<label className="custom-control custom-radio custom-control-inline">
 													<input
 														type="radio"
-														className={`custom-control-input ${formErrors.foot}`}
+														className="custom-control-input"
 														name="foot"
 														value="1"
 														checked={foot === 1 ? true : false}
@@ -926,7 +915,7 @@ export class Add extends Component {
 												<label className="custom-control custom-radio custom-control-inline">
 													<input
 														type="radio"
-														className={`custom-control-input ${formErrors.foot}`}
+														className="custom-control-input"
 														name="foot"
 														value="2"
 														checked={foot === 2 ? true : false}
@@ -937,7 +926,7 @@ export class Add extends Component {
 												<label className="custom-control custom-radio custom-control-inline">
 													<input
 														type="radio"
-														className={`custom-control-input ${formErrors.foot}`}
+														className="custom-control-input"
 														name="foot"
 														value="0"
 														checked={foot === 0 ? true : false}
