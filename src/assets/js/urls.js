@@ -57,6 +57,7 @@ var ep = {
     BUDGET_GET: host + api_version + "get/budget",
     SALARY_CREATE: host + api_version + "create/salary",
     SALARY_LIST: host + api_version + "list/employee/salaries",
+    FEE_CREATE: host + api_version + "pay/player/fee",
 };
 
 export default ep;
