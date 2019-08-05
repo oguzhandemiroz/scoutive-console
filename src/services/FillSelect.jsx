@@ -33,7 +33,7 @@ const Bloods = () => {
 					return selectData;
 				}
 			})
-			.catch(e => fatalSwal());
+			.catch(e => fatalSwal(true));
 	} catch (e) {}
 };
 
@@ -95,7 +95,7 @@ const Branchs = () => {
 					return selectData;
 				}
 			})
-			.catch(e => fatalSwal());
+			.catch(e => fatalSwal(true));
 	} catch (e) {}
 };
 
@@ -132,7 +132,7 @@ const EmployeePositions = () => {
 					return selectData;
 				}
 			})
-			.catch(e => fatalSwal());
+			.catch(e => fatalSwal(true));
 	} catch (e) {}
 };
 
@@ -163,7 +163,7 @@ const PlayerPositions = () => {
 					return selectData;
 				}
 			})
-			.catch(e => fatalSwal());
+			.catch(e => fatalSwal(true));
 	} catch (e) {}
 };
 
@@ -200,7 +200,38 @@ const Groups = () => {
 					return selectData;
 				}
 			})
-			.catch(e => fatalSwal());
+			.catch(e => fatalSwal(true));
+	} catch (e) {}
+};
+
+const Banks = () => {
+	try {
+		return fetch(ep.BANK, { headers: h })
+			.then(res => res.json())
+			.then(response => {
+				const data = response.data;
+				const status = response.status;
+				const selectData = [];
+				console.log("Banks: ", response);
+
+				if (status.code !== 1020) {
+					Toast.fire({
+						type: "error",
+						title: '"Bankalar" yüklenemedi'
+					});
+				} else {
+					for (const item in data) {
+						const value = item;
+						const label = data[item];
+						selectData.push({
+							value: value,
+							label: label
+						});
+					}
+					return selectData;
+				}
+			})
+			.catch(e => fatalSwal(true));
 	} catch (e) {}
 };
 
@@ -469,7 +500,7 @@ const GetBudgets = extra => {
 							type: "error",
 							title: '"Kasalar" yüklenemedi'
 						});
-					} else if(status.code === 1020) {
+					} else if (status.code === 1020) {
 						const data = response.data;
 						if (extra) {
 							data.map(el => {
@@ -515,6 +546,7 @@ export {
 	EmployeePositions,
 	PlayerPositions,
 	Groups,
+	Banks,
 	Days,
 	Months,
 	Years,

@@ -27,6 +27,7 @@ import GroupDetail from "../components/Groups/Detail";
 import GroupEdit from "../components/Groups/Edit";
 
 import Budgets from "../views/Budgets/Budgets";
+import BudgetAdd from "../components/Budgets/Add";
 import BudgetDetail from "../components/Budgets/Detail";
 
 import Profile from "../views/Pages/Profile";
@@ -267,6 +268,13 @@ var indexRoutes = [
 		path: "/budgets",
 		name: "Budgets",
 		component: Budgets,
+		layout: "/app",
+		prop: { exact: true }
+	},
+	{
+		path: "/budgets/add",
+		name: "Add Budget",
+		component: BudgetAdd,
 		layout: "/app",
 		prop: { exact: true }
 	},

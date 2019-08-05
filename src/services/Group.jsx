@@ -133,7 +133,7 @@ const UpdateGroup = data => {
 const DeleteGroup = data => {
     try {
         return fetch(ep.GROUP_DELETE, {
-            method: "POST",
+            method: "DELETE",
             body: JSON.stringify(data),
             headers: h
         })

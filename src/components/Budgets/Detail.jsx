@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {GetBugdet} from "../../services/Budget";
+import {GetBudget} from "../../services/Budget";
 import {nullCheck} from "../../services/Others";
 import {Link} from "react-router-dom";
 import "jquery";
@@ -146,7 +146,7 @@ export class Detail extends Component {
         try {
             const {uid} = this.state;
             const {bid} = this.props.match.params;
-            GetBugdet({
+            GetBudget({
                 uid: uid,
                 budget_id: bid
             }).then(response => {
@@ -164,7 +164,7 @@ export class Detail extends Component {
 
     render() {
         const {
-            bank,
+            bank_name,
             bank_branch,
             bank_account_number,
             iban,
@@ -246,7 +246,7 @@ export class Detail extends Component {
                                                 <hr className="my-5" />
                                                 <div className="form-group">
                                                     <label className="form-label">Banka Adı</label>
-                                                    <div className="form-control-plaintext">{bank}</div>
+                                                    <div className="form-control-plaintext">{bank_name}</div>
                                                 </div>
 
                                                 <div className="form-group">

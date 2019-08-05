@@ -1,4 +1,3 @@
-
 import React, { Component } from "react";
 import { DailyEmployee, GeneralEmployee, Table } from "../../components/Employees/List.jsx";
 import { Link, withRouter } from "react-router-dom";

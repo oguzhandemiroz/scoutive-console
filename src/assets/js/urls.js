@@ -10,6 +10,7 @@ var ep = {
     GROUP: host + api_version + "get/groups",
     BRANCH: host + api_version + "get/branchs",
     CLUB: host + api_version + "get/clubs",
+    BANK: host + api_version + "get/banks",
     ACCOUNT_LOGIN: host + api_version + "login",
     SCHOOL_CREATE: host + api_version + "create/school",
     SCHOOL_GET: host + api_version + "get/school",
@@ -57,9 +58,10 @@ var ep = {
     ADVANCE_PAYMENT_PAY: host + api_version + "pay/advancepayments",
     BUDGET_LIST: host + api_version + "list/budgets",
     BUDGET_GET: host + api_version + "get/budget",
+    BUDGET_CREATE: host + api_version + "create/budget",
     SALARY_CREATE: host + api_version + "create/salary",
     SALARY_LIST: host + api_version + "list/employee/salaries",
-    FEE_CREATE: host + api_version + "pay/player/fee"
+    FEE_CREATE: host + api_version + "pay/player/fee",
 };
 
 export default ep;

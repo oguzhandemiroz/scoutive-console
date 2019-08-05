@@ -163,35 +163,38 @@ export class Edit extends Component {
 		const { gid } = this.props.match.params;
 		const stateData = {};
 
-		GetEmployees().then(response => {
-			select.employees = response;
-			this.setState({ select });
-		});
-
-		GetPlayers().then(response => {
-			select.players = response;
-			this.setState({ select });
-
-			setTimeout(() => this.renderPlayerList(), 300);
-		});
-
 		select.hours = Hours();
 		select.minutes = Minutes();
 
 		this.setState({ select });
 
-		DetailGroup({
-			uid: uid,
-			group_id: parseInt(gid)
-		}).then(response => {
-			if (response) {
-				const status = response.status;
+		Promise.all([
+			GetEmployees(),
+			GetPlayers(),
+			DetailGroup({
+				uid: uid,
+				group_id: parseInt(gid)
+			})
+		]).then(([responseEmployees, responsePlayers, reponseDetail]) => {
+			if (responseEmployees) {
+				select.employees = responseEmployees;
+				this.setState({ select });
+			}
+			if (responsePlayers) {
+				select.players = responsePlayers;
+				this.setState({ select }, () => {
+					this.renderPlayerList();
+				});
+			}
+			if (reponseDetail) {
+				const status = reponseDetail.status;
+				console.log(reponseDetail);
 				if (status.code === 1020) {
-					const data = response.data;
+					const data = reponseDetail.data;
 					stateData.name = data.name;
 					stateData.hour = getSelectValue(select.hours, data.time.slice(0, 2), "label");
 					stateData.minute = getSelectValue(select.minutes, data.time.slice(3, -3), "label");
-					stateData.employee = getSelectValue(select.employees, data.employee.employee_id, "value");
+					stateData.employee = getSelectValue(responseEmployees, data.employee.employee_id, "value");
 					stateData.start_age = groupAgeSplit(data.age).start;
 					stateData.end_age = groupAgeSplit(data.age).end;
 					stateData.imagePreview = data.image ? data.image : null;
