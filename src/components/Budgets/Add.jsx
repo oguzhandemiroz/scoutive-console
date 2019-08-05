@@ -40,7 +40,7 @@ Inputmask.extendDefaults({
 
 Inputmask.extendAliases({
 	try: {
-		suffix: "",
+		suffix: " ₺",
 		radixPoint: ",",
 		groupSeparator: ".",
 		alias: "numeric",
@@ -130,7 +130,7 @@ export class Add extends Component {
 		};
 	}
 	fieldMasked = () => {
-		Inputmask({ alias: "try", ...InputmaskDefaultOptions }).mask($("[name=balance]"));
+		Inputmask({ alias: "try", ...InputmaskDefaultOptions, suffix: "" }).mask($("[name=balance]"));
 	};
 	componentDidMount() {
 		this.fieldMasked();

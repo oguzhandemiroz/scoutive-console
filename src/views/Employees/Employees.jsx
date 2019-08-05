@@ -1,9 +1,37 @@
 import React, { Component } from "react";
-import { DailyEmployee, GeneralEmployee, Table } from "../../components/Employees/List.jsx";
+import Table from "../../components/Employees/List.jsx";
+import TotalSalary from "../../components/Employees/Charts/TotalSalary";
+import DailyEmployee from "../../components/Employees/Charts/DailyEmployee";
+import GeneralEmployee from "../../components/Employees/Charts/GeneralEmployee";
 import { Link, withRouter } from "react-router-dom";
+import { ListEmployees } from "../../services/Employee";
 
 class Employees extends Component {
+	constructor(props) {
+		super(props);
+
+		this.state = {
+			uid: localStorage.getItem("UID"),
+			data: []
+		};
+	}
+
+	componentDidMount() {
+		this.renderEmployeeList();
+	}
+
+	renderEmployeeList = () => {
+		const { uid } = this.state;
+		ListEmployees(uid).then(response => {
+			if (response) {
+				const status = response.status;
+				if (status.code === 1020) this.setState({ data: response.data });
+			}
+		});
+	};
+
 	render() {
+		const { data } = this.state;
 		return (
 			<div className="container">
 				<div className="page-header">
@@ -13,19 +41,9 @@ class Employees extends Component {
 					</Link>
 				</div>
 				<div className="row row-cards">
-					<DailyEmployee />
-					<GeneralEmployee />
-					<div className="col-sm-6 col-md-4">
-						<div className="card">
-							<div className="card-body p-3 text-center">
-								<div className="h5">Toplam Maaş Gideri</div>
-								<div style={{ fontSize: "2.35rem" }} className="display-4 font-weight-bold mb-3">
-									9.652,75₺
-								</div>
-								<a className="text-muted">Detaylı görüntüle</a>
-							</div>
-						</div>
-					</div>
+					<DailyEmployee data={data} />
+					<GeneralEmployee data={data} />
+					<TotalSalary data={data} />
 				</div>
 				<div className="row row-cards">
 					<div className="col">

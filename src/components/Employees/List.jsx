@@ -1,9 +1,5 @@
 import React, { Component } from "react";
 import "jquery";
-import c3 from "c3";
-import * as d3 from "d3";
-import "../../assets/css/c3.min.css";
-import sc from "../../assets/js/sc";
 import "../../assets/js/core";
 import ep from "../../assets/js/urls";
 import { fatalSwal, errorSwal } from "../Alert.jsx";
@@ -23,160 +19,6 @@ var statusType = {
 	"2": ["İzinli", "warning"],
 	"3": ["İzinli", "warning"]
 };
-
-const chartOptions = {
-	axis: {},
-	legend: {
-		show: true //hide legend
-	},
-	padding: {
-		bottom: 0,
-		top: 0
-	},
-	tooltip: {
-		format: {
-			value: function(value) {
-				return d3.format("")(value);
-			}
-		}
-	},
-	pie: {
-		label: {
-			format: function(value) {
-				return d3.format("")(value);
-			}
-		}
-	}
-};
-
-class GeneralEmployee extends Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			data: [
-				// each columns data
-				["coach", 7],
-				["secretary", 1],
-				["coordinator", 1]
-			]
-		};
-	}
-	shouldComponentUpdate() {
-		return false;
-	}
-
-	componentDidMount() {
-		this.renderChart();
-	}
-	componentDidUpdate() {
-		this.renderChart();
-	}
-
-	renderChart() {
-		c3.generate({
-			bindto: "#general-employee",
-			data: {
-				columns: this.state.data,
-				type: "pie", // default type of chart
-				colors: {
-					coach: sc.colors["blue-darker"],
-					secretary: sc.colors["blue"],
-					coordinator: sc.colors["blue-light"]
-				},
-				names: {
-					// name of each serie
-					coach: "Antrenör",
-					secretary: "Sekreter",
-					coordinator: "Koordinator"
-				}
-			},
-			...chartOptions
-		});
-	}
-	render() {
-		return (
-			<div className="col-sm-6 col-md-4">
-				<div className="card">
-					<div className="card-body p-3 text-center">
-						<div className="h5"> Genel Personel Raporu </div>
-						<div
-							id="general-employee"
-							style={{
-								height: "192px"
-							}}
-						/>
-					</div>
-				</div>
-			</div>
-		);
-	}
-}
-
-class DailyEmployee extends Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			data: [
-				// each columns data
-				["working", 33],
-				["off", 24],
-				["non-work", 12],
-				["rest", 3]
-			]
-		};
-	}
-	shouldComponentUpdate() {
-		return false;
-	}
-
-	componentDidMount() {
-		this.renderChart();
-	}
-	componentDidUpdate() {
-		this.renderChart();
-	}
-
-	renderChart() {
-		c3.generate({
-			bindto: "#daily-employee",
-			data: {
-				columns: this.state.data,
-				type: "pie", // default type of chart
-				colors: {
-					working: sc.colors["green"],
-					off: sc.colors["orange"],
-					"non-work": sc.colors["red"],
-					rest: sc.colors["blue"]
-				},
-				names: {
-					// name of each serie
-					working: "Çalışıyor",
-					off: "İzinli",
-					"non-work": "Gelmeyen",
-					rest: "Raporlu"
-				}
-			},
-			...chartOptions
-		});
-	}
-	render() {
-		return (
-			<div className="col-sm-6 col-md-4">
-				<div className="card">
-					<div className="card-body p-3 text-center">
-						<div className="h5"> Günlük Personel Raporu </div>
-						<div
-							id="daily-employee"
-							style={{
-								height: "192px"
-							}}
-						/>
-					</div>
-				</div>
-			</div>
-		);
-	}
-}
 
 const datatable_turkish = {
 	sDecimal: ",",
@@ -538,4 +380,4 @@ class Table extends Component {
 	}
 }
 
-export { DailyEmployee, GeneralEmployee, Table };
+export default Table;
