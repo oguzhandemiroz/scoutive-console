@@ -4,6 +4,8 @@ import { CreateBudget } from "../../services/Budget";
 import Select, { components } from "react-select";
 import { Link, withRouter } from "react-router-dom";
 import { Toast } from "../Alert";
+import Inputmask from "inputmask";
+const $ = require("jquery");
 
 const currencies = [
 	{
@@ -31,6 +33,33 @@ const currencies = [
 		sign: "£"
 	}
 ];
+
+Inputmask.extendDefaults({
+	autoUnmask: true
+});
+
+Inputmask.extendAliases({
+	try: {
+		suffix: "",
+		radixPoint: ",",
+		groupSeparator: ".",
+		alias: "numeric",
+		autoGroup: true,
+		digits: 2,
+		digitsOptional: false,
+		clearMaskOnLostFocus: false,
+		allowMinus: false,
+		allowPlus: false,
+		rightAlign: false
+	}
+});
+
+const InputmaskDefaultOptions = {
+	showMaskOnHover: false,
+	showMaskOnFocus: false,
+	placeholder: "0,00",
+	autoUnmask: true
+};
 
 const formValid = ({ formErrors, ...rest }) => {
 	let valid = true;
@@ -100,8 +129,11 @@ export class Add extends Component {
 			loadingButton: ""
 		};
 	}
-
+	fieldMasked = () => {
+		Inputmask({ alias: "try", ...InputmaskDefaultOptions }).mask($("[name=balance]"));
+	};
 	componentDidMount() {
+		this.fieldMasked();
 		let select = { ...this.state.select };
 		Banks().then(response => {
 			select.banks = response;
@@ -159,7 +191,7 @@ export class Add extends Component {
 				budget_name: budget_name,
 				budget_type: budget_type,
 				currency: currency.value,
-				balance: parseFloat(balance),
+				balance: parseFloat(balance.replace(",", ".")),
 				note: note,
 				bank_id: bank ? parseInt(bank.value) : null,
 				bank_branch: bank_branch,
@@ -200,6 +232,16 @@ export class Add extends Component {
 		const { value, name } = e.target;
 		if (parseInt(value) === 0) {
 			this.setState({ initialState });
+		} else {
+			setTimeout(
+				() =>
+					Inputmask({
+						mask: "AA99 9999 9999 9999 9999 99",
+						...InputmaskDefaultOptions,
+						placeholder: ""
+					}).mask($("[name=iban]")),
+				100
+			);
 		}
 		this.setState({ [name]: parseInt(value) });
 	};

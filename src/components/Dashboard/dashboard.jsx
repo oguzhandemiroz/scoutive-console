@@ -28,7 +28,7 @@ const IconOption = props => (
 			/>
 			{props.data.label}
 			<div className="small text-muted">
-				Bütçe: <b>{props.data.balance.format() + " ₺"}</b>
+				Bütçe: <b>{props.data.balance.format() + " "+currencyType[props.data.currency]}</b>
 			</div>
 		</span>
 	</Option>
@@ -350,7 +350,7 @@ class Budgets extends Component {
 								</h3>
 								<div className="text-muted">Bakiye</div>
 							</div>
-							<div className="card-chart-bg">
+							<div className="card-chart-bg" style={{ zIndex: 0 }}>
 								<div id="budget" style={{ height: "100%" }} ref="budget" />
 							</div>
 							<table className="table card-table">
