@@ -246,9 +246,9 @@ class Budgets extends Component {
 		this.state = {
 			data: [30, 40, 10, 40, 12, 22, 100],
 			budget: {
-				label: "—",
-				value: null,
-				type: null,
+				label: null,
+				value: "",
+				type: 0,
 				balance: 0
 			},
 			select: {
@@ -263,7 +263,7 @@ class Budgets extends Component {
 		this.renderChart();
 	}
 
-	componentDidUpdate(){
+	componentDidUpdate() {
 		this.renderChart();
 	}
 
@@ -279,7 +279,10 @@ class Budgets extends Component {
 				if (response) {
 					console.log(response);
 					select.budgets = response;
-					this.setState({ select, budget: response[0] });
+					if (response.length > 0) {
+						this.setState({ budget: response[0] });
+					}
+					this.setState({ select });
 				}
 			});
 		} catch (e) {}
@@ -308,68 +311,83 @@ class Budgets extends Component {
 		return (
 			<div className="col-sm-12 col-lg-4">
 				<div className="card">
-					<div className="card-header pr-2">
-						<h3 className="card-title mr-4">Hesap</h3>
-						<div className="ml-auto w-75">
-							<Select
-								value={budget}
-								onChange={val => this.handleSelect(val, "budget")}
-								options={select.budgets}
-								name="budget"
-								placeholder="Kasa Seç..."
-								styles={customStyles}
-								isSearchable={true}
-								autoSize
-								isDisabled={select.budgets ? false : true}
-								noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
-								components={{ Option: IconOption }}
-							/>
+					<div className={`dimmer ${select.budgets.length === 0 ? "active" : ""}`}>
+						{select.budgets.length === 0 ? (
+							<div
+								className="d-flex justify-content-center chart-content align-items-center"
+								style={{ zIndex: 99999 }}>
+								<Link to="/app/budgets/add" className="btn btn-success">
+									Kasa veya Banka Oluştur
+								</Link>
+							</div>
+						) : null}
+						<div className="dimmer-content">
+							<div className="card-header pr-2">
+								<h3 className="card-title mr-4">Hesap</h3>
+								<div className="ml-auto w-75">
+									<Select
+										value={budget}
+										onChange={val => this.handleSelect(val, "budget")}
+										options={select.budgets}
+										name="budget"
+										placeholder="Kasa Seç..."
+										styles={customStyles}
+										isSearchable={true}
+										autoSize
+										isDisabled={select.budgets ? false : true}
+										noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
+										components={{ Option: IconOption }}
+									/>
+								</div>
+							</div>
+							<div className="card-body">
+								<div className="card-value float-right text-muted">
+									<i className={`fa fa-${budget.type === 1 ? "university" : "briefcase"}`}></i>
+								</div>
+								<div className="text-muted text-uppercase">{budget.label}</div>
+								<h3 className="mb-1">
+									{budget.balance.format() + " " + (currencyType[budget.currency] || "")}
+								</h3>
+								<div className="text-muted">Bakiye</div>
+							</div>
+							<div className="card-chart-bg">
+								<div id="budget" style={{ height: "100%" }} ref="budget" />
+							</div>
+							<table className="table card-table">
+								<tbody>
+									<tr>
+										<td width="1" className="pr-1">
+											<i className="fe fe-dollar-sign text-muted"></i>
+										</td>
+										<td>Para Birimi</td>
+										<td className="text-right">
+											<span className="text-muted">{currencyType[budget.currency]}</span>
+										</td>
+									</tr>
+									<tr>
+										<td width="1" className="pr-1">
+											<i className="fe fe-edit text-muted"></i>
+										</td>
+										<td>Son Güncelleme</td>
+										<td className="text-right">
+											<span className="text-muted">
+												{budget.last_update ? moment(budget.last_update).format("LLL") : null}
+											</span>
+										</td>
+									</tr>
+								</tbody>
+								<tfoot>
+									<tr>
+										<td className="text-right" colSpan="3">
+											<Link to="/app/budgets" className="font-italic">
+												Kasayı Görüntüle <i className="fe fe-arrow-right"></i>
+											</Link>
+										</td>
+									</tr>
+								</tfoot>
+							</table>
 						</div>
 					</div>
-					<div className="card-body">
-						<div className="card-value float-right text-muted">
-							<i className={`fa fa-${budget.type === 1 ? "university" : "briefcase"}`}></i>
-						</div>
-						<div className="text-muted text-uppercase">{budget.label}</div>
-						<h3 className="mb-1">
-							{budget.balance.format() + " " + (currencyType[budget.currency] || "")}
-						</h3>
-						<div className="text-muted">Bakiye</div>
-					</div>
-					<div className="card-chart-bg">
-						<div id="budget" style={{ height: "100%" }} ref="budget" />
-					</div>
-					<table className="table card-table">
-						<tbody>
-							<tr>
-								<td width="1" className="pr-1">
-									<i className="fe fe-dollar-sign text-muted"></i>
-								</td>
-								<td>Para Birimi</td>
-								<td className="text-right">
-									<span className="text-muted">{currencyType[budget.currency]}</span>
-								</td>
-							</tr>
-							<tr>
-								<td width="1" className="pr-1">
-									<i className="fe fe-edit text-muted"></i>
-								</td>
-								<td>Son Güncelleme</td>
-								<td className="text-right">
-									<span className="text-muted">{moment(budget.last_update).format("LLL")}</span>
-								</td>
-							</tr>
-						</tbody>
-						<tfoot>
-							<tr>
-								<td className="text-right" colSpan="3">
-									<Link to="/app/budgets" className="font-italic">
-										Kasayı Görüntüle <i className="fe fe-arrow-right"></i>
-									</Link>
-								</td>
-							</tr>
-						</tfoot>
-					</table>
 				</div>
 			</div>
 		);
