@@ -52,7 +52,7 @@ export class PlayerRollcall extends Component {
 									<tr key={key.toString()}>
 										<td className="p-4">
 											{el.group.group_name}
-											<span class="ml-1 text-muted">({el.group.time.slice(0, -3)})</span>
+											<span className="ml-1 text-muted">({el.group.time.slice(0, -3)})</span>
 										</td>
 										<td className="text-right">
 											<Link

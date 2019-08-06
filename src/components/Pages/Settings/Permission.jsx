@@ -53,7 +53,7 @@ export class Permission extends Component {
                                                           <th className="pl-0">
                                                               <input
                                                                   type="text"
-                                                                  class="form-control text-uppercase font-weight-600 text-dark"
+                                                                  className="form-control text-uppercase font-weight-600 text-dark"
                                                                   name={`position.name.${el}`}
                                                                   placeholder={positionList[el]}
                                                                   value={positionList[el]}
