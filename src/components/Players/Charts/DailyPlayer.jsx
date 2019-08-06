@@ -26,65 +26,98 @@ const chartOptions = {
 				return d3.format("")(value);
 			}
 		}
+	},
+	empty: {
+		label: {
+			text: "Veri bulunamadı"
+		}
 	}
 };
 
-class GeneralEmployee extends Component {
+class DailyPlayer extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
 			uid: localStorage.getItem("UID"),
-			noData: true,
-			data: []
+			came: ["1"],
+			vacation: ["2"],
+			not_came: ["0"],
+			none: ["-1"],
+			noData: true
 		};
 	}
 
 	componentWillReceiveProps(nextProps) {
 		const { data } = nextProps;
-		this.listEmployees(data);
+		this.listPlayers(data);
 	}
 
 	componentDidUpdate() {
 		this.renderChart();
 	}
 
-	listEmployees = data => {
-		const employeeNames = [];
-		const dataArr = [];
-		const dataObj = {};
+	listPlayers = data => {
+		const dataObj = {
+			"0": 0,
+			"1": 0,
+			"2": 0,
+			"-1": 0
+		};
 		data.map(el => {
-			if (!employeeNames.find(x => x[el.position] === el.position)) {
-				employeeNames.push({ [el.position]: el.position });
-			}
-			dataObj[el.position] = (dataObj[el.position] ? dataObj[el.position] : 0) + 1;
+			dataObj[el.daily] = dataObj[el.daily] + 1;
 		});
-
 		Object.keys(dataObj).map(el => {
-			dataArr.push([el, dataObj[el]]);
+			switch (el) {
+				case "0":
+					this.setState({ not_came: ["0", dataObj[el]] });
+					break;
+				case "1":
+					this.setState({ came: ["1", dataObj[el]] });
+					break;
+				case "2":
+					this.setState({ vacation: ["2", dataObj[el]] });
+					break;
+				case "-1":
+					this.setState({ none: ["-1", dataObj[el]] });
+					break;
+				default:
+					break;
+			}
 		});
-
-		this.setState({ data: dataArr, noData: false });
-		this.renderChart(employeeNames);
+		this.renderChart();
+		this.setState({ noData: false });
 	};
 
-	renderChart(names) {
+	renderChart() {
+		const { came, vacation, not_came, none } = this.state;
 		c3.generate({
-			bindto: "#general-employee",
+			bindto: "#daily-player",
 			data: {
-				columns: this.state.data,
+				columns: [[...came], [...vacation], [...not_came], [...none]],
 				type: "pie", // default type of chart
-				names: names
+				colors: {
+					"1": sc.colors["green"],
+					"2": sc.colors["orange"],
+					"0": sc.colors["red"],
+					"-1": "#495057"
+				},
+				names: {
+					// name of each serie
+					"1": "Geldi",
+					"2": "İzinli",
+					"0": "Gelmedi",
+					"-1": "Tanımsız"
+				}
 			},
 			...chartOptions
 		});
 	}
-
 	render() {
 		const { noData } = this.state;
 		return (
 			<div className="card">
 				<div className="card-body p-3 text-center">
-					<div className="h5"> Genel Personel Raporu </div>
+					<div className="h5">Günlük Öğrenci Raporu</div>
 					{noData ? (
 						<div
 							className="text-muted font-italic d-flex justify-content-center align-items-center"
@@ -95,7 +128,7 @@ class GeneralEmployee extends Component {
 						</div>
 					) : (
 						<div
-							id="general-employee"
+							id="daily-player"
 							style={{
 								height: "192px"
 							}}
@@ -107,4 +140,4 @@ class GeneralEmployee extends Component {
 	}
 }
 
-export default GeneralEmployee;
+export default DailyPlayer;

@@ -183,6 +183,7 @@ export class EmployeesRollcalls extends Component {
 
 	render() {
 		const { employees, onLoadedData, statuses, loadingButtons } = this.state;
+		if(!this.props.location.state) this.props.history.goBack();
 		return (
 			<div className="container">
 				<div className="page-header">

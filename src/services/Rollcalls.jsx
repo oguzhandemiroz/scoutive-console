@@ -132,4 +132,29 @@ const MakeRollcall = (data, type) => {
 	} catch (e) {}
 };
 
-export { CompleteRollcall, CreateRollcall, ListRollcall, ListRollcallType, MakeRollcall };
+const ActiveRollcall = (data, type) => {
+	try {
+		/*
+			- type 0 -> player
+			- type 1 -> employee
+		*/
+		return fetch(ep.ROLLCALL_ACTIVE + type, {
+			method: "POST",
+			body: JSON.stringify(data),
+			headers: h
+		})
+			.then(res => res.json())
+			.then(response => {
+				if (response) {
+					const status = response.status;
+					if (status.code !== 1020) errorSwal(status);
+					return response;
+				}
+			})
+			.catch(e => fatalSwal(true));
+	} catch (e) {
+		fatalSwal(true);
+	}
+};
+
+export { CompleteRollcall, CreateRollcall, ListRollcall, ListRollcallType, MakeRollcall, ActiveRollcall };

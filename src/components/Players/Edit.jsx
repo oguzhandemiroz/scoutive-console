@@ -385,7 +385,7 @@ export class Edit extends Component {
 					position_id: position ? position.value : null,
 					branch_id: branch ? branch.value : null,
 					blood_id: blood ? blood.value : null,
-					group_id: group ? group.value : null,
+					group_id: group ? group.value : 0,
 					email: email,
 					phone: phone,
 					gender: gender,
@@ -755,6 +755,9 @@ export class Edit extends Component {
 													<input
 														type="number"
 														name="point"
+														step="0.1"
+														min="1"
+														max="5"
 														value={point || "0"}
 														className={`form-control w-8 ${formErrors.point}`}
 														onChange={this.handleChange}

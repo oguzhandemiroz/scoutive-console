@@ -1,8 +1,9 @@
 import React, { Component } from "react";
-import { Revenue, Cost, Budgets } from "../../components/Dashboard/dashboard";
+import Budget from "../../components/Dashboard/Budget";
+import EmployeeRollcall from "../../components/Dashboard/EmployeeRollcall";
+import PlayerRollcall from "../../components/Dashboard/PlayerRollcall";
 
 class Dashboard extends Component {
-
 	render() {
 		return (
 			<div className="container">
@@ -10,7 +11,15 @@ class Dashboard extends Component {
 					<h1 className="page-title">Genel Durum</h1>
 				</div>
 				<div className="row row-cards">
-					<Budgets />
+					<div className="col-sm-12 col-lg-4">
+						<EmployeeRollcall />
+					</div>
+					<div className="col-sm-12 col-lg-4">
+						<PlayerRollcall />
+					</div>
+					<div className="col-sm-12 col-lg-4">
+						<Budget />
+					</div>
 				</div>
 			</div>
 		);

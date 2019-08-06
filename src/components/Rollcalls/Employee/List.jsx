@@ -168,7 +168,7 @@ export class List extends Component {
 																		{el.status === 2 ? "Devam ediyor" : ""}
 																	</span>
 																	<Link className="text-inherit" to={redirect}>
-																		{moment(el.created_date).format("LLL")}
+																		{moment(el.created_date).format("LL")}
 																	</Link>
 																</td>
 																<td className="text-center">

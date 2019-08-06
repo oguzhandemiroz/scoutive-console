@@ -46,7 +46,7 @@ class DailyEmployee extends Component {
 			noData: true
 		};
 	}
-	
+
 	componentWillReceiveProps(nextProps) {
 		const { data } = nextProps;
 		this.listEmployees(data);
@@ -115,27 +115,25 @@ class DailyEmployee extends Component {
 	render() {
 		const { noData } = this.state;
 		return (
-			<div className="col-sm-6 col-md-4">
-				<div className="card">
-					<div className="card-body p-3 text-center">
-						<div className="h5">Günlük Personel Raporu</div>
-						{noData ? (
-							<div
-								className="text-muted font-italic d-flex justify-content-center"
-								style={{
-									height: "192px"
-								}}>
-								<div className="loader"></div>
-							</div>
-						) : (
-							<div
-								id="daily-employee"
-								style={{
-									height: "192px"
-								}}
-							/>
-						)}
-					</div>
+			<div className="card">
+				<div className="card-body p-3 text-center">
+					<div className="h5">Günlük Personel Raporu</div>
+					{noData ? (
+						<div
+							className="text-muted font-italic d-flex justify-content-center align-items-center"
+							style={{
+								height: "192px"
+							}}>
+							<div className="loader"></div>
+						</div>
+					) : (
+						<div
+							id="daily-employee"
+							style={{
+								height: "192px"
+							}}
+						/>
+					)}
 				</div>
 			</div>
 		);

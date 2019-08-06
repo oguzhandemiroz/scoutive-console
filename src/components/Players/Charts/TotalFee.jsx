@@ -1,12 +1,12 @@
 import React, { Component } from "react";
 
-export class TotalSalary extends Component {
+export class TotalFee extends Component {
 	constructor(props) {
 		super(props);
 
 		this.state = {
 			uid: localStorage.getItem("UID"),
-			totalSalary: null,
+			totalFee: null,
 			totalCount: null
 		};
 	}
@@ -21,22 +21,22 @@ export class TotalSalary extends Component {
 	listEmployees = data => {
 		var total = 0;
 		data.map(el => {
-			if (el.salary) {
-				total += el.salary;
+			if (el.fee) {
+				total += el.fee;
 			}
 		});
-		this.setState({ totalSalary: total.format() + " ₺", totalCount: data.length });
+		this.setState({ totalFee: total.format() + " ₺", totalCount: data.length });
 	};
 
 	render() {
-		const { totalSalary, totalCount } = this.state;
+		const { totalFee, totalCount } = this.state;
 		return (
 			<div className="card">
 				<div className="card-body p-3 text-center">
-					<div className="h5">Toplam Maaş Gideri</div>
+					<div className="h5">Toplam Aidat Geliri</div>
 					<div style={{ fontSize: "2.35rem" }} className="display-4 font-weight-bold mb-3">
-						{totalSalary ? (
-							totalSalary
+						{totalFee ? (
+							totalFee
 						) : (
 							<div className="d-flex justify-content-center">
 								<div className="loader"></div>
@@ -45,7 +45,7 @@ export class TotalSalary extends Component {
 					</div>
 				</div>
 				<div className="card-body p-3 text-center">
-					<div className="h5">Toplam Personel Sayısı</div>
+					<div className="h5">Toplam Öğrenci Sayısı</div>
 					<div style={{ fontSize: "2rem" }} className="display-4 font-weight-bold mb-3">
 						{totalCount ? (
 							totalCount
@@ -61,4 +61,4 @@ export class TotalSalary extends Component {
 	}
 }
 
-export default TotalSalary;
+export default TotalFee;

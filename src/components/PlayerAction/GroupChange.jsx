@@ -80,7 +80,7 @@ export class GroupChange extends Component {
 			UpdatePlayer({
 				uid: uid,
 				to: data.uid,
-				group_id: group ? group.value : null,
+				group_id: group ? group.value : 0,
 				attributes: attributesData
 			}).then(response => {
 				this.setState({ loadingButton: false });
@@ -102,7 +102,7 @@ export class GroupChange extends Component {
 		UpdatePlayer({
 			uid: uid,
 			to: data.uid,
-			group_id: null
+			group_id: 0
 		}).then(response => {
 			this.setState({ loadingButton: false });
 			setTimeout(() => this.reload(), 1000);

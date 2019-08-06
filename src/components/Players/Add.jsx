@@ -341,7 +341,7 @@ export class Add extends Component {
 				position_id: position ? position.value : null,
 				branch_id: branch ? branch.value : null,
 				blood_id: blood ? blood.value : null,
-				group_id: group ? group.value : null,
+				group_id: group ? group.value : 0,
 				email: email,
 				phone: phone,
 				gender: gender,
@@ -715,6 +715,9 @@ export class Add extends Component {
 										<div className="col-auto">
 											<input
 												type="number"
+												step="0.1"
+												min="1"
+												max="5"
 												name="point"
 												value={point || "0"}
 												className={`form-control w-8 ${formErrors.point}`}

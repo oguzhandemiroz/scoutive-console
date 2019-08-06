@@ -306,7 +306,7 @@ export class Edit extends Component {
 							security_id__in: diffPlayers
 						},
 						update: {
-							group_id: null
+							group_id: 0
 						}
 					})
 				]).then(([responseGroup, responsePlayers, responsePlayersRemove]) => {

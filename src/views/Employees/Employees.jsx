@@ -41,9 +41,15 @@ class Employees extends Component {
 					</Link>
 				</div>
 				<div className="row row-cards">
-					<DailyEmployee data={data} />
-					<GeneralEmployee data={data} />
-					<TotalSalary data={data} />
+					<div className="col-sm-6 col-md-4">
+						<DailyEmployee data={data} />
+					</div>
+					<div className="col-sm-6 col-md-4">
+						<GeneralEmployee data={data} />
+					</div>
+					<div className="col-sm-6 col-md-4">
+						<TotalSalary data={data} />
+					</div>
 				</div>
 				<div className="row row-cards">
 					<div className="col">

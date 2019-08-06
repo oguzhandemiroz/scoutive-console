@@ -1,44 +1,80 @@
-import React, {Component} from "react";
-import {DailyEmployee, GeneralEmployee, Table} from "../../components/Players/List.jsx";
-import {Link} from "react-router-dom";
+import React, { Component } from "react";
+import Table from "../../components/Players/List";
+import { ListPlayers } from "../../services/Player";
+import { Link } from "react-router-dom";
+import DailyPlayer from "../../components/Players/Charts/DailyPlayer";
+import TotalFee from "../../components/Players/Charts/TotalFee";
 
 class Players extends Component {
-    render() {
-        return (
-            <div className="container">
-                <div className="page-header">
-                    <h1 className="page-title">Öğrenciler</h1>
-                    <Link
-                        to="/app/players/add"
-                        className="btn btn-icon btn-sm btn-success ml-auto dropdown-toggle"
-                        data-toggle="dropdown">
-                        Öğrenci Ekle
-                    </Link>
+	constructor(props) {
+		super(props);
 
-                    <div className="dropdown-menu">
-                        <Link to="/app/players/add" className="dropdown-item">Normal Öğrenci Ekle</Link>
-                        <Link to="/app/players/add/trial" className="dropdown-item">Deneme Öğrenci Ekle</Link>
-                    </div>
-                </div>
+		this.state = {
+			uid: localStorage.getItem("UID"),
+			data: []
+		};
+	}
 
-                <div className="row row-cards">
-                    <div className="col-sm-6 col-md-4" />
-                </div>
-                <div className="row row-cards">
-                    <div className="col">
-                        <div className="card">
-                            <div className="card-header">
-                                <h3 className="card-title">Tüm Öğrenciler</h3>
-                            </div>
-                            <div className="table-responsive employee-list">
-                                <Table history={this.props.history} />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        );
-    }
+	componentDidMount() {
+		this.renderPlayerList();
+	}
+
+	renderPlayerList = () => {
+		const { uid } = this.state;
+		ListPlayers(uid).then(response => {
+			if (response) {
+				const status = response.status;
+				if (status.code === 1020) this.setState({ data: response.data });
+			}
+		});
+	};
+
+	render() {
+		const { data } = this.state;
+		return (
+			<div className="container">
+				<div className="page-header">
+					<h1 className="page-title">Öğrenciler</h1>
+					<Link
+						to="/app/players/add"
+						className="btn btn-icon btn-sm btn-success ml-auto dropdown-toggle"
+						data-toggle="dropdown">
+						Öğrenci Ekle
+					</Link>
+
+					<div className="dropdown-menu">
+						<Link to="/app/players/add" className="dropdown-item">
+							Normal Öğrenci Ekle
+						</Link>
+						<Link to="/app/players/add/trial" className="dropdown-item">
+							Deneme Öğrenci Ekle
+						</Link>
+					</div>
+				</div>
+
+				<div className="row row-cards">
+					<div className="col-sm-6 col-md-4">
+						<DailyPlayer data={data} />
+					</div>
+					<div className="col-sm-6 col-md-4">
+						<TotalFee data={data} />
+					</div>
+				</div>
+				<div className="row row-cards">
+					<div className="col">
+						<div className="card">
+							<div className="card-header">
+								<h3 className="card-title">Tüm Öğrenciler</h3>
+							</div>
+							<div className="table-responsive employee-list">
+								<Table history={this.props.history} />
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		);
+	}
 }
 
 export default Players;

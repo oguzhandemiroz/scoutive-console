@@ -28,7 +28,7 @@ const IconOption = props => (
 			/>
 			{props.data.label}
 			<div className="small text-muted">
-				Bütçe: <b>{props.data.balance.format() + " "+currencyType[props.data.currency]}</b>
+				Bütçe: <b>{props.data.balance.format() + " " + currencyType[props.data.currency]}</b>
 			</div>
 		</span>
 	</Option>
@@ -307,86 +307,85 @@ class Budgets extends Component {
 
 	render() {
 		const { budget, select } = this.state;
+		const path = budget ? `/app/budgets/detail/${budget.budget_id}` : `/app/budgets`;
 		if (!select.budgets) return null;
 		return (
-			<div className="col-sm-12 col-lg-4">
-				<div className="card">
-					<div className={`dimmer ${select.budgets.length === 0 ? "active" : ""}`}>
-						{select.budgets.length === 0 ? (
-							<div
-								className="d-flex justify-content-center chart-content align-items-center"
-								style={{ zIndex: 99999 }}>
-								<Link to="/app/budgets/add" className="btn btn-success">
-									Kasa veya Banka Oluştur
-								</Link>
-							</div>
-						) : null}
-						<div className="dimmer-content">
-							<div className="card-header pr-2">
-								<h3 className="card-title mr-4">Hesap</h3>
-								<div className="ml-auto w-75">
-									<Select
-										value={budget}
-										onChange={val => this.handleSelect(val, "budget")}
-										options={select.budgets}
-										name="budget"
-										placeholder="Kasa Seç..."
-										styles={customStyles}
-										isSearchable={true}
-										autoSize
-										isDisabled={select.budgets ? false : true}
-										noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
-										components={{ Option: IconOption }}
-									/>
-								</div>
-							</div>
-							<div className="card-body">
-								<div className="card-value float-right text-muted">
-									<i className={`fa fa-${budget.type === 1 ? "university" : "briefcase"}`}></i>
-								</div>
-								<div className="text-muted text-uppercase">{budget.label}</div>
-								<h3 className="mb-1">
-									{budget.balance.format() + " " + (currencyType[budget.currency] || "")}
-								</h3>
-								<div className="text-muted">Bakiye</div>
-							</div>
-							<div className="card-chart-bg" style={{ zIndex: 0 }}>
-								<div id="budget" style={{ height: "100%" }} ref="budget" />
-							</div>
-							<table className="table card-table">
-								<tbody>
-									<tr>
-										<td width="1" className="pr-1">
-											<i className="fe fe-dollar-sign text-muted"></i>
-										</td>
-										<td>Para Birimi</td>
-										<td className="text-right">
-											<span className="text-muted">{currencyType[budget.currency]}</span>
-										</td>
-									</tr>
-									<tr>
-										<td width="1" className="pr-1">
-											<i className="fe fe-edit text-muted"></i>
-										</td>
-										<td>Son Güncelleme</td>
-										<td className="text-right">
-											<span className="text-muted">
-												{budget.last_update ? moment(budget.last_update).format("LLL") : null}
-											</span>
-										</td>
-									</tr>
-								</tbody>
-								<tfoot>
-									<tr>
-										<td className="text-right" colSpan="3">
-											<Link to="/app/budgets" className="font-italic">
-												Kasayı Görüntüle <i className="fe fe-arrow-right"></i>
-											</Link>
-										</td>
-									</tr>
-								</tfoot>
-							</table>
+			<div className="card">
+				<div className={`dimmer ${select.budgets.length === 0 ? "active" : ""}`}>
+					{select.budgets.length === 0 ? (
+						<div
+							className="d-flex justify-content-center chart-content align-items-center"
+							style={{ zIndex: 99999 }}>
+							<Link to="/app/budgets/add" className="btn btn-success">
+								Kasa veya Banka Oluştur
+							</Link>
 						</div>
+					) : null}
+					<div className="dimmer-content">
+						<div className="card-header pr-2">
+							<h3 className="card-title mr-4">Hesap</h3>
+							<div className="ml-auto w-75">
+								<Select
+									value={budget}
+									onChange={val => this.handleSelect(val, "budget")}
+									options={select.budgets}
+									name="budget"
+									placeholder="Kasa Seç..."
+									styles={customStyles}
+									isSearchable={true}
+									autoSize
+									isDisabled={select.budgets ? false : true}
+									noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
+									components={{ Option: IconOption }}
+								/>
+							</div>
+						</div>
+						<div className="card-body">
+							<div className="card-value float-right text-muted">
+								<i className={`fa fa-${budget.type === 1 ? "university" : "briefcase"}`}></i>
+							</div>
+							<div className="text-muted text-uppercase">{budget.label}</div>
+							<h3 className="mb-1">
+								{budget.balance.format() + " " + (currencyType[budget.currency] || "")}
+							</h3>
+							<div className="text-muted">Bakiye</div>
+						</div>
+						<div className="card-chart-bg" style={{ zIndex: 0 }}>
+							<div id="budget" style={{ height: "100%" }} ref="budget" />
+						</div>
+						<table className="table card-table">
+							<tbody>
+								<tr>
+									<td width="1" className="pr-1">
+										<i className="fe fe-dollar-sign text-muted"></i>
+									</td>
+									<td>Para Birimi</td>
+									<td className="text-right">
+										<span className="text-muted">{currencyType[budget.currency]}</span>
+									</td>
+								</tr>
+								<tr>
+									<td width="1" className="pr-1">
+										<i className="fe fe-edit text-muted"></i>
+									</td>
+									<td>Son Güncelleme</td>
+									<td className="text-right">
+										<span className="text-muted">
+											{budget.last_update ? moment(budget.last_update).format("LLL") : null}
+										</span>
+									</td>
+								</tr>
+							</tbody>
+							<tfoot>
+								<tr>
+									<td className="text-right" colSpan="3">
+										<Link to={{ pathname: path }} className="font-italic">
+											Kasayı Görüntüle <i className="fe fe-arrow-right"></i>
+										</Link>
+									</td>
+								</tr>
+							</tfoot>
+						</table>
 					</div>
 				</div>
 			</div>
@@ -394,4 +393,4 @@ class Budgets extends Component {
 	}
 }
 
-export { Revenue, Cost, NewUser, Budgets };
+export default Budgets;
