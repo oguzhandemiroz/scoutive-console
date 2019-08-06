@@ -63,9 +63,11 @@ export class TotalBankAmount extends Component {
 					) : (
 						Object.keys(totalAmount).map((el, key) => {
 							const fontSize = key === 0 ? "h3" : "h4";
-							if (parseFloat(totalAmount[el]) > 0) {
-								return <div key={key.toString()} className={`mb-1 ${fontSize}`}>{totalAmount[el]}</div>;
-							}
+							return (
+								<div key={key.toString()} className={`mb-1 ${fontSize}`}>
+									{totalAmount[el]}
+								</div>
+							);
 						})
 					)}
 					<div className="text-muted">Bankalar Toplamı</div>
