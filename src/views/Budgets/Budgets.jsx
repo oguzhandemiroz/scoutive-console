@@ -1,9 +1,37 @@
 import React, { Component } from "react";
 import { Link, withRouter } from "react-router-dom";
 import List from "../../components/Budgets/List";
+import TotalCaseAmount from "../../components/Budgets/Charts/TotalCaseAmount";
+import TotalBankAmount from "../../components/Budgets/Charts/TotalBankAmount";
+import TotalAmount from "../../components/Budgets/Charts/TotalAmount";
+import { ListBudgets } from "../../services/Budget";
 
 export class Budgets extends Component {
+	constructor(props) {
+		super(props);
+
+		this.state = {
+			uid: localStorage.getItem("UID"),
+			data: []
+		};
+	}
+
+	componentDidMount() {
+		this.renderBudgetList();
+	}
+
+	renderBudgetList = () => {
+		const { uid } = this.state;
+		ListBudgets(uid).then(response => {
+			if (response) {
+				const status = response.status;
+				if (status.code === 1020) this.setState({ data: response.data });
+			}
+		});
+	};
+
 	render() {
+		const { data } = this.state;
 		return (
 			<div className="container">
 				<div className="page-header">
@@ -15,41 +43,18 @@ export class Budgets extends Component {
 
 				<div className="row row-cards">
 					<div className="col-lg-4 col-sm-12">
-						<div className="card">
-							<div className="card-body">
-								<div className="card-value float-right text-muted">
-									<i className={`fa fa-briefcase`}></i>
-								</div>
-								<h3 className="mb-1">144.578,97 ₺</h3>
-								<div className="text-muted">Kasalar Toplamı</div>
-							</div>
-						</div>
+						<TotalCaseAmount data={data} />
 					</div>
 
 					<div className="col-lg-4 col-sm-12">
-						<div className="card">
-							<div className="card-body">
-								<div className="card-value float-right text-muted">
-									<i className={`fa fa-university`}></i>
-								</div>
-								<h3 className="mb-1">4.257,44 ₺</h3>
-								<div className="text-muted">Bankalar Toplamı</div>
-							</div>
-						</div>
+						<TotalBankAmount data={data} />
 					</div>
 
 					<div className="col-lg-4 col-sm-12">
-						<div className="card">
-							<div className="card-body">
-								<div className="card-value float-right text-muted">
-									<i className={`fa fa-coins`}></i>
-								</div>
-								<h3 className="mb-1">‭148.836,41‬ ₺</h3>
-								<div className="text-muted">Nakit Toplamı</div>
-							</div>
-						</div>
+						<TotalAmount data={data} />
 					</div>
 				</div>
+				
 				<div className="row row-cards">
 					<div className="col">
 						<div className="card">

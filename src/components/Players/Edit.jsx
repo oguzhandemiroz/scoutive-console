@@ -385,7 +385,7 @@ export class Edit extends Component {
 					position_id: position ? position.value : null,
 					branch_id: branch ? branch.value : null,
 					blood_id: blood ? blood.value : null,
-					group_id: group ? group.value : 0,
+					group_id: group ? group.value : 1,
 					email: email,
 					phone: phone,
 					gender: gender,

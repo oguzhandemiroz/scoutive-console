@@ -48,4 +48,27 @@ const CreateBudget = data => {
 	}
 };
 
-export { GetBudget, CreateBudget };
+const ListBudgets = uid => {
+	try {
+		return fetch(ep.BUDGET_LIST, {
+			method: "POST",
+			body: JSON.stringify({
+				uid: uid
+			}),
+			headers: h
+		})
+			.then(res => res.json())
+			.then(response => {
+				if (response) {
+					const status = response.status;
+					if (status.code !== 1020) errorSwal(status);
+					return response;
+				}
+			})
+			.catch(e => fatalSwal(true));
+	} catch (e) {
+		fatalSwal(true);
+	}
+};
+
+export { GetBudget, CreateBudget, ListBudgets };
