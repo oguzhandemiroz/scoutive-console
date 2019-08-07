@@ -45,7 +45,7 @@ export class TotalFee extends Component {
 					</div>
 				</div>
 				<div className="card-body p-3 text-center">
-					<div className="h5">Toplam Öğrenci Sayısı</div>
+					<div className="h5">Toplam Aktif Öğrenci Sayısı</div>
 					<div style={{ fontSize: "2rem" }} className="display-4 font-weight-bold mb-3">
 						{totalCount !== null ? (
 							totalCount

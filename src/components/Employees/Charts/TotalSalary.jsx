@@ -45,7 +45,7 @@ export class TotalSalary extends Component {
 					</div>
 				</div>
 				<div className="card-body p-3 text-center">
-					<div className="h5">Toplam Personel Sayısı</div>
+					<div className="h5">Toplam Aktif Personel Sayısı</div>
 					<div style={{ fontSize: "2rem" }} className="display-4 font-weight-bold mb-3">
 						{totalCount !== null ? (
 							totalCount
