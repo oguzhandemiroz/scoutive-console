@@ -459,14 +459,6 @@ class Table extends Component {
 						}
 					},
 					{
-						data: "phone",
-						render: function(data, type, row) {
-							if (data && data !== "")
-								return `<a href="tel:${data}" data-toggle="tooltip" data-placement="top" data-original-title="${data}" class="text-inherit">${data}</a>`;
-							else return "&mdash;";
-						}
-					},
-					{
 						data: "fee",
 						render: function(data, type, row) {
 							if (type === "sort" || type === "type") {
@@ -522,6 +514,7 @@ class Table extends Component {
 			fatalSwal();
 		}
 	}
+
 	componentWillUnmount() {
 		$(".data-table-wrapper")
 			.find("table")
@@ -541,7 +534,6 @@ class Table extends Component {
 							<th className="w-1 text-center no-sort">#</th>
 							<th className="name">AD SOYAD</th>
 							<th className="emergency">VELİ TEL.</th>
-							<th className="phone">TELEFON</th>
 							<th className="fee">AİDAT</th>
 							<th className="point">GENEL PUAN</th>
 							<th className="birthday">YAŞ</th>

@@ -74,12 +74,15 @@ class Report extends Component {
             data2: [7, 7, 5, 7, 9, 12, 6, 8]
         };
     }
+
     shouldComponentUpdate() {
         return false;
     }
+
     componentDidMount() {
         this.renderChart();
     }
+    
     componentDidUpdate() {
         this.renderChart();
     }

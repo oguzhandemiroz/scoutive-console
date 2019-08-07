@@ -15,6 +15,7 @@ import DetailEmployee from "../components/Employees/Detail";
 import EditEmployee from "../components/Employees/Edit";
 import VacationEmployee from "../components/Employees/Vacation";
 import SalaryEmployee from "../components/Employees/Salary";
+import SalaryDetailEmployee from "../components/Employees/SalaryDetail";
 
 import AddPlayers from "../components/Players/Add";
 import DetailPlayer from "../components/Players/Detail";
@@ -140,6 +141,12 @@ var indexRoutes = [
 		component: SalaryEmployee,
 		layout: "/app",
 		prop: { exact: false }
+	},
+	{
+		path: "/employees/salary-detail/:uid?",
+		name: "Detail Salary",
+		component: SalaryDetailEmployee,
+		layout: "/app"
 	},
 	{
 		path: "/players",

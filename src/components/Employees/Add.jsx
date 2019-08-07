@@ -5,7 +5,13 @@ import { UploadFile } from "../../services/Others.jsx";
 import { showSwal } from "../../components/Alert.jsx";
 import Select from "react-select";
 import Inputmask from "inputmask";
+import DatePicker, { registerLocale } from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import tr from "date-fns/locale/tr";
+import moment from "moment";
 const $ = require("jquery");
+
+registerLocale("tr", tr);
 
 Inputmask.extendDefaults({
 	autoUnmask: true
@@ -86,7 +92,8 @@ const initialState = {
 	emergency: [],
 	school_history: [],
 	certificate: [],
-	imagePreview: null
+	imagePreview: null,
+	start_date: null
 };
 
 export class Add extends Component {
@@ -241,6 +248,7 @@ export class Add extends Component {
 			formErrors,
 			addContinuously,
 			imagePreview,
+			start_date,
 			file
 		} = this.state;
 
@@ -255,6 +263,7 @@ export class Add extends Component {
 		requiredData.position = position ? position.value : null;
 		requiredData.branch = branch ? branch.value : null;
 		requiredData.phone = phone;
+		requiredData.start_date = start_date;
 		requiredData.salary = salary;
 		requiredData.formErrors = formErrors;
 
@@ -326,6 +335,7 @@ export class Add extends Component {
 				emergency: emergency,
 				school_history: school_history,
 				certificates: certificate,
+				start_date: moment(start_date).format("YYYY-MM-DD"),
 				attributes: attributesData
 			}).then(response => {
 				const formData = new FormData();
@@ -366,6 +376,7 @@ export class Add extends Component {
 			formErrors.email = email ? (!emailRegEx.test(email) ? "is-invalid" : "") : "is-invalid";
 			formErrors.phone = phone ? (phone.length !== 10 ? "is-invalid" : "") : "is-invalid";
 			formErrors.salary = salary ? "" : "is-invalid";
+			formErrors.start_date = start_date ? "" : "is-invalid";
 			//select
 			formErrors.position = position ? "" : true;
 			formErrors.branch = branch ? "" : true;
@@ -465,6 +476,12 @@ export class Add extends Component {
 		this.setState({ [name]: parseInt(value) });
 	};
 
+	handleDate = (date, name) => {
+		let formErrors = { ...this.state.formErrors };
+		formErrors.start_date = date ? "" : "is-invalid";
+		this.setState({ formErrors, [name]: date });
+	};
+
 	reload = () => {
 		const current = this.props.history.location.pathname;
 		this.props.history.replace(`/`);
@@ -499,7 +516,8 @@ export class Add extends Component {
 			uploadedFile,
 			emergency,
 			school_history,
-			certificate
+			certificate,
+			start_date
 		} = this.state;
 		return (
 			<div className="container">
@@ -634,6 +652,24 @@ export class Add extends Component {
 										placeholder="Maaş"
 										name="salary"
 										value={salary || ""}
+									/>
+								</div>
+
+								<div className="form-group">
+									<label className="form-label">
+										İşe Başlama Tarihi
+										<span className="form-required">*</span>
+									</label>
+
+									<DatePicker
+										selected={start_date}
+										selectsEnd
+										startDate={start_date}
+										name="start_date"
+										locale="tr"
+										dateFormat="dd/MM/yyyy"
+										onChange={date => this.handleDate(date, "start_date")}
+										className={`form-control ${formErrors.start_date}`}
 									/>
 								</div>
 							</div>
@@ -808,10 +844,7 @@ export class Add extends Component {
 										</div>
 									</div>
 									<div className="col-12 mt-3">
-										<label className="form-label">
-											Acil Durumda İletişim
-											<span className="form-required">*</span>
-										</label>
+										<label className="form-label">Acil Durumda İletişim</label>
 										<div id="parent">
 											<table className="table mb-0">
 												<thead>
@@ -872,9 +905,7 @@ export class Add extends Component {
 										</div>
 									</div>
 									<div className="col-12 mt-3">
-										<label className="form-label">
-											Okul Bilgileri<span className="form-required">*</span>
-										</label>
+										<label className="form-label">Okul Bilgileri</label>
 										<div id="school">
 											<table className="table mb-0">
 												<thead>

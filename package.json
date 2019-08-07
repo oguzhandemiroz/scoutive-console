@@ -10,6 +10,7 @@
     "d3": "^5.9.2",
     "datatables.net": "^1.10.19",
     "datatables.net-bs4": "^1.10.19",
+    "datatables.net-responsive": "^2.2.3",
     "date-fns": "^2.0.0-beta.2",
     "history": "^4.9.0",
     "inputmask": "^4.0.8",

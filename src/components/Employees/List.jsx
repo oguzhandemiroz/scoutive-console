@@ -294,14 +294,6 @@ class Table extends Component {
 						}
 					},
 					{
-						data: "email",
-						render: function(data, type, row) {
-							if (data && data !== "")
-								return `<a href="mailto:${data}" data-toggle="tooltip" data-placement="top" data-original-title="${data}" class="text-truncate w-9 d-block text-inherit">${data}</a>`;
-							else return "&mdash;";
-						}
-					},
-					{
 						data: "position"
 					},
 					{
@@ -364,7 +356,6 @@ class Table extends Component {
 							<th className="w-1 text-center no-sort">#</th>
 							<th className="name">AD SOYAD</th>
 							<th className="phone">TELEFON</th>
-							<th className="email">EMAIL</th>
 							<th className="position">POZİSYON</th>
 							<th className="salary">MAAŞ</th>
 							<th className="status">DURUM</th>

@@ -1,4 +1,5 @@
 import "./assets/css/dashboard.css";
+//import "./assets/css/responsive.dataTables.min.css";
 import "jquery";
 import "popper.js";
 import "bootstrap/dist/js/bootstrap.bundle.min";

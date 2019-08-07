@@ -5,7 +5,13 @@ import { CreatePlayer } from "../../services/Player.jsx";
 import { showSwal } from "../../components/Alert.jsx";
 import Select from "react-select";
 import Inputmask from "inputmask";
+import DatePicker, { registerLocale } from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import tr from "date-fns/locale/tr";
+import moment from "moment";
 const $ = require("jquery");
+
+registerLocale("tr", tr);
 
 Inputmask.extendDefaults({
 	autoUnmask: true
@@ -96,7 +102,8 @@ const initialState = {
 	body_measure: [],
 	position: null,
 	group: null,
-	imagePreview: null
+	imagePreview: null,
+	start_date: null
 };
 
 export class Add extends Component {
@@ -243,6 +250,7 @@ export class Add extends Component {
 			formErrors,
 			addContinuously,
 			file,
+			start_date,
 			imagePreview
 		} = this.state;
 
@@ -258,6 +266,7 @@ export class Add extends Component {
 		requiredData.day = day ? day.value : null;
 		requiredData.month = month ? month.value : null;
 		requiredData.year = year ? year.value : null;
+		requiredData.start_date = start_date;
 		requiredData.formErrors = formErrors;
 
 		//attributes data
@@ -351,6 +360,7 @@ export class Add extends Component {
 				fee: parseFloat(fee.toString().replace(",", ".")),
 				foot: foot,
 				birthday: checkBirthday,
+				start_date: moment(start_date).format("YYYY-MM-DD"),
 				attributes: attributesData
 			}).then(response => {
 				const formData = new FormData();
@@ -390,6 +400,7 @@ export class Add extends Component {
 			formErrors.email = email ? (!emailRegEx.test(email) ? "is-invalid" : "") : "";
 			formErrors.phone = phone ? (phone.length !== 10 ? "is-invalid" : "") : "";
 			formErrors.fee = fee ? "" : "is-invalid";
+			formErrors.start_date = start_date ? "" : "is-invalid";
 			//formErrors.point = point ? "" : "is-invalid-iconless";
 			//select
 			formErrors.position = position ? "" : true;
@@ -509,6 +520,12 @@ export class Add extends Component {
 		this.setState({ formErrors, [name]: parseInt(value) });
 	};
 
+	handleDate = (date, name) => {
+		let formErrors = { ...this.state.formErrors };
+		formErrors.start_date = date ? "" : "is-invalid";
+		this.setState({ formErrors, [name]: date });
+	};
+
 	reload = () => {
 		const current = this.props.history.location.pathname;
 		this.props.history.replace(`/`);
@@ -546,6 +563,7 @@ export class Add extends Component {
 			uploadedFile,
 			imagePreview,
 			addContinuously,
+			start_date,
 			loadingButton
 		} = this.state;
 		return (
@@ -694,6 +712,22 @@ export class Add extends Component {
 										placeholder="Aidat"
 										name="fee"
 										value={fee || ""}
+									/>
+								</div>
+								<div className="form-group">
+									<label className="form-label">
+										Okula Başlama Tarihi
+										<span className="form-required">*</span>
+									</label>
+									<DatePicker
+										selected={start_date}
+										selectsEnd
+										startDate={start_date}
+										name="start_date"
+										locale="tr"
+										dateFormat="dd/MM/yyyy"
+										onChange={date => this.handleDate(date, "start_date")}
+										className={`form-control ${formErrors.start_date}`}
 									/>
 								</div>
 
@@ -900,9 +934,7 @@ export class Add extends Component {
 										</div>
 
 										<div className="form-group">
-											<label className="form-label">
-												Kullandığı Ayak
-											</label>
+											<label className="form-label">Kullandığı Ayak</label>
 											<div className="custom-controls-stacked">
 												<label className="custom-control custom-radio custom-control-inline">
 													<input

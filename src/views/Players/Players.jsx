@@ -66,7 +66,7 @@ class Players extends Component {
 							<div className="card-header">
 								<h3 className="card-title">Tüm Öğrenciler</h3>
 							</div>
-							<div className="table-responsive employee-list">
+							<div className="table-responsive player-list">
 								<Table history={this.props.history} />
 							</div>
 						</div>

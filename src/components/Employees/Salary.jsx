@@ -466,27 +466,29 @@ export class Salary extends Component {
     };
 
     salaryTabContent = (el, key) => {
-        return (
-            <li className="timeline-item" key={key.toString()}>
-                <div className={`timeline-badge ${el.is_future === 0 ? "bg-success" : ""}`} />
-                <div>
-                    <strong>{el.amount ? el.amount.format() + " ₺" : null}</strong> maaş ödendi
-                </div>
-                <div className="timeline-time">{moment(el.payment_date).format("DD-MM-YYYY")}</div>
+        if(key < 10) {
+            return (
+                <li className="timeline-item" key={key.toString()}>
+                    <div className={`timeline-badge ${el.is_future === 0 ? "bg-success" : ""}`} />
+                    <div>
+                        <strong>{el.amount ? el.amount.format() + " ₺" : null}</strong> maaş ödendi
+                    </div>
+                    <div className="timeline-time">{moment(el.payment_date).format("DD-MM-YYYY")}</div>
 
-                <div>
-                    {el.is_future === 1 ? (
-                        <button
-                            type="button"
-                            data-toggle="tooltip"
-                            title="Maaşı Öde"
-                            className="btn btn-sm btn-success btn-icon p-1">
-                            <i className="fa fa-money-bill-wave"></i>
-                        </button>
-                    ) : null}
-                </div>
-            </li>
-        );
+                    <div>
+                        {el.is_future === 1 ? (
+                            <button
+                                type="button"
+                                data-toggle="tooltip"
+                                title="Maaşı Öde"
+                                className="btn btn-sm btn-success btn-icon p-1">
+                                <i className="fa fa-money-bill-wave"></i>
+                            </button>
+                        ) : null}
+                    </div>
+                </li>
+            );
+        }
     };
 
     advancePaymentTabContent = (el, key) => {

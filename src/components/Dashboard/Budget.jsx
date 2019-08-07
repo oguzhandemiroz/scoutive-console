@@ -315,7 +315,7 @@ class Budgets extends Component {
 					{select.budgets.length === 0 ? (
 						<div
 							className="d-flex justify-content-center chart-content align-items-center"
-							style={{ zIndex: 99999 }}>
+							style={{ zIndex: 2 }}>
 							<Link to="/app/budgets/add" className="btn btn-success">
 								Kasa veya Banka Oluştur
 							</Link>
