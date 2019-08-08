@@ -140,7 +140,7 @@ export class Detail extends Component {
 									<Link className="font-weight-600" to={`/app/groups/detail/${gid}`}>
 										{detail.name || ""}
 									</Link>{" "}
-									&mdash; Grup Yoklaması &mdash; {moment(rcid).format("LLL")}
+									&mdash; Grup Yoklaması &mdash; {rcid}
 								</h3>
 								<div className="card-options">
 									<span

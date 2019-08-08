@@ -22,6 +22,8 @@ import DetailPlayer from "../components/Players/Detail";
 import EditPlayer from "../components/Players/Edit";
 import PaymentPlayer from "../components/Players/Payment";
 
+import Attributes from "../components/Others/Attributes";
+
 import Groups from "../views/Groups/Groups";
 import GroupAdd from "../components/Groups/Add";
 import GroupDetail from "../components/Groups/Detail";
@@ -289,6 +291,13 @@ var indexRoutes = [
 		path: "/budgets/detail/:bid",
 		name: "Detail Budget",
 		component: BudgetDetail,
+		layout: "/app",
+		prop: { exact: true }
+	},
+	{
+		path: "/players/attr/:pid",
+		name: "Detail Attributes",
+		component: Attributes,
 		layout: "/app",
 		prop: { exact: true }
 	},

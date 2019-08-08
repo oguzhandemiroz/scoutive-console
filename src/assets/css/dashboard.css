@@ -21290,7 +21290,7 @@ svg {
 
 .fe {
 	font-family: "feather" !important;
-	speak: none;
+	speak-as: none;
 	font-style: normal;
 	font-weight: normal;
 	font-variant: normal;
@@ -22391,7 +22391,7 @@ figure span.player-number {
 
 #budget-report.c3-area {
 	opacity: 1 !important;
-  }
+}
 
 .swal2-input.activation-input {
 	width: 150px;
@@ -22465,8 +22465,8 @@ figure span.player-number {
 
 #passwordEmployeeAction {
 	font-size: 30px;
-    height: 60px;
-    line-height: 1;
+	height: 60px;
+	line-height: 1;
 	font-weight: 600;
 	text-align: center;
 }
