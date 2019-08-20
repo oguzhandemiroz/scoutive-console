@@ -72,22 +72,10 @@ class Menu extends Component {
 										</NavLink>
 									</li>
 									<li className="nav-item">
-										<NavLink
-											to="/app/accountings"
-											activeClassName="active"
-											className="nav-link"
-											data-toggle="dropdown">
+										<NavLink to="/app/accountings" activeClassName="active" className="nav-link">
 											<i className="fe fe-bar-chart-2" />
 											Gelir/Gider
 										</NavLink>
-										<div className="dropdown-menu dropdown-menu-arrow">
-											<NavLink to="/app/accountings/income" exact className="dropdown-item">
-												<i className="fe fe-plus-square" /> Gelir
-											</NavLink>
-											<NavLink to="/app/accountings/expense" exact className="dropdown-item">
-												<i className="fe fe-minus-square" /> Gider
-											</NavLink>
-										</div>
 									</li>
 									<li className="nav-item">
 										<NavLink to="/app/reports" exact activeClassName="active" className="nav-link">

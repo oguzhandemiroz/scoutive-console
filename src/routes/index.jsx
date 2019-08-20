@@ -43,7 +43,8 @@ import EmployeesRollcallDetail from "../components/Rollcalls/Employee/Detail";
 import PlayersRollcallList from "../views/Rollcalls/Player";
 import PlayersRollcallAdd from "../components/Rollcalls/Player/Add";
 import PlayersRollcallDetail from "../components/Rollcalls/Player/Detail";
-import PlayersRollcallPast from "../components/Rollcalls/Player/Past";
+
+import Accountings from "../views/Accountings/Accountings";
 
 var indexRoutes = [
 	{
@@ -291,6 +292,13 @@ var indexRoutes = [
 		path: "/players/attr/:pid",
 		name: "Detail Attributes",
 		component: Attributes,
+		layout: "/app",
+		prop: { exact: true }
+	},
+	{
+		path: "/accountings",
+		name: "Accountings",
+		component: Accountings,
 		layout: "/app",
 		prop: { exact: true }
 	},

@@ -186,14 +186,9 @@ export class Detail extends Component {
                 <div className="page-header">
                     <h1 className="page-title">Kasa ve Bankalar &mdash; {budget_name}</h1>
                     <div className="ml-auto">
-                        <div className="btn-group" role="group" aria-label="Budget Money Process">
-                            <button type="button" className="btn btn-sm btn-icon btn-success">
-                                <i className="fe fe-plus mr-2"></i>Para Girişi
-                            </button>
-                            <button type="button" className="btn btn-sm btn-icon btn-danger">
-                                <i className="fe fe-minus mr-2"></i>Para Çıkışı
-                            </button>
-                        </div>
+                        <button className="btn btn-sm btn-primary">
+                            Varsayılan Yap
+                        </button>
                     </div>
                 </div>
                 <div className="row">
