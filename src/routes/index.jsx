@@ -260,14 +260,7 @@ var indexRoutes = [
 		prop: { exact: true }
 	},
 	{
-		path: "/rollcalls/player/detail/:gid",
-		name: "Players Rollcalls",
-		component: PlayersRollcallPast,
-		layout: "/app",
-		prop: { exact: true }
-	},
-	{
-		path: "/rollcalls/player/detail/:gid/:rcid",
+		path: "/rollcalls/player/detail/:rcid",
 		name: "Players Rollcalls Past",
 		component: PlayersRollcallDetail,
 		layout: "/app",

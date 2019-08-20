@@ -80,29 +80,6 @@ export class EmployeesRollcalls extends Component {
 		this.renderEmployeeList();
 	}
 
-	takeRollcall = (to, type) => {
-		try {
-			const { uid } = this.state;
-			const data = {
-				status: parseInt(type),
-				uid: uid,
-				to: to
-			};
-
-			CreateRollcall(data).then(response => {
-				if (response) {
-					const status = response.status;
-					if (status.code === 1020) {
-						Toast.fire({
-							type: "success",
-							title: "İşlem başarılı..."
-						});
-					}
-				}
-			});
-		} catch (e) {}
-	};
-
 	render() {
 		const { employees, onLoadedData } = this.state;
 		return (

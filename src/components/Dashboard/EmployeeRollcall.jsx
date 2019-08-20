@@ -49,8 +49,8 @@ export class EmployeeRollcall extends Component {
 						<table className="table card-table">
 							<tbody>
 								<tr>
-									<td className="p-4">{moment(data.created_date).format("LL")}</td>
-									<td className="p-4 text-right">
+									<td>{moment(data.created_date).format("LL")}</td>
+									<td className="text-right">
 										<Link
 											to={{
 												pathname: `/app/rollcalls/employee/add`,

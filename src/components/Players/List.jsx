@@ -17,8 +17,8 @@ var statusType = {
 	"-1": ["Tanımsız", "secondary"],
 	"0": ["Gelmedi", "danger"],
 	"1": ["Geldi", "success"],
-	"2": ["İzinli", "warning"],
-	"3": ["İzinli", "warning"]
+	"2": ["T. Gün İzinli", "warning"],
+	"3": ["Y. Gün İzinli", "warning"]
 };
 
 const datatable_turkish = {

@@ -64,9 +64,10 @@ class DailyPlayer extends Component {
 			"-1": 0
 		};
 		data.map(el => {
-			dataObj[el.daily] = dataObj[el.daily] + 1;
+			dataObj[el.daily] = dataObj[el.daily === 3 ? 2 : el.daily] + 1;
 		});
 		Object.keys(dataObj).map(el => {
+			console.log(el);
 			switch (el) {
 				case "0":
 					this.setState({ not_came: ["0", dataObj[el]] });
@@ -75,6 +76,9 @@ class DailyPlayer extends Component {
 					this.setState({ came: ["1", dataObj[el]] });
 					break;
 				case "2":
+					this.setState({ vacation: ["2", dataObj[el]] });
+					break;
+				case "3":
 					this.setState({ vacation: ["2", dataObj[el]] });
 					break;
 				case "-1":

@@ -11,11 +11,10 @@ class Dashboard extends Component {
 					<h1 className="page-title">Genel Durum</h1>
 				</div>
 				<div className="row row-cards">
+					<div className="col-sm-12 col-lg-4"></div>
 					<div className="col-sm-12 col-lg-4">
-						{/* <EmployeeRollcall /> */}
-					</div>
-					<div className="col-sm-12 col-lg-4">
-						{/* <PlayerRollcall /> */}
+						<EmployeeRollcall />
+						<PlayerRollcall />
 					</div>
 					<div className="col-sm-12 col-lg-4">
 						<Budget />
