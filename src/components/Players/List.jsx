@@ -57,6 +57,7 @@ const initialState = {
 	vacation: false,
 	group_change: false
 };
+
 class Table extends Component {
 	constructor(props) {
 		super(props);
@@ -188,7 +189,7 @@ class Table extends Component {
 				responsive: true,
 				order: [3, "asc"],
 				aLengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "Tümü"]],
-				stateSave: false, // change true
+				stateSave: true, // change true
 				language: {
 					...datatable_turkish,
 					decimal: ",",

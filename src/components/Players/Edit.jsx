@@ -744,7 +744,7 @@ export class Edit extends Component {
 														type="range"
 														className="form-control custom-range"
 														step="0.1"
-														min="1"
+														min="0"
 														max="5"
 														name="point"
 														value={point || "0"}
@@ -756,7 +756,7 @@ export class Edit extends Component {
 														type="number"
 														name="point"
 														step="0.1"
-														min="1"
+														min="0"
 														max="5"
 														value={point || "0"}
 														className={`form-control w-8 ${formErrors.point}`}

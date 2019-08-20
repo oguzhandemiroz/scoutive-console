@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { DetailPlayer, DeletePlayer } from "../../services/Player.jsx";
+import Tabs from "../../components/Players/Tabs";
 import { showSwal, Toast } from "../../components/Alert";
 import moment from "moment";
 
@@ -147,13 +148,14 @@ export class Detail extends Component {
 			end_date,
 			onLoadedData
 		} = this.state;
+		const { match } = this.props;
 		return (
 			<div className="container">
 				<div className="page-header">
 					<h1 className="page-title">Öğrenci Detay</h1>
 					<div className="col" />
-					<div className="col-4">
-						<select name="user" id="select-player" className="form-control custom-select" />
+					<div className="col-auto px-0">
+						<Tabs match={match} to={to} />
 					</div>
 				</div>
 
@@ -344,32 +346,27 @@ export class Detail extends Component {
 														<tbody>
 															{Array.isArray(emergency)
 																? emergency.map((el, key) => {
-																		if (
-																			el.kinship !== "" &&
-																			el.name !== "" &&
-																			el.phone !== ""
-																		)
-																			return (
-																				<tr key={key.toString()}>
-																					<td className="pl-0 pr-0">
-																						<div className="form-control-plaintext">
-																							{el.kinship}
-																						</div>
-																					</td>
-																					<td>
-																						<div className="form-control-plaintext">
-																							{el.name}
-																						</div>
-																					</td>
-																					<td className="pl-0">
-																						<div className="form-control-plaintext">
-																							<a href={"tel:" + el.phone}>
-																								{el.phone}
-																							</a>
-																						</div>
-																					</td>
-																				</tr>
-																			);
+																		return (
+																			<tr key={key.toString()}>
+																				<td className="pl-0 pr-0">
+																					<div className="form-control-plaintext">
+																						{el.kinship}
+																					</div>
+																				</td>
+																				<td>
+																					<div className="form-control-plaintext">
+																						{el.name}
+																					</div>
+																				</td>
+																				<td className="pl-0">
+																					<div className="form-control-plaintext">
+																						<a href={"tel:" + el.phone}>
+																							{el.phone}
+																						</a>
+																					</div>
+																				</td>
+																			</tr>
+																		);
 																  })
 																: null}
 														</tbody>

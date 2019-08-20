@@ -112,6 +112,12 @@ export class List extends Component {
 								td
 							);
 						}
+					},
+					{
+						targets: "default",
+						createdCell: (td, cellData, rowData) => {
+							ReactDOM.render(<button className="btn btn-sm btn-primary">Varsayılan</button>, td);
+						}
 					}
 				],
 				columns: [
@@ -152,7 +158,8 @@ export class List extends Component {
 								'<span class="status-icon bg-' + statusType[data][1] + '"></span>' + statusType[data][0]
 							);
 						}
-					}
+					},
+					{ data: null }
 				]
 			});
 
@@ -189,6 +196,7 @@ export class List extends Component {
 							<th className="balance">BAKİYE</th>
 							<th className="currency">PARA BİRİMİ</th>
 							<th className="status">DURUM</th>
+							<th className="w-1 text-right default"></th>
 						</tr>
 					</thead>
 				</table>

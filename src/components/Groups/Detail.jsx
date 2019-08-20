@@ -206,13 +206,6 @@ export class Detail extends Component {
 								<div className="card-status bg-teal" />
 								<h3 className="card-title">{detail.name || ""}</h3>
 								<div className="card-options">
-									<button
-										onClick={this.createRollcall}
-										className={`btn btn-sm btn-success mr-2 ${
-											loadingButton ? "btn-loading disabled" : ""
-										} ${!onLoadedData ? "btn-loading disabled" : ""}`}>
-										Yoklama Oluştur
-									</button>
 									<span
 										className="tag tag-gray-dark"
 										data-original-title="Antrenman Saati"

@@ -1,6 +1,24 @@
 import React, { Component } from "react";
-import { ListGroups } from "../../../services/Group";
 import { Link, withRouter } from "react-router-dom";
+import { CreateRollcall, ListRollcall } from "../../../services/Rollcalls";
+import { Toast, showSwal } from "../../Alert";
+import moment from "moment";
+import "moment/locale/tr";
+
+const noRow = loading => (
+	<tr style={{ height: 80 }}>
+		<td colSpan="3" className="text-center text-muted font-italic">
+			{loading ? (
+				<div className={`dimmer active`}>
+					<div className="loader" />
+					<div className="dimmer-content" />
+				</div>
+			) : (
+				"Kayıt bulunamadı..."
+			)}
+		</td>
+	</tr>
+);
 
 export class List extends Component {
 	constructor(props) {
@@ -8,60 +26,155 @@ export class List extends Component {
 
 		this.state = {
 			uid: localStorage.getItem("UID"),
-			list: null
+			rollcallList: null,
+			loadingButton: ""
 		};
 	}
 
 	componentDidMount() {
+		this.renderRollcallList();
+	}
+
+	renderRollcallList = () => {
 		try {
 			const { uid } = this.state;
-			ListGroups(uid).then(response => {
+			ListRollcall({
+				uid: uid,
+				type: 0
+			}).then(response => {
 				if (response) {
-					this.setState({ list: response.data });
+					const status = response.status;
+					if (status.code === 1020) {
+						this.setState({ rollcallList: response.data.reverse() });
+					}
 				}
 			});
 		} catch (e) {}
-	}
+	};
+
+	createRollcall = () => {
+		try {
+			const { uid } = this.state;
+			this.setState({
+				loadingButton: true
+			});
+			CreateRollcall({
+				uid: uid,
+				type: 0
+			}).then(response => {
+				if (response) {
+					const status = response.status;
+					if (status.code === 1020) {
+						Toast.fire({
+							type: "success",
+							title: "İşlem başarılı..."
+						});
+						this.props.history.push({
+							pathname: `/app/rollcalls/player/add`,
+							state: { rcid: response.rollcall_id }
+						});
+					} else if (status.code === 2010) {
+						showSwal({
+							type: "warning",
+							title: "Uyarı",
+							text: status.description,
+							reverseButtons: true,
+							showCancelButton: true,
+							confirmButtonText: "Yoklamaya devam et",
+							cancelButtonText: "Kapat"
+						}).then(result => {
+							if (result.value) {
+								this.props.history.push({
+									pathname: `/app/rollcalls/player/add`,
+									state: { rcid: response.rollcall_id }
+								});
+							}
+						});
+					}
+				}
+				this.setState({
+					loadingButton: false
+				});
+			});
+		} catch (e) {}
+	};
 
 	render() {
-		console.log(this.props);
-		const { list } = this.state;
-		const { location, match } = this.props;
+		const { loadingData, rollcallList, loadingButton } = this.state;
 		return (
-			<div className={`dimmer ${!list ? "active" : ""}`}>
-				<div className="loader" />
-				<div className="dimmer-content">
-					<div className="list-group list-group-transparent mb-0">
-						{Array.isArray(list)
-							? list.map((el, key) => {
-									return (
-										<Link
-											to={{
-												pathname: "/app/rollcalls/player/detail/" + el.group_id,
-												state: {
-													type: "detail",
-													detailGroup: el
-												}
-											}}
-											key={key.toString()}
-											className={`list-group-item list-group-item-action d-flex ${
-												match.params.gid === el.group_id.toString() ? "active" : ""
-											}`}>
-											<span className="icon mr-3">
-												<i className="fe fe-grid" />
-											</span>
-											<span
-												data-original-title={el.name}
-												data-toggle="tooltip"
-												className="text-truncate pr-2"
-												style={{ flex: 1 }}>
-												{el.name}
-											</span>
-											<span className="float-right tag tag-gray">{el.time.slice(0, -3)}</span>
-										</Link>
-									);
-							  })
-							: null}
+			<div className="card">
+				<div className="card-header">
+					<div className="card-status bg-azure" />
+					<h3 className="card-title">Geçmiş Yoklama Listesi</h3>
+					<div className="card-options">
+						<button onClick={this.createRollcall} className={`btn btn-sm btn-success ${loadingButton}`}>
+							Yoklama Oluştur
+						</button>
+					</div>
+				</div>
+
+				<div className="card-body">
+					<div className="dimmer">
+						<div className="loader" />
+						<div className="dimmer-content">
+							<div className="table-responsive">
+								<table className="table table-hover table-outline table-vcenter text-nowrap card-table mb-0">
+									<thead>
+										<tr>
+											<th className="pl-0 w-1" />
+											<th>Yoklama Tarihi</th>
+											<th className="text-center">
+												Detay
+												<span
+													className="form-help ml-2"
+													data-original-title="Gelen/Toplam"
+													data-toggle="tooltip"
+													data-placement="top">
+													?
+												</span>
+											</th>
+										</tr>
+									</thead>
+									<tbody>
+										{rollcallList
+											? rollcallList.length > 0
+												? rollcallList.map((el, key) => {
+														const redirect =
+															el.status === 2
+																? {
+																		pathname: "/app/rollcalls/player/add",
+																		state: { rcid: el.rollcall_id }
+																  }
+																: {
+																		pathname:
+																			"/app/rollcalls/player/detail/" +
+																			el.rollcall_id
+																  };
+														return (
+															<tr key={key.toString()}>
+																<td className="text-center text-muted">
+																	#{rollcallList.length - key}
+																</td>
+																<td>
+																	<span className="badge badge-danger mr-2">
+																		{el.status === 2 ? "Devam ediyor" : ""}
+																	</span>
+																	<Link className="text-inherit" to={redirect}>
+																		{moment(el.created_date).format("LL")}
+																	</Link>
+																</td>
+																<td className="text-center">
+																	{el.came + "/" + el.total}
+																</td>
+															</tr>
+														);
+												  })
+												: noRow()
+											: noRow(true)}
+									</tbody>
+								</table>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
