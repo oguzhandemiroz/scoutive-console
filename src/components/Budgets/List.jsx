@@ -115,8 +115,14 @@ export class List extends Component {
 					},
 					{
 						targets: "default",
+						class: "text-center",
 						createdCell: (td, cellData, rowData) => {
-							ReactDOM.render(<button className="btn btn-sm btn-primary">Varsayılan</button>, td);
+							ReactDOM.render(
+								<button className="btn btn-sm btn-icon btn-primary">
+									<i className="fe fe-check"></i>
+								</button>,
+								td
+							);
 						}
 					}
 				],
@@ -196,7 +202,7 @@ export class List extends Component {
 							<th className="balance">BAKİYE</th>
 							<th className="currency">PARA BİRİMİ</th>
 							<th className="status">DURUM</th>
-							<th className="w-1 text-right default"></th>
+							<th className="w-1 default">Varsayılan</th>
 						</tr>
 					</thead>
 				</table>
