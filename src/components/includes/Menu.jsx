@@ -77,9 +77,16 @@ class Menu extends Component {
 											Gelir/Gider
 										</NavLink>
 									</li>
-									<li className="nav-item">
-										<NavLink to="/app/reports" exact activeClassName="active" className="nav-link">
+									<li className="nav-item cursor-not-allowed">
+										<NavLink
+											to="/app/reports"
+											exact
+											activeClassName="active"
+											className="nav-link cursor-not-allowed disabled">
 											<i className="fe fe-pie-chart" /> Raporlar
+											<span className="ml-2">
+												(<i className="fe fe-lock mr-0" />)
+											</span>
 										</NavLink>
 									</li>
 								</ul>

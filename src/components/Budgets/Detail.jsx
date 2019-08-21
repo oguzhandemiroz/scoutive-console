@@ -209,8 +209,8 @@ export class Detail extends Component {
 						{default_budget === 1 ? (
 							<span className="tag tag-primary">
 								Varsayılan Olarak Tanımlı
-								<span class="tag-addon">
-									<i class="fe fe-check"></i>
+								<span className="tag-addon">
+									<i className="fe fe-check"></i>
 								</span>
 							</span>
 						) : default_budget === 0 ? (

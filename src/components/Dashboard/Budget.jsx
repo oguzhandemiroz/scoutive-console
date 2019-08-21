@@ -23,7 +23,7 @@ const IconOption = props => (
 	<Option {...props}>
 		<span>
 			<i
-				className={`mr-2 fa fa-${props.data.type === 1 ? "university" : "briefcase"}`}
+				className={`mr-2 fa fa-${props.data.budget_type === 1 ? "university" : "briefcase"}`}
 				style={{ backgroundImage: `url(${props.data.image})` }}
 			/>
 			{props.data.label}
