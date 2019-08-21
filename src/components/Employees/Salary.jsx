@@ -404,6 +404,9 @@ export class Salary extends Component {
             GetBudgets().then(response => {
                 console.log(response);
                 select.budgets = response;
+                if (response.length > 0) {
+                    this.setState({ budget: response.find(x => x.default === 1) });
+                }
                 this.setState({select});
             });
         } catch (e) {}
@@ -854,7 +857,7 @@ export class Salary extends Component {
                                                     </div>
                                                     <div className="form-group col-6">
                                                         <label className="form-label">
-                                                            Kasa Hesabı{" "}
+                                                            Kasa Hesabı
                                                             <span className="form-required">*</span>
                                                         </label>
                                                         <Select

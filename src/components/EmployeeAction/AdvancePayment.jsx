@@ -176,6 +176,9 @@ export class AdvancePayment extends Component {
 			GetBudgets().then(response => {
 				console.log(response);
 				select.budgets = response;
+				if (response.length > 0) {
+					this.setState({ budget: response.find(x => x.default === 1) });
+				}
 				this.setState({ select });
 			});
 		} catch (e) {}

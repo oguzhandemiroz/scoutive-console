@@ -1,4 +1,4 @@
-import { errorSwal, fatalSwal } from "../components/Alert";
+import { errorSwal, fatalSwal, Toast } from "../components/Alert";
 import ep from "../assets/js/urls";
 
 const h = new Headers();
@@ -71,4 +71,30 @@ const ListBudgets = uid => {
 	}
 };
 
-export { GetBudget, CreateBudget, ListBudgets };
+const MakeDefaultBudget = data => {
+	try {
+		return fetch(ep.BUDGET_DEFAULT, {
+			method: "POST",
+			body: JSON.stringify(data),
+			headers: h
+		})
+			.then(res => res.json())
+			.then(response => {
+				if (response) {
+					const status = response.status;
+					if (status.code !== 1020) errorSwal(status);
+					else
+						Toast.fire({
+							type: "success",
+							title: "İşlem başarılı..."
+						});
+					return response;
+				}
+			})
+			.catch(e => fatalSwal(true));
+	} catch (e) {
+		fatalSwal(true);
+	}
+};
+
+export { GetBudget, CreateBudget, ListBudgets, MakeDefaultBudget };

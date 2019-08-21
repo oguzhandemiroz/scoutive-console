@@ -518,11 +518,13 @@ const GetBudgets = extra => {
 								const label = el.budget_name;
 								const type = el.budget_type;
 								const balance = el.balance;
+								const _default = el.default;
 								selectData.push({
 									value: value,
 									label: label,
 									type: type,
-									balance: balance
+									balance: balance,
+									default: _default
 								});
 							});
 						}
