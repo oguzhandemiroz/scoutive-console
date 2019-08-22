@@ -85,4 +85,24 @@ const ListPermissions = uid => {
 	}
 };
 
-export { GetSchool, UpdateSchool, ListPermissions };
+const UpdatePermissions = data => {
+	try {
+		return fetch(ep.SCHOOL_UPDATE_PERMISSION, {
+			method: "PATCH",
+			body: JSON.stringify(data),
+			headers: h
+		})
+			.then(res => res.json())
+			.then(response => {
+				if (response) {
+					const status = response.status;
+					if (status.code !== 1020) errorSwal(status);
+
+					return response;
+				}
+			})
+			.catch(e => fatalSwal(true));
+	} catch (e) {}
+};
+
+export { GetSchool, UpdateSchool, ListPermissions, UpdatePermissions };

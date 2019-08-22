@@ -219,9 +219,7 @@ export class Edit extends Component {
 					initialState.year = getSelectValue(select.years, getSplitBirthday.year, "value");
 					initialState.blood = getSelectValue(select.bloods, data.blood, "label");
 					initialState.emergency = data.emergency || [];
-					initialState.body_measure = data.attributes.body_measure
-						? JSON.parse(data.attributes.body_measure)
-						: [];
+					initialState.body_measure = data.attributes.body_measure ? data.attributes.body_measure : [];
 					if (initialState.emergency) {
 						const len = initialState.emergency.length;
 						if (len < 2) {

@@ -1,5 +1,6 @@
 import React, { Component } from "react";
-import { ListPermissions } from "../../../services/School";
+import { ListPermissions, UpdatePermissions } from "../../../services/School";
+import { Toast } from "../../Alert";
 
 const permissionTypeDescription = {
 	text: {
@@ -35,12 +36,52 @@ export class Permission extends Component {
 		this.getEmployeePosition();
 	}
 
+	handleSubmit = e => {
+		e.preventDefault();
+		const { uid, permissionList } = this.state;
+		const arr = [];
+
+		permissionList.map(el => arr.push(el.title));
+
+		if (arr.indexOf("") === -1) {
+			this.setState({ loadingData: "btn-loading" });
+			UpdatePermissions({
+				uid: uid,
+				permissions: permissionList
+			}).then(response => {
+				if (response) {
+					const status = response.status;
+					if (status.code === 1020) {
+						Toast.fire({
+							type: "success",
+							title: "İşlem başarılı..."
+						});
+					}
+				}
+				this.setState({ loadingData: "" });
+			});
+		} else {
+			Toast.fire({
+				type: "error",
+				title: "Pozisyon isimleri boş olamaz!"
+			});
+		}
+	};
+
+	handleChange = e => {
+		e.preventDefault();
+		const { permissionList } = this.state;
+		const { name, value } = e.target;
+		const split_id = parseInt(name.split(".")[1]);
+		const permissionElement = permissionList.find(x => x.permission_id === split_id);
+		permissionElement.title = value;
+		this.setState({ permissionList });
+	};
+
 	handleCheck = e => {
 		const { permissionList } = this.state;
 		const { name, checked } = e.target;
-		const permissions = permissionList;
 		const splitName = name.split(".");
-		console.log(name, checked);
 
 		const permissionDetail = {
 			permission_id: parseInt(splitName[0]),
@@ -89,7 +130,7 @@ export class Permission extends Component {
 	render() {
 		const { permissionList, loadingData } = this.state;
 		return (
-			<div className="card">
+			<form className="card" onSubmit={this.handleSubmit}>
 				<div className="card-header">
 					<h3 className="card-title">Yetkilendirme</h3>
 					<div className="card-options">
@@ -118,9 +159,10 @@ export class Permission extends Component {
 																<input
 																	type="text"
 																	className="form-control text-uppercase font-weight-600 text-dark"
-																	name={`position.name.${el.permission_id}`}
+																	name={`permission.${el.permission_id}`}
 																	placeholder={el.title}
 																	value={el.title}
+																	onChange={this.handleChange}
 																/>
 															</th>
 															<th className="w-2 text-center">
@@ -315,11 +357,11 @@ export class Permission extends Component {
 					</div>
 				</div>
 				<div className="card-footer text-right">
-					<button type="submit" className={`btn btn-primary`}>
+					<button type="submit" className={`btn btn-primary ${loadingData}`}>
 						Kaydet
 					</button>
 				</div>
-			</div>
+			</form>
 		);
 	}
 }

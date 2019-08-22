@@ -76,9 +76,7 @@ export class Detail extends Component {
 					stateData.foot = data.foot !== null ? footToText[data.foot] : "—";
 					stateData.foot_no = data.attributes.foot_no || "—";
 					stateData.emergency = data.emergency;
-					stateData.body_measure = data.attributes.body_measure
-						? JSON.parse(data.attributes.body_measure)
-						: null;
+					stateData.body_measure = data.attributes.body_measure;
 					stateData.onLoadedData = true;
 				}
 			}
