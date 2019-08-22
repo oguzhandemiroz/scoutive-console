@@ -62,6 +62,7 @@ export class Password extends Component {
 					password: password
 				}).then(response => {
 					this.setState({ loadingButton: "" });
+					setTimeout(() => this.reload(), 1000);
 				});
 			} else {
 				console.error("ERROR FORM");
@@ -109,6 +110,14 @@ export class Password extends Component {
 		formErrors.password = "";
 
 		this.setState({ password: pass, formErrors });
+	};
+
+	reload = () => {
+		const current = this.props.history.location.pathname;
+		this.props.history.replace(`/`);
+		setTimeout(() => {
+			this.props.history.replace(current);
+		});
 	};
 
 	render() {

@@ -544,7 +544,7 @@ class Table extends Component {
 						</tr>
 					</thead>
 				</table>
-				{<Vacation data={data} visible={vacation} />}
+				{<Vacation data={data} visible={vacation} history={this.props.history} />}
 				{<GroupChange data={data} visible={group_change} history={this.props.history} />}
 			</div>
 		);

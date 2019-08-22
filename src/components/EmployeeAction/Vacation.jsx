@@ -140,10 +140,18 @@ export class Vacation extends Component {
 		this.setState({ ...nextProps, ...initialState });
 	}
 
+	reload = () => {
+		const current = this.props.history.location.pathname;
+		this.props.history.replace(`/`);
+		setTimeout(() => {
+			this.props.history.replace(current);
+		});
+	};
+
 	handleSubmit = e => {
 		e.preventDefault();
 		const { uid, day, startDate, note, daily_amount, endDate, formErrors, no_cost } = this.state;
-		const { data, refresh, reload } = this.props;
+		const { data } = this.props;
 		const requiredData = {};
 
 		console.log(startDate, endDate, day);
@@ -176,10 +184,7 @@ export class Vacation extends Component {
 							type: "success",
 							title: "Başarıyla kaydedildi..."
 						});
-
-						if (refresh) {
-							reload();
-						}
+						setTimeout(() => this.reload(), 1000);
 					} else if (status.code === 1037) {
 						showSwal({
 							type: "warning",
@@ -256,12 +261,10 @@ export class Vacation extends Component {
 												title: "Başarıyla güncellendi..."
 											});
 										}
-										if (refresh) {
-											reload();
-										}
+										setTimeout(() => this.reload(), 1000);
 									}
 								});
-							}
+							}.bind(this)
 						});
 					}
 				}
