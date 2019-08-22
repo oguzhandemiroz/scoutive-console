@@ -739,7 +739,7 @@ export class Add extends Component {
 												type="range"
 												className="form-control custom-range"
 												step="0.1"
-												min="1"
+												min="0"
 												max="5"
 												name="point"
 												value={point || "0"}
@@ -750,7 +750,7 @@ export class Add extends Component {
 											<input
 												type="number"
 												step="0.1"
-												min="1"
+												min="0"
 												max="5"
 												name="point"
 												value={point || "0"}

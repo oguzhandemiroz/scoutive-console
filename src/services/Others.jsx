@@ -117,7 +117,7 @@ function ObjectIsEqual(objA, objB) {
 	var bProps = Object.getOwnPropertyNames(objB);
 	// If count of properties is different,
 	// objects are not equivalent
-	if (aProps.length != bProps.length) {
+	if (aProps.length !== bProps.length) {
 		return false;
 	}
 	for (var i = 0; i < aProps.length; i++) {

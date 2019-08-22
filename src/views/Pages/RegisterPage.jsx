@@ -30,7 +30,7 @@ export class RegisterPage extends Component {
 			email: null,
 			taxNo: null,
 			password: null,
-			terms: false,
+			terms: null,
 			formErrors: {
 				name: "",
 				email: "",

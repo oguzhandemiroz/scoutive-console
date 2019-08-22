@@ -23,7 +23,7 @@ const IconOption = props => (
 	<Option {...props}>
 		<span>
 			<i
-				className={`mr-2 fa fa-${props.data.type === 1 ? "university" : "briefcase"}`}
+				className={`mr-2 fa fa-${props.data.budget_type === 1 ? "university" : "briefcase"}`}
 				style={{ backgroundImage: `url(${props.data.image})` }}
 			/>
 			{props.data.label}
@@ -277,10 +277,9 @@ class Budgets extends Component {
 		try {
 			GetBudgets(true).then(response => {
 				if (response) {
-					console.log(response);
 					select.budgets = response;
 					if (response.length > 0) {
-						this.setState({ budget: response[0] });
+						this.setState({ budget: response.find(x => x.default === 1) });
 					}
 					this.setState({ select });
 				}

@@ -82,6 +82,14 @@ export class Vacation extends Component {
 		this.setState({ ...this.props });
 	}
 
+	reload = () => {
+		const current = this.props.history.location.pathname;
+		this.props.history.replace(`/`);
+		setTimeout(() => {
+			this.props.history.replace(current);
+		});
+	};
+
 	componentWillReceiveProps(nextProps) {
 		if (document.querySelectorAll("#vacation-past-tab.active").length > 0)
 			this.renderVacationList(nextProps.data.uid);
@@ -127,6 +135,7 @@ export class Vacation extends Component {
 							type: "success",
 							title: "Başarıyla kaydedildi..."
 						});
+						setTimeout(() => this.reload(), 1000);
 					} else if (status.code === 1037) {
 						showSwal({
 							type: "warning",
@@ -186,10 +195,11 @@ export class Vacation extends Component {
 												type: "success",
 												title: "Başarıyla güncellendi..."
 											});
+											setTimeout(() => this.reload(), 1000);
 										}
 									}
 								});
-							}
+							}.bind(this)
 						});
 					}
 				}

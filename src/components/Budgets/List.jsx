@@ -152,6 +152,13 @@ export class List extends Component {
 								'<span class="status-icon bg-' + statusType[data][1] + '"></span>' + statusType[data][0]
 							);
 						}
+					},
+					{
+						data: "default",
+						class: "text-center w-1",
+						render: function(data, type, row) {
+							if (data) return '<span class="badge badge-primary">Varsayılan</span>';
+						}
 					}
 				]
 			});
@@ -189,6 +196,7 @@ export class List extends Component {
 							<th className="balance">BAKİYE</th>
 							<th className="currency">PARA BİRİMİ</th>
 							<th className="status">DURUM</th>
+							<th className="w-1 default no-sort"></th>
 						</tr>
 					</thead>
 				</table>

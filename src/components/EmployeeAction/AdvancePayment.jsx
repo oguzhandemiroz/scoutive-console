@@ -126,6 +126,14 @@ export class AdvancePayment extends Component {
 		};
 	}
 
+	reload = () => {
+		const current = this.props.history.location.pathname;
+		this.props.history.replace(`/`);
+		setTimeout(() => {
+			this.props.history.replace(current);
+		});
+	};
+
 	fieldMasked = () => {
 		try {
 			console.log("e");
@@ -176,6 +184,9 @@ export class AdvancePayment extends Component {
 			GetBudgets().then(response => {
 				console.log(response);
 				select.budgets = response;
+				if (response.length > 0) {
+					this.setState({ budget: response.find(x => x.default === 1) });
+				}
 				this.setState({ select });
 			});
 		} catch (e) {}
@@ -207,6 +218,7 @@ export class AdvancePayment extends Component {
 							type: "success",
 							title: "İşlem Başarılı..."
 						});
+						setTimeout(() => this.reload(), 1000);
 					}
 				}
 				this.setState({ loadingButton: "" });

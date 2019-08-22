@@ -151,9 +151,6 @@ class Table extends Component {
 												className="dropdown-item action-advance-payment">
 												<i className="dropdown-icon fa fa-hand-holding-usd" /> Avans Ver
 											</button>
-											<a className="dropdown-item action-salary-raise" href="javascript:void(0)">
-												<i className="dropdown-icon fa fa-coins" /> Zam Yap
-											</a>
 											<div role="separator" className="dropdown-divider" />
 											<button
 												className="dropdown-item action-day-off"
@@ -363,9 +360,9 @@ class Table extends Component {
 						</tr>
 					</thead>
 				</table>
-				{<Vacation data={data} visible={vacation} />}
-				{<Password data={data} visible={password} />}
-				{advance ? <AdvancePayment data={data} visible={advance} /> : null}
+				{<Vacation data={data} visible={vacation} history={this.props.history} />}
+				{<Password data={data} visible={password} history={this.props.history} />}
+				{advance ? <AdvancePayment data={data} visible={advance} history={this.props.history} /> : null}
 			</div>
 		);
 	}

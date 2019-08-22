@@ -32,6 +32,7 @@ export class PlayerRollcall extends Component {
 				const status = response.status;
 				if (status.code === 1020) {
 					this.setState({ loadingData: "", data: response.data });
+					console.log(response.data);
 				}
 			}
 		});
@@ -50,14 +51,11 @@ export class PlayerRollcall extends Component {
 							<tbody>
 								{data.map((el, key) => (
 									<tr key={key.toString()}>
-										<td className="p-4">
-											{el.group.group_name}
-											<span className="ml-1 text-muted">({el.group.time.slice(0, -3)})</span>
-										</td>
+										<td>{moment(data.created_date).format("LL")}</td>
 										<td className="text-right">
 											<Link
 												to={{
-													pathname: `/app/rollcalls/player/add/${el.group.group_id}`,
+													pathname: `/app/rollcalls/player/add`,
 													state: { rcid: el.rollcall_id }
 												}}
 												className="btn btn-sm btn-info">

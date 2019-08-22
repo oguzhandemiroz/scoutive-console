@@ -340,7 +340,7 @@ export class Vacation extends Component {
 									İzin Oluştur
 								</button>
 
-								{<ModalVacation data={data} visible={vacation} refresh={true} reload={this.reload} />}
+								{<ModalVacation data={data} visible={vacation} history={this.props.history} />}
 							</div>
 							<div className="card-body">
 								<div className="table-responsive">

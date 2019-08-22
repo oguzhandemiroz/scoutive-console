@@ -426,13 +426,19 @@ const GetEmployees = errorMsg => {
 							const value = el.employee_id;
 							const label = name + " " + surname;
 							const image = el.image;
+							const position = el.position;
 							selectData.push({
 								value: value,
 								label: label,
-								image: image
+								image: image,
+								position: position
 							});
 						});
-						return selectData;
+
+						return selectData.sort((a, b) => {
+							var orderBool = a.label > b.label;
+							return orderBool ? 1 : -1;
+						});
 					}
 				}
 			});
@@ -467,13 +473,19 @@ const GetPlayers = () => {
 							const value = el.security_id;
 							const label = name + " " + surname;
 							const image = el.image;
+							const group = el.group ? el.group.name : "—";
 							selectData.push({
 								value: value,
 								label: label,
-								image: image
+								image: image,
+								group: group,
+								disabled: true
 							});
 						});
-						return selectData;
+						return selectData.sort((a, b) => {
+							var orderBool = a.label > b.label;
+							return orderBool ? 1 : -1;
+						});
 					}
 				}
 			});
@@ -518,11 +530,13 @@ const GetBudgets = extra => {
 								const label = el.budget_name;
 								const type = el.budget_type;
 								const balance = el.balance;
+								const _default = el.default;
 								selectData.push({
 									value: value,
 									label: label,
 									type: type,
-									balance: balance
+									balance: balance,
+									default: _default
 								});
 							});
 						}
