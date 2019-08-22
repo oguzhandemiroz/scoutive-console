@@ -78,7 +78,7 @@ export class Detail extends Component {
 			ListPlayers({
 				uid: uid,
 				filter: {
-					group_id: parseInt(gid)
+					"group.group_id": parseInt(gid)
 				}
 			}).then(response => {
 				if (response) {
@@ -302,7 +302,9 @@ export class Detail extends Component {
 																					</div>
 																				</td>
 																				<td>
-																					{el.position ? el.position : "—"}
+																					{el.position
+																						? el.position.name
+																						: "—"}
 																				</td>
 																				<td className="text-center">
 																					{el.point ? el.point : "—"}
