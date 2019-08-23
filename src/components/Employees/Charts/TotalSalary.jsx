@@ -21,7 +21,7 @@ export class TotalSalary extends Component {
 	listEmployees = data => {
 		var total = 0;
 		data.map(el => {
-			if (el.salary) {
+			if (typeof el.salary === "number") {
 				total += el.salary;
 			}
 		});

@@ -41,7 +41,7 @@ const ImageOptionPlayer = props => (
 		<span className="avatar avatar-sm mr-2" style={{ backgroundImage: `url(${props.data.image})` }} />
 		{props.data.label}
 		<div class="small text-muted mt-1">
-			Mevcut Grup: <b className="text-blue">{props.data.position}</b>
+			Mevcut Grup: <b className="text-blue">{props.data.group}</b>
 		</div>
 	</Option>
 );

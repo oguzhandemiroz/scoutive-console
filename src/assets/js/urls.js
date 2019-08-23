@@ -1,5 +1,14 @@
 //var host = "https://7c9a2694.ngrok.io/";
+import {
+    getCookie
+} from "./core";
+
 var host = "https://scoutive.online/";
+
+if (getCookie("sc_debug")) {
+    host = getCookie("sc_debug");
+}
+
 var api_version = "api/v1/";
 
 var ep = {

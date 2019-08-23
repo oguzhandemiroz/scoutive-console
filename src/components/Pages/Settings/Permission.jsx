@@ -9,15 +9,17 @@ const permissionTypeDescription = {
 		employee: "Personeller",
 		player: "Öğrenciler",
 		group: "Gruplar",
-		vacation: "İzinler"
+		vacation: "İzinler",
+		accounting: "Gelir/Gider"
 	},
 	default: {
 		club: ["list", "read", "write", "edit"],
-		school: ["list", "read", "write", "edit"],
+		school: ["read", "write", "edit"],
 		employee: ["list", "read", "write", "edit", "delete", "rollcall"],
 		player: ["list", "read", "write", "edit", "delete", "rollcall"],
 		group: ["list", "read", "write", "edit", "delete"],
-		vacation: ["edit", "write", "read"]
+		vacation: ["edit", "write", "read"],
+		accounting: ["list", "read", "write", "edit", "delete"]
 	}
 };
 
@@ -218,6 +220,8 @@ export class Permission extends Component {
 													<tbody>
 														{Object.keys(permissionTypeDescription.default).map(
 															(elem, key) => {
+																console.log(elem, el.permission_value[elem]);
+																if (elem === "club") return null;
 																return (
 																	<tr key={key.toString()}>
 																		<td className="pl-2 text-muted">
