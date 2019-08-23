@@ -41,15 +41,19 @@ export class Permission extends Component {
 	handleSubmit = e => {
 		e.preventDefault();
 		const { uid, permissionList } = this.state;
+		const permissions = JSON.parse(JSON.stringify(permissionList));
 		const arr = [];
 
 		permissionList.map(el => arr.push(el.title));
 
 		if (arr.indexOf("") === -1) {
 			this.setState({ loadingData: "btn-loading" });
+			permissions.map(
+				(el, key) => (permissions[key].permission_value = JSON.stringify(permissions[key].permission_value))
+			);
 			UpdatePermissions({
 				uid: uid,
-				permissions: permissionList
+				permissions: permissions
 			}).then(response => {
 				if (response) {
 					const status = response.status;

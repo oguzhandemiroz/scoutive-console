@@ -149,6 +149,7 @@ class Cost extends Component {
 	componentDidMount() {
 		this.renderChart();
 	}
+
 	componentDidUpdate() {
 		this.renderChart();
 	}
@@ -194,6 +195,7 @@ class NewUser extends Component {
 			data: [30, 40, 10, 40, 12, 22, 100]
 		};
 	}
+
 	shouldComponentUpdate() {
 		return false;
 	}
@@ -201,6 +203,7 @@ class NewUser extends Component {
 	componentDidMount() {
 		this.renderChart();
 	}
+
 	componentDidUpdate() {
 		this.renderChart();
 	}
@@ -307,19 +310,24 @@ class Budgets extends Component {
 	render() {
 		const { budget, select } = this.state;
 		const path = budget ? `/app/budgets/detail/${budget.budget_id}` : `/app/budgets`;
-		if (!select.budgets) return null;
+		const permission = localStorage.getItem("sType");
+		if (permission !== "0") return null;
 		return (
 			<div className="card">
-				<div className={`dimmer ${select.budgets.length === 0 ? "active" : ""}`}>
-					{select.budgets.length === 0 ? (
-						<div
-							className="d-flex justify-content-center chart-content align-items-center"
-							style={{ zIndex: 2 }}>
-							<Link to="/app/budgets/add" className="btn btn-success">
-								Kasa veya Banka Oluştur
-							</Link>
-						</div>
-					) : null}
+				<div className={`dimmer ${select.budgets ? "" : "active"}`}>
+					{select.budgets ? (
+						select.budgets.length === 0 ? (
+							<div
+								className="d-flex justify-content-center chart-content align-items-center"
+								style={{ zIndex: 2 }}>
+								<Link to="/app/budgets/add" className="btn btn-success">
+									Kasa veya Banka Oluştur
+								</Link>
+							</div>
+						) : null
+					) : (
+						<div className="loader"></div>
+					)}
 					<div className="dimmer-content">
 						<div className="card-header pr-2">
 							<h3 className="card-title mr-4">Hesap</h3>
