@@ -436,8 +436,7 @@ const GetEmployees = errorMsg => {
 						});
 
 						return selectData.sort((a, b) => {
-							var orderBool = a.label > b.label;
-							return orderBool ? 1 : -1;
+							return a.label.localeCompare(b.label);
 						});
 					}
 				}
@@ -483,8 +482,7 @@ const GetPlayers = () => {
 							});
 						});
 						return selectData.sort((a, b) => {
-							var orderBool = a.label > b.label;
-							return orderBool ? 1 : -1;
+							return a.label.localeCompare(b.label);
 						});
 					}
 				}
