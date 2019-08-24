@@ -40,8 +40,8 @@ const ImageOptionPlayer = props => (
     <Option {...props}>
         <span className="avatar avatar-sm mr-2" style={{backgroundImage: `url(${props.data.image})`}} />
         {props.data.label}
-        <div class="small text-muted mt-1">
-            Mevcut Grup: <b className="text-blue">{props.data.group}</b>
+        <div className="small text-muted mt-1">
+            Mevcut Grup: <b className="text-blue">{props.data.group || "—"}</b>
         </div>
     </Option>
 );
@@ -49,7 +49,7 @@ const ImageOptionEmployee = props => (
     <Option {...props}>
         <span className="avatar avatar-sm mr-2" style={{backgroundImage: `url(${props.data.image})`}} />
         {props.data.label}
-        <div class="small text-muted mt-1">
+        <div className="small text-muted mt-1">
             Pozisyon: <b className="text-blue">{props.data.position}</b>
         </div>
     </Option>

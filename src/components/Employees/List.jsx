@@ -88,27 +88,6 @@ class Table extends Component {
 						orderable: false
 					},
 					{
-						targets: "name",
-						createdCell: (td, cellData, rowData) => {
-							const fullname = fullnameGenerator(cellData, rowData.surname);
-							ReactDOM.render(
-								<BrowserRouter>
-									<Link
-										onClick={() => this.props.history.push("/app/employees/detail/" + rowData.uid)}
-										to={"/app/employees/detail/" + rowData.uid}
-										className="text-truncate d-block text-inherit"
-										style={{ maxWidth: "160px" }}
-										data-toggle="tooltip"
-										data-placement="top"
-										data-original-title={fullname}>
-										{fullname}
-									</Link>
-								</BrowserRouter>,
-								td
-							);
-						}
-					},
-					{
 						targets: "action",
 						createdCell: (td, cellData, rowData) => {
 							const fullname = fullnameGenerator(rowData.name, rowData.surname);
@@ -279,9 +258,19 @@ class Table extends Component {
 							}
 						}
 					},
-					{
-						data: "name"
-					},
+                    {
+						data: "name",
+						class: "w-1",
+                        render: function(data, type, row) {
+                            const fullname = fullnameGenerator(data, row.surname);
+                            if (type === "sort" || type === "type") {
+                                return fullname;
+                            }
+                            if (data)
+                                return `<a class="text-inherit" data-toggle="tooltip" data-placement="top" data-original-title="${fullname}" 
+								href="/app/employees/detail/${row.uid}">${fullname}</a>`;
+                        }
+                    },
 					{
 						data: "phone",
 						render: function(data, type, row) {
@@ -351,7 +340,7 @@ class Table extends Component {
 							<th>ID</th>
 							<th className="w-1 no-sort">T.C.</th>
 							<th className="w-1 text-center no-sort">#</th>
-							<th className="name">AD SOYAD</th>
+							<th className="w-1 name">AD SOYAD</th>
 							<th className="phone">TELEFON</th>
 							<th className="position">POZİSYON</th>
 							<th className="salary">MAAŞ</th>

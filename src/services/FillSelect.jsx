@@ -1,4 +1,4 @@
-import { Toast, fatalSwal } from "../components/Alert.jsx";
+import {Toast, fatalSwal} from "../components/Alert.jsx";
 import ep from "../assets/js/urls";
 
 const h = new Headers();
@@ -7,566 +7,567 @@ h.append("XIP", sessionStorage.getItem("IPADDR"));
 h.append("Authorization", localStorage.getItem("UID"));
 
 const Bloods = () => {
-	try {
-		return fetch(ep.BLOOD_TYPE, { headers: h })
-			.then(res => res.json())
-			.then(response => {
-				const data = response.data;
-				const status = response.status;
-				const selectData = [];
-				console.log("Bloods: ", response);
+    try {
+        return fetch(ep.BLOOD_TYPE, {headers: h})
+            .then(res => res.json())
+            .then(response => {
+                const data = response.data;
+                const status = response.status;
+                const selectData = [];
+                console.log("Bloods: ", response);
 
-				if (status.code !== 1020) {
-					Toast.fire({
-						type: "error",
-						title: '"Kan Grubu" yüklenemedi'
-					});
-				} else {
-					for (const item in data) {
-						const value = item;
-						const label = data[item];
-						selectData.push({
-							value: value,
-							label: label
-						});
-					}
-					return selectData;
-				}
-			})
-			.catch(e => fatalSwal(true));
-	} catch (e) {}
+                if (status.code !== 1020) {
+                    Toast.fire({
+                        type: "error",
+                        title: '"Kan Grubu" yüklenemedi'
+                    });
+                } else {
+                    for (const item in data) {
+                        const value = item;
+                        const label = data[item];
+                        selectData.push({
+                            value: value,
+                            label: label
+                        });
+                    }
+                    return selectData;
+                }
+            })
+            .catch(e => fatalSwal(true));
+    } catch (e) {}
 };
 
 const Clubs = () => {
-	try {
-		return fetch(ep.CLUB, { headers: h })
-			.then(res => res.json())
-			.then(response => {
-				const data = response.data;
-				const status = response.status;
-				const selectData = [];
-				console.log("Club: ", response);
+    try {
+        return fetch(ep.CLUB, {headers: h})
+            .then(res => res.json())
+            .then(response => {
+                const data = response.data;
+                const status = response.status;
+                const selectData = [];
+                console.log("Club: ", response);
 
-				if (status.code !== 1020) {
-					Toast.fire({
-						type: "error",
-						title: '"Kulüpler" yüklenemedi'
-					});
-				} else {
-					for (const item in data) {
-						const value = item;
-						const label = data[item];
-						selectData.push({
-							value: value,
-							label: label
-						});
-					}
-					return selectData;
-				}
-			})
-			.catch(e => fatalSwal(true));
-	} catch (e) {}
+                if (status.code !== 1020) {
+                    Toast.fire({
+                        type: "error",
+                        title: '"Kulüpler" yüklenemedi'
+                    });
+                } else {
+                    for (const item in data) {
+                        const value = item;
+                        const label = data[item];
+                        selectData.push({
+                            value: value,
+                            label: label
+                        });
+                    }
+                    return selectData;
+                }
+            })
+            .catch(e => fatalSwal(true));
+    } catch (e) {}
 };
 
 const Branchs = () => {
-	try {
-		return fetch(ep.BRANCH, { headers: h })
-			.then(res => res.json())
-			.then(response => {
-				const data = response.data;
-				const status = response.status;
-				const selectData = [];
-				console.log("Branchs: ", response);
+    try {
+        return fetch(ep.BRANCH, {headers: h})
+            .then(res => res.json())
+            .then(response => {
+                const data = response.data;
+                const status = response.status;
+                const selectData = [];
+                console.log("Branchs: ", response);
 
-				if (status.code !== 1020) {
-					Toast.fire({
-						type: "error",
-						title: '"Branş" yüklenemedi'
-					});
-				} else {
-					for (const item in data) {
-						const value = item;
-						const label = data[item];
-						selectData.push({
-							value: value,
-							label: label
-						});
-					}
-					return selectData;
-				}
-			})
-			.catch(e => fatalSwal(true));
-	} catch (e) {}
+                if (status.code !== 1020) {
+                    Toast.fire({
+                        type: "error",
+                        title: '"Branş" yüklenemedi'
+                    });
+                } else {
+                    for (const item in data) {
+                        const value = item;
+                        const label = data[item];
+                        selectData.push({
+                            value: value,
+                            label: label
+                        });
+                    }
+                    return selectData;
+                }
+            })
+            .catch(e => fatalSwal(true));
+    } catch (e) {}
 };
 
 const EmployeePositions = () => {
-	try {
-		return fetch(ep.EMPLOYEE_POSITION_TYPE, {
-			method: "POST",
-			body: JSON.stringify({
-				uid: localStorage.getItem("UID")
-			}),
-			headers: h
-		})
-			.then(res => res.json())
-			.then(response => {
-				const data = response.data;
-				const status = response.status;
-				const selectData = [];
-				console.log("Employee: ", response);
+    try {
+        return fetch(ep.EMPLOYEE_POSITION_TYPE, {
+            method: "POST",
+            body: JSON.stringify({
+                uid: localStorage.getItem("UID")
+            }),
+            headers: h
+        })
+            .then(res => res.json())
+            .then(response => {
+                const data = response.data;
+                const status = response.status;
+                const selectData = [];
+                console.log("Employee: ", response);
 
-				if (status.code !== 1020) {
-					Toast.fire({
-						type: "error",
-						title: '"Pozisyon" yüklenemedi'
-					});
-				} else {
-					for (const item in data) {
-						const value = item;
-						const label = data[item];
-						selectData.push({
-							value: value,
-							label: label
-						});
-					}
-					return selectData;
-				}
-			})
-			.catch(e => fatalSwal(true));
-	} catch (e) {}
+                if (status.code !== 1020) {
+                    Toast.fire({
+                        type: "error",
+                        title: '"Pozisyon" yüklenemedi'
+                    });
+                } else {
+                    for (const item in data) {
+                        const value = item;
+                        const label = data[item];
+                        selectData.push({
+                            value: value,
+                            label: label
+                        });
+                    }
+                    return selectData;
+                }
+            })
+            .catch(e => fatalSwal(true));
+    } catch (e) {}
 };
 
 const PlayerPositions = () => {
-	try {
-		return fetch(ep.PLAYER_POSITION_TYPE, { headers: h })
-			.then(res => res.json())
-			.then(response => {
-				const data = response.data;
-				const status = response.status;
-				const selectData = [];
-				console.log("Mevkii: ", response);
+    try {
+        return fetch(ep.PLAYER_POSITION_TYPE, {headers: h})
+            .then(res => res.json())
+            .then(response => {
+                const data = response.data;
+                const status = response.status;
+                const selectData = [];
+                console.log("Mevkii: ", response);
 
-				if (status.code !== 1020) {
-					Toast.fire({
-						type: "error",
-						title: '"Mevkii" yüklenemedi'
-					});
-				} else {
-					for (const item in data) {
-						const value = item;
-						const label = data[item];
-						selectData.push({
-							value: value,
-							label: label
-						});
-					}
-					return selectData;
-				}
-			})
-			.catch(e => fatalSwal(true));
-	} catch (e) {}
+                if (status.code !== 1020) {
+                    Toast.fire({
+                        type: "error",
+                        title: '"Mevkii" yüklenemedi'
+                    });
+                } else {
+                    for (const item in data) {
+                        const value = item;
+                        const label = data[item];
+                        selectData.push({
+                            value: value,
+                            label: label
+                        });
+                    }
+                    return selectData;
+                }
+            })
+            .catch(e => fatalSwal(true));
+    } catch (e) {}
 };
 
 const Groups = () => {
-	try {
-		return fetch(ep.GROUP, {
-			method: "POST",
-			body: JSON.stringify({
-				uid: localStorage.getItem("UID")
-			}),
-			headers: h
-		})
-			.then(res => res.json())
-			.then(response => {
-				const data = response.data;
-				const status = response.status;
-				const selectData = [];
-				console.log("Employee: ", response);
+    try {
+        return fetch(ep.GROUP, {
+            method: "POST",
+            body: JSON.stringify({
+                uid: localStorage.getItem("UID")
+            }),
+            headers: h
+        })
+            .then(res => res.json())
+            .then(response => {
+                const data = response.data;
+                const status = response.status;
+                const selectData = [];
+                console.log("Employee: ", response);
 
-				if (status.code !== 1020) {
-					Toast.fire({
-						type: "error",
-						title: '"Grup" yüklenemedi'
-					});
-				} else {
-					for (const item in data) {
-						const value = item;
-						const label = data[item];
-						selectData.push({
-							value: value,
-							label: label
-						});
-					}
-					return selectData;
-				}
-			})
-			.catch(e => fatalSwal(true));
-	} catch (e) {}
+                if (status.code !== 1020) {
+                    Toast.fire({
+                        type: "error",
+                        title: '"Grup" yüklenemedi'
+                    });
+                } else {
+                    for (const item in data) {
+                        const value = item;
+                        const label = data[item];
+                        selectData.push({
+                            value: value,
+                            label: label
+                        });
+                    }
+                    return selectData;
+                }
+            })
+            .catch(e => fatalSwal(true));
+    } catch (e) {}
 };
 
 const Banks = () => {
-	try {
-		return fetch(ep.BANK, { headers: h })
-			.then(res => res.json())
-			.then(response => {
-				const data = response.data;
-				const status = response.status;
-				const selectData = [];
-				console.log("Banks: ", response);
+    try {
+        return fetch(ep.BANK, {headers: h})
+            .then(res => res.json())
+            .then(response => {
+                const data = response.data;
+                const status = response.status;
+                const selectData = [];
+                console.log("Banks: ", response);
 
-				if (status.code !== 1020) {
-					Toast.fire({
-						type: "error",
-						title: '"Bankalar" yüklenemedi'
-					});
-				} else {
-					for (const item in data) {
-						const value = item;
-						const label = data[item];
-						selectData.push({
-							value: value,
-							label: label
-						});
-					}
-					return selectData;
-				}
-			})
-			.catch(e => fatalSwal(true));
-	} catch (e) {}
+                if (status.code !== 1020) {
+                    Toast.fire({
+                        type: "error",
+                        title: '"Bankalar" yüklenemedi'
+                    });
+                } else {
+                    for (const item in data) {
+                        const value = item;
+                        const label = data[item];
+                        selectData.push({
+                            value: value,
+                            label: label
+                        });
+                    }
+                    return selectData;
+                }
+            })
+            .catch(e => fatalSwal(true));
+    } catch (e) {}
 };
 
 const Days = () => {
-	try {
-		const days = [];
-		var day = 1;
-		const endDay = 31;
+    try {
+        const days = [];
+        var day = 1;
+        const endDay = 31;
 
-		for (day; day <= endDay; day++) {
-			days.push({
-				value: day < 10 ? "0" + day.toString() : day.toString(),
-				label: day < 10 ? "0" + day.toString() : day.toString()
-			});
-		}
+        for (day; day <= endDay; day++) {
+            days.push({
+                value: day < 10 ? "0" + day.toString() : day.toString(),
+                label: day < 10 ? "0" + day.toString() : day.toString()
+            });
+        }
 
-		return days;
-	} catch (e) {}
+        return days;
+    } catch (e) {}
 };
 
 const Months = () => {
-	try {
-		const months = [
-			{
-				value: "01",
-				label: "Ocak"
-			},
-			{
-				value: "02",
-				label: "Şubat"
-			},
-			{
-				value: "03",
-				label: "Mart"
-			},
-			{
-				value: "04",
-				label: "Nisan"
-			},
-			{
-				value: "05",
-				label: "Mayıs"
-			},
-			{
-				value: "06",
-				label: "Haziran"
-			},
-			{
-				value: "07",
-				label: "Temmuz"
-			},
-			{
-				value: "08",
-				label: "Ağustos"
-			},
-			{
-				value: "09",
-				label: "Eylül"
-			},
-			{
-				value: "10",
-				label: "Ekim"
-			},
-			{
-				value: "11",
-				label: "Kasım"
-			},
-			{
-				value: "12",
-				label: "Aralık"
-			}
-		];
+    try {
+        const months = [
+            {
+                value: "01",
+                label: "Ocak"
+            },
+            {
+                value: "02",
+                label: "Şubat"
+            },
+            {
+                value: "03",
+                label: "Mart"
+            },
+            {
+                value: "04",
+                label: "Nisan"
+            },
+            {
+                value: "05",
+                label: "Mayıs"
+            },
+            {
+                value: "06",
+                label: "Haziran"
+            },
+            {
+                value: "07",
+                label: "Temmuz"
+            },
+            {
+                value: "08",
+                label: "Ağustos"
+            },
+            {
+                value: "09",
+                label: "Eylül"
+            },
+            {
+                value: "10",
+                label: "Ekim"
+            },
+            {
+                value: "11",
+                label: "Kasım"
+            },
+            {
+                value: "12",
+                label: "Aralık"
+            }
+        ];
 
-		return months;
-	} catch (e) {}
+        return months;
+    } catch (e) {}
 };
 
 const Years = reverse => {
-	try {
-		const years = [];
-		var year = 1950;
-		const endYear = 2016;
+    try {
+        const years = [];
+        var year = 1950;
+        const endYear = 2016;
 
-		for (year; year <= endYear; year++) {
-			years.push({
-				value: year.toString(),
-				label: year.toString()
-			});
-		}
+        for (year; year <= endYear; year++) {
+            years.push({
+                value: year.toString(),
+                label: year.toString()
+            });
+        }
 
-		return reverse ? years.reverse() : years;
-	} catch (e) {}
+        return reverse ? years.reverse() : years;
+    } catch (e) {}
 };
 
 const Hours = () => {
-	try {
-		const hours = [];
-		var hour = 0;
-		const endHour = 24;
-		for (hour; hour <= endHour; hour++) {
-			hours.push({
-				value: hour < 10 ? "0" + hour.toString() : hour.toString(),
-				label: hour < 10 ? "0" + hour.toString() : hour.toString()
-			});
-		}
-		return hours;
-	} catch (e) {}
+    try {
+        const hours = [];
+        var hour = 0;
+        const endHour = 24;
+        for (hour; hour <= endHour; hour++) {
+            hours.push({
+                value: hour < 10 ? "0" + hour.toString() : hour.toString(),
+                label: hour < 10 ? "0" + hour.toString() : hour.toString()
+            });
+        }
+        return hours;
+    } catch (e) {}
 };
 
 const Minutes = () => {
-	try {
-		const minutes = [];
-		var minute = 0;
-		const endminute = 59;
-		for (minute; minute <= endminute; minute++) {
-			minutes.push({
-				value: minute < 10 ? "0" + minute.toString() : minute.toString(),
-				label: minute < 10 ? "0" + minute.toString() : minute.toString()
-			});
-		}
-		return minutes;
-	} catch (e) {}
+    try {
+        const minutes = [];
+        var minute = 0;
+        const endminute = 59;
+        for (minute; minute <= endminute; minute++) {
+            minutes.push({
+                value: minute < 10 ? "0" + minute.toString() : minute.toString(),
+                label: minute < 10 ? "0" + minute.toString() : minute.toString()
+            });
+        }
+        return minutes;
+    } catch (e) {}
 };
 
 const DateRange = (start, end, reverse) => {
-	try {
-		const years = [];
-		if (start === null) start = 1970;
-		if (end === null) end = 2019;
+    try {
+        const years = [];
+        if (start === null) start = 1970;
+        if (end === null) end = 2019;
 
-		for (start; start <= end; start++) {
-			years.push({
-				value: start.toString(),
-				label: start.toString()
-			});
-		}
+        for (start; start <= end; start++) {
+            years.push({
+                value: start.toString(),
+                label: start.toString()
+            });
+        }
 
-		return reverse ? years.reverse() : years;
-	} catch (e) {}
+        return reverse ? years.reverse() : years;
+    } catch (e) {}
 };
 
 const Kinship = () => {
-	try {
-		const list = [
-			{
-				value: "0",
-				label: "Anne"
-			},
-			{
-				value: "1",
-				label: "Baba"
-			},
-			{
-				value: "2",
-				label: "Eş"
-			},
-			{
-				value: "3",
-				label: "Diğer"
-			}
-		];
-		return list;
-	} catch (e) {}
+    try {
+        const list = [
+            {
+                value: "0",
+                label: "Anne"
+            },
+            {
+                value: "1",
+                label: "Baba"
+            },
+            {
+                value: "2",
+                label: "Eş"
+            },
+            {
+                value: "3",
+                label: "Diğer"
+            }
+        ];
+        return list;
+    } catch (e) {}
 };
 
 const GetEmployees = errorMsg => {
-	try {
-		if (!errorMsg) errorMsg = "Antrenörler";
-		return fetch(ep.GET_EMPLOYEE_NAME, {
-			method: "POST",
-			body: JSON.stringify({
-				uid: localStorage.getItem("UID")
-			}),
-			headers: h
-		})
-			.then(res => res.json())
-			.then(response => {
-				if (response) {
-					const selectData = [];
-					const status = response.status;
+    try {
+        if (!errorMsg) errorMsg = "Antrenörler";
+        return fetch(ep.GET_EMPLOYEE_NAME, {
+            method: "POST",
+            body: JSON.stringify({
+                uid: localStorage.getItem("UID")
+            }),
+            headers: h
+        })
+            .then(res => res.json())
+            .then(response => {
+                if (response) {
+                    const selectData = [];
+                    const status = response.status;
 
-					if (status.code !== 1020) {
-						Toast.fire({
-							type: "error",
-							title: `"${errorMsg}" yüklenemedi`
-						});
-					} else {
-						const data = response.data;
-						data.map(el => {
-							const name = el.name || "";
-							const surname = el.surname || "";
-							const value = el.employee_id;
-							const label = name + " " + surname;
-							const image = el.image;
-							const position = el.position;
-							selectData.push({
-								value: value,
-								label: label,
-								image: image,
-								position: position
-							});
-						});
-
-						return selectData.sort((a, b) => {
-							return a.label.localeCompare(b.label);
-						});
-					}
-				}
-			});
-	} catch (e) {}
+                    if (status.code !== 1020) {
+                        Toast.fire({
+                            type: "error",
+                            title: `"${errorMsg}" yüklenemedi`
+                        });
+                    } else {
+                        const data = response.data;
+                        data.map(el => {
+                            const name = el.name || "";
+                            const surname = el.surname || "";
+                            const value = el.employee_id;
+                            const label = name + " " + surname;
+                            const image = el.image;
+                            const position = el.position;
+                            selectData.push({
+                                value: value,
+                                label: label,
+                                image: image,
+                                position: position
+                            });
+                        });
+                        return selectData.sort((a, b) => {
+                            return a.label.localeCompare(b.label);
+                        });
+                    }
+                }
+            });
+    } catch (e) {}
 };
 
 const GetPlayers = () => {
-	try {
-		return fetch(ep.GET_PLAYER_NAME, {
-			method: "POST",
-			body: JSON.stringify({
-				uid: localStorage.getItem("UID")
-			}),
-			headers: h
-		})
-			.then(res => res.json())
-			.then(response => {
-				if (response) {
-					const selectData = [];
-					const status = response.status;
+    try {
+        return fetch(ep.GET_PLAYER_NAME, {
+            method: "POST",
+            body: JSON.stringify({
+                uid: localStorage.getItem("UID")
+            }),
+            headers: h
+        })
+            .then(res => res.json())
+            .then(response => {
+                if (response) {
+                    let selectData = [];
+                    const status = response.status;
 
-					if (status.code !== 1020) {
-						Toast.fire({
-							type: "error",
-							title: '"Öğrenciler" yüklenemedi'
-						});
-					} else {
-						const data = response.data;
-						data.map(el => {
-							const name = el.name || "";
-							const surname = el.surname || "";
-							const value = el.security_id;
-							const label = name + " " + surname;
-							const image = el.image;
-							const group = el.group ? el.group.name : "—";
-							selectData.push({
-								value: value,
-								label: label,
-								image: image,
-								group: group,
-								disabled: true
-							});
-						});
-						return selectData.sort((a, b) => {
-							return a.label.localeCompare(b.label);
-						});
-					}
-				}
-			});
-	} catch (e) {}
+                    if (status.code !== 1020) {
+                        Toast.fire({
+                            type: "error",
+                            title: '"Öğrenciler" yüklenemedi'
+                        });
+                    } else {
+                        const data = response.data;
+                        data.map(el => {
+                            const name = el.name || "";
+                            const surname = el.surname || "";
+                            const value = el.security_id;
+                            const label = name + " " + surname;
+                            const image = el.image;
+                            const group = el.group ? el.group.name : null;
+                            selectData.push({
+                                value: value,
+                                label: label,
+                                image: image,
+                                group: group,
+                                disabled: true
+                            });
+                        });
+                        
+                        return selectData.sort((a, b) => {
+                            return a.group ? 1 : -1;
+                            // return a.label.localeCompare(b.label); isimleri A'dan Z'ye sıralamak için.
+                        });
+                    }
+                }
+            });
+    } catch (e) {}
 };
 
 const GetBudgets = extra => {
-	try {
-		return fetch(ep.BUDGET_LIST, {
-			method: "POST",
-			body: JSON.stringify({
-				uid: localStorage.getItem("UID")
-			}),
-			headers: h
-		})
-			.then(res => res.json())
-			.then(response => {
-				if (response) {
-					const selectData = [];
-					const status = response.status;
+    try {
+        return fetch(ep.BUDGET_LIST, {
+            method: "POST",
+            body: JSON.stringify({
+                uid: localStorage.getItem("UID")
+            }),
+            headers: h
+        })
+            .then(res => res.json())
+            .then(response => {
+                if (response) {
+                    const selectData = [];
+                    const status = response.status;
 
-					if (status.code !== 1020) {
-						Toast.fire({
-							type: "error",
-							title: '"Kasalar" yüklenemedi'
-						});
-					} else {
-						const data = response.data;
-						if (extra) {
-							data.map(el => {
-								const value = el.budget_id;
-								const label = el.budget_name;
-								selectData.push({
-									value: value,
-									label: label,
-									...el
-								});
-							});
-						} else {
-							data.map(el => {
-								const value = el.budget_id;
-								const label = el.budget_name;
-								const type = el.budget_type;
-								const balance = el.balance;
-								const _default = el.default;
-								selectData.push({
-									value: value,
-									label: label,
-									type: type,
-									balance: balance,
-									default: _default
-								});
-							});
-						}
-						return selectData;
-					}
-				}
-			})
-			.catch(e =>
-				Toast.fire({
-					type: "error",
-					title: '"Kasalar" yüklenemedi'
-				})
-			);
-	} catch (e) {}
+                    if (status.code !== 1020) {
+                        Toast.fire({
+                            type: "error",
+                            title: '"Kasalar" yüklenemedi'
+                        });
+                    } else {
+                        const data = response.data;
+                        if (extra) {
+                            data.map(el => {
+                                const value = el.budget_id;
+                                const label = el.budget_name;
+                                selectData.push({
+                                    value: value,
+                                    label: label,
+                                    ...el
+                                });
+                            });
+                        } else {
+                            data.map(el => {
+                                const value = el.budget_id;
+                                const label = el.budget_name;
+                                const type = el.budget_type;
+                                const balance = el.balance;
+                                const _default = el.default;
+                                selectData.push({
+                                    value: value,
+                                    label: label,
+                                    type: type,
+                                    balance: balance,
+                                    default: _default
+                                });
+                            });
+                        }
+                        return selectData;
+                    }
+                }
+            })
+            .catch(e =>
+                Toast.fire({
+                    type: "error",
+                    title: '"Kasalar" yüklenemedi'
+                })
+            );
+    } catch (e) {}
 };
 
 export {
-	Clubs,
-	Bloods,
-	Branchs,
-	EmployeePositions,
-	PlayerPositions,
-	Groups,
-	Banks,
-	Days,
-	Months,
-	Years,
-	DateRange,
-	Kinship,
-	Hours,
-	Minutes,
-	GetEmployees,
-	GetPlayers,
-	GetBudgets
+    Clubs,
+    Bloods,
+    Branchs,
+    EmployeePositions,
+    PlayerPositions,
+    Groups,
+    Banks,
+    Days,
+    Months,
+    Years,
+    DateRange,
+    Kinship,
+    Hours,
+    Minutes,
+    GetEmployees,
+    GetPlayers,
+    GetBudgets
 };

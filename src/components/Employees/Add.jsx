@@ -392,17 +392,17 @@ export class Add extends Component {
 
 		switch (name) {
 			case "name":
-				formErrors.name = value.length < 3 ? "is-invalid" : "";
+				formErrors.name = value.length < 2 ? "is-invalid" : "";
 				break;
 			case "surname":
-				formErrors.surname = value.length < 3 ? "is-invalid" : "";
+				formErrors.surname = value.length < 2 ? "is-invalid" : "";
 				break;
 			case "securityNo":
 				formErrors.securityNo =
 					value.length !== 11 ? "is-invalid" : !securityNoRegEx.test(value) ? "is-invalid" : "";
 				break;
 			case "email":
-				formErrors.email = value.length < 3 ? "is-invalid" : !emailRegEx.test(value) ? "is-invalid" : "";
+				formErrors.email = value.length < 2 ? "is-invalid" : !emailRegEx.test(value) ? "is-invalid" : "";
 				break;
 			case "phone":
 				formErrors.phone = value.length !== 10 ? "is-invalid" : "";

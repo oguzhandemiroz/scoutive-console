@@ -240,10 +240,10 @@ export class Profile extends Component {
 
         switch (name) {
             case "name":
-                formErrors.name = value.length < 3 ? "is-invalid" : "";
+                formErrors.name = value.length < 2 ? "is-invalid" : "";
                 break;
             case "tax_office":
-                formErrors.tax_office = value.length < 3 ? "is-invalid" : "";
+                formErrors.tax_office = value.length < 2 ? "is-invalid" : "";
                 break;
             case "tax_no":
                 formErrors.tax_no =

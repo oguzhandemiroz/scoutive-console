@@ -87,7 +87,7 @@ const initialState = {
 	email: null,
 	phone: null,
 	branch: null,
-	fee: null,
+	fee: "0,00",
 	blood: null,
 	gender: null,
 	body_height: null,
@@ -419,17 +419,17 @@ export class Add extends Component {
 
 		switch (name) {
 			case "name":
-				formErrors.name = value.length < 3 ? "is-invalid" : "";
+				formErrors.name = value.length < 2 ? "is-invalid" : "";
 				break;
 			case "surname":
-				formErrors.surname = value.length < 3 ? "is-invalid" : "";
+				formErrors.surname = value.length < 2 ? "is-invalid" : "";
 				break;
 			case "securityNo":
 				formErrors.securityNo =
 					value.length < 9 ? "is-invalid" : !securityNoRegEx.test(value) ? "is-invalid" : "";
 				break;
 			case "email":
-				formErrors.email = value.length < 3 ? "is-invalid" : !emailRegEx.test(value) ? "is-invalid" : "";
+				formErrors.email = value.length < 2 ? "is-invalid" : !emailRegEx.test(value) ? "is-invalid" : "";
 				break;
 			case "phone":
 				formErrors.phone = value.length !== 10 ? "is-invalid" : "";
@@ -437,14 +437,11 @@ export class Add extends Component {
 			case "fee":
 				formErrors.fee = value ? "" : "is-invalid";
 				break;
-			/*case "point":
-                formErrors.point = value ? "" : "is-invalid-iconless";
-                break;*/
 			default:
 				break;
 		}
 		if (name === "fee") {
-			this.setState({ formErrors, [name]: value === "0,00" ? null : value });
+			this.setState({ formErrors, [name]: value });
 		} else if (name.indexOf(".") === -1) this.setState({ formErrors, [name]: value });
 		else {
 			const splitName = name.split(".");
@@ -711,7 +708,7 @@ export class Add extends Component {
 										onChange={this.handleChange}
 										placeholder="Aidat"
 										name="fee"
-										value={fee || ""}
+										value={fee || "0,00"}
 									/>
 								</div>
 								<div className="form-group">

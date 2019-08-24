@@ -308,7 +308,6 @@ export class Edit extends Component {
 			requiredData.day = day;
 			requiredData.month = month;
 			requiredData.year = year;
-			requiredData.position = position ? position.value : null;
 			requiredData.branch = branch ? branch.value : null;
 			requiredData.formErrors = formErrors;
 
@@ -420,7 +419,6 @@ export class Edit extends Component {
 				formErrors.phone = phone ? (phone.length !== 10 ? "is-invalid" : "") : "";
 				formErrors.fee = fee ? "" : "is-invalid";
 				//select
-				formErrors.position = position ? "" : true;
 				formErrors.branch = branch ? "" : true;
 				formErrors.day = day ? "" : true;
 				formErrors.month = month ? "" : true;
@@ -437,20 +435,19 @@ export class Edit extends Component {
 		e.preventDefault();
 		const { value, name } = e.target;
 		let formErrors = { ...this.state.formErrors };
-
 		switch (name) {
 			case "name":
-				formErrors.name = value.length < 3 ? "is-invalid" : "";
+				formErrors.name = value.length < 2 ? "is-invalid" : "";
 				break;
 			case "surname":
-				formErrors.surname = value.length < 3 ? "is-invalid" : "";
+				formErrors.surname = value.length < 2 ? "is-invalid" : "";
 				break;
 			case "securityNo":
 				formErrors.securityNo =
 					value.length < 9 ? "is-invalid" : !securityNoRegEx.test(value) ? "is-invalid" : "";
 				break;
 			case "email":
-				formErrors.email = value.length < 3 ? "is-invalid" : !emailRegEx.test(value) ? "is-invalid" : "";
+				formErrors.email = value.length < 2 ? "is-invalid" : !emailRegEx.test(value) ? "is-invalid" : "";
 				break;
 			case "phone":
 				formErrors.phone = value.length !== 10 ? "is-invalid" : "";
@@ -507,9 +504,6 @@ export class Edit extends Component {
 			});
 		} else {
 			switch (name) {
-				case "position":
-					formErrors.position = value ? false : true;
-					break;
 				case "branch":
 					formErrors.branch = value ? false : true;
 					break;
@@ -705,7 +699,6 @@ export class Edit extends Component {
 										<div className="form-group">
 											<label className="form-label">
 												Mevkii
-												<span className="form-required">*</span>
 											</label>
 											<Select
 												value={position}
@@ -731,7 +724,7 @@ export class Edit extends Component {
 												onChange={this.handleChange}
 												placeholder="Aidat"
 												name="fee"
-												value={fee || ""}
+												value={fee || 0}
 											/>
 										</div>
 										<div className="form-group">

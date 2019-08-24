@@ -14,10 +14,10 @@ export class Accountings extends Component {
 						</div>
 						<div className="card">
 							<div className="card-header">
-								<h3 class="card-title">Son 15 İşlem</h3>
+								<h3 className="card-title">Son 15 İşlem</h3>
 							</div>
-							<div class="table-responsive">
-								<table class="table card-table table-striped table-vcenter">
+							<div className="table-responsive">
+								<table className="table card-table table-striped table-vcenter">
 									<thead>
 										<tr>
 											<th>İşlem</th>
@@ -30,24 +30,24 @@ export class Accountings extends Component {
 										<tr>
 											<td>Bağış</td>
 											<td>10.000,00 ₺</td>
-											<td class="text-nowrap" title="10/10/2019">
+											<td className="text-nowrap" title="10/10/2019">
 												5 gün önce
 											</td>
-											<td class="w-1">
-												<a href="#" class="icon">
-													<i class="fe fe-eye"></i>
+											<td className="w-1">
+												<a href="#" className="icon">
+													<i className="fe fe-eye"></i>
 												</a>
 											</td>
 										</tr>
 										<tr>
 											<td>Kira</td>
 											<td>5.350,00 ₺</td>
-											<td class="text-nowrap" title="10/10/2019">
+											<td className="text-nowrap" title="10/10/2019">
 												10 gün önce
 											</td>
-											<td class="w-1">
-												<a href="#" class="icon">
-													<i class="fe fe-eye"></i>
+											<td className="w-1">
+												<a href="#" className="icon">
+													<i className="fe fe-eye"></i>
 												</a>
 											</td>
 										</tr>
@@ -66,10 +66,10 @@ export class Accountings extends Component {
 						</div>
 						<div className="card">
 							<div className="card-header">
-								<h3 class="card-title">Son 15 İşlem</h3>
+								<h3 className="card-title">Son 15 İşlem</h3>
 							</div>
-							<div class="table-responsive">
-								<table class="table card-table table-striped table-vcenter">
+							<div className="table-responsive">
+								<table className="table card-table table-striped table-vcenter">
 									<thead>
 										<tr>
 											<th>İşlem</th>
@@ -82,24 +82,24 @@ export class Accountings extends Component {
 										<tr>
 											<td>Su Faturası</td>
 											<td>127,00 ₺</td>
-											<td class="text-nowrap" title="10/10/2019">
+											<td className="text-nowrap" title="10/10/2019">
 												8 gün önce
 											</td>
-											<td class="w-1">
-												<a href="#" class="icon">
-													<i class="fe fe-eye"></i>
+											<td className="w-1">
+												<a href="#" className="icon">
+													<i className="fe fe-eye"></i>
 												</a>
 											</td>
 										</tr>
 										<tr>
 											<td>Top</td>
 											<td>52,00 ₺</td>
-											<td class="text-nowrap" title="10/10/2019">
+											<td className="text-nowrap" title="10/10/2019">
 												17 gün önce
 											</td>
-											<td class="w-1">
-												<a href="#" class="icon">
-													<i class="fe fe-eye"></i>
+											<td className="w-1">
+												<a href="#" className="icon">
+													<i className="fe fe-eye"></i>
 												</a>
 											</td>
 										</tr>

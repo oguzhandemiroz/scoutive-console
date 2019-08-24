@@ -94,8 +94,8 @@ export class Detail extends Component {
 				html: `<b>${name}</b> adlı öğrencinin kaydını silmek istediğinize emin misiniz?`,
 				confirmButtonText: "Evet",
 				cancelButtonText: "Hayır",
-				cancelButtonColor: "#cd201f",
-				confirmButtonColor: "#868e96",
+				confirmButtonColor: "#cd201f",
+				cancelButtonColor: "#868e96",
 				showCancelButton: true,
 				reverseButtons: true
 			}).then(result => {
