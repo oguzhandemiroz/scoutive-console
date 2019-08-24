@@ -189,7 +189,7 @@ class Table extends Component {
 				responsive: true,
 				order: [3, "asc"],
 				aLengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "Tümü"]],
-				stateSave: true, // change true
+				stateSave: false, // change true
 				language: {
 					...datatable_turkish,
 					decimal: ",",

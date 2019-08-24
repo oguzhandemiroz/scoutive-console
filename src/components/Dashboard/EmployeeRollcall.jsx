@@ -72,7 +72,7 @@ export class EmployeeRollcall extends Component {
 					)
 				) : (
 					<div className="card-body">
-						<div className={`dimmer ${loadingData}`}>
+						<div className={`dimmer ${loadingData} p-3`}>
 							<div className="loader" />
 							<div className="dimmer-content"></div>
 						</div>
