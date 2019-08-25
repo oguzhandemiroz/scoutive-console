@@ -46,15 +46,6 @@ export class RegisterPage extends Component {
 		e.preventDefault();
 
 		if (formValid(this.state)) {
-			console.log(`
-             ---SUBMITTING---
-             name: ${this.state.name}
-             email: ${this.state.email}
-             taxNo: ${this.state.taxNo}
-             password: ${this.state.password}
-             terms: ${this.state.terms}
-			`);
-
 			this.setState({ loadingButton: "btn-loading" });
 
 			RequestRegister({

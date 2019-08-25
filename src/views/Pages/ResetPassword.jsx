@@ -36,12 +36,6 @@ class ResetPassword extends Component {
         e.preventDefault();
 
         if (formValid(this.state)) {
-            console.log(`
-				---SUBMITTING---
-				UID: ${this.state.UID}
-				newPassword: ${this.state.newPassword}
-				newPasswordAgain: ${this.state.newPasswordAgain}
-			`);
             this.setState({loadingButton: "btn-loading"});
 
             Reset(

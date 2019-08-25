@@ -273,15 +273,6 @@ export class Edit extends Component {
 			requiredData.end_age = end_age;
 			requiredData.formErrors = formErrors;
 
-			console.log(`
-            ---SUBMITTING---
-               name: ${name}
-               hour: ${hour}
-               minute: ${minute}
-               employee: ${employee}
-               age: ${start_age}-${end_age}
-           `);
-
 			if (formValid(requiredData)) {
 				this.setState({ loadingButton: "btn-loading" });
 				players.map(el => {

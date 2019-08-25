@@ -292,26 +292,6 @@ export class Add extends Component {
 			attributesData.body_weight = body_weight.toString();
 		}
 
-		console.log(`
-        ---SUBMITTING---
-           name: ${name}
-           surname: ${surname}
-           securityNo: ${securityNo}
-           email: ${email}
-           position: ${position}
-           branch: ${branch}
-           phone: ${phone}
-           salary: ${salary}
-           address: ${address}
-           gender: ${gender}
-           blood: ${JSON.stringify(blood)}
-           attributes: ${JSON.stringify(attributesData)}
-           emergency: ${JSON.stringify(emergency)}
-           certificate: ${JSON.stringify(certificate)}
-           school_history: ${JSON.stringify(school_history)}
-           birthday: ${year ? year.value : null}-${month ? month.value : null}-${day ? day.value : null}
-       `);
-
 		const checkBirthday = year && month && day ? `${year.value}-${month.value}-${day.value}` : null;
 
 		if (formValid(requiredData)) {

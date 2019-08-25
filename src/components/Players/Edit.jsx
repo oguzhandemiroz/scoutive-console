@@ -6,7 +6,13 @@ import { SplitBirthday, getSelectValue, AttributeDataChecker, UploadFile } from 
 import { showSwal } from "../../components/Alert";
 import Select from "react-select";
 import Inputmask from "inputmask";
+import DatePicker, { registerLocale } from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import tr from "date-fns/locale/tr";
+import moment from 'moment'
 const $ = require("jquery");
+
+registerLocale("tr", tr);
 
 Inputmask.extendDefaults({
 	autoUnmask: true
@@ -98,6 +104,7 @@ const initialState = {
 	body_height: null,
 	fee: null,
 	point: null,
+	start_date: null,
 	emergency: [],
 	body_measure: []
 };
@@ -185,7 +192,8 @@ export class Edit extends Component {
 			this.setState({ select });
 		});
 
-		DetailPlayer({
+		
+		setTimeout(() => {DetailPlayer({
 			uid: uid,
 			to: to
 		}).then(response => {
@@ -220,6 +228,8 @@ export class Edit extends Component {
 					initialState.blood = getSelectValue(select.bloods, data.blood, "label");
 					initialState.emergency = data.emergency || [];
 					initialState.body_measure = data.attributes.body_measure ? data.attributes.body_measure : [];
+					initialState.start_date = data.start_date ? data.start_date === "None" ? null : new Date(data.start_date) : null; 
+					
 					if (initialState.emergency) {
 						const len = initialState.emergency.length;
 						if (len < 2) {
@@ -249,7 +259,7 @@ export class Edit extends Component {
 				}
 			} catch (e) {}
 		});
-
+	}, 100);
 		select.days = Days();
 		select.months = Months();
 		select.years = Years(true);
@@ -295,7 +305,7 @@ export class Edit extends Component {
 				addContinuously,
 				onLoadedData,
 				uploadedFile,
-				responseData
+				responseData,start_date
 			} = this.state;
 			const requiredData = {};
 			const attributesData = {};
@@ -308,6 +318,7 @@ export class Edit extends Component {
 			requiredData.day = day;
 			requiredData.month = month;
 			requiredData.year = year;
+			requiredData.start_date = start_date;
 			requiredData.branch = branch ? branch.value : null;
 			requiredData.formErrors = formErrors;
 
@@ -353,23 +364,6 @@ export class Edit extends Component {
 				attributesData.group_id = group.value.toString();
 			}
 
-			console.log(`
-                ---SUBMITTING---
-                name: ${name}
-                surname: ${surname}
-                securityNo: ${securityNo}
-                email: ${email}
-                position: ${JSON.stringify(position)}
-                branch: ${JSON.stringify(branch)}
-                phone: ${phone}
-                fee: ${formatFee}
-                image: ${image}
-                emergency: ${JSON.stringify(emergency)}
-                blood: ${JSON.stringify(blood)}
-                gender: ${gender}
-				birthday: ${year.value}-${month.value}-${day.value}
-				attributes: ${JSON.stringify(attributesData)}
-            `);
 			const checkBirthday = year && month && day ? `${year.value}-${month.value}-${day.value}` : null;
 			if (formValid(requiredData)) {
 				this.setState({ loadingButton: "btn-loading" });
@@ -393,6 +387,7 @@ export class Edit extends Component {
 					foot: foot,
 					birthday: checkBirthday,
 					image: image,
+					start_date: moment(start_date).format("YYYY-MM-DD"),
 					attributes: attributesData
 				}).then(code => {
 					this.setState({ loadingButton: "" });
@@ -418,6 +413,7 @@ export class Edit extends Component {
 				formErrors.email = email ? (!emailRegEx.test(email) ? "is-invalid" : "") : "";
 				formErrors.phone = phone ? (phone.length !== 10 ? "is-invalid" : "") : "";
 				formErrors.fee = fee ? "" : "is-invalid";
+				formErrors.start_date = start_date ? "" : "is-invalid";
 				//select
 				formErrors.branch = branch ? "" : true;
 				formErrors.day = day ? "" : true;
@@ -540,6 +536,12 @@ export class Edit extends Component {
 		this.setState({ formErrors, [name]: parseInt(value) });
 	};
 
+	handleDate = (date, name) => {
+		let formErrors = { ...this.state.formErrors };
+		formErrors.start_date = date ? "" : "is-invalid";
+		this.setState({ formErrors, [name]: date });
+	};
+
 	render() {
 		const {
 			to,
@@ -571,8 +573,10 @@ export class Edit extends Component {
 			formErrors,
 			loadingButton,
 			onLoadedData,
-			uploadedFile
+			uploadedFile,
+			start_date
 		} = this.state;
+		console.log(start_date)
 		return (
 			<div className="container">
 				<div className="page-header">
@@ -756,6 +760,22 @@ export class Edit extends Component {
 												</div>
 											</div>
 										</div>
+										<div className="form-group">
+									<label className="form-label">
+										Okula Başlama Tarihi
+										<span className="form-required">*</span>
+									</label>
+									<DatePicker
+										selected={start_date}
+										selectsEnd
+										startDate={start_date}
+										name="start_date"
+										locale="tr"
+										dateFormat="dd/MM/yyyy"
+										onChange={date => this.handleDate(date, "start_date")}
+										className={`form-control ${formErrors.start_date}`}
+									/> 
+								</div>
 									</div>
 								</div>
 							</div>

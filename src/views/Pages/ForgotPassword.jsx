@@ -36,10 +36,6 @@ class ForgotPassword extends Component {
         e.preventDefault();
 
         if (formValid(this.state)) {
-            console.log(`
-				---SUBMITTING---
-				username: ${this.state.username}
-			`);
             this.setState({loadingButton: "btn-loading"});
 
             Forgot({

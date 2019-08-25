@@ -38,12 +38,7 @@ export class LoginPage extends Component {
 
 		console.log(this.state);
 		if (formValid(this.state)) {
-			console.log(`
-             ---SUBMITTING---
-             username: ${this.state.username}
-             password: ${this.state.password}
-             remember: ${this.state.remember}
-			`);
+
 
 			this.setState({ loadingButton: "btn-loading" });
 

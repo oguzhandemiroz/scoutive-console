@@ -159,22 +159,6 @@ export class Profile extends Component {
             requiredData.phone_tel = phone_tel;
             requiredData.formErrors = formErrors;
 
-            console.log(`
-                ---SUBMITTING---
-                name: ${name}
-                tax_office: ${tax_office}
-                tax_no: ${tax_no}
-                phone_gsm: ${phone_gsm}
-                phone_tel: ${phone_tel}
-                phone_fax: ${phone_fax}
-                social_media: ${JSON.stringify(social_media)}
-                club: ${JSON.stringify(club)}
-                email: ${email}
-                address: ${address}
-                image: ${image}
-                owner_name: ${owner_name}
-                birthday: ${checkDate}
-            `);
             if (formValid(requiredData)) {
                 this.setState({loadingButton: "btn-loading"});
 

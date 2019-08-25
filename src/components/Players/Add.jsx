@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Bloods, Branchs, Days, Months, Years, PlayerPositions, Kinship, Groups } from "../../services/FillSelect.jsx";
-import { UploadFile } from "../../services/Others";
+import { UploadFile, getSelectValue } from "../../services/Others";
 import { CreatePlayer } from "../../services/Player.jsx";
 import { showSwal } from "../../components/Alert.jsx";
 import Select from "react-select";
@@ -194,13 +194,17 @@ export class Add extends Component {
 			this.setState({ select });
 		});
 
-		for (var i = 0; i < 2; i++) {
-			initialState.emergency.push({
-				kinship: "",
-				name: "",
-				phone: ""
-			});
-		}
+		initialState.emergency.push({
+			kinship: "Anne",
+			name: "",
+			phone: ""
+		});
+
+		initialState.emergency.push({
+			kinship: "Baba",
+			name: "",
+			phone: ""
+		});
 
 		for (var i = 0; i < body_measure_list.length; i++) {
 			initialState.body_measure.push({
@@ -312,28 +316,6 @@ export class Add extends Component {
 			attributesData.group_id = group.value.toString();
 		}
 
-		console.log(`
-        ---SUBMITTING---
-           name: ${name}
-           surname: ${surname}
-           securityNo: ${securityNo}
-           email: ${email}
-		   position: ${JSON.stringify(position)}
-		   group: ${group}
-           branch: ${branch}
-           phone: ${phone}
-           fee: ${fee}
-           point: ${point}
-           blood: ${blood}
-           gender: ${gender}
-           foot: ${foot}
-           foot_no: ${foot_no}
-           birthday: ${year ? year.value : null}-${month ? month.value : null}-${day ? day.value : null}
-           attributes: ${JSON.stringify(attributesData)}
-           emergency: ${JSON.stringify(emergency)}
-           body_measure: ${JSON.stringify(body_measure)}
-       `);
-
 		const checkBirthday = year && month && day ? `${year.value}-${month.value}-${day.value}` : null;
 
 		console.log(requiredData);
@@ -427,12 +409,6 @@ export class Add extends Component {
 			case "securityNo":
 				formErrors.securityNo =
 					value.length < 9 ? "is-invalid" : !securityNoRegEx.test(value) ? "is-invalid" : "";
-				break;
-			case "email":
-				formErrors.email = value.length < 2 ? "is-invalid" : !emailRegEx.test(value) ? "is-invalid" : "";
-				break;
-			case "phone":
-				formErrors.phone = value.length !== 10 ? "is-invalid" : "";
 				break;
 			case "fee":
 				formErrors.fee = value ? "" : "is-invalid";
@@ -1000,6 +976,11 @@ export class Add extends Component {
 															<tr key={key.toString()}>
 																<td className="pl-0 pr-0">
 																	<Select
+																						value={getSelectValue(
+																							select.kinships,
+																							el.kinship,
+																							"label"
+																						)}
 																		onChange={val =>
 																			this.handleSelect(
 																				val,

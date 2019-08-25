@@ -252,15 +252,6 @@ export class Add extends Component {
             requiredData.end_age = end_age;
             requiredData.formErrors = formErrors;
 
-            console.log(`
-            ---SUBMITTING---
-               name: ${name}
-               hour: ${hour}
-               minute: ${minute}
-               employee: ${employee}
-               age: ${start_age}-${end_age}
-           `);
-
             if (formValid(requiredData)) {
                 players.map(el => {
                     if (el.security_id && el.security_id !== "") playersArr.push(el.security_id);

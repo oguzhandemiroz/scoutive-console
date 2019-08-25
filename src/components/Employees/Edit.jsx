@@ -6,8 +6,13 @@ import { showSwal } from "../../components/Alert.jsx";
 import Select from "react-select";
 import { Link } from "react-router-dom";
 import Inputmask from "inputmask";
+import DatePicker, { registerLocale } from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import tr from "date-fns/locale/tr";
+import moment from 'moment'
 const $ = require("jquery");
 
+registerLocale("tr", tr);
 Inputmask.extendDefaults({
 	autoUnmask: true
 });
@@ -87,6 +92,7 @@ const initialState = {
 	school_history: null,
 	certificate: null,
 	image: null,
+	start_date: null,
 	imagePreview: null
 };
 
@@ -188,7 +194,7 @@ export class Edit extends Component {
 
 		this.setState({ select });
 
-		DetailEmployee({
+		setTimeout(() => {DetailEmployee({
 			uid: uid,
 			to: to
 		}).then(response => {
@@ -218,6 +224,7 @@ export class Edit extends Component {
 					initialState.emergency = data.emergency || [];
 					initialState.school_history = data.school_history || [];
 					initialState.certificate = data.certificates || [];
+					initialState.start_date = data.start_date ? data.start_date === "None" ? null : new Date(data.start_date) : null; 
 					if (initialState.emergency) {
 						const len = initialState.emergency.length;
 						if (len < 2) {
@@ -261,6 +268,7 @@ export class Edit extends Component {
 				}
 			}
 		});
+	}, 100);
 	}
 
 	handleSubmit = e => {
@@ -289,7 +297,7 @@ export class Edit extends Component {
 			certificate,
 			formErrors,
 			to,
-			select,
+			select,start_date,
 			responseData
 		} = this.state;
 		const requiredData = {};
@@ -303,6 +311,7 @@ export class Edit extends Component {
 		requiredData.phone = phone;
 		requiredData.position = position ? position.value : null;
 		requiredData.branch = branch ? branch.value : null;
+		requiredData.start_date = start_date;
 		requiredData.salary = salary;
 		requiredData.formErrors = formErrors;
 
@@ -332,26 +341,7 @@ export class Edit extends Component {
 		}
 
 		const checkBirthday = year && month && day ? `${year}-${month}-${day}` : null;
-		console.log(`
-            ---SUBMITTING---
-            name: ${name}
-            surname: ${surname}
-            securityNo: ${securityNo}
-            email: ${email}
-            position: ${JSON.stringify(position)}
-            branch: ${JSON.stringify(branch)}
-            phone: ${phone}
-            salary: ${formatSalary}
-            image: ${image}
-            emergency: ${JSON.stringify(emergency)}
-            school_history: ${JSON.stringify(school_history)}
-            blood: ${JSON.stringify(blood)}
-            gender: ${gender}
-            birthday: ${checkBirthday}
-			attributes: ${JSON.stringify(attributesData)}
-        `);
 
-		console.log(requiredData);
 
 		if (formValid(requiredData)) {
 			this.setState({ loadingButton: "btn-loading" });
@@ -374,6 +364,7 @@ export class Edit extends Component {
 				birthday: checkBirthday,
 				school_history: school_history,
 				certificates: certificate,
+				start_date: moment(start_date).format("YYYY-MM-DD"),
 				attributes: attributesData
 			}).then(code => {
 				this.setState({ loadingButton: "" });
@@ -400,6 +391,7 @@ export class Edit extends Component {
 			formErrors.email = email ? (!emailRegEx.test(email) ? "is-invalid" : "") : "is-invalid";
 			formErrors.phone = phone ? (phone.length !== 10 ? "is-invalid" : "") : "is-invalid";
 			formErrors.salary = salary ? "" : "is-invalid";
+			formErrors.start_date = start_date ? "" : "is-invalid";
 			//select
 			formErrors.position = position ? "" : true;
 			formErrors.branch = branch ? "" : true;
@@ -503,6 +495,12 @@ export class Edit extends Component {
 		const { name, value } = e.target;
 		this.setState({ [name]: parseInt(value) });
 	};
+	
+	handleDate = (date, name) => {
+		let formErrors = { ...this.state.formErrors };
+		formErrors.start_date = date ? "" : "is-invalid";
+		this.setState({ formErrors, [name]: date });
+	};
 
 	reload = () => {
 		const current = this.props.history.location.pathname;
@@ -534,6 +532,7 @@ export class Edit extends Component {
 			body_weight,
 			school_history,
 			certificate,
+			start_date,
 			formErrors,
 			select,
 			to,
@@ -682,6 +681,23 @@ export class Edit extends Component {
 												value={salary || ""}
 											/>
 										</div>
+
+										<div className="form-group">
+									<label className="form-label">
+										İşe Başlama Tarihi
+										<span className="form-required">*</span>
+									</label>
+									<DatePicker
+										selected={start_date}
+										selectsEnd
+										startDate={start_date}
+										name="start_date"
+										locale="tr"
+										dateFormat="dd/MM/yyyy"
+										onChange={date => this.handleDate(date, "start_date")}
+										className={`form-control ${formErrors.start_date}`}
+									/> 
+								</div>
 									</div>
 								</div>
 							</div>
