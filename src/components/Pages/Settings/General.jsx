@@ -31,6 +31,26 @@ export class General extends Component {
                 </div>
                 <div className="card-body">
                     <div className="form-group">
+                        <label className="form-label">Saha Ayarları</label>
+                        <div className="row gutters-xs mb-3">
+                            <div className="col-6">
+                                <input type="text" className="form-control" placeholder="Saha 1" />
+                            </div>
+                            <div className="col-6">
+                                <input type="text" className="form-control" placeholder="Saha 2" />
+                            </div>
+                        </div>
+                        <div className="row gutters-xs">
+                            <div className="col-6">
+                                <input type="text" className="form-control" placeholder="Saha 3" />
+                            </div>
+                            <div className="col-6">
+                                <input type="text" className="form-control" placeholder="Saha 4" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="form-group">
                         <label className="form-label">Güvenli Bölge</label>
                         <div className="input-group">
                             <input
@@ -49,6 +69,7 @@ export class General extends Component {
                             </span>
                         </div>
                     </div>
+                    <hr />
                 </div>
                 <div className="card-footer text-right">
                     <button type="submit" className={`btn btn-primary`}>
