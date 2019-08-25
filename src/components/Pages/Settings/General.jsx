@@ -49,6 +49,7 @@ export class General extends Component {
                             </div>
                         </div>
                     </div>
+                    <hr />
 
                     <div className="form-group">
                         <label className="form-label">Güvenli Bölge</label>
@@ -69,7 +70,6 @@ export class General extends Component {
                             </span>
                         </div>
                     </div>
-                    <hr />
                 </div>
                 <div className="card-footer text-right">
                     <button type="submit" className={`btn btn-primary`}>

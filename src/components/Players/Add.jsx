@@ -134,7 +134,7 @@ export class Add extends Component {
 				point: ""
 			},
 			loadingButton: "",
-			addContinuously: false,
+			addContinuously: true,
 			uploadedFile: true
 		};
 	}

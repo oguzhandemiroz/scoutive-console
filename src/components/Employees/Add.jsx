@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Bloods, Branchs, Days, Months, Years, EmployeePositions, Kinship } from "../../services/FillSelect.jsx";
 import { CreateEmployee } from "../../services/Employee.jsx";
-import { UploadFile } from "../../services/Others.jsx";
+import { UploadFile, getSelectValue } from "../../services/Others.jsx";
 import { showSwal } from "../../components/Alert.jsx";
 import Select from "react-select";
 import Inputmask from "inputmask";
@@ -125,7 +125,7 @@ export class Add extends Component {
 				salary: ""
 			},
 			loadingButton: "",
-			addContinuously: false,
+			addContinuously: true,
 			uploadedFile: true
 		};
 	}
@@ -184,13 +184,16 @@ export class Add extends Component {
 			this.setState({ select });
 		});
 
-		for (var i = 0; i < 2; i++) {
-			initialState.emergency.push({
-				kinship: "",
-				name: "",
-				phone: ""
-			});
-		}
+		initialState.emergency.push({
+			kinship: "Anne",
+			name: "",
+			phone: ""
+		});
+		initialState.emergency.push({
+			kinship: "Baba",
+			name: "",
+			phone: ""
+		});
 
 		for (var i = 0; i < 3; i++) {
 			initialState.school_history.push({
@@ -840,6 +843,11 @@ export class Add extends Component {
 															<tr key={key.toString()}>
 																<td className="pl-0 pr-0">
 																	<Select
+																	value={getSelectValue(
+																							select.kinships,
+																							el.kinship,
+																							"label"
+																						)}
 																		onChange={val =>
 																			this.handleSelect(
 																				val,
