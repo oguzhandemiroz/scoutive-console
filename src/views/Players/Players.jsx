@@ -4,6 +4,7 @@ import { ListPlayers } from "../../services/Player";
 import { Link } from "react-router-dom";
 import DailyPlayer from "../../components/Players/Charts/DailyPlayer";
 import TotalFee from "../../components/Players/Charts/TotalFee";
+import TotalPlayerCount from "../../components/Players/Charts/TotalPlayerCount";
 
 class Players extends Component {
 	constructor(props) {
@@ -57,7 +58,12 @@ class Players extends Component {
 						<DailyPlayer data={data} />
 					</div>
 					<div className="col-sm-6 col-md-4">
-						<TotalFee data={data} />
+						<TotalPlayerCount data={data} />
+					</div>
+					<div className="col-sm-6 col-md-4">
+						<div className="card">
+							<TotalFee data={data} />
+						</div>
 					</div>
 				</div>
 				<div className="row row-cards">

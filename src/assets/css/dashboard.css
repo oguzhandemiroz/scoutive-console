@@ -18487,8 +18487,15 @@ a.tag-addon:hover {
 }
 
 .dataTables_wrapper .dataTables_length {
-	margin: 1rem 1.5rem;
-	float: left;
+	padding: 0 1.5rem;
+	float: right;
+	margin: 1rem 0;
+	border-left: 1px solid rgba(0, 40, 100, 0.12);
+}
+
+.dataTables_wrapper .dataTables_length label,
+.dataTables_wrapper .dataTables_filter label {
+	margin-bottom: 0 !important;
 }
 
 .dataTables_wrapper .dataTables_length select {
@@ -18498,7 +18505,7 @@ a.tag-addon:hover {
 }
 
 .dataTables_wrapper .dataTables_filter {
-	float: right;
+	float: left;
 	margin: 1rem 1.5rem;
 	text-align: right;
 	color: #495057;

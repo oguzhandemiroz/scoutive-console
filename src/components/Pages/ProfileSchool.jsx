@@ -193,9 +193,9 @@ export class Profile extends Component {
                 console.error("FORM INVALID - DISPLAY ERROR");
                 let formErrors = {...this.state.formErrors};
 
-                formErrors.name = name ? (name.length < 3 ? "is-invalid" : "") : "is-invalid";
+                formErrors.name = name ? (name.length < 2 ? "is-invalid" : "") : "is-invalid";
                 formErrors.tax_office = tax_office
-                    ? tax_office.length < 3
+                    ? tax_office.length < 2
                         ? "is-invalid"
                         : ""
                     : "is-invalid";

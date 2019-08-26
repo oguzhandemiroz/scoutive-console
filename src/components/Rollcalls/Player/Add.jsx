@@ -65,7 +65,7 @@ export class Add extends Component {
 						data.map(el => {
 							statusList.push({
 								uid: el.uid,
-								status: el.status
+								status: el.daily
 							});
 						});
 						this.setState({ players: data, statuses: statusList });

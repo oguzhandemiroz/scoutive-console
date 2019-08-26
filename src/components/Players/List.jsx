@@ -9,16 +9,24 @@ import { DeletePlayer, FreezePlayer, RefreshPlayer } from "../../services/Player
 import { fullnameGenerator } from "../../services/Others";
 import Vacation from "../PlayerAction/Vacation";
 import GroupChange from "../PlayerAction/GroupChange";
-
+import "datatables.net-buttons/js/buttons.print";
+import "datatables.net-buttons/js/buttons.colVis";
 const $ = require("jquery");
-$.DataTable = require("datatables.net");
+$.DataTable = require("datatables.net-buttons");
 
-var statusType = {
+var dailyType = {
 	"-1": ["Tanımsız", "secondary"],
 	"0": ["Gelmedi", "danger"],
 	"1": ["Geldi", "success"],
 	"2": ["T. Gün İzinli", "warning"],
 	"3": ["Y. Gün İzinli", "warning"]
+};
+
+var statusType = {
+	0: "bg-gray",
+	1: "bg-success",
+	2: "bg-azure",
+	3: "bg-indigo"
 };
 
 const datatable_turkish = {
@@ -29,10 +37,11 @@ const datatable_turkish = {
 	sInfoFiltered: "(_MAX_ kayıt içerisinden bulunan)",
 	sInfoPostFix: "",
 	sInfoThousands: ".",
-	sLengthMenu: "Sayfada _MENU_ kayıt göster",
+	sLengthMenu: "_MENU_ göster",
 	sLoadingRecords: "Yükleniyor...",
 	sProcessing: "İşleniyor...",
-	sSearch: "Ara: ",
+	sSearch: "",
+	searchPlaceholder: "Ara",
 	sZeroRecords: "Eşleşen kayıt bulunamadı",
 	oPaginate: {
 		sFirst: "İlk",
@@ -185,8 +194,24 @@ class Table extends Component {
 	componentDidMount() {
 		try {
 			const UID = localStorage.getItem("UID");
-			$("#player-list").DataTable({
+			const table = $("#player-list").DataTable({
+				dom: '<"top"f>rt<"bottom"ilp><"clear">',
+				/*buttons: [
+					{
+						text: "My button",
+						className: "btn btn-secondary",
+						action: function(e, dt, node, config) {
+							$.fn.dataTable.ext.search = [];
+							$.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
+								if (dt.ajax.json().data[dataIndex].status === 1) return true;
+								else return false;
+							});
+							dt.draw();
+						}
+					}
+				],*/
 				responsive: true,
+				fixedHeader: true,
 				order: [3, "asc"],
 				aLengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "Tümü"]],
 				stateSave: false, // change true
@@ -392,43 +417,30 @@ class Table extends Component {
 						class: "text-center",
 						render: function(data, type, row) {
 							var status = row.status;
-							var bg_class_type = {
-								"0": "gray",
-								"1": "success",
-								"2": "azure"
-							};
 							if (data === null) {
-								return (
-									'<span class="avatar avatar-placeholder">' +
-									'<span class="avatar-status bg-' +
-									bg_class_type[status] +
-									'"></span></span>'
-								);
+								return `<span class="avatar avatar-placeholder">
+										<span class="avatar-status ${row.is_trial ? statusType[3] : statusType[status]}"></span>
+									</span>`;
 							} else {
-								return (
-									'<div class="avatar" style="background-image: url(' +
-									data +
-									')">' +
-									'<span class="avatar-status bg-' +
-									bg_class_type[status] +
-									'"></span></div>'
-								);
+								return `<div class="avatar" style="background-image: url(${data})">
+										<span class="avatar-status ${statusType[status]}"></span>
+									</div>`;
 							}
 						}
 					},
-                    {
+					{
 						data: "name",
 						class: "w-1",
-                        render: function(data, type, row) {
-                            const fullname = fullnameGenerator(data, row.surname);
-                            if (type === "sort" || type === "type") {
-                                return fullname;
-                            }
-                            if (data)
-                                return `<a class="text-inherit" data-toggle="tooltip" data-placement="top" data-original-title="${fullname}" 
+						render: function(data, type, row) {
+							const fullname = fullnameGenerator(data, row.surname);
+							if (type === "sort" || type === "type") {
+								return fullname;
+							}
+							if (data)
+								return `<a class="text-inherit" data-toggle="tooltip" data-placement="top" data-original-title="${fullname}" 
 								href="/app/players/detail/${row.uid}">${fullname}</a>`;
-                        }
-                    },
+						}
+					},
 					{
 						data: "emergency",
 						render: function(data, type, row) {
@@ -483,7 +495,7 @@ class Table extends Component {
 						data: "daily",
 						render: function(data, type, row) {
 							return (
-								'<span class="status-icon bg-' + statusType[data][1] + '"></span>' + statusType[data][0]
+								'<span class="status-icon bg-' + dailyType[data][1] + '"></span>' + dailyType[data][0]
 							);
 						}
 					},
@@ -492,16 +504,31 @@ class Table extends Component {
 					}
 				]
 			});
+
+			$("#player-list tbody").on("click", "tr", el => {
+				var data = table.row(el.currentTarget).data();
+				this.props.history.push("/app/players/detail/" + data.uid);
+			});
+
+			$("div.toolbar").html("<b>Custom tool bar! Text/images etc.</b>");
+
 			$.fn.DataTable.ext.errMode = "none";
 			$("#player-list").on("error.dt", function(e, settings, techNote, message) {
 				console.log("An error has been reported by DataTables: ", message, techNote);
 			});
 
 			$("#player-list").on("draw.dt", function() {
+				console.log("draw.dt");
 				$('[data-toggle="tooltip"]').tooltip();
+				/*$.fn.dataTable.ext.search = [];
+				$.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
+					if (table.ajax.json().data[dataIndex].status === 1) return true;
+					else return false;
+				});*/
 			});
 		} catch (e) {
-			fatalSwal();
+			//fatalSwal(true);
+			console.log("e", e);
 		}
 	}
 

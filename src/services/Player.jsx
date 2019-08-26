@@ -8,7 +8,7 @@ h.append("Authorization", localStorage.getItem("UID"));
 
 const CreatePlayer = data => {
 	try {
-		return fetch(ep.CREATE_PLAYER, {
+		return fetch(ep.PLAYER_CREATE, {
 			method: "POST",
 			body: JSON.stringify(data),
 			headers: h
@@ -29,6 +29,35 @@ const CreatePlayer = data => {
 
 					return response;
 				}
+			})
+			.catch(e => fatalSwal(true));
+	} catch (e) {
+		fatalSwal(true);
+	}
+};
+
+const CreateTrialPlayer = data => {
+	try {
+		return fetch(ep.PLAYER_TRIAL_CREATE, {
+			method: "POST",
+			body: JSON.stringify(data),
+			headers: h
+		})
+			.then(res => res.json())
+			.then(response => {
+				console.log(response);
+				const status = response.status;
+
+				if (status.code !== 1020) {
+					errorSwal(status);
+				} else {
+					Toast.fire({
+						type: "success",
+						title: "Başarıyla oluşturuldu...",
+						timer: 3500
+					});
+				}
+				return response;
 			})
 			.catch(e => fatalSwal(true));
 	} catch (e) {
@@ -204,6 +233,7 @@ const ListPlayers = uid => {
 
 export {
 	CreatePlayer,
+	CreateTrialPlayer,
 	DetailPlayer,
 	UpdatePlayer,
 	UpdatePlayers,

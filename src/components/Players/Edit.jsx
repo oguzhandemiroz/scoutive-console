@@ -9,7 +9,7 @@ import Inputmask from "inputmask";
 import DatePicker, { registerLocale } from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import tr from "date-fns/locale/tr";
-import moment from 'moment'
+import moment from "moment";
 const $ = require("jquery");
 
 registerLocale("tr", tr);
@@ -192,74 +192,80 @@ export class Edit extends Component {
 			this.setState({ select });
 		});
 
-		
-		setTimeout(() => {DetailPlayer({
-			uid: uid,
-			to: to
-		}).then(response => {
-			try {
-				const status = response.status;
-				initialState.body = {};
-				if (status.code === 1020) {
-					const data = response.data;
-					this.setState({ responseData: data });
-					const getSplitBirthday = SplitBirthday(data.birthday);
-					initialState.name = data.name;
-					initialState.surname = data.surname;
-					initialState.securityNo = data.security_id;
-					initialState.email = data.email;
-					initialState.phone = data.phone;
-					initialState.image = data.image;
-					initialState.imagePreview = data.image;
-					initialState.gender = data.gender;
-					initialState.address = data.address;
-					initialState.body_height = data.attributes.body_height;
-					initialState.body_weight = data.attributes.body_weight;
-					initialState.foot_no = data.attributes.foot_no;
-					initialState.fee = Inputmask.format(data.fee.toString(), { alias: "decimal" });
-					initialState.point = data.point;
-					initialState.foot = data.foot;
-					initialState.position = getSelectValue(select.positions, data.position, "label");
-					initialState.branch = getSelectValue(select.branchs, data.branch, "label");
-					initialState.group = data.group ? getSelectValue(select.groups, data.group.name, "label") : null;
-					initialState.day = getSelectValue(select.days, getSplitBirthday.day, "value");
-					initialState.month = getSelectValue(select.months, getSplitBirthday.month, "value");
-					initialState.year = getSelectValue(select.years, getSplitBirthday.year, "value");
-					initialState.blood = getSelectValue(select.bloods, data.blood, "label");
-					initialState.emergency = data.emergency || [];
-					initialState.body_measure = data.attributes.body_measure ? data.attributes.body_measure : [];
-					initialState.start_date = data.start_date ? data.start_date === "None" ? null : new Date(data.start_date) : null; 
-					
-					if (initialState.emergency) {
-						const len = initialState.emergency.length;
-						if (len < 2) {
-							for (var i = 0; i < 2 - len; i++) {
-								initialState.emergency.push({
-									kinship: "",
-									name: "",
-									phone: ""
-								});
-							}
-						}
-					}
-					if (initialState.body_measure) {
-						const len = initialState.body_measure.length;
-						if (len === 0) {
-							for (var i = 0; i < body_measure_list.length; i++) {
-								initialState.body_measure.push({
-									type: body_measure_list[i],
-									value: ""
-								});
-							}
-						}
-					}
+		setTimeout(() => {
+			DetailPlayer({
+				uid: uid,
+				to: to
+			}).then(response => {
+				try {
+					const status = response.status;
+					initialState.body = {};
+					if (status.code === 1020) {
+						const data = response.data;
+						this.setState({ responseData: data });
+						const getSplitBirthday = SplitBirthday(data.birthday);
+						initialState.name = data.name;
+						initialState.surname = data.surname;
+						initialState.securityNo = data.security_id;
+						initialState.email = data.email;
+						initialState.phone = data.phone;
+						initialState.image = data.image;
+						initialState.imagePreview = data.image;
+						initialState.gender = data.gender;
+						initialState.address = data.address;
+						initialState.body_height = data.attributes.body_height;
+						initialState.body_weight = data.attributes.body_weight;
+						initialState.foot_no = data.attributes.foot_no;
+						initialState.fee = Inputmask.format(data.fee.toString(), { alias: "decimal" });
+						initialState.point = data.point;
+						initialState.foot = data.foot;
+						initialState.position = getSelectValue(select.positions, data.position, "label");
+						initialState.branch = getSelectValue(select.branchs, data.branch, "label");
+						initialState.group = data.group
+							? getSelectValue(select.groups, data.group.name, "label")
+							: null;
+						initialState.day = getSelectValue(select.days, getSplitBirthday.day, "value");
+						initialState.month = getSelectValue(select.months, getSplitBirthday.month, "value");
+						initialState.year = getSelectValue(select.years, getSplitBirthday.year, "value");
+						initialState.blood = getSelectValue(select.bloods, data.blood, "label");
+						initialState.emergency = data.emergency || [];
+						initialState.body_measure = data.attributes.body_measure ? data.attributes.body_measure : [];
+						initialState.start_date = data.start_date
+							? data.start_date === "None"
+								? null
+								: new Date(data.start_date)
+							: null;
 
-					this.setState({ ...initialState });
-					this.setState({ onLoadedData: true });
-				}
-			} catch (e) {}
-		});
-	}, 100);
+						if (initialState.emergency) {
+							const len = initialState.emergency.length;
+							if (len < 2) {
+								for (var i = 0; i < 2 - len; i++) {
+									initialState.emergency.push({
+										kinship: "",
+										name: "",
+										phone: ""
+									});
+								}
+							}
+						}
+						if (initialState.body_measure) {
+							const len = initialState.body_measure.length;
+							if (len === 0) {
+								for (var i = 0; i < body_measure_list.length; i++) {
+									initialState.body_measure.push({
+										type: body_measure_list[i],
+										value: ""
+									});
+								}
+							}
+						}
+
+						this.setState({ ...initialState });
+						this.setState({ onLoadedData: true });
+					}
+				} catch (e) {}
+			});
+		}, 100);
 		select.days = Days();
 		select.months = Months();
 		select.years = Years(true);
@@ -305,7 +311,8 @@ export class Edit extends Component {
 				addContinuously,
 				onLoadedData,
 				uploadedFile,
-				responseData,start_date
+				responseData,
+				start_date
 			} = this.state;
 			const requiredData = {};
 			const attributesData = {};
@@ -401,8 +408,8 @@ export class Edit extends Component {
 				console.error("FORM INVALID - DISPLAY ERROR");
 				let formErrors = { ...this.state.formErrors };
 
-				formErrors.name = name ? (name.length < 3 ? "is-invalid" : "") : "is-invalid";
-				formErrors.surname = surname ? (surname.length < 3 ? "is-invalid" : "") : "is-invalid";
+				formErrors.name = name ? (name.length < 2 ? "is-invalid" : "") : "is-invalid";
+				formErrors.surname = surname ? (surname.length < 2 ? "is-invalid" : "") : "is-invalid";
 				formErrors.securityNo = securityNo
 					? securityNo.length < 9
 						? "is-invalid"
@@ -576,7 +583,7 @@ export class Edit extends Component {
 			uploadedFile,
 			start_date
 		} = this.state;
-		console.log(start_date)
+		console.log(start_date);
 		return (
 			<div className="container">
 				<div className="page-header">
@@ -701,9 +708,7 @@ export class Edit extends Component {
 											/>
 										</div>
 										<div className="form-group">
-											<label className="form-label">
-												Mevkii
-											</label>
+											<label className="form-label">Mevkii</label>
 											<Select
 												value={position}
 												onChange={val => this.handleSelect(val, "position")}
@@ -761,21 +766,21 @@ export class Edit extends Component {
 											</div>
 										</div>
 										<div className="form-group">
-									<label className="form-label">
-										Okula Başlama Tarihi
-										<span className="form-required">*</span>
-									</label>
-									<DatePicker
-										selected={start_date}
-										selectsEnd
-										startDate={start_date}
-										name="start_date"
-										locale="tr"
-										dateFormat="dd/MM/yyyy"
-										onChange={date => this.handleDate(date, "start_date")}
-										className={`form-control ${formErrors.start_date}`}
-									/> 
-								</div>
+											<label className="form-label">
+												Okula Başlama Tarihi
+												<span className="form-required">*</span>
+											</label>
+											<DatePicker
+												selected={start_date}
+												selectsEnd
+												startDate={start_date}
+												name="start_date"
+												locale="tr"
+												dateFormat="dd/MM/yyyy"
+												onChange={date => this.handleDate(date, "start_date")}
+												className={`form-control ${formErrors.start_date}`}
+											/>
+										</div>
 									</div>
 								</div>
 							</div>

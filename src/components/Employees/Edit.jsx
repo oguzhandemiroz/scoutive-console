@@ -379,8 +379,8 @@ export class Edit extends Component {
 			const { value } = e.target;
 			let formErrors = { ...this.state.formErrors };
 
-			formErrors.name = name ? (name.length < 3 ? "is-invalid" : "") : "is-invalid";
-			formErrors.surname = surname ? (surname.length < 3 ? "is-invalid" : "") : "is-invalid";
+			formErrors.name = name ? (name.length < 2 ? "is-invalid" : "") : "is-invalid";
+			formErrors.surname = surname ? (surname.length < 2 ? "is-invalid" : "") : "is-invalid";
 			formErrors.securityNo = securityNo
 				? securityNo.length < 9
 					? "is-invalid"

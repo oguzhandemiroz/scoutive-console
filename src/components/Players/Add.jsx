@@ -370,8 +370,8 @@ export class Add extends Component {
 			console.error("FORM INVALID - DISPLAY ERROR");
 			let formErrors = { ...this.state.formErrors };
 
-			formErrors.name = name ? (name.length < 3 ? "is-invalid" : "") : "is-invalid";
-			formErrors.surname = surname ? (surname.length < 3 ? "is-invalid" : "") : "is-invalid";
+			formErrors.name = name ? (name.length < 2 ? "is-invalid" : "") : "is-invalid";
+			formErrors.surname = surname ? (surname.length < 2 ? "is-invalid" : "") : "is-invalid";
 			formErrors.securityNo = securityNo
 				? securityNo.length < 9
 					? "is-invalid"
@@ -976,11 +976,11 @@ export class Add extends Component {
 															<tr key={key.toString()}>
 																<td className="pl-0 pr-0">
 																	<Select
-																						value={getSelectValue(
-																							select.kinships,
-																							el.kinship,
-																							"label"
-																						)}
+																		value={getSelectValue(
+																			select.kinships,
+																			el.kinship,
+																			"label"
+																		)}
 																		onChange={val =>
 																			this.handleSelect(
 																				val,

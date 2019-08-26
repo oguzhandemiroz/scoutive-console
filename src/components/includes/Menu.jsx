@@ -50,7 +50,7 @@ class Menu extends Component {
 									</li>
 									<li className="nav-item">
 										<NavLink
-											to="/app/rollcalls"
+											to="/app/rollcalls/player"
 											activeClassName="active"
 											className="nav-link"
 											data-toggle="dropdown">

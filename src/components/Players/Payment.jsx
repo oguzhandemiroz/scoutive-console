@@ -322,7 +322,7 @@ export class Payment extends Component {
             if (response) {
                 const status = response.status;
                 if (status.code === 1020) {
-                    this.setState({pastData: response.data.reverse()});
+                    this.setState({pastData: response.data});
                 }
             }
         });
@@ -507,7 +507,7 @@ export class Payment extends Component {
                                                         <strong>
                                                             {el.amount ? el.amount.format() + " ₺" : null}
                                                         </strong>{" "}
-                                                        maaş ödendi
+                                                        ödeme alındı
                                                     </div>
                                                     <div className="timeline-time">
                                                         {moment(el.payment_date).format("DD-MM-YYYY")}
