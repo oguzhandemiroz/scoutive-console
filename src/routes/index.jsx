@@ -242,7 +242,7 @@ var indexRoutes = [
 		prop: { exact: true }
 	},
 	{
-		path: "/rollcalls/employee/add",
+		path: "/rollcalls/employee/add/:rcid",
 		component: EmployeesRollcallAdd,
 		layout: "/app",
 		prop: { exact: true }
@@ -262,7 +262,7 @@ var indexRoutes = [
 		prop: { exact: true }
 	},
 	{
-		path: "/rollcalls/player/add",
+		path: "/rollcalls/player/add/:rcid",
 		name: "Players Rollcalls",
 		component: PlayersRollcallAdd,
 		layout: "/app",

@@ -18505,7 +18505,7 @@ a.tag-addon:hover {
 }
 
 .dataTables_wrapper .dataTables_filter {
-	float: left;
+	float: right;
 	margin: 1rem 1.5rem;
 	text-align: right;
 	color: #495057;

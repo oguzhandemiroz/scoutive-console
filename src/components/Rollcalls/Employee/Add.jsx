@@ -47,7 +47,7 @@ export class EmployeesRollcalls extends Component {
 
 	renderEmployeeList = () => {
 		const { uid } = this.state;
-		const { rcid } = this.props.location.state;
+		const { rcid } = this.props.match.params;
 		ListRollcallType(
 			{
 				uid: uid,
@@ -94,7 +94,7 @@ export class EmployeesRollcalls extends Component {
 				- type 2 -> izinli
 			*/
 			const { uid, loadingButtons } = this.state;
-			const { rcid } = this.props.location.state;
+			const { rcid } = this.props.match.params;
 			console.log({
 				uid: uid,
 				to: to,
@@ -182,13 +182,12 @@ export class EmployeesRollcalls extends Component {
 	};
 
 	render() {
-		const { employees, onLoadedData, statuses, loadingButtons } = this.state;
-		if(!this.props.location.state) this.props.history.goBack();
+		const { employees, statuses, loadingButtons } = this.state;
 		return (
 			<div className="container">
 				<div className="page-header">
 					<h1 className="page-title">
-						Yoklamalar &mdash; Personel &mdash; Yoklama Al (#{this.props.location.state.rcid})
+						Yoklamalar &mdash; Personel &mdash; Yoklama Al (#{this.props.match.params.rcid})
 					</h1>
 				</div>
 				<div className="row">

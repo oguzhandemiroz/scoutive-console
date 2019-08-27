@@ -1,10 +1,9 @@
 import React, { Component } from "react";
 import { datatable_turkish } from "../../assets/js/core";
 import ep from "../../assets/js/urls";
-import { fatalSwal, errorSwal } from "../Alert.jsx";
+import { fatalSwal, errorSwal, showSwal, Toast } from "../Alert.jsx";
 import ReactDOM from "react-dom";
 import { BrowserRouter, Link } from "react-router-dom";
-import { showSwal, Toast } from "../Alert";
 import { DeletePlayer, FreezePlayer, RefreshPlayer } from "../../services/Player";
 import { fullnameGenerator } from "../../services/Others";
 import Vacation from "../PlayerAction/Vacation";

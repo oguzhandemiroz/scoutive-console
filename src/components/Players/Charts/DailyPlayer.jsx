@@ -67,7 +67,6 @@ class DailyPlayer extends Component {
             dataObj[el.daily] = dataObj[el.daily === 3 ? 2 : el.daily] + 1;
         });
         Object.keys(dataObj).map(el => {
-            console.log(el);
             switch (el) {
                 case "0":
                     this.setState({not_came: ["0", dataObj[el]]});

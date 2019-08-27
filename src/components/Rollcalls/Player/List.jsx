@@ -69,10 +69,7 @@ export class List extends Component {
 							type: "success",
 							title: "İşlem başarılı..."
 						});
-						this.props.history.push({
-							pathname: `/app/rollcalls/player/add`,
-							state: { rcid: response.rollcall_id }
-						});
+						this.props.history.push(`/app/rollcalls/player/add/${response.rollcall_id}`);
 					} else if (status.code === 2010) {
 						showSwal({
 							type: "warning",
@@ -84,10 +81,7 @@ export class List extends Component {
 							cancelButtonText: "Kapat"
 						}).then(result => {
 							if (result.value) {
-								this.props.history.push({
-									pathname: `/app/rollcalls/player/add`,
-									state: { rcid: response.rollcall_id }
-								});
+								this.props.history.push(`/app/rollcalls/player/add/${response.rollcall_id}`);
 							}
 						});
 					}
@@ -140,16 +134,9 @@ export class List extends Component {
 											? rollcallList.length > 0
 												? rollcallList.map((el, key) => {
 														const redirect =
-															el.status === 2
-																? {
-																		pathname: "/app/rollcalls/player/add",
-																		state: { rcid: el.rollcall_id }
-																  }
-																: {
-																		pathname:
-																			"/app/rollcalls/player/detail/" +
-																			el.rollcall_id
-																  };
+															"/app/rollcalls/player/" +
+															(el.status === 2 ? "add/" : "detail/") +
+															el.rollcall_id;
 														return (
 															<tr key={key.toString()}>
 																<td className="text-center text-muted">
