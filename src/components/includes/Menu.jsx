@@ -1,6 +1,88 @@
 import React, { Component } from "react";
 import { NavLink } from "react-router-dom";
 
+const menu = [
+	{
+		li: "nav-item",
+		navlink: { to: "/app/dashboard", exact: true, activeClassName: "active", className: "nav-link" },
+		icon: "fe fe-home",
+		text: "Anasayfa",
+		item: null
+	},
+	{
+		li: "nav-item",
+		navlink: { to: "/app/employees", exact: false, activeClassName: "active", className: "nav-link" },
+		icon: "fe fe-briefcase",
+		text: "Personeller",
+		item: null
+	},
+	{
+		li: "nav-item",
+		navlink: { to: "/app/players", exact: false, activeClassName: "active", className: "nav-link" },
+		icon: "fe fe-users",
+		text: "Öğrenciler",
+		item: null
+	},
+	{
+		li: "nav-item",
+		navlink: { to: "/app/groups", exact: false, activeClassName: "active", className: "nav-link" },
+		icon: "fe fe-grid",
+		text: "Gruplar",
+		item: null
+	},
+	{
+		li: "nav-item",
+		navlink: { to: "/app/rollcalls", exact: false, activeClassName: "active", className: "nav-link" },
+		dataToggle: "dropdown",
+		icon: "fe fe-check-square",
+		text: "Yoklamalar",
+		childDividerClass: "dropdown-menu dropdown-menu-arrow",
+		item: [
+			{
+				to: "/app/rollcalls/player",
+				className: "dropdown-item",
+				childText: "Öğrenci Yoklaması"
+			},
+			{
+				to: "/app/rollcalls/employee",
+				className: "dropdown-item",
+				childText: "Personel Yoklaması"
+			}
+		]
+	},
+	{
+		li: "nav-item",
+		navlink: { to: "/app/budgets", exact: false, activeClassName: "active", className: "nav-link" },
+		icon: "fa fa-coins",
+		text: "Kasa ve Banka",
+		item: null
+	},
+	{
+		li: "nav-item",
+		navlink: { to: "/app/accountings", exact: false, activeClassName: "active", className: "nav-link" },
+		icon: "fe fe-bar-chart-2",
+		text: "Gelir/Gider",
+		item: null
+	},
+	{
+		li: "nav-item cursor-not-allowed",
+		navlink: {
+			to: "/app/reports",
+			exact: true,
+			activeClassName: "active",
+			className: "nav-link cursor-not-allowed disabled"
+		},
+		icon: "fe fe-pie-chart",
+		text: "Raporlar",
+		item: null,
+		child: () => (
+			<span className="ml-2">
+				(<i className="fe fe-lock mr-0" />)
+			</span>
+		)
+	}
+];
+
 class Menu extends Component {
 	render() {
 		console.log(this.props);
@@ -21,74 +103,42 @@ class Menu extends Component {
 										<i className="fe fe-search" />
 									</div>
 								</form>
-							</div>*/}
+						</div>*/}
 							<div className="col-lg order-lg-first">
 								<ul className="nav nav-tabs border-0 flex-column flex-lg-row">
-									<li className="nav-item">
-										<NavLink
-											to="/app/dashboard"
-											exact
-											activeClassName="active"
-											className="nav-link">
-											<i className="fe fe-home" /> Anasayfa
-										</NavLink>
-									</li>
-									<li className="nav-item">
-										<NavLink to="/app/employees" activeClassName="active" className="nav-link">
-											<i className="fe fe-briefcase" /> Personeller
-										</NavLink>
-									</li>
-									<li className="nav-item">
-										<NavLink to="/app/players" activeClassName="active" className="nav-link">
-											<i className="fe fe-users" /> Öğrenciler
-										</NavLink>
-									</li>
-									<li className="nav-item">
-										<NavLink to="/app/groups" activeClassName="active" className="nav-link">
-											<i className="fe fe-grid" /> Gruplar
-										</NavLink>
-									</li>
-									<li className="nav-item">
-										<NavLink
-											to="/app/rollcalls"
-											activeClassName="active"
-											className="nav-link"
-											data-toggle="dropdown">
-											<i className="fe fe-check-square" />
-											Yoklamalar
-										</NavLink>
-										<div className="dropdown-menu dropdown-menu-arrow">
-											<NavLink to="/app/rollcalls/player" className="dropdown-item">
-												Öğrenci Yoklaması
-											</NavLink>
-											<NavLink to="/app/rollcalls/employee" className="dropdown-item">
-												Personel Yoklaması
-											</NavLink>
-										</div>
-									</li>
-									<li className="nav-item">
-										<NavLink to="/app/budgets" activeClassName="active" className="nav-link">
-											<i className="fa fa-coins" /> Kasa ve Banka
-										</NavLink>
-									</li>
-									<li className="nav-item">
-										<NavLink to="/app/accountings" activeClassName="active" className="nav-link">
-											<i className="fe fe-bar-chart-2" />
-											Gelir/Gider
-										</NavLink>
-									</li>
-									<li className="nav-item cursor-not-allowed">
-										<NavLink
-											to="/app/reports"
-											exact
-											activeClassName="active"
-											className="nav-link cursor-not-allowed disabled">
-											<i className="fe fe-pie-chart" /> Raporlar
-											<span className="ml-2">
-												(<i className="fe fe-lock mr-0" />)
-											</span>
-										</NavLink>
-									</li>
+									{menu.map((el, key) => {
+										if (!el.item) {
+											return (
+												<li key={key.toString()} className={el.li}>
+													<NavLink {...el.navlink}>
+														<i className={el.icon} /> {el.text}
+														{el.child ? el.child() : null}
+													</NavLink>
+												</li>
+											);
+										} else {
+											return (
+												<li key={key.toString()} className={el.li}>
+													<NavLink {...el.navlink} data-toggle={el.dataToggle}>
+														<i className={el.icon} /> {el.text}
+													</NavLink>
+
+													<div className={el.childDividerClass}>
+														{el.item.map((el, key) => {
+															return (
+																<NavLink
+																	key={key.toString()}
+																	to={el.to}
+																	className={el.className}>
+																	{el.childText}
+																</NavLink>
+															);
+														})}
+													</div>
+												</li>
+											);
+										}
+									})}
 								</ul>
 							</div>
 						</div>
