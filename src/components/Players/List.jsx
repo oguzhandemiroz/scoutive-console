@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import "../../assets/js/core";
+import { datatable_turkish } from "../../assets/js/core";
 import ep from "../../assets/js/urls";
 import { fatalSwal, errorSwal } from "../Alert.jsx";
 import ReactDOM from "react-dom";
@@ -27,39 +27,6 @@ var statusType = {
 	1: "bg-success",
 	2: "bg-azure",
 	3: "bg-indigo"
-};
-
-const datatable_turkish = {
-	sDecimal: ",",
-	sEmptyTable: "Tabloda herhangi bir veri mevcut değil",
-	sInfo: "_TOTAL_ kayıttan _START_ - _END_ arasındaki kayıtlar gösteriliyor",
-	sInfoEmpty: "Kayıt yok",
-	sInfoFiltered: "(_MAX_ kayıt içerisinden bulunan)",
-	sInfoPostFix: "",
-	sInfoThousands: ".",
-	sLengthMenu: "_MENU_ göster",
-	sLoadingRecords: "Yükleniyor...",
-	sProcessing: "İşleniyor...",
-	sSearch: "",
-	searchPlaceholder: "Ara",
-	sZeroRecords: "Eşleşen kayıt bulunamadı",
-	oPaginate: {
-		sFirst: "İlk",
-		sLast: "Son",
-		sNext: "Sonraki",
-		sPrevious: "Önceki"
-	},
-	oAria: {
-		sSortAscending: ": artan sütun sıralamasını aktifleştir",
-		sSortDescending: ": azalan sütun sıralamasını aktifleştir"
-	},
-	select: {
-		rows: {
-			_: "%d kayıt seçildi",
-			"0": "",
-			"1": "1 kayıt seçildi"
-		}
-	}
 };
 
 const initialState = {
@@ -95,8 +62,8 @@ class Table extends Component {
 				html: `<b>${name}</b> adlı öğrencinin <b>kaydını silmek</b> istediğinize emin misiniz?`,
 				confirmButtonText: "Evet",
 				cancelButtonText: "Hayır",
-				cancelButtonColor: "#cd201f",
-				confirmButtonColor: "#868e96",
+				cancelButtonColor: "#868e96",
+				confirmButtonColor: "#cd201f",
 				showCancelButton: true,
 				reverseButtons: true
 			}).then(result => {
@@ -130,8 +97,8 @@ class Table extends Component {
 				html: `<b>${name}</b> adlı öğrencinin <b>kaydını dondurmak</b> istediğinize emin misiniz?`,
 				confirmButtonText: "Evet",
 				cancelButtonText: "Hayır",
-				cancelButtonColor: "#cd201f",
-				confirmButtonColor: "#868e96",
+				cancelButtonColor: "#868e96",
+				confirmButtonColor: "#cd201f",
 				showCancelButton: true,
 				reverseButtons: true
 			}).then(result => {
@@ -165,8 +132,8 @@ class Table extends Component {
 				html: `<b>${name}</b> adlı öğrencinin <b>kaydını yenilemek</b> istediğinize emin misiniz?`,
 				confirmButtonText: "Evet",
 				cancelButtonText: "Hayır",
-				cancelButtonColor: "#cd201f",
-				confirmButtonColor: "#868e96",
+				cancelButtonColor: "#868e96",
+				confirmButtonColor: "#cd201f",
 				showCancelButton: true,
 				reverseButtons: true
 			}).then(result => {
@@ -507,7 +474,8 @@ class Table extends Component {
 
 			$("#player-list tbody").on("click", "tr", el => {
 				var data = table.row(el.currentTarget).data();
-				this.props.history.push("/app/players/detail/" + data.uid);
+				//console.log(el.currentTarget)
+				//this.props.history.push("/app/players/detail/" + data.uid);
 			});
 
 			$("div.toolbar").html("<b>Custom tool bar! Text/images etc.</b>");

@@ -50,10 +50,11 @@ const datatable_turkish = {
     sInfoFiltered: "(_MAX_ kayıt içerisinden bulunan)",
     sInfoPostFix: "",
     sInfoThousands: ".",
-    sLengthMenu: "Sayfada _MENU_ kayıt göster",
+    sLengthMenu: "_MENU_ göster",
     sLoadingRecords: "Yükleniyor...",
     sProcessing: "İşleniyor...",
-    sSearch: "Ara: ",
+    sSearch: "",
+    searchPlaceholder: "Ara",
     sZeroRecords: "Eşleşen kayıt bulunamadı",
     oPaginate: {
         sFirst: "İlk",

@@ -125,8 +125,8 @@ export class Vacation extends Component {
 				html: `<b>${name}</b> adlı personeli <b>işten çıkarmak</b> istediğinize emin misiniz?`,
 				confirmButtonText: "Evet",
 				cancelButtonText: "Hayır",
-				cancelButtonColor: "#cd201f",
-				confirmButtonColor: "#868e96",
+				cancelButtonColor: "#868e96",
+				confirmButtonColor: "#cd201f",
 				showCancelButton: true,
 				reverseButtons: true
 			}).then(result => {
@@ -170,8 +170,8 @@ export class Vacation extends Component {
 				html: `<b>${name}</b> adlı personelin <b>#${key}</b> nolu iznini iptal etmek istediğinize emin misiniz?`,
 				confirmButtonText: "Evet",
 				cancelButtonText: "Hayır",
-				cancelButtonColor: "#cd201f",
-				confirmButtonColor: "#868e96",
+				cancelButtonColor: "#868e96",
+				confirmButtonColor: "#cd201f",
 				showCancelButton: true,
 				reverseButtons: true
 			}).then(result => {

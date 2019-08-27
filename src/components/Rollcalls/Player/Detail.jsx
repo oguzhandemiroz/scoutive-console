@@ -5,7 +5,7 @@ import moment from "moment";
 import "moment/locale/tr";
 
 const statusType = {
-	"-1": { icon: "x", color: "danger", text: "Gelmedi" },
+	"-1": { icon: "help-circle", color: "gray", text: "Tanımsız" },
 	"0": { icon: "x", color: "danger", text: "Gelmedi" },
 	"1": { icon: "check", color: "success", text: "Geldi" },
 	"2": { icon: "alert-circle", color: "warning", text: "İzinli" },
@@ -170,11 +170,11 @@ export class Detail extends Component {
 																<td className="text-center">
 																	<div
 																		data-toggle="tooltip"
-																		title={statusType[el.status].text}
-																		className={`text-${statusType[el.status].color}`}
+																		title={statusType[el.daily].text}
+																		className={`text-${statusType[el.daily].color}`}
 																		style={{ fontSize: 20 }}>
 																		<i
-																			className={`fe fe-${statusType[el.status].icon}`}
+																			className={`fe fe-${statusType[el.daily].icon}`}
 																		/>
 																	</div>
 																</td>

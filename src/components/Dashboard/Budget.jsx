@@ -282,8 +282,9 @@ class Budgets extends Component {
 				if (response) {
 					select.budgets = response;
 					if (response.length > 0) {
-						const defaultBudget = response.find(x => (x.default === 1 ? x : response[0]));
-						this.setState({ budget: defaultBudget });
+						const defaultBudget = response.find(x => x.default === 1);
+						console.log(defaultBudget);
+						this.setState({ budget: defaultBudget ? defaultBudget : response[0] });
 					}
 					this.setState({ select });
 				}

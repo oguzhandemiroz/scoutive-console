@@ -69,11 +69,11 @@ export class EmployeesRollcalls extends Component {
 							position: el.position,
 							phone: el.phone,
 							image: el.image,
-							status: el.status
+							status: el.daily
 						});
 						statusList.push({
 							uid: el.uid,
-							status: el.status
+							status: el.daily
 						});
 					});
 					this.setState({

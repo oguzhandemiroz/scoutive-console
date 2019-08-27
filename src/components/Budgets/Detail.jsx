@@ -223,7 +223,7 @@ export class Detail extends Component {
 					</div>
 				</div>
 				<div className="row">
-					<div className="col-8">
+					<div className="col-lg-8 col-md-12">
 						<div className="card">
 							<div className="card-body p-0">
 								<Report />
@@ -231,7 +231,7 @@ export class Detail extends Component {
 						</div>
 					</div>
 
-					<div className="col-4">
+					<div className="col-lg-4 col-md-12">
 						<div className="card">
 							<div className="card-header">
 								<h3 className="card-title">

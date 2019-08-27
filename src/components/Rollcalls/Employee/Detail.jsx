@@ -7,7 +7,7 @@ import moment from "moment";
 import "moment/locale/tr";
 
 const statusType = {
-	"-1": { icon: "x", color: "danger", text: "Gelmedi" },
+	"-1": { icon: "help-circle", color: "gray", text: "Tanımsız" },
 	"0": { icon: "x", color: "danger", text: "Gelmedi" },
 	"1": { icon: "check", color: "success", text: "Geldi" },
 	"2": { icon: "alert-circle", color: "warning", text: "İzinli" },
@@ -64,7 +64,7 @@ export class EmployeesRollcalls extends Component {
 							position: el.position,
 							phone: el.phone,
 							image: el.image,
-							status: el.status
+							status: el.daily
 						});
 					});
 					this.setState({

@@ -152,8 +152,8 @@ export class Detail extends Component {
 				html: `<b>${detail.name || ""}</b> adlı grubu silmek istediğinize emin misiniz?`,
 				confirmButtonText: "Evet",
 				cancelButtonText: "Hayır",
-				cancelButtonColor: "#cd201f",
-				confirmButtonColor: "#868e96",
+				cancelButtonColor: "#868e96",
+				confirmButtonColor: "#cd201f",
 				showCancelButton: true,
 				reverseButtons: true
 			}).then(result => {
