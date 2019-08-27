@@ -13,7 +13,7 @@ import ep from "../../../assets/js/urls";
 import { fatalSwal, errorSwal, showSwal, Toast } from "../../Alert.jsx";
 import { fullnameGenerator } from "../../../services/Others";
 const $ = require("jquery");
-$.DataTable = require("datatables.net-buttons");
+$.DataTable = require("datatables.net");
 
 var statusType = {
 	0: "bg-gray",
@@ -414,7 +414,6 @@ export class Add extends Component {
 				},
 				{
 					data: "name",
-					class: "w-1",
 					render: function(data, type, row) {
 						const fullname = fullnameGenerator(data, row.surname);
 						if (type === "sort" || type === "type") {
@@ -719,9 +718,9 @@ export class Add extends Component {
 												<th>ID</th>
 												<th className="w-1 no-sort">T.C.</th>
 												<th className="w-1 text-center no-sort"></th>
-												<th className="w-1 name">AD SOYAD</th>
+												<th className="name">AD SOYAD</th>
 												<th className="no-sort rollcalls">SON 5 YOKLAMA</th>
-												<th className="w-1 phone">TELEFON</th>
+												<th className="phone">TELEFON</th>
 												<th className="emergency">VELİ İLETİŞİM</th>
 												<th className="group">GRUP</th>
 												<th className="w-1 no-sort status">DURUM</th>

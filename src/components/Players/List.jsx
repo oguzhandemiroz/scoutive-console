@@ -8,6 +8,9 @@ import { DeletePlayer, FreezePlayer, RefreshPlayer } from "../../services/Player
 import { fullnameGenerator } from "../../services/Others";
 import Vacation from "../PlayerAction/Vacation";
 import GroupChange from "../PlayerAction/GroupChange";
+import Inputmask from "inputmask";
+import moment from "moment";
+import "moment/locale/tr";
 import "datatables.net-buttons/js/buttons.print";
 import "datatables.net-buttons/js/buttons.colVis";
 const $ = require("jquery");
@@ -231,16 +234,22 @@ class Table extends Component {
 											{status === 1 ? (
 												<div>
 													<a
-														className="dropdown-item action-warning"
+														className="dropdown-item action-warning cursor-not-allowed disabled"
 														href="javascript:void(0)">
 														<i className="dropdown-icon fa fa-exclamation-triangle" /> Ödeme
 														İkazı
+														<span className="ml-1">
+															(<i className="fe fe-lock mr-0" />)
+														</span>
 													</a>
 													<a
-														className="dropdown-item action-change-password"
+														className="dropdown-item action-change-password cursor-not-allowed disabled"
 														href="javascript:void(0)">
 														<i className="dropdown-icon fa fa-hand-holding-heart" /> Burs
 														Ver
+														<span className="ml-1">
+															(<i className="fe fe-lock mr-0" />)
+														</span>
 													</a>
 												</div>
 											) : null}
@@ -279,17 +288,23 @@ class Table extends Component {
 													</button>
 													<div role="separator" className="dropdown-divider" />
 													<a
-														className="dropdown-item action-permission"
+														className="dropdown-item action-permission cursor-not-allowed disabled"
 														href="javascript:void(0)">
 														<i className="dropdown-icon fa fa-notes-medical" /> Not (Puan)
 														Ver
+														<span className="ml-1">
+															(<i className="fe fe-lock mr-0" />)
+														</span>
 													</a>
 													<div role="separator" className="dropdown-divider" />
 													<a
-														className="dropdown-item action-send-message"
+														className="dropdown-item action-send-message cursor-not-allowed disabled"
 														href="javascript:void(0)">
 														<i className="dropdown-icon fa fa-paper-plane" /> Veliye Mesaj
 														Gönder
+														<span className="ml-1">
+															(<i className="fe fe-lock mr-0" />)
+														</span>
 													</a>
 													<div role="separator" className="dropdown-divider" />
 													<Link
@@ -314,9 +329,12 @@ class Table extends Component {
 												</div>
 											) : null}
 											<a
-												className="dropdown-item action-all-salary-info"
+												className="dropdown-item action-all-salary-info cursor-not-allowed disabled"
 												href="javascript:void(0)">
 												<i className="dropdown-icon fa fa-id-card-alt" /> Öğrenci Belgesi
+												<span className="ml-1">
+													(<i className="fe fe-lock mr-0" />)
+												</span>
 											</a>
 											<a
 												className="dropdown-item action-all-salary-info"
@@ -403,8 +421,7 @@ class Table extends Component {
 								return fullname;
 							}
 							if (data)
-								return `<a class="text-inherit" data-toggle="tooltip" data-placement="top" data-original-title="${fullname}" 
-								href="/app/players/detail/${row.uid}">${fullname}</a>`;
+								return `<a class="text-inherit" href="/app/players/detail/${row.uid}">${fullname}</a>`;
 						}
 					},
 					{
@@ -415,8 +432,11 @@ class Table extends Component {
 							if (data) {
 								data.map(el => {
 									if (el.phone !== "" && el.name !== "" && el.kinship !== "") {
+										const formatPhone = el.phone
+											? Inputmask.format(el.phone, { mask: "(999) 999 9999" })
+											: null;
 										j++;
-										elem += `<a href="tel:${el.phone}" data-toggle="tooltip" data-placement="left" data-original-title="${el.kinship}" class="text-inherit d-block">${el.phone}</a> `;
+										elem += `<a href="tel:${el.phone}" data-toggle="tooltip" data-placement="left" data-original-title="${el.kinship}: ${el.name}" class="text-inherit d-block">${formatPhone}</a> `;
 									}
 								});
 							} else {
@@ -446,7 +466,7 @@ class Table extends Component {
 					{
 						data: "birthday",
 						render: function(data) {
-							if (data && data !== "") return data;
+							if (data && data !== "") return moment(data).format("DD-MM-YYYY");
 							else return "&mdash;";
 						}
 					},

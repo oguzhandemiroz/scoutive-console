@@ -9,6 +9,7 @@ import Password from "../EmployeeAction/Password";
 import AdvancePayment from "../EmployeeAction/AdvancePayment";
 import { fullnameGenerator } from "../../services/Others";
 import ReactDOM from "react-dom";
+import Inputmask from "inputmask";
 const $ = require("jquery");
 $.DataTable = require("datatables.net");
 
@@ -112,11 +113,21 @@ class Table extends Component {
 												<i className="dropdown-icon fa fa-coffee" /> İzin Yaz
 											</button>
 											<div role="separator" className="dropdown-divider" />
-											<a className="dropdown-item action-send-message" href="javascript:void(0)">
+											<a
+												className="dropdown-item action-send-message cursor-not-allowed disabled"
+												href="javascript:void(0)">
 												<i className="dropdown-icon fa fa-paper-plane" /> Mesaj Gönder
+												<span className="ml-1">
+													(<i className="fe fe-lock mr-0" />)
+												</span>
 											</a>
-											<a className="dropdown-item action-warning" href="javascript:void(0)">
+											<a
+												className="dropdown-item action-warning cursor-not-allowed disabled"
+												href="javascript:void(0)">
 												<i className="dropdown-icon fa fa-exclamation-triangle" /> İkaz Et
+												<span className="ml-1">
+													(<i className="fe fe-lock mr-0" />)
+												</span>
 											</a>
 											<div role="separator" className="dropdown-divider" />
 											<Link
@@ -227,24 +238,24 @@ class Table extends Component {
 							}
 						}
 					},
-                    {
+					{
 						data: "name",
 						class: "w-1",
-                        render: function(data, type, row) {
-                            const fullname = fullnameGenerator(data, row.surname);
-                            if (type === "sort" || type === "type") {
-                                return fullname;
-                            }
-                            if (data)
-                                return `<a class="text-inherit" data-toggle="tooltip" data-placement="top" data-original-title="${fullname}" 
+						render: function(data, type, row) {
+							const fullname = fullnameGenerator(data, row.surname);
+							if (type === "sort" || type === "type") {
+								return fullname;
+							}
+							if (data)
+								return `<a class="text-inherit" data-toggle="tooltip" data-placement="top" data-original-title="${fullname}" 
 								href="/app/employees/detail/${row.uid}">${fullname}</a>`;
-                        }
-                    },
+						}
+					},
 					{
 						data: "phone",
 						render: function(data, type, row) {
-							if (data && data !== "")
-								return `<a href="tel:${data}" data-toggle="tooltip" data-placement="top" data-original-title="${data}" class="text-inherit">${data}</a>`;
+							const formatPhone = data ? Inputmask.format(data, { mask: "(999) 999 9999" }) : null;
+							if (formatPhone) return `<a href="tel:${data}" class="text-inherit">${formatPhone}</a>`;
 							else return "&mdash;";
 						}
 					},
