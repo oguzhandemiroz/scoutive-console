@@ -22481,3 +22481,71 @@ figure span.player-number {
 	font-weight: 600;
 	text-align: center;
 }
+
+.FABs-wrapper {
+	display: flex;
+	justify-content: center;
+	align-items: flex-start;
+	position: fixed;
+	z-index: 9999;
+	margin: 0 auto;
+	bottom: -65px;
+	left: 50%;
+	width: 150px;
+	height: 100px;
+	-webkit-transition: all 0.5s ease;
+	-moz-transition: all 0.5s ease;
+	-ms-transition: all 0.5s ease;
+	-o-transition: all 0.5s ease;
+	transition: all 0.5s ease;
+	-webkit-transform: translate(-50%, 0);
+	-ms-transform: translate(-50%, 0);
+	-moz-transform: translate(-50%, 0);
+	-o-transform: translate(-50%, 0);
+	transform: translate(-50%, 0);
+}
+
+.FABs-wrapper:hover {
+	bottom: -10px;
+}
+
+.FABs-wrapper.fixed {
+	bottom: -10px;
+}
+
+#FABs {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	border-radius: 50%;
+	width: 60px;
+	height: 60px;
+}
+
+#FABs i {
+	color: #fbc328;
+	font-size: 1.85rem;
+}
+
+.FABs-wrapper .dropdown-header {
+	font-size: 1rem !important;
+}
+
+.FABs-wrapper .dropup .dropdown-menu {
+	margin-bottom: 0.5rem !important;
+	width: 200px;
+	margin-left: -100px;
+	left: 50% !important;
+}
+
+@media (max-width: 992px) {
+	.FABs-wrapper {
+		left: 0px;
+		bottom: 20px;
+	}
+
+	.FABs-wrapper:hover {
+		left: 45px;
+		bottom: 20px;
+	}
+}
