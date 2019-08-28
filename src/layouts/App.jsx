@@ -3,8 +3,10 @@ import { Switch, Route, Redirect, withRouter } from "react-router-dom";
 import Menu from "../components/includes/Menu.jsx";
 import HeaderMenu from "../components/includes/HeaderMenu.jsx";
 import Footer from "../components/includes/Footer.jsx";
+import FABs from "../components/Others/FABs";
 import indexRoutes from "../routes/index.jsx";
 const $ = require("jquery");
+
 class App extends Component {
 	componentDidUpdate() {
 		console.log("render");
@@ -48,6 +50,7 @@ class App extends Component {
 						</Switch>
 					</div>
 				</div>
+				<FABs />
 				<Footer />
 			</div>
 		);

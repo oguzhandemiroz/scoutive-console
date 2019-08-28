@@ -45,14 +45,13 @@ class HeaderMenu extends Component {
                                 <div className="dropdown d-none d-md-flex">
                                     <span className="nav-link icon" data-toggle="dropdown">
                                         <i className="fe fe-bell" />
-                                        <span className="nav-unread" />
                                     </span>
                                     <div className="dropdown-menu dropdown-menu-right dropdown-menu-arrow"></div>
                                 </div>
                                 <div className="dropdown">
                                     <span
                                         href="javascript:void(0)"
-                                        className="nav-link pr-0 leading-none"
+                                        className="nav-link px-0 leading-none"
                                         data-toggle="dropdown">
                                         <span
                                             className="avatar"

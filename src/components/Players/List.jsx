@@ -162,7 +162,7 @@ class Table extends Component {
 
 	componentDidMount() {
 		try {
-			const UID = localStorage.getItem("UID");
+			const { uid } = this.state;
 			const table = $("#player-list").DataTable({
 				dom: '<"top"f>rt<"bottom"ilp><"clear">',
 				/*buttons: [
@@ -189,172 +189,6 @@ class Table extends Component {
 					decimal: ",",
 					thousands: "."
 				},
-				columnDefs: [
-					{
-						targets: [0, 1],
-						visible: false
-					},
-					{
-						targets: "no-sort",
-						orderable: false
-					},
-					{
-						targets: "action",
-						createdCell: (td, cellData, rowData) => {
-							const fullname = fullnameGenerator(rowData.name, rowData.surname);
-							const { uid, group, status } = rowData;
-							ReactDOM.render(
-								<BrowserRouter>
-									<div className="dropdown btn-block" id="action-dropdown">
-										<button
-											type="button"
-											id="player-action"
-											className="btn btn-sm btn-secondary btn-block dropdown-toggle"
-											data-toggle="dropdown"
-											aria-haspopup="true"
-											aria-expanded="false">
-											İşlem
-										</button>
-										<div
-											className="dropdown-menu dropdown-menu-right"
-											aria-labelledby="player-action"
-											x-placement="top-end">
-											<a className="dropdown-item disabled text-azure" href="javascript:void(0)">
-												<i className="dropdown-icon fa fa-user text-azure" />
-												{fullname}
-											</a>
-											<div role="separator" className="dropdown-divider" />
-
-											<Link
-												onClick={() => this.props.history.push(`/app/players/payment/${uid}`)}
-												className="dropdown-item action-pay-salary"
-												to={`/app/players/payment/${uid}`}>
-												<i className="dropdown-icon fa fa-hand-holding-usd" /> Ödeme Al
-											</Link>
-											{status === 1 ? (
-												<div>
-													<a
-														className="dropdown-item action-warning cursor-not-allowed disabled"
-														href="javascript:void(0)">
-														<i className="dropdown-icon fa fa-exclamation-triangle" /> Ödeme
-														İkazı
-														<span className="ml-1">
-															(<i className="fe fe-lock mr-0" />)
-														</span>
-													</a>
-													<a
-														className="dropdown-item action-change-password cursor-not-allowed disabled"
-														href="javascript:void(0)">
-														<i className="dropdown-icon fa fa-hand-holding-heart" /> Burs
-														Ver
-														<span className="ml-1">
-															(<i className="fe fe-lock mr-0" />)
-														</span>
-													</a>
-												</div>
-											) : null}
-											<div role="separator" className="dropdown-divider" />
-											{status === 1 ? (
-												<button
-													className="dropdown-item action-advance-payment"
-													onClick={() => this.freezePlayer(uid, fullname)}>
-													<i className="dropdown-icon fa fa-snowflake" /> Kaydı Dondur
-												</button>
-											) : status === 2 ? (
-												<button
-													className="dropdown-item action-advance-payment"
-													onClick={() => this.refreshPlayer(uid, fullname)}>
-													<i className="dropdown-icon fa fa-sync-alt" /> Kaydı Yenile
-												</button>
-											) : null}
-											<button
-												className="dropdown-item action-salary-raise"
-												onClick={() => this.deletePlayer(uid, fullname)}>
-												<i className="dropdown-icon fa fa-user-times" /> Kaydı Sil
-											</button>
-											<div role="separator" className="dropdown-divider" />
-											{status === 1 ? (
-												<div>
-													<button
-														className="dropdown-item action-day-off"
-														onClick={() =>
-															this.setState({
-																...initialState,
-																vacation: true,
-																data: { name: fullname, uid: uid }
-															})
-														}>
-														<i className="dropdown-icon fa fa-coffee" /> İzin Yaz
-													</button>
-													<div role="separator" className="dropdown-divider" />
-													<a
-														className="dropdown-item action-permission cursor-not-allowed disabled"
-														href="javascript:void(0)">
-														<i className="dropdown-icon fa fa-notes-medical" /> Not (Puan)
-														Ver
-														<span className="ml-1">
-															(<i className="fe fe-lock mr-0" />)
-														</span>
-													</a>
-													<div role="separator" className="dropdown-divider" />
-													<a
-														className="dropdown-item action-send-message cursor-not-allowed disabled"
-														href="javascript:void(0)">
-														<i className="dropdown-icon fa fa-paper-plane" /> Veliye Mesaj
-														Gönder
-														<span className="ml-1">
-															(<i className="fe fe-lock mr-0" />)
-														</span>
-													</a>
-													<div role="separator" className="dropdown-divider" />
-													<Link
-														onClick={() =>
-															this.props.history.push(`/app/players/edit/${uid}`)
-														}
-														className="dropdown-item action-edit"
-														to={`/app/players/edit/${uid}`}>
-														<i className="dropdown-icon fa fa-pen" /> Düzenle
-													</Link>
-													<button
-														className="dropdown-item action-permission"
-														onClick={() =>
-															this.setState({
-																...initialState,
-																group_change: true,
-																data: { name: fullname, uid: uid, group: group }
-															})
-														}>
-														<i className="dropdown-icon fa fa-user-cog" /> Grup Değişikliği
-													</button>
-												</div>
-											) : null}
-											<a
-												className="dropdown-item action-all-salary-info cursor-not-allowed disabled"
-												href="javascript:void(0)">
-												<i className="dropdown-icon fa fa-id-card-alt" /> Öğrenci Belgesi
-												<span className="ml-1">
-													(<i className="fe fe-lock mr-0" />)
-												</span>
-											</a>
-											<a
-												className="dropdown-item action-all-salary-info"
-												href="javascript:void(0)">
-												<i className="dropdown-icon fa fa-receipt" /> Tüm Aidat Bilgisi
-											</a>
-											<Link
-												onClick={() => this.props.history.push(`/app/players/detail/${uid}`)}
-												to={`/app/players/detail/${uid}`}
-												className="dropdown-item action-all-info">
-												<i className="dropdown-icon fa fa-info-circle" /> Tüm Bilgileri
-											</Link>
-										</div>
-									</div>
-								</BrowserRouter>,
-								td
-							);
-						}
-					}
-				],
 				ajax: {
 					url: ep.PLAYER_LIST,
 					type: "POST",
@@ -366,7 +200,7 @@ class Table extends Component {
 					},
 					data: function(d) {
 						return JSON.stringify({
-							uid: UID
+							uid: uid
 						});
 					},
 					contentType: "application/json",
@@ -389,6 +223,293 @@ class Table extends Component {
 						} else return d.data;
 					}
 				},
+				columnDefs: [
+					{
+						targets: [0, 1],
+						visible: false
+					},
+					{
+						targets: "no-sort",
+						orderable: false
+					},
+					{
+						targets: "action",
+						createdCell: (td, cellData, rowData) => {
+							const fullname = fullnameGenerator(rowData.name, rowData.surname);
+							const { uid, group, status, is_trial } = rowData;
+
+							const dropdownDivider = key => (
+								<div role="separator" className="dropdown-divider" key={key.toString()} />
+							);
+							const lock = (
+								<span className="ml-1">
+									(<i className="fe fe-lock mr-0" />)
+								</span>
+							);
+							const actionMenu = [
+								{
+									tag: "Link",
+									elementAttr: {
+										className: "dropdown-item",
+										to: `/app/players/payment/${uid}`,
+										onClick: () => this.props.history.push(`/app/players/payment/${uid}`)
+									},
+									childText: "Ödeme Al",
+									child: {
+										className: "dropdown-icon fa fa-hand-holding-usd"
+									},
+									lock: false,
+									condition: !is_trial
+								},
+								{
+									divider: key => dropdownDivider(key),
+									condition: !is_trial && status === 0
+								},
+								{
+									tag: "button",
+									elementAttr: {
+										className: "dropdown-item cursor-not-allowed disabled",
+										onClick: () => console.log("Ödeme İkazı")
+									},
+									childText: "Ödeme İkazı",
+									child: {
+										className: "dropdown-icon fa fa-exclamation-triangle"
+									},
+									lock: lock,
+									condition: !is_trial && status !== 0
+								},
+								{
+									divider: key => dropdownDivider(key),
+									condition: !is_trial && status !== 0
+								},
+								{
+									tag: "button",
+									elementAttr: {
+										className: "dropdown-item",
+										onClick: () => this.freezePlayer(uid, fullname)
+									},
+									childText: "Kaydı Dondur",
+									child: {
+										className: "dropdown-icon fa fa-snowflake"
+									},
+									lock: false,
+									condition: !is_trial && status === 1
+								},
+								{
+									tag: "button",
+									elementAttr: {
+										className: "dropdown-item",
+										onClick: () => this.refreshPlayer(uid, fullname)
+									},
+									childText: "Kaydı Yenile",
+									child: {
+										className: "dropdown-icon fa fa-sync-alt"
+									},
+									lock: false,
+									condition: !is_trial && status === 2
+								},
+								{
+									tag: "button",
+									elementAttr: {
+										className: "dropdown-item",
+										onClick: () => this.deletePlayer(uid, fullname)
+									},
+									childText: "Kaydı Sil",
+									child: {
+										className: "dropdown-icon fa fa-user-times"
+									},
+									lock: false,
+									condition: status !== 0
+								},
+								{
+									divider: key => dropdownDivider(key),
+									condition: status !== 0
+								},
+								{
+									tag: "button",
+									elementAttr: {
+										className: "dropdown-item",
+										onClick: () =>
+											this.setState({
+												...initialState,
+												vacation: true,
+												data: { name: fullname, uid: uid }
+											})
+									},
+									childText: "İzin Yaz",
+									child: {
+										className: "dropdown-icon fa fa-coffee"
+									},
+									lock: false,
+									condition: !is_trial && status === 1
+								},
+								{
+									divider: key => dropdownDivider(key),
+									condition: !is_trial && status === 1
+								},
+								{
+									tag: "button",
+									elementAttr: {
+										className: "dropdown-item cursor-not-allowed disabled",
+										onClick: () => console.log("Not (Puan) Ver")
+									},
+									childText: "Not (Puan) Ver",
+									child: {
+										className: "dropdown-icon fa fa-notes-medical"
+									},
+									lock: lock,
+									condition: !is_trial && status === 1
+								},
+								{
+									divider: key => dropdownDivider(key),
+									condition: !is_trial && status === 1
+								},
+								{
+									tag: "button",
+									elementAttr: {
+										className: "dropdown-item cursor-not-allowed disabled",
+										onClick: () => console.log("Veliye Mesaj Gönder")
+									},
+									childText: "Veliye Mesaj Gönder",
+									child: {
+										className: "dropdown-icon fa fa-paper-plane"
+									},
+									lock: lock,
+									condition: true
+								},
+								{
+									divider: key => dropdownDivider(key),
+									condition: true
+								},
+								{
+									tag: "Link",
+									elementAttr: {
+										className: "dropdown-item",
+										to: `/app/players/edit/${uid}`,
+										onClick: () => this.props.history.push(`/app/players/edit/${uid}`)
+									},
+									childText: "Düzenle",
+									child: {
+										className: "dropdown-icon fa fa-pen"
+									},
+									lock: false,
+									condition: true
+								},
+								{
+									tag: "button",
+									elementAttr: {
+										className: "dropdown-item",
+										onClick: () =>
+											this.setState({
+												...initialState,
+												group_change: true,
+												data: { name: fullname, uid: uid, group: group }
+											})
+									},
+									childText: "Grup Değişikliği",
+									child: {
+										className: "dropdown-icon fa fa-user-cog"
+									},
+									lock: false,
+									condition: !is_trial && status !== 0
+								},
+								{
+									divider: key => dropdownDivider(key),
+									condition: !is_trial && status !== 0
+								},
+								{
+									tag: "button",
+									elementAttr: {
+										className: "dropdown-item cursor-not-allowed disabled",
+										onClick: () => console.log("Öğrenci Belgesi")
+									},
+									childText: "Öğrenci Belgesi",
+									child: {
+										className: "dropdown-icon fa fa-id-card-alt"
+									},
+									lock: lock,
+									condition: true
+								},
+								{
+									tag: "Link",
+									elementAttr: {
+										className: "dropdown-item",
+										to: `/app/players/fee-detail/${uid}`,
+										onClick: () => this.props.history.push(`/app/players/fee-detail/${uid}`)
+									},
+									childText: "Tüm Aidat Bilgisi",
+									child: {
+										className: "dropdown-icon fa fa-receipt"
+									},
+									lock: false,
+									condition: true
+								},
+								{
+									tag: "Link",
+									elementAttr: {
+										className: "dropdown-item",
+										to: `/app/players/detail/${uid}`,
+										onClick: () => this.props.history.push(`/app/players/detail/${uid}`)
+									},
+									childText: "Tüm Bilgileri",
+									child: {
+										className: "dropdown-icon fa fa-info-circle"
+									},
+									lock: false,
+									condition: true
+								}
+							];
+
+							ReactDOM.render(
+								<BrowserRouter>
+									<div className="dropdown btn-block" id="action-dropdown">
+										<button
+											type="button"
+											id="player-action"
+											className="btn btn-sm btn-secondary btn-block dropdown-toggle"
+											data-toggle="dropdown"
+											aria-haspopup="true"
+											aria-expanded="false">
+											İşlem
+										</button>
+										<div
+											className="dropdown-menu dropdown-menu-right"
+											aria-labelledby="player-action"
+											x-placement="top-end">
+											<a className="dropdown-item disabled text-azure" href="javascript:void(0)">
+												<i className="dropdown-icon fa fa-user text-azure" />
+												{fullname}
+											</a>
+											<div role="separator" className="dropdown-divider" />
+											{actionMenu.map((el, key) => {
+												if (el.condition) {
+													if (el.tag === "Link") {
+														return (
+															<Link {...el.elementAttr} key={key.toString()}>
+																<i {...el.child} /> {el.childText}
+																{el.lock}
+															</Link>
+														);
+													} else if (el.tag === "button") {
+														return (
+															<button {...el.elementAttr} key={key.toString()}>
+																<i {...el.child} /> {el.childText}
+																{el.lock}
+															</button>
+														);
+													} else {
+														return el.divider(key);
+													}
+												}
+											})}
+										</div>
+									</div>
+								</BrowserRouter>,
+								td
+							);
+						}
+					}
+				],
 				columns: [
 					{
 						data: "uid"
@@ -453,7 +574,7 @@ class Table extends Component {
 								return data;
 							}
 							if (data && data !== "") return data.format() + " ₺";
-							else return "<i><b>BURSLU</b></i>";
+							else return row.is_trial ? "<i><b>DENEME</b></i>" : "<i><b>BURSLU</b></i>";
 						}
 					},
 					{
@@ -465,7 +586,11 @@ class Table extends Component {
 					},
 					{
 						data: "birthday",
-						render: function(data) {
+						render: function(data, type, row) {
+							if (type === "sort" || type === "type") {
+								return data ? data.split(".")[0] : data;
+							}
+
 							if (data && data !== "") return moment(data).format("DD-MM-YYYY");
 							else return "&mdash;";
 						}
@@ -491,12 +616,6 @@ class Table extends Component {
 				]
 			});
 
-			$("#player-list tbody").on("click", "tr", el => {
-				var data = table.row(el.currentTarget).data();
-				//console.log(el.currentTarget)
-				//this.props.history.push("/app/players/detail/" + data.uid);
-			});
-
 			$("div.toolbar").html("<b>Custom tool bar! Text/images etc.</b>");
 
 			$.fn.DataTable.ext.errMode = "none";
@@ -505,16 +624,9 @@ class Table extends Component {
 			});
 
 			$("#player-list").on("draw.dt", function() {
-				console.log("draw.dt");
 				$('[data-toggle="tooltip"]').tooltip();
-				/*$.fn.dataTable.ext.search = [];
-				$.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
-					if (table.ajax.json().data[dataIndex].status === 1) return true;
-					else return false;
-				});*/
 			});
 		} catch (e) {
-			//fatalSwal(true);
 			console.log("e", e);
 		}
 	}
@@ -530,7 +642,7 @@ class Table extends Component {
 		const { vacation, group_change, data } = this.state;
 		return (
 			<div>
-				<table id="player-list" className="table card-table table-vcenter table-striped text-nowrap datatable">
+				<table id="player-list" className="table card-table w-100 table-vcenter table-striped text-nowrap datatable">
 					<thead>
 						<tr>
 							<th>ID</th>

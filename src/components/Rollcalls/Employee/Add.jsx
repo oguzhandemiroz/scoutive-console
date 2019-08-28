@@ -256,11 +256,21 @@ export class Add extends Component {
 											<i className="dropdown-icon fa fa-hand-holding-usd" /> Avans Ver
 										</button>
 										<div role="separator" className="dropdown-divider" />
-										<a className="dropdown-item action-send-message" href="javascript:void(0)">
+										<a
+											className="dropdown-item action-send-message cursor-not-allowed disabled"
+											href="javascript:void(0)">
 											<i className="dropdown-icon fa fa-paper-plane" /> Mesaj Gönder
+											<span className="ml-1">
+												(<i className="fe fe-lock mr-0" />)
+											</span>
 										</a>
-										<a className="dropdown-item action-warning" href="javascript:void(0)">
+										<a
+											className="dropdown-item action-warning cursor-not-allowed disabled"
+											href="javascript:void(0)">
 											<i className="dropdown-icon fa fa-exclamation-triangle" /> İkaz Et
+											<span className="ml-1">
+												(<i className="fe fe-lock mr-0" />)
+											</span>
 										</a>
 										<div role="separator" className="dropdown-divider" />
 										<Link

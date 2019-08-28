@@ -188,7 +188,7 @@ export class List extends Component {
 	render() {
 		return (
 			<div>
-				<table id="budget-list" className="table table-hover card-table table-vcenter text-nowrap datatable">
+				<table id="budget-list" className="table table-hover w-100 card-table table-vcenter text-nowrap datatable">
 					<thead>
 						<tr>
 							<th className="w-1 text-center budget_type no-sort"></th>

@@ -314,7 +314,7 @@ class Table extends Component {
 			<div>
 				<table
 					id="employee-list"
-					className="table card-table table-vcenter table-striped text-nowrap datatable">
+					className="table card-table table-vcenter w-100 table-striped text-nowrap datatable">
 					<thead>
 						<tr>
 							<th>ID</th>

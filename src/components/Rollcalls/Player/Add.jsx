@@ -214,7 +214,7 @@ export class Add extends Component {
 							});
 						});
 						this.setState({ statuses: statusList });
-						return d.extra_data === 1 ? [] : d.data.filter(x => x.status === 1);
+						return d.extra_data === 1 ? [] : d.data.filter(x => x.status === 1); //.filter(x => x.is_trial === 0);
 					}
 				}
 			},
@@ -231,10 +231,10 @@ export class Add extends Component {
 					targets: "rollcalls",
 					createdCell: (td, cellData, rowData) => {
 						const status_type = {
-							0: { icon: "fe-x", badge: "badge-danger" },
-							1: { icon: "fe-check", badge: "badge-success" },
-							2: { icon: "fe-alert-circle", badge: "badge-warning" },
-							3: { icon: "fe-alert-circle", badge: "badge-warning" }
+							0: { icon: "fe-x", badge: "badge-danger", text: "Gelmedi" },
+							1: { icon: "fe-check", badge: "badge-success", text: "Geldi" },
+							2: { icon: "fe-alert-circle", badge: "badge-warning", text: "Tam Gün" },
+							3: { icon: "fe-alert-circle", badge: "badge-warning", text: "Yarın Gün" }
 						};
 
 						ReactDOM.render(
@@ -243,7 +243,7 @@ export class Add extends Component {
 									return (
 										<span
 											key={key.toString()}
-											title={el.rollcall_date}
+											title={status_type[el.status].text + ": " + el.rollcall_date}
 											data-toggle="tooltip"
 											className={`d-inline-flex justify-content-center align-items-center mr-1 badge ${status_type[el.status].badge}`}>
 											<i className={`fe ${status_type[el.status].icon}`} />
@@ -346,8 +346,13 @@ export class Add extends Component {
 											<i className="dropdown-icon fa fa-hand-holding-usd" /> Ödeme Al
 										</Link>
 										<div>
-											<a className="dropdown-item action-warning" href="javascript:void(0)">
+											<a
+												className="dropdown-item action-warning cursor-not-allowed disabled"
+												href="javascript:void(0)">
 												<i className="dropdown-icon fa fa-exclamation-triangle" /> Ödeme İkazı
+												<span className="ml-1">
+													(<i className="fe fe-lock mr-0" />)
+												</span>
 											</a>
 										</div>
 										<div role="separator" className="dropdown-divider" />
@@ -362,8 +367,13 @@ export class Add extends Component {
 											<i className="dropdown-icon fa fa-user-times" /> Kaydı Sil
 										</button>
 										<div role="separator" className="dropdown-divider" />
-										<a className="dropdown-item action-send-message" href="javascript:void(0)">
+										<a
+											className="dropdown-item action-send-message cursor-not-allowed disabled"
+											href="javascript:void(0)">
 											<i className="dropdown-icon fa fa-paper-plane" /> Veliye Mesaj Gönder
+											<span className="ml-1">
+												(<i className="fe fe-lock mr-0" />)
+											</span>
 										</a>
 										<div role="separator" className="dropdown-divider" />
 										<Link
@@ -452,6 +462,17 @@ export class Add extends Component {
 						}
 						if (j === 0) elem = "&mdash;";
 						return elem;
+					}
+				},
+				{
+					data: "birthday",
+					render: function(data, type, row) {
+						if (type === "sort" || type === "type") {
+							return data ? data.split(".")[0] : data;
+						}
+
+						if (data && data !== "") return moment(data).format("DD-MM-YYYY");
+						else return "&mdash;";
 					}
 				},
 				{
@@ -722,6 +743,7 @@ export class Add extends Component {
 												<th className="no-sort rollcalls">SON 5 YOKLAMA</th>
 												<th className="phone">TELEFON</th>
 												<th className="emergency">VELİ İLETİŞİM</th>
+												<th className="birthday">DOĞUM TARİHİ</th>
 												<th className="group">GRUP</th>
 												<th className="w-1 no-sort status">DURUM</th>
 												<th className="pr-2 w-1 no-sort action"></th>

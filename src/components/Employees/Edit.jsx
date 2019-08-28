@@ -9,7 +9,7 @@ import Inputmask from "inputmask";
 import DatePicker, { registerLocale } from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import tr from "date-fns/locale/tr";
-import moment from 'moment'
+import moment from "moment";
 const $ = require("jquery");
 
 registerLocale("tr", tr);
@@ -194,81 +194,86 @@ export class Edit extends Component {
 
 		this.setState({ select });
 
-		setTimeout(() => {DetailEmployee({
-			uid: uid,
-			to: to
-		}).then(response => {
-			if (response !== null) {
-				const status = response.status;
-				initialState.body = {};
-				if (status.code === 1020) {
-					const data = response.data;
-					this.setState({ responseData: data });
-					const getSplitBirthday = SplitBirthday(data.birthday);
-					initialState.name = data.name;
-					initialState.surname = data.surname;
-					initialState.securityNo = data.security_id;
-					initialState.phone = data.phone;
-					initialState.salary = data.salary ? data.salary.toString().replace(".", ",") : null;
-					initialState.imagePreview = data.image;
-					initialState.image = data.image;
-					initialState.email = data.email;
-					initialState.position = data.position;
-					initialState.branch = data.branch;
-					initialState.day = getSplitBirthday.day;
-					initialState.month = getSplitBirthday.month;
-					initialState.year = getSplitBirthday.year;
-					initialState.address = data.address;
-					initialState.gender = data.gender;
-					initialState.blood = data.blood;
-					initialState.emergency = data.emergency || [];
-					initialState.school_history = data.school_history || [];
-					initialState.certificate = data.certificates || [];
-					initialState.start_date = data.start_date ? data.start_date === "None" ? null : new Date(data.start_date) : null; 
-					if (initialState.emergency) {
-						const len = initialState.emergency.length;
-						if (len < 2) {
-							for (var i = 0; i < 2 - len; i++) {
-								initialState.emergency.push({
-									kinship: "",
-									name: "",
-									phone: ""
-								});
+		setTimeout(() => {
+			DetailEmployee({
+				uid: uid,
+				to: to
+			}).then(response => {
+				if (response !== null) {
+					const status = response.status;
+					initialState.body = {};
+					if (status.code === 1020) {
+						const data = response.data;
+						this.setState({ responseData: data });
+						const getSplitBirthday = SplitBirthday(data.birthday);
+						initialState.name = data.name;
+						initialState.surname = data.surname;
+						initialState.securityNo = data.security_id;
+						initialState.phone = data.phone;
+						initialState.salary = data.salary ? data.salary.toString().replace(".", ",") : null;
+						initialState.imagePreview = data.image;
+						initialState.image = data.image;
+						initialState.email = data.email;
+						initialState.position = data.position;
+						initialState.branch = data.branch;
+						initialState.day = getSplitBirthday.day;
+						initialState.month = getSplitBirthday.month;
+						initialState.year = getSplitBirthday.year;
+						initialState.address = data.address;
+						initialState.gender = data.gender;
+						initialState.blood = data.blood;
+						initialState.emergency = data.emergency || [];
+						initialState.school_history = data.school_history || [];
+						initialState.certificate = data.certificates || [];
+						initialState.start_date = data.start_date
+							? data.start_date === "None"
+								? null
+								: new Date(data.start_date)
+							: null;
+						if (initialState.emergency) {
+							const len = initialState.emergency.length;
+							if (len < 2) {
+								for (var i = 0; i < 2 - len; i++) {
+									initialState.emergency.push({
+										kinship: "",
+										name: "",
+										phone: ""
+									});
+								}
 							}
 						}
-					}
-					if (initialState.school_history) {
-						const len = initialState.school_history.length;
-						if (len < 3) {
-							for (var i = 0; i < 3 - len; i++) {
-								initialState.school_history.push({
-									start: "",
-									end: "",
-									name: ""
-								});
+						if (initialState.school_history) {
+							const len = initialState.school_history.length;
+							if (len < 3) {
+								for (var i = 0; i < 3 - len; i++) {
+									initialState.school_history.push({
+										start: "",
+										end: "",
+										name: ""
+									});
+								}
 							}
 						}
-					}
-					if (initialState.certificate) {
-						const len = initialState.certificate.length;
-						if (len < 3) {
-							for (var i = 0; i < 3 - len; i++) {
-								initialState.certificate.push({
-									type: "",
-									year: "",
-									corporation: ""
-								});
+						if (initialState.certificate) {
+							const len = initialState.certificate.length;
+							if (len < 3) {
+								for (var i = 0; i < 3 - len; i++) {
+									initialState.certificate.push({
+										type: "",
+										year: "",
+										corporation: ""
+									});
+								}
 							}
 						}
+						initialState.body_height = data.attributes.body_height;
+						initialState.body_weight = data.attributes.body_weight;
+						this.setState({ ...initialState });
+						this.setState({ onLoadedData: true });
 					}
-					initialState.body_height = data.attributes.body_height;
-					initialState.body_weight = data.attributes.body_weight;
-					this.setState({ ...initialState });
-					this.setState({ onLoadedData: true });
 				}
-			}
-		});
-	}, 100);
+			});
+		}, 100);
 	}
 
 	handleSubmit = e => {
@@ -297,7 +302,8 @@ export class Edit extends Component {
 			certificate,
 			formErrors,
 			to,
-			select,start_date,
+			select,
+			start_date,
 			responseData
 		} = this.state;
 		const requiredData = {};
@@ -341,7 +347,6 @@ export class Edit extends Component {
 		}
 
 		const checkBirthday = year && month && day ? `${year}-${month}-${day}` : null;
-
 
 		if (formValid(requiredData)) {
 			this.setState({ loadingButton: "btn-loading" });
@@ -495,7 +500,7 @@ export class Edit extends Component {
 		const { name, value } = e.target;
 		this.setState({ [name]: parseInt(value) });
 	};
-	
+
 	handleDate = (date, name) => {
 		let formErrors = { ...this.state.formErrors };
 		formErrors.start_date = date ? "" : "is-invalid";
@@ -683,21 +688,21 @@ export class Edit extends Component {
 										</div>
 
 										<div className="form-group">
-									<label className="form-label">
-										İşe Başlama Tarihi
-										<span className="form-required">*</span>
-									</label>
-									<DatePicker
-										selected={start_date}
-										selectsEnd
-										startDate={start_date}
-										name="start_date"
-										locale="tr"
-										dateFormat="dd/MM/yyyy"
-										onChange={date => this.handleDate(date, "start_date")}
-										className={`form-control ${formErrors.start_date}`}
-									/> 
-								</div>
+											<label className="form-label">
+												İşe Başlama Tarihi
+												<span className="form-required">*</span>
+											</label>
+											<DatePicker
+												selected={start_date}
+												selectsEnd
+												startDate={start_date}
+												name="start_date"
+												locale="tr"
+												dateFormat="dd/MM/yyyy"
+												onChange={date => this.handleDate(date, "start_date")}
+												className={`form-control ${formErrors.start_date}`}
+											/>
+										</div>
 									</div>
 								</div>
 							</div>
@@ -765,7 +770,9 @@ export class Edit extends Component {
 														<div className="col-4">
 															<Select
 																value={getSelectValue(select.months, month, "value")}
-																onChange={val => this.handleSelect(val, "month", "value")}
+																onChange={val =>
+																	this.handleSelect(val, "month", "value")
+																}
 																options={select.months}
 																name="month"
 																placeholder="Ay"
@@ -780,7 +787,9 @@ export class Edit extends Component {
 														<div className="col-4">
 															<Select
 																value={getSelectValue(select.years, year, "value")}
-																onChange={val => this.handleSelect(val, "year", "value")}
+																onChange={val =>
+																	this.handleSelect(val, "year", "value")
+																}
 																options={select.years}
 																name="year"
 																placeholder="Yıl"

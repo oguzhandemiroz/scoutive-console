@@ -10,7 +10,6 @@ export class EmployeeRollcall extends Component {
 
 		this.state = {
 			uid: localStorage.getItem("UID"),
-			loadingData: "active",
 			data: null
 		};
 	}
@@ -21,7 +20,7 @@ export class EmployeeRollcall extends Component {
 
 	listActiveRollcall = () => {
 		const { uid } = this.state;
-		this.setState({ loadingData: "active" });
+		
 		ActiveRollcall(
 			{
 				uid: uid
@@ -31,14 +30,14 @@ export class EmployeeRollcall extends Component {
 			if (response) {
 				const status = response.status;
 				if (status.code === 1020) {
-					this.setState({ loadingData: "", data: response.data });
+					this.setState({ data: response.data });
 				}
 			}
 		});
 	};
 
 	render() {
-		const { data, loadingData } = this.state;
+		const { data } = this.state;
 		return (
 			<div className="card">
 				<div className="card-header">
@@ -49,13 +48,10 @@ export class EmployeeRollcall extends Component {
 						<table className="table card-table">
 							<tbody>
 								<tr>
-									<td>{moment(data.created_date).format("LL")}</td>
+									<td>{moment(data[data.length - 1].created_date).format("LL")}</td>
 									<td className="text-right">
 										<Link
-											to={{
-												pathname: `/app/rollcalls/employee/add`,
-												state: { rcid: data[0].rollcall_id }
-											}}
+											to={`/app/rollcalls/employee/add/${data[data.length - 1].rollcall_id}`}
 											className="btn btn-sm btn-info">
 											Yoklamaya Devam Et
 										</Link>
@@ -72,7 +68,7 @@ export class EmployeeRollcall extends Component {
 					)
 				) : (
 					<div className="card-body">
-						<div className={`dimmer ${loadingData} p-3`}>
+						<div className={`dimmer active p-3`}>
 							<div className="loader" />
 							<div className="dimmer-content"></div>
 						</div>

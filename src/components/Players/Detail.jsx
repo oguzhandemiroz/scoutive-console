@@ -40,6 +40,7 @@ export class Detail extends Component {
 			branch: "—",
 			body_measure: null,
 			emergency: null,
+			is_trial: 1,
 			body: { height: "—", weight: "—" },
 			onLoadedData: false
 		};
@@ -76,6 +77,7 @@ export class Detail extends Component {
 					stateData.foot = data.foot !== null ? footToText[data.foot] : "—";
 					stateData.foot_no = data.attributes.foot_no || "—";
 					stateData.emergency = data.emergency;
+					stateData.is_trial = data.is_trial;
 					stateData.body_measure = data.attributes.body_measure;
 					stateData.onLoadedData = true;
 				}
@@ -143,6 +145,7 @@ export class Detail extends Component {
 			foot,
 			foot_no,
 			start_date,
+			is_trial,
 			end_date,
 			onLoadedData
 		} = this.state;
@@ -152,9 +155,7 @@ export class Detail extends Component {
 				<div className="page-header">
 					<h1 className="page-title">Öğrenci Detay</h1>
 					<div className="col" />
-					<div className="col-auto px-0">
-						<Tabs match={match} to={to} />
-					</div>
+					<div className="col-auto px-0">{is_trial === 0 ? <Tabs match={match} to={to} /> : null}</div>
 				</div>
 
 				<div className="row">
