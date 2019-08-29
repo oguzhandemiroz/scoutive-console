@@ -26,7 +26,7 @@ export class WarningModal extends Component {
 							</p>
 							<p>
 								Yoklamalar gün sonunda otomatik olarak tamamlanır. İşaretlenmemiş olanlar, sisteme{" "}
-								<b>"gelmedi"</b> şeklinde tanımlanır.
+								<b>"Tanımsız"</b> şeklinde tanımlanır.
 							</p>
 							<p>
 								<b className="text-red">Not:</b> Yoklama tamamlana kadar değişiklik yapabilirsiniz.

@@ -243,7 +243,7 @@ export class Add extends Component {
 									return (
 										<span
 											key={key.toString()}
-											title={status_type[el.status].text + ": " + el.rollcall_date}
+											title={status_type[el.status].text + ": " + moment(el.rollcall_date).format("LL")}
 											data-toggle="tooltip"
 											className={`d-inline-flex justify-content-center align-items-center mr-1 badge ${status_type[el.status].badge}`}>
 											<i className={`fe ${status_type[el.status].icon}`} />
@@ -466,12 +466,13 @@ export class Add extends Component {
 				},
 				{
 					data: "birthday",
+					class: "w-1",
 					render: function(data, type, row) {
 						if (type === "sort" || type === "type") {
 							return data ? data.split(".")[0] : data;
 						}
 
-						if (data && data !== "") return moment(data).format("DD-MM-YYYY");
+						if (data && data !== "") return moment(data).format("YYYY");
 						else return "&mdash;";
 					}
 				},
@@ -723,7 +724,7 @@ export class Add extends Component {
 										className="form-help bg-gray-dark text-white"
 										data-toggle="popover"
 										data-placement="bottom"
-										data-content='<p>Yoklama yapılırken, sisteme <b>"geldi"</b>, <b>"izinli"</b> veya <b>"gelmedi"</b> olarak giriş yapabilirsiniz.</p><p>Yoklamalar gün sonunda otomatik olarak tamamlanır. İşaretlenmemiş olanlar, sisteme <b>"gelmedi"</b> şeklinde tanımlanır.</p><p><b className="text-red">Not:</b> Yoklama tamamlana kadar değişiklik yapabilirsiniz. Tamamlanan yoklamalarda değişiklik <b><u><i>yapılamaz.</i></u></b></p>'>
+										data-content='<p>Yoklama yapılırken, sisteme <b>"geldi"</b>, <b>"izinli"</b> veya <b>"gelmedi"</b> olarak giriş yapabilirsiniz.</p><p>Yoklamalar gün sonunda otomatik olarak tamamlanır. İşaretlenmemiş olanlar, sisteme <b>"Tanımsız"</b> şeklinde tanımlanır.</p><p><b className="text-red">Not:</b> Yoklama tamamlana kadar değişiklik yapabilirsiniz. Tamamlanan yoklamalarda değişiklik <b><u><i>yapılamaz.</i></u></b></p>'>
 										!
 									</span>
 									<Modal />
@@ -743,7 +744,7 @@ export class Add extends Component {
 												<th className="no-sort rollcalls">SON 5 YOKLAMA</th>
 												<th className="phone">TELEFON</th>
 												<th className="emergency">VELİ İLETİŞİM</th>
-												<th className="birthday">DOĞUM TARİHİ</th>
+												<th className="w-1 birthday">DOĞUM TARİHİ</th>
 												<th className="group">GRUP</th>
 												<th className="w-1 no-sort status">DURUM</th>
 												<th className="pr-2 w-1 no-sort action"></th>

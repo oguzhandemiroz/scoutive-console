@@ -87,13 +87,13 @@ export class TotalPlayerCount extends Component {
 		c3.generate({
 			bindto: "#total-player-count",
 			data: {
-				json: [{ total: total, active: active, passive: passive, freeze: freeze, trial: trial }],
+				json: [{ active: active, passive: passive, freeze: freeze, trial: trial }],
 				keys: {
-					value: ["total", "active", "passive", "freeze", "trial"]
+					value: ["active", "passive", "freeze", "trial"]
 				},
 				type: "pie",
 				colors: {
-					total: "#495057",
+					//total: "#495057",
 					active: sc.colors["green"],
 					passive: sc.colors["red"],
 					freeze: sc.colors["azure"],
@@ -101,7 +101,7 @@ export class TotalPlayerCount extends Component {
 				},
 				names: {
 					// name of each serie
-					total: "Toplam",
+					//total: "Toplam",
 					active: "Aktif",
 					passive: "Silinen",
 					freeze: "Pasif",
