@@ -239,13 +239,17 @@ export class Detail extends Component {
 												</div>
 												<div className="form-inline">
 													<label className="form-label">Sorumlu Antrenör: </label>
-													<Link
-														to={"/app/employees/detail/" + detail.employee.uid}
-														className="ml-2">
-														{(detail.employee.name || "") +
-															" " +
-															(detail.employee.surname || "")}
-													</Link>
+													{detail.employee ? (
+														<Link
+															to={"/app/employees/detail/" + detail.employee.uid}
+															className="ml-2">
+															{(detail.employee.name || "") +
+																" " +
+																(detail.employee.surname || "")}
+														</Link>
+													) : (
+														<span className="ml-2">&mdash;</span>
+													)}
 												</div>
 											</div>
 										</div>
@@ -291,13 +295,13 @@ export class Detail extends Component {
 																						</Link>
 																					</div>
 																					<div className="small text-muted">
-																						Doğum Tarihi:{" "}
+																						Doğum Yılı:{" "}
 																						{el.birthday
 																							? moment(
 																									new Date(
 																										el.birthday
 																									)
-																							  ).format("LL")
+																							  ).format("YYYY")
 																							: "—"}
 																					</div>
 																				</td>

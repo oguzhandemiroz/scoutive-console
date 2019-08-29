@@ -472,12 +472,13 @@ const GetPlayers = () => {
                             const label = name + " " + surname;
                             const image = el.image;
                             const group = el.group ? el.group.name : null;
+                            const birthday = el.birthday;
                             selectData.push({
                                 value: value,
                                 label: label,
                                 image: image,
                                 group: group,
-                                disabled: true
+                                birthday: birthday
                             });
                         });
                         

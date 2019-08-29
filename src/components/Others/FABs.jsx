@@ -17,6 +17,10 @@ export class FABs extends Component {
 			delay: { show: "500" }
 		});
 
+		$(".dropdown-menu").mouseover(function() {
+			$('[data-toggle="tooltip"]').tooltip("hide");
+        });
+
 		$("#FABs").click(function() {
 			$(".FABs-wrapper").toggleClass("fixed");
 			$('[data-toggle="tooltip"]').tooltip("hide");

@@ -7,6 +7,8 @@ import { Hours, Minutes, DateRange, GetEmployees, GetPlayers } from "../../servi
 import { getSelectValue, UploadFile, groupAgeSplit } from "../../services/Others";
 import { Toast, showSwal } from "../../components/Alert";
 import List from "./List";
+import moment from "moment";
+import "moment/locale/tr";
 
 const formValid = ({ formErrors, ...rest }) => {
 	let valid = true;
@@ -39,7 +41,7 @@ const { Option } = components;
 const ImageOptionPlayer = props => (
 	<Option {...props}>
 		<span className="avatar avatar-sm mr-2" style={{ backgroundImage: `url(${props.data.image})` }} />
-		{props.data.label}
+		{props.data.label} ({props.data.birthday? moment(props.data.birthday).format("YYYY") : null})
 		<div className="small text-muted mt-1">
 			Mevcut Grup: <b className="text-blue">{props.data.group || "—"}</b>
 		</div>
@@ -206,7 +208,11 @@ export class Edit extends Component {
 					stateData.name = data.name;
 					stateData.hour = getSelectValue(select.hours, data.time.slice(0, 2), "label");
 					stateData.minute = getSelectValue(select.minutes, data.time.slice(3, -3), "label");
-					stateData.employee = getSelectValue(responseEmployees, data.employee.employee_id, "value");
+					stateData.employee = getSelectValue(
+						responseEmployees,
+						data.employee ? data.employee.employee_id : null,
+						"value"
+					);
 					stateData.start_age = groupAgeSplit(data.age).start;
 					stateData.end_age = groupAgeSplit(data.age).end;
 					stateData.imagePreview = data.image ? data.image : null;

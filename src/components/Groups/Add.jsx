@@ -7,6 +7,8 @@ import {Hours, Minutes, DateRange, GetEmployees, GetPlayers} from "../../service
 import {UpdatePlayers} from "../../services/Player";
 import {UploadFile} from "../../services/Others";
 import {Toast, showSwal} from "../../components/Alert";
+import moment from "moment";
+import "moment/locale/tr";
 
 const formValid = ({formErrors, ...rest}) => {
     let valid = true;
@@ -39,7 +41,7 @@ const {Option} = components;
 const ImageOptionPlayer = props => (
     <Option {...props}>
         <span className="avatar avatar-sm mr-2" style={{backgroundImage: `url(${props.data.image})`}} />
-        {props.data.label}
+        {props.data.label} ({props.data.birthday? moment(props.data.birthday).format("YYYY") : null})
         <div className="small text-muted mt-1">
             Mevcut Grup: <b className="text-blue">{props.data.group || "—"}</b>
         </div>

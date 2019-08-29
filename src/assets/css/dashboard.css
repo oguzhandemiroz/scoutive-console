@@ -22388,7 +22388,7 @@ figure span.player-number {
 }
 
 #header-menu #ScoutiveLogo {
-	width: 100px;
+	width: 110px;
 }
 
 #daily-employee .c3-chart-arc text {
@@ -22541,11 +22541,17 @@ figure span.player-number {
 @media (max-width: 992px) {
 	.FABs-wrapper {
 		left: 0px;
-		bottom: 20px;
+		bottom: 0px;
 	}
 
 	.FABs-wrapper:hover {
 		left: 45px;
 		bottom: 20px;
 	}
+
+	
+.FABs-wrapper .dropup .dropdown-menu { 
+	margin-left: 0 !important;
+	left: 0 !important;
+}
 }

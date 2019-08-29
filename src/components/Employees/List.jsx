@@ -147,11 +147,14 @@ class Table extends Component {
 												className="dropdown-item action-change-password">
 												<i className="dropdown-icon fa fa-key" /> Şifre Değiştir
 											</button>
-											<a
-												className="dropdown-item action-all-salary-info"
-												href="javascript:void(0)">
+											<Link
+												onClick={() =>
+													this.props.history.push(`/app/employees/salary-detail/${uid}`)
+												}
+												to={`/app/employees/salary-detail/${uid}`}
+												className="dropdown-item">
 												<i className="dropdown-icon fa fa-receipt" /> Tüm Maaş Bilgisi
-											</a>
+											</Link>
 											<Link
 												onClick={() => this.props.history.push(`/app/employees/detail/${uid}`)}
 												to={`/app/employees/detail/${uid}`}
