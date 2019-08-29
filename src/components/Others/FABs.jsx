@@ -19,7 +19,7 @@ export class FABs extends Component {
 
 		$(".dropdown-menu").mouseover(function() {
 			$('[data-toggle="tooltip"]').tooltip("hide");
-        });
+		});
 
 		$("#FABs").click(function() {
 			$(".FABs-wrapper").toggleClass("fixed");
@@ -31,10 +31,12 @@ export class FABs extends Component {
 		return (
 			<div className="FABs-wrapper" data-toggle="tooltip" title="Hızlı Erişim Menüsü">
 				<div className="dropup">
-					<button id="FABs" className="btn btn-dark btn-lg" data-toggle="dropdown">
+					<span className="FABs-pin">
+						<i className="fa fa-thumbtack text-white"></i>
+					</span>
+					<button id="FABs" className="btn btn-secondary btn-lg" data-toggle="dropdown">
 						<i className="fe fe-zap"></i>
 					</button>
-
 					<div className="dropdown-menu">
 						<h6 className="dropdown-header">Hızlı Erişim Menüsü</h6>
 						<div className="dropdown-divider"></div>

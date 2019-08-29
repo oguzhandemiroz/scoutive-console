@@ -34,7 +34,7 @@ class HeaderMenu extends Component {
 								<img id="ScoutiveLogo" src={logo} alt="" />
 							</Link>
 							<div
-								data-original-title="Bu özellik üzerinde çalışıyoruz."
+								data-original-title="Geliştirme aşamasında..."
 								data-toggle="tooltip"
 								className="d-flex justify-content-center align-items-center cursor-pointer px-4 mr-auto icon"
 								style={{
