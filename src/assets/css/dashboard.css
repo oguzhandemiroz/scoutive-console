@@ -22523,8 +22523,7 @@ figure span.player-number {
 }
 
 #FABs i {
-	color: #fbc328;
-	font-size: 1.85rem;
+	font-size: 1.55rem;
 }
 
 .FABs-wrapper .dropdown-header {
@@ -22569,4 +22568,16 @@ figure span.player-number {
 	margin-left: 0 !important;
 	left: 0 !important;
 }
+}
+
+#player-list_wrapper .top {
+	display: flex;
+}
+
+#player-list_wrapper .filterTools {
+	margin: 0 1.5rem;
+	display: flex;
+	flex: 1;
+	justify-content: flex-start;
+	align-items: center;
 }
