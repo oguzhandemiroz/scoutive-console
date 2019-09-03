@@ -46,6 +46,7 @@ import PlayersRollcallAdd from "../components/Rollcalls/Player/Add";
 import PlayersRollcallDetail from "../components/Rollcalls/Player/Detail";
 
 import Accountings from "../views/Accountings/Accountings";
+import Fast from "../components/Accountings/Income/Fast";
 
 var indexRoutes = [
 	{
@@ -307,6 +308,13 @@ var indexRoutes = [
 		path: "/accountings",
 		name: "Accountings",
 		component: Accountings,
+		layout: "/app",
+		prop: { exact: true }
+	},
+	{
+		path: "/accountings/income/fast",
+		name: "Hızlı Gelir İşlemi",
+		component: Fast,
 		layout: "/app",
 		prop: { exact: true }
 	},
