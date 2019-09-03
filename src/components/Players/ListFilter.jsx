@@ -1,44 +1,95 @@
 import React, { Component } from "react";
+import Select from "react-select";
+import { Groups } from "../../services/FillSelect";
+
+const customStyles = {
+	control: styles => ({ ...styles, borderColor: "rgba(0, 40, 100, 0.12)", borderRadius: 3 })
+};
 
 export class ListFilter extends Component {
 	constructor(props) {
 		super(props);
 
 		this.state = {
+			uid: localStorage.getItem("UID"),
+			feeConditionButtonText: "Koşul",
+			pointConditionButtonText: "Koşul",
 			filter: {
-				status: [],
-				is_trial: [],
-				fee: {
-					value: 0,
-					condition: ">="
-				}
-			}
+				status: null,
+				is_trial: null,
+				group: null,
+				fee: null,
+				point: null,
+				birthday: null
+			},
+			options: null,
+			isLoading: true
 		};
 	}
 
-	handleCondition = (e, name, value) => {
-		e.preventDefault();
+	componentDidMount() {
+		Groups().then(response => {
+			this.setState({ options: response, isLoading: false });
+		});
+	}
+
+	handleSelect = (value, name) => {
 		const filter = { ...this.state.filter };
+		filter[name] = value ? value.label : "";
+		this.setState({ filter });
 	};
 
 	handleChange = e => {
 		const { name, value } = e.target;
 		const filter = { ...this.state.filter };
-		console.log(name, value);
+
+		if (name.indexOf(".") > -1) {
+			const splitName = name.split(".");
+			filter[splitName[0]] = filter[splitName[0]] || {};
+			filter[splitName[0]][splitName[1]] = value;
+
+			if (filter[splitName[0]].value === "") filter[splitName[0]] = null;
+		} else {
+			filter[name] = filter[name] || {};
+			filter[name].value = value;
+
+			if (filter[name].value === "") filter[name] = null;
+		}
+
+		this.setState({ filter });
 	};
 
 	handleCheck = e => {
 		const { name, checked, value } = e.target;
 		const filter = { ...this.state.filter };
+		filter[name] = filter[name] || [];
 
 		if (checked) filter[name].push(parseInt(value));
-		else filter[name].pop(parseInt(value));
+		else filter[name] = filter[name].filter(x => x !== parseInt(value));
+
+		if (filter[name].length === 0) filter[name] = null;
 
 		this.setState({ filter });
 	};
 
+	handleCondition = (e, name, value, buttonText) => {
+		e.preventDefault();
+		const filter = { ...this.state.filter };
+		console.log(name, value);
+
+		if (value !== "clear") {
+			filter[name] = filter[name] || {};
+			filter[name].condition = value;
+		} else {
+			filter[name] = null;
+		}
+		if (name === "fee") this.setState({ feeConditionButtonText: buttonText });
+		else if (name === "point") this.setState({ pointConditionButtonText: buttonText });
+		this.setState({ filter });
+	};
+
 	render() {
-		const { filter } = this.state;
+		const { filter, feeConditionButtonText, pointConditionButtonText, options, isLoading } = this.state;
 		return (
 			<div
 				className="modal fade bd-example-modal-xl"
@@ -94,7 +145,7 @@ export class ListFilter extends Component {
 													type="checkbox"
 													className="custom-control-input"
 													name="is_trial"
-													value="3"
+													value="1"
 													onChange={this.handleCheck}
 												/>
 												<span className="custom-control-label text-purple">Deneme</span>
@@ -107,57 +158,64 @@ export class ListFilter extends Component {
 										<label className="form-label">Aidat Tutarı</label>
 										<div className="input-group">
 											<input
-												type="text"
+												type="number"
 												className="form-control"
 												name="fee"
 												onChange={this.handleChange}
 											/>
 											<div className="input-group-append">
+												<span className="input-group-text">,00</span>
 												<button
 													type="button"
 													className="btn btn-secondary dropdown-toggle"
 													data-toggle="dropdown"
 													aria-haspopup="true"
 													aria-expanded="false">
-													Koşul
+													{feeConditionButtonText}
 												</button>
 												<div className="dropdown-menu">
-													<a
+													<button
 														className="dropdown-item"
-														onClick={() => this.handleCondition(this, "fee", ">")}
-														href="javascript:void(0)">
+														onClick={e => this.handleCondition(e, "fee", ">", "Büyük")}>
 														Büyük
-													</a>
-													<a
+													</button>
+													<button
 														className="dropdown-item"
-														onClick={() => this.handleCondition(this, "fee", ">=")}
-														href="javascript:void(0)">
+														onClick={e =>
+															this.handleCondition(e, "fee", ">=", "Büyük ve Eşit")
+														}>
 														Büyük ve Eşit
-													</a>
-													<a
+													</button>
+													<button
 														className="dropdown-item"
-														onClick={() => this.handleCondition(this, "fee", "<")}
-														href="javascript:void(0)">
+														onClick={e => this.handleCondition(e, "fee", "<", "Küçük")}>
 														Küçük
-													</a>
-													<a
+													</button>
+													<button
 														className="dropdown-item"
-														onClick={() => this.handleCondition(this, "fee", "<=")}
-														href="javascript:void(0)">
+														onClick={e =>
+															this.handleCondition(e, "fee", "<=", "Küçük ve Eşit")
+														}>
 														Küçük ve Eşit
-													</a>
-													<a
+													</button>
+													<button
 														className="dropdown-item"
-														onClick={() => this.handleCondition(this, "fee", "=")}
-														href="javascript:void(0)">
+														onClick={e => this.handleCondition(e, "fee", "===", "Eşit")}>
 														Eşit
-													</a>
-													<a
+													</button>
+													<button
 														className="dropdown-item"
-														onClick={() => this.handleCondition(this, "fee", "!=")}
-														href="javascript:void(0)">
+														onClick={e =>
+															this.handleCondition(e, "fee", "!==", "Eşit Değil")
+														}>
 														Eşit Değil
-													</a>
+													</button>
+													<div role="separator" class="dropdown-divider"></div>
+													<button
+														className="dropdown-item"
+														onClick={e => this.handleCondition(e, "fee", "clear", "Koşul")}>
+														Temizle
+													</button>
 												</div>
 											</div>
 										</div>
@@ -167,10 +225,24 @@ export class ListFilter extends Component {
 										<label className="form-label">Yaş Aralığı</label>
 										<div className="row gutters-xs">
 											<div className="col-6">
-												<input type="number" className="form-control" />
+												<input
+													type="number"
+													name="birthday.first"
+													onChange={this.handleChange}
+													min="1960"
+													max={filter.birthday ? filter.birthday.second : "2016"}
+													className="form-control"
+												/>
 											</div>
 											<div className="col-6">
-												<input type="number" className="form-control" />
+												<input
+													type="number"
+													name="birthday.second"
+													onChange={this.handleChange}
+													min={filter.birthday ? filter.birthday.first : "1960"}
+													max="2016"
+													className="form-control"
+												/>
 											</div>
 										</div>
 									</div>
@@ -182,7 +254,8 @@ export class ListFilter extends Component {
 											<input
 												type="text"
 												className="form-control"
-												aria-label="Text input with dropdown button"
+												name="point"
+												onChange={this.handleChange}
 											/>
 											<div className="input-group-append">
 												<button
@@ -191,27 +264,51 @@ export class ListFilter extends Component {
 													data-toggle="dropdown"
 													aria-haspopup="true"
 													aria-expanded="false">
-													Koşul
+													{pointConditionButtonText}
 												</button>
 												<div className="dropdown-menu">
-													<a className="dropdown-item" href="javascript:void(0)">
+													<button
+														className="dropdown-item"
+														onClick={e => this.handleCondition(e, "point", ">", "Büyük")}>
 														Büyük
-													</a>
-													<a className="dropdown-item" href="javascript:void(0)">
+													</button>
+													<button
+														className="dropdown-item"
+														onClick={e =>
+															this.handleCondition(e, "point", ">=", "Büyük ve Eşit")
+														}>
 														Büyük ve Eşit
-													</a>
-													<a className="dropdown-item" href="javascript:void(0)">
+													</button>
+													<button
+														className="dropdown-item"
+														onClick={e => this.handleCondition(e, "point", "<", "Küçük")}>
 														Küçük
-													</a>
-													<a className="dropdown-item" href="javascript:void(0)">
+													</button>
+													<button
+														className="dropdown-item"
+														onClick={e =>
+															this.handleCondition(e, "point", "<=", "Küçük ve Eşit")
+														}>
 														Küçük ve Eşit
-													</a>
-													<a className="dropdown-item" href="javascript:void(0)">
+													</button>
+													<button
+														className="dropdown-item"
+														onClick={e => this.handleCondition(e, "point", "===", "Eşit")}>
 														Eşit
-													</a>
-													<a className="dropdown-item" href="javascript:void(0)">
+													</button>
+													<button
+														className="dropdown-item"
+														onClick={e =>
+															this.handleCondition(e, "point", "!==", "Eşit Değil")
+														}>
 														Eşit Değil
-													</a>
+													</button>
+													<div role="separator" class="dropdown-divider"></div>
+													<button
+														className="dropdown-item"
+														onClick={e => this.handleCondition(e, "point", "clear", "Koşul")}>
+														Temizle
+													</button>
 												</div>
 											</div>
 										</div>
@@ -219,22 +316,24 @@ export class ListFilter extends Component {
 
 									<div className="form-group">
 										<label className="form-label">Grup</label>
-										<input type="text" className="form-control" />
+										<Select
+											onChange={val => this.handleSelect(val, "group")}
+											options={options}
+											name="group"
+											placeholder="Seç..."
+											styles={customStyles}
+											isClearable={true}
+											isSearchable={true}
+											isDisabled={isLoading}
+											isLoading={isLoading}
+											noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
+										/>
 									</div>
 								</div>
 							</div>
 						</div>
 						<div className="modal-footer">
-							<button
-								className="btn btn-yellow"
-								onClick={() =>
-									this.props.filterState({
-										status: []
-										/*group: "TEST-GROUP-1",
-										fee: { value: 200, condition: ">" },
-										birthday: { value: 2007, condition: ">=" }*/
-									})
-								}>
+							<button className="btn btn-yellow" onClick={() => this.props.filterState(filter)}>
 								Uygula
 							</button>
 						</div>

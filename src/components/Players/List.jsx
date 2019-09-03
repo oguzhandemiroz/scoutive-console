@@ -164,37 +164,71 @@ class Table extends Component {
 
 	generateFilter = filterFromModal => {
 		console.log("filterFromModal", filterFromModal);
+		$.fn.dataTable.ext.search = [];
 
 		Object.keys(filterFromModal).map(el => {
 			$.fn.dataTable.ext.search.push(function(settings, searchData, index, rowData, counter) {
 				if (["status", "group", "is_trial"].indexOf(el) > -1) {
-					return filterFromModal[el].length > 0
-						? filterFromModal[el].indexOf(rowData[el]) > -1
-							? true
-							: false
-						: true;
-				} else {
-					switch (filterFromModal[el].condition) {
-						case ">":
-							return parseInt(rowData[el]) > filterFromModal[el].value;
-						case ">=":
-							return parseInt(rowData[el]) >= filterFromModal[el].value;
-						case "<":
-							return parseInt(rowData[el]) < filterFromModal[el].value;
-						case "<=":
-							return parseInt(rowData[el]) <= filterFromModal[el].value;
-						case "=":
-							return parseInt(rowData[el]) === filterFromModal[el].value;
-						case "!=":
-							return parseInt(rowData[el]) !== filterFromModal[el].value;
+					return filterFromModal[el] ? (filterFromModal[el].indexOf(rowData[el]) > -1 ? true : false) : true;
+				} else if (el === "birthday") {
+					if (filterFromModal[el]) {
+						var first = parseInt(filterFromModal[el].first);
+						var second = parseInt(filterFromModal[el].second);
+						var age = parseInt(rowData[el]) || 0; // use data for the age column
+
+						if (
+							(isNaN(first) && isNaN(second)) ||
+							(isNaN(first) && age <= second) ||
+							(first <= age && isNaN(second)) ||
+							(first <= age && age <= second)
+						) {
+							return true;
+						}
+						return false;
 					}
+					return true;
+				} else {
+					if (filterFromModal[el]) {
+						switch (filterFromModal[el].condition) {
+							case ">":
+								return parseInt(rowData[el]) > parseInt(filterFromModal[el].value);
+							case ">=":
+								return parseInt(rowData[el]) >= parseInt(filterFromModal[el].value);
+							case "<":
+								return parseInt(rowData[el]) < parseInt(filterFromModal[el].value);
+							case "<=":
+								return parseInt(rowData[el]) <= parseInt(filterFromModal[el].value);
+							case "===":
+								return parseInt(rowData[el]) === parseInt(filterFromModal[el].value);
+							case "!==":
+								return parseInt(rowData[el]) !== parseInt(filterFromModal[el].value);
+							default:
+								return true;
+						}
+					} else return true;
 				}
 			});
 		});
 
+		if (!document.getElementById("clearFilter")) {
+			console.log("yok");
+			$("div.filterTools").append(
+				`<a href="javascript:void(0)" id="clearFilter" class="btn btn-link">Filtreyi temizle</a>`
+			);
+
+			$(".filterTools #clearFilter").on("click", function() {
+				$.fn.dataTable.ext.search = [];
+				$("#player-list")
+					.DataTable()
+					.draw();
+				$(this).remove();
+			});
+		}
+
 		$("#player-list")
 			.DataTable()
 			.draw();
+		$("#playerListFilterMenu").modal("hide");
 	};
 
 	componentDidMount() {
@@ -254,6 +288,7 @@ class Table extends Component {
 					},
 					dataSrc: function(d) {
 						console.log(d);
+						$.fn.dataTable.ext.search = [];
 						if (d.status.code !== 1020) {
 							errorSwal(d.status);
 							return [];
@@ -667,16 +702,8 @@ class Table extends Component {
 			});
 
 			$("div.filterTools").html(`
-                <button type="button" class="btn btn-yellow" data-toggle="modal" data-target="#playerListFilterMenu"><i class="fe fe-filter mr-2"></i>Filtre</button>
+                <button type="button" class="btn btn-yellow" data-toggle="modal" data-target="#playerListFilterMenu"><i class="fe fe-filter mr-2"></i>Filtre</button> 
 			`);
-
-			$(".filterTools button").on("click", function() {
-				//const { filter } = this.state;
-				/*$.fn.dataTable.ext.search.push(function(settings, searchData, index, rowData, counter) {
-					return filter.status.indexOf(rowData.status) > -1 ? true : false;
-				});
-				table.draw();*/
-			});
 
 			$("#activePlayers").on("change", function() {
 				if ($(this).is(":checked")) {
