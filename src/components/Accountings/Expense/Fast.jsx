@@ -63,7 +63,7 @@ export class Fast extends Component {
 			note: null,
 			amount: null,
 			budget: null,
-			type: 0,
+			type: 1,
 			payment_date: new Date(),
 			select: {
 				accounting_types: null,
@@ -217,7 +217,7 @@ export class Fast extends Component {
 		return (
 			<div className="container">
 				<div className="page-header">
-					<h1 className="page-title">Gelir &mdash; Hızlı İşlem</h1>
+					<h1 className="page-title">Gider &mdash; Hızlı İşlem</h1>
 				</div>
 
 				<form className="row" onSubmit={this.handleSubmit}>
@@ -225,7 +225,7 @@ export class Fast extends Component {
 						<div className="card">
 							<div className="card-header">
 								<h3 className="card-title">
-									<i className="fa fa-plus-square mr-2" /> Hızlı İşlem
+									<i className="fa fa-minus-square mr-2" /> Hızlı İşlem
 								</h3>
 							</div>
 							<div className="card-body">
@@ -324,7 +324,7 @@ export class Fast extends Component {
 							</div>
 							<div className="card-footer d-flex justify-content-between align-items-center">
 								<Link to={`/app/accountings`}>Geri dön</Link>
-								<button className={`btn btn-success ${loadingButton}`}>Kaydet</button>
+								<button className={`btn btn-danger ${loadingButton}`}>Kaydet</button>
 							</div>
 						</div>
 					</div>

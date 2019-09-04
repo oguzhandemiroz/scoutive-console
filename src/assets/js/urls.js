@@ -75,7 +75,9 @@ var ep = {
     SALARY_CREATE: host + api_version + "create/salary",
     SALARY_LIST: host + api_version + "list/employee/salaries",
     FEE_CREATE: host + api_version + "pay/player/fee",
-    FEE_LIST: host + api_version + "list/player/fees"
+    FEE_LIST: host + api_version + "list/player/fees",
+    ACCOUNTING_CREATE: host + api_version + "list/accounting/types" ,
+    ACCOUNTING_TYPE_LIST: host + api_version + "list/accounting/types" 
 };
 
 export default ep;

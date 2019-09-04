@@ -11,7 +11,9 @@ export class Income extends Component {
 					</h1>
 					<div className="input-group w-auto ml-auto">
 						<div className="input-group-append">
-							<button className="btn btn-sm btn-success">Gelir Oluştur</button>
+							<Link to="/app/accountings/income/fast" className="btn btn-sm btn-success">
+								<i className="fa fa-plus-square mr-1"></i> Gelir Oluştur
+							</Link>
 							<button
 								type="button"
 								className="btn btn-success btn-sm dropdown-toggle dropdown-toggle-split"
@@ -21,10 +23,6 @@ export class Income extends Component {
 								<span className="sr-only">Toggle Dropdown</span>
 							</button>
 							<div className="dropdown-menu">
-								<Link to="/app/accountings/income/fast" className="dropdown-item">
-									<i className="dropdown-icon fa fa-plus-square"></i> Hızlı Gelir İşlemi
-								</Link>
-								<div role="separator" className="dropdown-divider"></div>
 								<button className="dropdown-item">
 									<i className="dropdown-icon fa fa-receipt" /> Fatura
 								</button>

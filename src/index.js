@@ -1,5 +1,8 @@
 import "./assets/css/dashboard.css";
-//import "./assets/css/responsive.dataTables.min.css";
+import {
+    registerLocale
+} from "react-datepicker";
+import tr from "date-fns/locale/tr";
 import "jquery";
 import "popper.js";
 import "bootstrap/dist/js/bootstrap.bundle.min";
@@ -10,6 +13,8 @@ import * as serviceWorker from "./serviceWorker";
 import Core from "./layouts/Core.jsx";
 import ep from "./assets/js/urls";
 const $ = require("jquery");
+
+registerLocale("tr", tr);
 
 /** Initialize popovers */
 $(function () {
