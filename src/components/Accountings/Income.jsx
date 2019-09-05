@@ -23,9 +23,9 @@ export class Income extends Component {
 								<span className="sr-only">Toggle Dropdown</span>
 							</button>
 							<div className="dropdown-menu">
-								<button className="dropdown-item">
-									<i className="dropdown-icon fa fa-receipt" /> Fatura
-								</button>
+								<Link to="/app/accountings/income/invoice" className="dropdown-item">
+									<i className="dropdown-icon fa fa-receipt"></i> Fatura
+								</Link>
 								<Link to="/app/players/payment" className="dropdown-item">
 									<i className="dropdown-icon fa fa-hand-holding-usd"></i> Aidat Ödemesi
 								</Link>

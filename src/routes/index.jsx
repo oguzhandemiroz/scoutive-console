@@ -48,6 +48,9 @@ import PlayersRollcallDetail from "../components/Rollcalls/Player/Detail";
 import Accountings from "../views/Accountings/Accountings";
 import IncomeFast from "../components/Accountings/Income/Fast";
 import ExpenseFast from "../components/Accountings/Expense/Fast";
+import IncomeInvoice from "../components/Accountings/Income/Invoice";
+import ExpenseInvoice from "../components/Accountings/Expense/Invoice";
+
 
 var indexRoutes = [
 	{
@@ -320,9 +323,23 @@ var indexRoutes = [
 		prop: { exact: true }
 	},
 	{
+		path: "/accountings/income/invoice",
+		name: "Gelir - Fatura",
+		component: IncomeInvoice,
+		layout: "/app",
+		prop: { exact: true }
+	},
+	{
 		path: "/accountings/expense/fast",
 		name: "Hızlı Gider İşlemi",
 		component: ExpenseFast,
+		layout: "/app",
+		prop: { exact: true }
+	},
+	{
+		path: "/accountings/expense/invoice",
+		name: "Gider - Fatura",
+		component: ExpenseInvoice,
 		layout: "/app",
 		prop: { exact: true }
 	},

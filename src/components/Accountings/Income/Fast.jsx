@@ -92,6 +92,14 @@ export class Fast extends Component {
 		} catch (e) {}
 	};
 
+	reload = () => {
+		const current = this.props.history.location.pathname;
+		this.props.history.replace(`/`);
+		setTimeout(() => {
+			this.props.history.replace(current);
+		});
+	};
+
 	componentDidMount() {
 		this.fieldMasked();
 		this.listAccountingTypes();
@@ -131,7 +139,9 @@ export class Fast extends Component {
 							timer: 5000
 						}).then(result => {
 							if (result.value) {
-								console.log("xd");
+								console.log("tamam");
+							} else if (result.dismiss) {
+								this.reload();
 							}
 						});
 					}
