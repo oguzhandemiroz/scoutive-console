@@ -36,7 +36,6 @@ Array.prototype.diff = function (a) {
 
 if (sessionStorage.getItem("IPADDR") === null) {
     fetch(ep.GET_IP).then(res => res.json()).then(response => {
-        console.log("istek ip")
         sessionStorage.setItem("IPADDR", response.ip);
     });
 }

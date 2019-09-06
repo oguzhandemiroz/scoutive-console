@@ -27,7 +27,28 @@ const CreateAccountingRecord = data => {
 	}
 };
 
-const AccountingType = type => {
+const ListAccountingRecords = data => {
+	try {
+		return fetch(ep.ACCOUNTING_LIST, {
+			method: "POST",
+			body: JSON.stringify(data),
+			headers: h
+		})
+			.then(res => res.json())
+			.then(response => {
+				if (response) {
+					const status = response.status;
+					if (status.code !== 1020) errorSwal(status);
+					return response;
+				}
+			})
+			.catch(e => fatalSwal(true));
+	} catch (e) {
+		fatalSwal(true);
+	}
+};
+
+const ListAccountingTypes = type => {
 	try {
 		return fetch(ep.ACCOUNTING_TYPE_LIST, {
 			method: "POST",
@@ -75,4 +96,4 @@ const AccountingType = type => {
 	} catch (e) {}
 };
 
-export { CreateAccountingRecord, AccountingType };
+export { CreateAccountingRecord, ListAccountingRecords, ListAccountingTypes };

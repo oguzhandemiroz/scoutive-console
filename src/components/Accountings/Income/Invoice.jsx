@@ -251,9 +251,7 @@ export class Invoice extends Component {
 								<h3 className="card-title">Özet</h3>
 							</div>
 
-							<fieldset class="form-fieldset mb-0" style={{ borderRadius: 0, border: 0 }}>
-								
-							</fieldset>
+							<fieldset class="form-fieldset mb-0" style={{ borderRadius: 0, border: 0 }}></fieldset>
 						</div>
 					</div>
 				</form>

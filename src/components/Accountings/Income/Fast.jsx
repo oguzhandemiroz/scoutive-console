@@ -3,7 +3,7 @@ import { Link, withRouter } from "react-router-dom";
 import Select, { components } from "react-select";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { CreateAccountingRecord, AccountingType } from "../../../services/Accounting";
+import { CreateAccountingRecord, ListAccountingTypes } from "../../../services/Accounting";
 import { selectCustomStyles, selectCustomStylesError, formValid } from "../../../assets/js/core";
 import { GetBudgets } from "../../../services/FillSelect";
 import Inputmask from "inputmask";
@@ -63,7 +63,7 @@ export class Fast extends Component {
 			note: null,
 			amount: null,
 			budget: null,
-			type: 0,
+			type: 1,
 			payment_date: new Date(),
 			select: {
 				accounting_types: null,
@@ -115,11 +115,11 @@ export class Fast extends Component {
 			CreateAccountingRecord({
 				uid: uid,
 				type: type,
-				accounting_type: accounting_type.value,
+				accounting_type_id: accounting_type.value,
 				budget_id: budget.value,
 				amount: parseFloat(amount.replace(",", ".")),
-				payment_date: moment(payment_date).format("YYYY-MM-DD")
-				//note: note
+				payment_date: moment(payment_date).format("YYYY-MM-DD"),
+				note: note
 			}).then(response => {
 				if (response) {
 					const status = response.status;
@@ -139,7 +139,7 @@ export class Fast extends Component {
 							timer: 5000
 						}).then(result => {
 							if (result.value) {
-								console.log("tamam");
+								this.props.history.push("/app/accountings/income/detail/" + response.accounting_id);
 							} else if (result.dismiss) {
 								this.reload();
 							}
@@ -196,7 +196,7 @@ export class Fast extends Component {
 	};
 
 	listAccountingTypes = () => {
-		AccountingType(2).then(response =>
+		ListAccountingTypes(2).then(response =>
 			this.setState(prevState => ({
 				select: {
 					// object that we want to update
@@ -269,6 +269,7 @@ export class Fast extends Component {
 												İşlem Açıklaması <span className="form-required">*</span>
 											</label>
 											<input
+												placeholder="İşlem Açıklaması"
 												type="text"
 												name="note"
 												className={`form-control ${formErrors.note}`}

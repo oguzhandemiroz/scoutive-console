@@ -1,8 +1,58 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
+import { ListAccountingRecords } from "../../services/Accounting";
+import moment from "moment";
+import "moment/locale/tr";
+const $ = require("jquery");
+
+const noRow = loading => (
+	<tr style={{ height: 80 }}>
+		<td colSpan="5" className="text-center text-muted font-italic">
+			{loading ? (
+				<div className={`dimmer active`}>
+					<div className="loader" />
+					<div className="dimmer-content" />
+				</div>
+			) : (
+				"Kayıt bulunamadı..."
+			)}
+		</td>
+	</tr>
+);
 
 export class Expense extends Component {
+	constructor(props) {
+		super(props);
+
+		this.state = {
+			uid: localStorage.getItem("UID"),
+			list: null
+		};
+	}
+
+	componentDidMount() {
+		this.listAccountingRecord();
+	}
+
+	listAccountingRecord = () => {
+		const { uid } = this.state;
+		ListAccountingRecords({
+			uid: uid,
+			filter: { type: 0 },
+			count: 5
+		}).then(response => {
+			if (response) {
+				const status = response.status;
+				if (status.code === 1020) {
+					this.setState({ list: response.data });
+					$('[data-toggle="tooltip"]').tooltip();
+				}
+			}
+		});
+	};
+
 	render() {
+		const { list } = this.state;
 		return (
 			<div className="col-lg-6 col-sm-12">
 				<div className="page-header">
@@ -48,30 +98,35 @@ export class Expense extends Component {
 								</tr>
 							</thead>
 							<tbody>
-								<tr>
-									<td>Su Faturası</td>
-									<td>127,00 ₺</td>
-									<td className="text-nowrap" title="10/10/2019">
-										8 gün önce
-									</td>
-									<td className="w-1">
-										<a href="#" className="icon">
-											<i className="fe fe-eye"></i>
-										</a>
-									</td>
-								</tr>
-								<tr>
-									<td>Top</td>
-									<td>52,00 ₺</td>
-									<td className="text-nowrap" title="10/10/2019">
-										17 gün önce
-									</td>
-									<td className="w-1">
-										<a href="#" className="icon">
-											<i className="fe fe-eye"></i>
-										</a>
-									</td>
-								</tr>
+								{list
+									? list.map((el, key) => {
+											return (
+												<tr key={key.toString()}>
+													<td>
+														{el.accounting_type}
+														<div className="small text-muted text-break">{el.note}</div>
+													</td>
+													<td>{el.amount.format() + " ₺"}</td>
+													<td className="text-nowrap">
+														<span
+															data-toggle="tooltip"
+															title={moment(el.payment_date).format("LL")}>
+															{moment(el.payment_date, "YYYY-MM-DD")
+																.startOf("day")
+																.fromNow()}
+														</span>
+													</td>
+													<td className="w-1">
+														<Link
+															to={"/app/accountings/income/detail/" + el.accounting_id}
+															className="icon">
+															<i className="fe fe-eye"></i>
+														</Link>
+													</td>
+												</tr>
+											);
+									  })
+									: noRow(true)}
 							</tbody>
 							<tfoot>
 								<tr>
