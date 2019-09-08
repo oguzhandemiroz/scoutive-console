@@ -75,6 +75,7 @@ var ep = {
     SALARY_CREATE: host + api_version + "create/salary",
     SALARY_LIST: host + api_version + "list/employee/salaries",
     FEE_CREATE: host + api_version + "pay/player/fee",
+    FEE_UPDATE: host + api_version + "update/player/fee",
     FEE_LIST: host + api_version + "list/player/fees",
     ACCOUNTING_CREATE: host + api_version + "create/accounting/record",
     ACCOUNTING_LIST: host + api_version + "list/accounting/records",

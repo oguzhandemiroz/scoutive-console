@@ -1,4 +1,4 @@
-import {errorSwal, fatalSwal, Toast} from "../components/Alert";
+import { errorSwal, fatalSwal, Toast } from "../components/Alert";
 import ep from "../assets/js/urls";
 
 const h = new Headers();
@@ -91,6 +91,33 @@ const CreatePaymentFee = data => {
     }
 };
 
+const UpdatePaymentFee = data => {
+    try {
+        return fetch(ep.FEE_UPDATE, {
+            method: "POST",
+            body: JSON.stringify(data),
+            headers: h
+        })
+            .then(res => res.json())
+            .then(response => {
+                if (response) {
+                    const status = response.status;
+                    if (status.code !== 1020) errorSwal(status);
+                    else {
+                        Toast.fire({
+                            type: "success",
+                            title: status.description
+                        });
+                    }
+                    return response;
+                }
+            })
+            .catch(e => fatalSwal(true));
+    } catch (e) {
+        fatalSwal(true);
+    }
+};
+
 const ListFees = data => {
     try {
         return fetch(ep.FEE_LIST, {
@@ -112,4 +139,4 @@ const ListFees = data => {
     }
 };
 
-export {CreateVacation, UpdateVacation, ListVacations, CreatePaymentFee, ListFees};
+export { CreateVacation, UpdateVacation, ListVacations, CreatePaymentFee, UpdatePaymentFee, ListFees };
