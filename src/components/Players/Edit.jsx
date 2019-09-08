@@ -233,7 +233,7 @@ export class Edit extends Component {
 						initialState.start_date = data.start_date
 							? data.start_date === "None"
 								? null
-								: new Date(data.start_date)
+								: moment(data.start_date).toDate()
 							: null;
 
 						if (initialState.emergency) {

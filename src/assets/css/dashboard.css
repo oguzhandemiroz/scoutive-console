@@ -22586,3 +22586,10 @@ figure span.player-number {
 	justify-content: flex-start;
 	align-items: center;
 }
+
+
+.tick tspan {
+	/*
+	font-size: 12px;
+	font-weight: bold;*/
+}
