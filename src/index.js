@@ -1,4 +1,5 @@
 import "./assets/css/dashboard.css";
+import "./assets/css/custom.css";
 import {
     registerLocale
 } from "react-datepicker";

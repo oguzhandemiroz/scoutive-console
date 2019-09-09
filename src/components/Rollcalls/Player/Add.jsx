@@ -158,6 +158,29 @@ export class Add extends Component {
 		} catch (e) {}
 	};
 
+	getPaidStatus = (fee, amount) => {
+		try {
+			if (amount === 0) {
+				return 0;
+			} else {
+				return amount >= fee ? 1 : 2;
+			}
+		} catch (e) {}
+	};
+
+	formatPaidDate = date => {
+		try {
+			const splitDate = date.split(",");
+			const firstDate = moment(splitDate[0]);
+			const secondDate = moment(splitDate[1]);
+			const diff = Math.ceil(moment(secondDate).diff(moment(firstDate), "months", true));
+
+			return `${firstDate.format("MMMM")} ${firstDate.format("YYYY")} - ${secondDate.format(
+				"MMMM"
+			)} ${secondDate.format("YYYY")} (${diff} aylık)`;
+		} catch (e) {}
+	};
+
 	renderDataTable = () => {
 		const { uid } = this.state;
 		const { rcid } = this.props.match.params;
@@ -214,7 +237,9 @@ export class Add extends Component {
 							});
 						});
 						this.setState({ statuses: statusList });
-						return d.extra_data === 1 ? [] : d.data.filter(x => x.status === 1); //.filter(x => x.is_trial === 0);
+						return d.extra_data === 1
+							? []
+							: d.data.filter(x => x.status === 1).filter(x => x.is_trial === 0);
 					}
 				}
 			},
@@ -243,10 +268,59 @@ export class Add extends Component {
 									return (
 										<span
 											key={key.toString()}
-											title={status_type[el.status].text + ": " + moment(el.rollcall_date).format("LL")}
+											title={
+												status_type[el.status].text +
+												": " +
+												moment(el.rollcall_date).format("LL")
+											}
 											data-toggle="tooltip"
 											className={`d-inline-flex justify-content-center align-items-center mr-1 badge ${status_type[el.status].badge}`}>
 											<i className={`fe ${status_type[el.status].icon}`} />
+										</span>
+									);
+								})}
+							</div>,
+							td
+						);
+					}
+				},
+				{
+					targets: "fees",
+					createdCell: (td, cellData, rowData) => {
+						const status_type = {
+							0: { icon: "fe-x", badge: "badge-danger", text: "Ödenmedi", color: "text-danger" },
+							1: { icon: "fe-check", badge: "badge-success", text: "Ödendi", color: "text-success" },
+							2: {
+								icon: "fe-alert-circle",
+								badge: "badge-warning",
+								text: "Eksik Ödendi",
+								color: "text-warning"
+							}
+						};
+
+						ReactDOM.render(
+							<div>
+								{cellData.fees.map((el, key) => {
+									return (
+										<span
+											key={key.toString()}
+											data-placement="top"
+											data-content={`
+												<p>${this.formatPaidDate(el.month)}</p>
+												<b class="${status_type[this.getPaidStatus(el.fee, el.amount)].color}">
+													${status_type[this.getPaidStatus(el.fee, el.amount)].text}
+												</b>
+												<hr class="my-2"/>
+												<b>Ödemesi Gereken:</b> ${el.fee.format() + " ₺"} <br>
+												<b>Ödenen:</b> ${el.amount.format() + " ₺"} <br>
+												<hr class="my-1"/>
+												<b>Borç:</b> ${(el.fee - el.amount).format() + " ₺"} <br>
+											`}
+											data-toggle="popover"
+											className={`d-inline-flex justify-content-center align-items-center mr-1 badge ${status_type[this.getPaidStatus(el.fee, el.amount)].badge}`}>
+											<i
+												className={`fe ${status_type[this.getPaidStatus(el.fee, el.amount)].icon}`}
+											/>
 										</span>
 									);
 								})}
@@ -433,22 +507,22 @@ export class Add extends Component {
 							return `<a class="text-inherit" href="/app/players/detail/${row.uid}">${fullname}</a>`;
 					}
 				},
-				{ data: null },
-				{
-					data: "phone",
-					render: function(data, type, row) {
-						const formatPhone = data ? Inputmask.format(data, { mask: "(999) 999 9999" }) : null;
-						if (formatPhone) return `<a href="tel:${data}" class="text-inherit">${formatPhone}</a>`;
-						else return "&mdash;";
-					}
-				},
 				{
 					data: "emergency",
 					render: function(data, type, row) {
+						const fullname = fullnameGenerator(row.name, row.surname);
 						var elem = "";
 						var j = 0;
+
 						if (data) {
-							data.map(el => {
+							var myselfAddedData = data;
+							myselfAddedData.push({
+								kinship: "Kendisi",
+								name: fullname,
+								phone: row.phone || ""
+							});
+
+							myselfAddedData.map(el => {
 								if (el.phone !== "" && el.name !== "" && el.kinship !== "") {
 									const formatPhone = el.phone
 										? Inputmask.format(el.phone, { mask: "(999) 999 9999" })
@@ -485,6 +559,8 @@ export class Add extends Component {
 					}
 				},
 				{ data: null },
+				{ data: null },
+				{ data: null },
 				{ data: null }
 			]
 		});
@@ -497,6 +573,10 @@ export class Add extends Component {
 		$("#rollcall-list").on("draw.dt", function() {
 			console.log("draw.dt");
 			$('[data-toggle="tooltip"]').tooltip();
+			$('[data-toggle="popover"]').popover({
+				html: true,
+				trigger: "hover"
+			});
 		});
 	};
 
@@ -741,11 +821,11 @@ export class Add extends Component {
 												<th className="w-1 no-sort">T.C.</th>
 												<th className="w-1 text-center no-sort"></th>
 												<th className="name">AD SOYAD</th>
-												<th className="no-sort rollcalls">SON 5 YOKLAMA</th>
-												<th className="phone">TELEFON</th>
-												<th className="emergency">VELİ İLETİŞİM</th>
+												<th className="emergency">İLETİŞİM</th>
 												<th className="w-1 birthday">DOĞUM TARİHİ</th>
 												<th className="group">GRUP</th>
+												<th className="no-sort rollcalls">SON 3 YOKLAMA</th>
+												<th className="no-sort fees">SON 3 ÖDEME</th>
 												<th className="w-1 no-sort status">DURUM</th>
 												<th className="pr-2 w-1 no-sort action"></th>
 											</tr>

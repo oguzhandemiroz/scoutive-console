@@ -98,7 +98,6 @@ const UpdatePlayer = data => {
 			.then(res => res.json())
 			.then(response => {
 				console.log(response);
-				const data = response.data;
 				const status = response.status;
 
 				if (status.code !== 1020) {

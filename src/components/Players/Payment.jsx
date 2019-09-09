@@ -162,38 +162,42 @@ export class Payment extends Component {
 	handleSubmit = e => {
 		try {
 			e.preventDefault();
-			const { uid, to, player, fee, neccesary_fee, paid_date, period, month, payment_type, budget } = this.state;
+			const { uid, to, player, fee, necessary_fee, paid_date, period, month, payment_type, budget } = this.state;
 			let required = { ...this.state };
 			delete required.pastData;
 			if (formValid(required)) {
-				this.setState({ loadingButton: "btn-loading" });
-				CreatePaymentFee({
-					uid: uid,
-					to: player.value,
-					fee: parseFloat(neccesary_fee),
-					amount: parseFloat(fee.replace(",", ".")),
-					required_payment_date: moment(player.required_payment_date)
-						.month(parseInt(month.value) - 1)
-						.format("YYYY-MM-DD"),
-					payment_end_date: moment(player.required_payment_date)
-						.month(parseInt(month.value) - 1)
-						.add(period, "month")
-						.format("YYYY-MM-DD"),
-					paid_date: moment(paid_date).format("YYYY-MM-DD"),
-					payment_type: payment_type,
-					budget_id: budget.value
-				}).then(response => {
-					if (response) {
-						const status = response.status;
-						if (status.code === 1020) {
-							Toast.fire({
-								type: "success",
-								title: "İşlem başarılı..."
-							});
-						}
+				this.feePaymentAlert(player, fee).then(re => {
+					if (re.value) {
+						this.setState({ loadingButton: "btn-loading" });
+						CreatePaymentFee({
+							uid: uid,
+							to: player.value,
+							fee: parseFloat(necessary_fee),
+							amount: parseFloat(fee.replace(",", ".")),
+							required_payment_date: moment(player.required_payment_date)
+								.month(parseInt(month.value) - 1)
+								.format("YYYY-MM-DD"),
+							payment_end_date: moment(player.required_payment_date)
+								.month(parseInt(month.value) - 1)
+								.add(period, "month")
+								.format("YYYY-MM-DD"),
+							paid_date: moment(paid_date).format("YYYY-MM-DD"),
+							payment_type: payment_type,
+							budget_id: budget.value
+						}).then(response => {
+							if (response) {
+								const status = response.status;
+								if (status.code === 1020) {
+									Toast.fire({
+										type: "success",
+										title: "İşlem başarılı..."
+									});
+								}
+							}
+							this.setState({ loadingButton: "" });
+							this.listPastPayment(to);
+						});
 					}
-					this.setState({ loadingButton: "" });
-					this.listPastPayment(to);
 				});
 			} else {
 				console.error("ERROR FORM");
@@ -225,7 +229,7 @@ export class Payment extends Component {
 								? (player.fee * parseInt(value)).format().replace(".", "")
 								: null
 							: null,
-						neccesary_fee: player
+						necessary_fee: player
 							? player.fee
 								? (player.fee * parseInt(value)).format().replace(".", "")
 								: null
@@ -272,7 +276,7 @@ export class Payment extends Component {
 										.split(".")
 										.join("")
 								: null,
-							neccesary_fee: value.fee
+							necessary_fee: value.fee
 								? value.fee
 										.format()
 										.toString()
@@ -333,7 +337,7 @@ export class Payment extends Component {
 											.join("")
 									: null
 								: null,
-							neccesary_fee: to
+							necessary_fee: to
 								? getFee
 									? getFee
 											.format()
@@ -493,9 +497,31 @@ export class Payment extends Component {
 			: "—";
 	};
 
-	renderNeccesaryFeeAmount = () => {
+	renderNecessaryFeeAmount = () => {
 		const { player, period } = this.state;
 		return player ? (player.fee ? (player.fee * parseInt(period || 1)).format() + " ₺" : "—") : "—";
+	};
+
+	feePaymentAlert = (player, fee) => {
+		try {
+			return showSwal({
+				type: "warning",
+				title: "Uyarı",
+				html: `Aidat ödemesi yapmadan önce <b>Geçmiş İşlemler'i</b> kontrol et. 
+					Tamamlanmamış ödeme var ise yeni bir ödeme <u>alınmayacaktır.</u> Ödemeleri tamamladıktan sonra devam edebilirsin.
+					<hr>
+					<b>${player.label}</b> adlı öğrencinin <b>${parseFloat(fee.replace(",", ".")).format() +
+					" ₺"}</b> ödemesi alınacaktır.`,
+				confirmButtonText: "Devam et",
+				cancelButtonText: "Kontrol et",
+				confirmButtonColor: "#cd201f",
+				cancelButtonColor: "#467fcf",
+				showCancelButton: true,
+				reverseButtons: true
+			});
+		} catch (e) {
+			console.log(e);
+		}
 	};
 
 	render() {
@@ -510,7 +536,6 @@ export class Payment extends Component {
 			formErrors,
 			pastData,
 			loadingData,
-			loadingPast,
 			loadingButton
 		} = this.state;
 		return (
@@ -631,7 +656,7 @@ export class Payment extends Component {
 													<div className="col-12">
 														<div className="alert alert-warning p-3">
 															<strong className="mr-2">Ödemesi Gereken Tutar:</strong>
-															{this.renderNeccesaryFeeAmount()}
+															{this.renderNecessaryFeeAmount()}
 														</div>
 													</div>
 

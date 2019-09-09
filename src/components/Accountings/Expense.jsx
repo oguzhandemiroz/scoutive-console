@@ -107,14 +107,8 @@ export class Expense extends Component {
 														<div className="small text-muted text-break">{el.note}</div>
 													</td>
 													<td>{el.amount.format() + " ₺"}</td>
-													<td className="text-nowrap text-first-letter">
-														<span
-															data-toggle="tooltip"
-															title={moment(el.payment_date).format("LL")}>
-															{moment(el.payment_date, "YYYY-MM-DD")
-																.startOf("day")
-																.fromNow()}
-														</span>
+													<td className="text-nowrap">
+														{moment(el.payment_date).format("LL")}
 													</td>
 													<td className="w-1">
 														<Link

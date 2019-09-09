@@ -69,8 +69,7 @@ const ListAccountingTypes = type => {
 							title: '"Gelir Tipleri" yüklenemedi'
 						});
 					} else {
-						//const data = response.data.filter(x => x.type !== type);
-						const data = response.data;
+						const data = response.data.filter(x => [2, type].indexOf(x.type) > -1);
 						data.map(el => {
 							const value = el.accounting_type_id;
 							const label = el.name;

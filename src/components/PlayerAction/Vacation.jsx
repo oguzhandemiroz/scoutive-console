@@ -31,9 +31,9 @@ const initialState = {
 };
 
 const vacationStatus = {
-	0: { type: "danger", text: "İptal" },
-	1: { type: "success", text: "Onaylandı" },
-	2: { type: "warning", text: "Kullanıldı" }
+	3: { type: "danger", text: "İptal" },
+	1: { type: "success", text: "Aktif" },
+	2: { type: "warning", text: "Tamamlandı" }
 };
 
 const noRow = loading => (
@@ -425,14 +425,13 @@ export class Vacation extends Component {
 								aria-labelledby="vacation-past-tab">
 								<div className="modal-body">
 									<div className="table-responsive">
-										<table className="table table-hover table-outline table-vcenter text-nowrap card-table">
+										<table className="table table-hover table-outline table-vcenter text-center text-nowrap card-table">
 											<thead>
 												<tr>
-													<th className="text-center w-1">#</th>
 													<th>Başlangıç Tarihi</th>
 													<th>Bitiş Tarihi</th>
 													<th className="w-1">Gün Sayısı</th>
-													<th className="text-center">Durum</th>
+													<th>Durum</th>
 												</tr>
 											</thead>
 											<tbody>
@@ -440,13 +439,10 @@ export class Vacation extends Component {
 													? list.map((el, key) => {
 															return (
 																<tr key={key.toString()}>
-																	<td className="text-center text-muted">
-																		#{key + 1}
-																	</td>
 																	<td>{el.start}</td>
 																	<td>{el.end}</td>
 																	<td>{el.day}</td>
-																	<td className="text-center">
+																	<td>
 																		<span
 																			className={`badge badge-${vacationStatus[el.status].type}`}>
 																			{vacationStatus[el.status].text}

@@ -196,7 +196,7 @@ export class Fast extends Component {
 	};
 
 	listAccountingTypes = () => {
-		ListAccountingTypes(2).then(response =>
+		ListAccountingTypes(1).then(response =>
 			this.setState(prevState => ({
 				select: {
 					// object that we want to update
@@ -242,7 +242,7 @@ export class Fast extends Component {
 								<div className="row">
 									<div className="col-12">
 										<div className="form-group">
-											<label class="form-label">
+											<label className="form-label">
 												Kategori <span className="form-required">*</span>
 											</label>
 											<Select
@@ -265,7 +265,7 @@ export class Fast extends Component {
 									</div>
 									<div className="col-sm-12 col-md-6 col-lg-6">
 										<div className="form-group">
-											<label class="form-label">
+											<label className="form-label">
 												İşlem Açıklaması <span className="form-required">*</span>
 											</label>
 											<input
@@ -279,7 +279,7 @@ export class Fast extends Component {
 									</div>
 									<div className="col-sm-12 col-md-6 col-lg-6">
 										<div className="form-group">
-											<label class="form-label">
+											<label className="form-label">
 												İşlem Tarihi <span className="form-required">*</span>
 											</label>
 											<DatePicker
@@ -296,7 +296,7 @@ export class Fast extends Component {
 									</div>
 									<div className="col-sm-12 col-md-6 col-lg-6">
 										<div className="form-group">
-											<label class="form-label">
+											<label className="form-label">
 												Tutar <span className="form-required">*</span>
 											</label>
 											<input
@@ -309,7 +309,7 @@ export class Fast extends Component {
 									</div>
 									<div className="col-sm-12 col-md-6 col-lg-6">
 										<div className="form-group">
-											<label class="form-label">
+											<label className="form-label">
 												Kasa Hesabı <span className="form-required">*</span>
 											</label>
 											<Select

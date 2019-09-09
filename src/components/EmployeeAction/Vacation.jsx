@@ -54,9 +54,9 @@ const formValid = ({ formErrors, ...rest }) => {
 };
 
 const vacationStatus = {
-	0: { type: "danger", text: "İptal" },
-	1: { type: "success", text: "Onaylandı" },
-	2: { type: "warning", text: "Kullanıldı" }
+	3: { type: "danger", text: "İptal" },
+	1: { type: "success", text: "Aktif" },
+	2: { type: "warning", text: "Tamamlandı" }
 };
 
 const noRow = loading => (
@@ -592,7 +592,6 @@ export class Vacation extends Component {
 										<table className="table table-hover table-outline table-vcenter text-nowrap card-table text-center">
 											<thead>
 												<tr>
-													<th className="w-1"></th>
 													<th className="w-1">Başlangıç Tarihi</th>
 													<th className="w-1">Bitiş Tarihi</th>
 													<th className="w-1">Gün Sayısı</th>
@@ -604,7 +603,6 @@ export class Vacation extends Component {
 													? list.map((el, key) => {
 															return (
 																<tr key={key.toString()}>
-																	<td className="text-muted">#{key + 1}</td>
 																	<td>{el.start}</td>
 																	<td>{el.end}</td>
 																	<td>{el.day}</td>
