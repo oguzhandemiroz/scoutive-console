@@ -22589,7 +22589,5 @@ figure span.player-number {
 
 
 .tick tspan {
-	/*
-	font-size: 12px;
-	font-weight: bold;*/
+	font-size: .75rem;
 }

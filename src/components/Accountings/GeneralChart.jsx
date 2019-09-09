@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { ListAccountingRecords } from "../../services/Accounting";
 import "jquery";
 import c3 from "c3";
+import * as d3 from "d3";
 import "../../assets/css/c3.min.css";
 import sc from "../../assets/js/sc";
 import _ from "lodash";
@@ -34,7 +35,8 @@ const chartOptions = {
 			value: function(value, ratio, id, index) {
 				return value.format() + " ₺";
 			}
-		}
+		},
+		horizontal: true
 	},
 	axis: {
 		x: {
@@ -42,18 +44,28 @@ const chartOptions = {
 			localtime: true,
 			tick: {
 				fit: true,
-				format: "%d-%m-%Y",
+				format: "%d-%m",
 				rotate: -50,
 				culling: false
 			},
 			show: true
+		},
+		y: {
+			tick: {
+				format: d3.format(".2s")
+			}
 		}
 	},
-	zoom: {
-		enabled: true
-	},
 	bar: {
-		width: 40
+		width: 35
+	},
+	grid: {
+		x: {
+			show: true
+		},
+		y: {
+			show: true
+		}
 	}
 };
 
@@ -87,7 +99,7 @@ export class GeneralChart extends Component {
 			fullDay.push({ payment_date: monthDate.format("YYYY-MM-DD"), incomeAmount: 0, expenseAmount: 0 }); // your format
 			monthDate.add(1, "day");
 		});
-		console.log(fullDay);
+
 		return fullDay;
 	};
 
@@ -103,8 +115,8 @@ export class GeneralChart extends Component {
 				type: "bar", // default type of chart
 				groups: [["incomeAmount", "expenseAmount"]],
 				colors: {
-					data1: sc.colors["blue"],
-					data2: sc.colors["pink"]
+					incomeAmount: sc.colors["green"],
+					expenseAmount: sc.colors["red"]
 				},
 				names: {
 					x: "İşlem Tarihi",
@@ -154,7 +166,7 @@ export class GeneralChart extends Component {
 							};
 						})
 						.value();
-					console.log(grouped);
+
 					this.getDays();
 					this.setState({ list: grouped });
 					this.renderChart(
