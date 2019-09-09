@@ -107,7 +107,6 @@ const initialState = {
 	fee: null,
 	player: null,
 	month: { label: moment().format("MMMM"), value: moment().format("M") },
-	budget: null,
 	payment_type: 0,
 	period: 1,
 	loadingButton: ""
@@ -129,6 +128,7 @@ export class Payment extends Component {
 			loadingData: true,
 			loadingPast: true,
 			pastData: null,
+			budget: null,
 			select: {
 				employees: null,
 				budgets: null,
