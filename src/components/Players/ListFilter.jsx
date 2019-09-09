@@ -210,7 +210,7 @@ export class ListFilter extends Component {
 														}>
 														Eşit Değil
 													</button>
-													<div role="separator" class="dropdown-divider"></div>
+													<div role="separator" className="dropdown-divider"></div>
 													<button
 														className="dropdown-item"
 														onClick={e => this.handleCondition(e, "fee", "clear", "Koşul")}>
@@ -303,7 +303,7 @@ export class ListFilter extends Component {
 														}>
 														Eşit Değil
 													</button>
-													<div role="separator" class="dropdown-divider"></div>
+													<div role="separator" className="dropdown-divider"></div>
 													<button
 														className="dropdown-item"
 														onClick={e => this.handleCondition(e, "point", "clear", "Koşul")}>

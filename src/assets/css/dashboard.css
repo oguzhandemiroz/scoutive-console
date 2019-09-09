@@ -22591,3 +22591,7 @@ figure span.player-number {
 .tick tspan {
 	font-size: .75rem;
 }
+
+.text-first-letter::first-letter {
+	text-transform: capitalize;
+}

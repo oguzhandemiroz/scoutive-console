@@ -10,11 +10,6 @@ import moment from "moment";
 import "moment/locale/tr";
 
 const chartOptions = {
-	grid: {
-		y: {
-			lines: [{ value: 0 }]
-		}
-	},
 	padding: {
 		top: 15,
 		bottom: -1,
@@ -64,7 +59,8 @@ const chartOptions = {
 			show: true
 		},
 		y: {
-			show: true
+			show: true,
+			lines: [{ value: 0 }]
 		}
 	}
 };

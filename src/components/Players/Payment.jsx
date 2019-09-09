@@ -272,6 +272,13 @@ export class Payment extends Component {
 										.split(".")
 										.join("")
 								: null,
+							neccesary_fee: value.fee
+								? value.fee
+										.format()
+										.toString()
+										.split(".")
+										.join("")
+								: null,
 							to: value.value
 						});
 						this.listPastPayment(value.value);
@@ -318,6 +325,15 @@ export class Payment extends Component {
 							loadingData: false,
 							player: to ? getSelectValue(selectData, to, "value") : initialState.player,
 							fee: to
+								? getFee
+									? getFee
+											.format()
+											.toString()
+											.split(".")
+											.join("")
+									: null
+								: null,
+							neccesary_fee: to
 								? getFee
 									? getFee
 											.format()
