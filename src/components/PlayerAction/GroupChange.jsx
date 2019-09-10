@@ -47,6 +47,7 @@ export class GroupChange extends Component {
 				this.setState({ select, loadingButton: false });
 			});
 		}
+		console.log(this.props.data);
 		this.setState({ ...this.props });
 	}
 
@@ -150,11 +151,7 @@ export class GroupChange extends Component {
 
 										<div className="form-group">
 											<label className="form-label">Mevcut Grup:</label>
-											<div className="form-control-plaintext">
-												<Link to={`/app/groups/detail/${data.group_id}`}>
-													{data.group || "—"}
-												</Link>
-											</div>
+											<div className="form-control-plaintext">{data.group || "—"}</div>
 										</div>
 
 										<div className="form-group">

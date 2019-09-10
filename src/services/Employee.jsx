@@ -135,4 +135,26 @@ const DeleteEmployee = data => {
 	}
 };
 
-export { CreateEmployee, DetailEmployee, UpdateEmployee, ListEmployees, DeleteEmployee };
+const ActivateEmployee = data => {
+	try {
+		return fetch(ep.EMPLOYEE_ACTIVATE, {
+			method: "POST",
+			body: JSON.stringify(data),
+			headers: h
+		})
+			.then(res => res.json())
+			.then(response => {
+				if (response) {
+					const status = response.status;
+					if (status.code !== 1020) errorSwal(status);
+
+					return response;
+				}
+			})
+			.catch(e => fatalSwal(true));
+	} catch (e) {
+		fatalSwal(true);
+	}
+};
+
+export { CreateEmployee, DetailEmployee, UpdateEmployee, ListEmployees, DeleteEmployee, ActivateEmployee };

@@ -19,6 +19,7 @@ import SalaryDetailEmployee from "../components/Employees/SalaryDetail";
 
 import AddPlayer from "../components/Players/Add";
 import TrialPlayer from "../components/Players/Trial";
+import ActivateTrial from "../components/Players/ActivateTrial";
 import DetailPlayer from "../components/Players/Detail";
 import EditPlayer from "../components/Players/Edit";
 import PaymentPlayer from "../components/Players/Payment";
@@ -50,7 +51,6 @@ import IncomeFast from "../components/Accountings/Income/Fast";
 import ExpenseFast from "../components/Accountings/Expense/Fast";
 import IncomeInvoice from "../components/Accountings/Income/Invoice";
 import ExpenseInvoice from "../components/Accountings/Expense/Invoice";
-
 
 var indexRoutes = [
 	{
@@ -175,6 +175,13 @@ var indexRoutes = [
 		path: "/players/add/trial",
 		name: "Trial Players",
 		component: TrialPlayer,
+		layout: "/app",
+		prop: { exact: true }
+	},
+	{
+		path: "/players/trial/activate/:uid",
+		name: "Activate Trial Players",
+		component: ActivateTrial,
 		layout: "/app",
 		prop: { exact: true }
 	},

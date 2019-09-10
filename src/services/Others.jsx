@@ -59,7 +59,6 @@ const UploadFile = formData => {
 
 const AttributeDataChecker = (data, attr) => {
 	try {
-		console.log(data, attr);
 		if (data && attr) {
 			return data.toString() !== attr.toString();
 		} else if (attr === null) return false;

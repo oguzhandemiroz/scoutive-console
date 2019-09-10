@@ -95,6 +95,10 @@ const selectCustomStylesError = {
 	})
 };
 
+// eslint-disable-next-line
+const emailRegEx = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+const securityNoRegEx = /^\d+$/;
+
 const formValid = ({
 	formErrors,
 	...rest
@@ -118,5 +122,7 @@ export {
 	datatable_turkish,
 	selectCustomStyles,
 	selectCustomStylesError,
-	formValid
+	formValid,
+	emailRegEx,
+	securityNoRegEx
 };

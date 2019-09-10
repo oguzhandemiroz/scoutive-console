@@ -208,6 +208,28 @@ const RefreshPlayer = data => {
 	}
 };
 
+const ActivatePlayer = data => {
+	try {
+		return fetch(ep.PLAYER_ACTIVATE, {
+			method: "POST",
+			body: JSON.stringify(data),
+			headers: h
+		})
+			.then(res => res.json())
+			.then(response => {
+				if (response) {
+					const status = response.status;
+					if (status.code !== 1020) errorSwal(status);
+
+					return response;
+				}
+			})
+			.catch(e => fatalSwal(true));
+	} catch (e) {
+		fatalSwal(true);
+	}
+};
+
 const ListPlayers = uid => {
 	try {
 		return fetch(ep.PLAYER_LIST, {
@@ -239,5 +261,6 @@ export {
 	DeletePlayer,
 	FreezePlayer,
 	RefreshPlayer,
+	ActivatePlayer,
 	ListPlayers
 };

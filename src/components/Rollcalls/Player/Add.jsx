@@ -6,12 +6,15 @@ import moment from "moment";
 import "moment/locale/tr";
 import { MakeRollcall } from "../../../services/Rollcalls";
 import { WarningModal as Modal } from "../WarningModal";
+import GroupChange from "../../PlayerAction/GroupChange";
+import Vacation from "../../PlayerAction/Vacation";
 import { CreateVacation, UpdateVacation } from "../../../services/PlayerAction";
 import { DeletePlayer, FreezePlayer, RefreshPlayer } from "../../../services/Player";
 import { datatable_turkish } from "../../../assets/js/core";
 import ep from "../../../assets/js/urls";
 import { fatalSwal, errorSwal, showSwal, Toast } from "../../Alert.jsx";
 import { fullnameGenerator } from "../../../services/Others";
+import ActionButton from "../../Players/ActionButton";
 const $ = require("jquery");
 $.DataTable = require("datatables.net");
 
@@ -22,15 +25,22 @@ var statusType = {
 	3: "bg-indigo"
 };
 
+const initialState = {
+	vacation: false,
+	group_change: false
+};
+
 export class Add extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
 			uid: localStorage.getItem("UID"),
+			...initialState,
 			players: null,
 			counter: 0,
 			statuses: [],
-			loadingButtons: []
+			loadingButtons: [],
+			data: {}
 		};
 	}
 
@@ -44,119 +54,6 @@ export class Add extends Component {
 			.DataTable()
 			.destroy(true);
 	}
-
-	reload = () => {
-		const current = this.props.history.location.pathname;
-		this.props.history.replace(`/`);
-		setTimeout(() => {
-			this.props.history.replace(current);
-		});
-	};
-
-	deletePlayer = (to, name) => {
-		try {
-			const { uid } = this.state;
-			showSwal({
-				type: "warning",
-				title: "Emin misiniz?",
-				html: `<b>${name}</b> adlı öğrencinin <b>kaydını silmek</b> istediğinize emin misiniz?`,
-				confirmButtonText: "Evet",
-				cancelButtonText: "Hayır",
-				cancelButtonColor: "#868e96",
-				confirmButtonColor: "#cd201f",
-				showCancelButton: true,
-				reverseButtons: true
-			}).then(result => {
-				if (result.value) {
-					DeletePlayer({
-						uid: uid,
-						to: to
-					}).then(response => {
-						if (response) {
-							const status = response.status;
-							if (status.code === 1020) {
-								Toast.fire({
-									type: "success",
-									title: "İşlem başarılı..."
-								});
-								setTimeout(() => this.reload(), 1000);
-							}
-						}
-					});
-				}
-			});
-		} catch (e) {}
-	};
-
-	freezePlayer = (to, name) => {
-		try {
-			const { uid } = this.state;
-			showSwal({
-				type: "warning",
-				title: "Emin misiniz?",
-				html: `<b>${name}</b> adlı öğrencinin <b>kaydını dondurmak</b> istediğinize emin misiniz?`,
-				confirmButtonText: "Evet",
-				cancelButtonText: "Hayır",
-				cancelButtonColor: "#868e96",
-				confirmButtonColor: "#cd201f",
-				showCancelButton: true,
-				reverseButtons: true
-			}).then(result => {
-				if (result.value) {
-					FreezePlayer({
-						uid: uid,
-						to: to
-					}).then(response => {
-						if (response) {
-							const status = response.status;
-							if (status.code === 1020) {
-								Toast.fire({
-									type: "success",
-									title: "İşlem başarılı..."
-								});
-								setTimeout(() => this.reload(), 1000);
-							}
-						}
-					});
-				}
-			});
-		} catch (e) {}
-	};
-
-	refreshPlayer = (to, name) => {
-		try {
-			const { uid } = this.state;
-			showSwal({
-				type: "warning",
-				title: "Emin misiniz?",
-				html: `<b>${name}</b> adlı öğrencinin <b>kaydını yenilemek</b> istediğinize emin misiniz?`,
-				confirmButtonText: "Evet",
-				cancelButtonText: "Hayır",
-				cancelButtonColor: "#868e96",
-				confirmButtonColor: "#cd201f",
-				showCancelButton: true,
-				reverseButtons: true
-			}).then(result => {
-				if (result.value) {
-					RefreshPlayer({
-						uid: uid,
-						to: to
-					}).then(response => {
-						if (response) {
-							const status = response.status;
-							if (status.code === 1020) {
-								Toast.fire({
-									type: "success",
-									title: "İşlem başarılı..."
-								});
-								setTimeout(() => this.reload(), 1000);
-							}
-						}
-					});
-				}
-			});
-		} catch (e) {}
-	};
 
 	getPaidStatus = (fee, amount) => {
 		try {
@@ -391,82 +288,44 @@ export class Add extends Component {
 					class: "pr-4 pl-1 w-1",
 					createdCell: (td, cellData, rowData) => {
 						const fullname = fullnameGenerator(rowData.name, rowData.surname);
-						const { uid } = rowData;
+						const { uid, group, status, is_trial } = rowData;
 						ReactDOM.render(
 							<BrowserRouter>
-								<div className="dropdown" id="action-dropdown">
-									<a
-										href="javascript:void(0)"
-										className="icon"
-										data-toggle="dropdown"
-										aria-haspopup="true"
-										aria-expanded="false">
-										<i className="fe fe-more-vertical"></i>
-									</a>
-									<div
-										className="dropdown-menu dropdown-menu-right"
-										aria-labelledby="player-action"
-										x-placement="top-end">
-										<a className="dropdown-item disabled text-azure" href="javascript:void(0)">
-											<i className="dropdown-icon fa fa-user text-azure" />
-											{fullname}
-										</a>
-										<div role="separator" className="dropdown-divider" />
-
-										<Link
-											onClick={() => this.props.history.push(`/app/players/payment/${uid}`)}
-											className="dropdown-item action-pay-salary"
-											to={`/app/players/payment/${uid}`}>
-											<i className="dropdown-icon fa fa-hand-holding-usd" /> Ödeme Al
-										</Link>
-										<div>
-											<a
-												className="dropdown-item action-warning cursor-not-allowed disabled"
-												href="javascript:void(0)">
-												<i className="dropdown-icon fa fa-exclamation-triangle" /> Ödeme İkazı
-												<span className="ml-1">
-													(<i className="fe fe-lock mr-0" />)
-												</span>
-											</a>
-										</div>
-										<div role="separator" className="dropdown-divider" />
-										<button
-											className="dropdown-item action-advance-payment"
-											onClick={() => this.freezePlayer(uid, fullname)}>
-											<i className="dropdown-icon fa fa-snowflake" /> Kaydı Dondur
-										</button>
-										<button
-											className="dropdown-item action-salary-raise"
-											onClick={() => this.deletePlayer(uid, fullname)}>
-											<i className="dropdown-icon fa fa-user-times" /> Kaydı Sil
-										</button>
-										<div role="separator" className="dropdown-divider" />
+								<ActionButton
+									vacationButton={data =>
+										this.setState({
+											...initialState,
+											vacation: true,
+											data: data
+										})
+									}
+									groupChangeButton={data =>
+										this.setState({
+											...initialState,
+											group_change: true,
+											data: data
+										})
+									}
+									history={this.props.history}
+									dropdown={true}
+									data={{
+										to: uid,
+										name: fullname,
+										is_trial: is_trial,
+										status: status,
+										group: group
+									}}
+									renderButton={() => (
 										<a
-											className="dropdown-item action-send-message cursor-not-allowed disabled"
-											href="javascript:void(0)">
-											<i className="dropdown-icon fa fa-paper-plane" /> Veliye Mesaj Gönder
-											<span className="ml-1">
-												(<i className="fe fe-lock mr-0" />)
-											</span>
+											href="javascript:void(0)"
+											className="icon"
+											data-toggle="dropdown"
+											aria-haspopup="true"
+											aria-expanded="false">
+											<i className="fe fe-more-vertical"></i>
 										</a>
-										<div role="separator" className="dropdown-divider" />
-										<Link
-											onClick={() => this.props.history.push(`/app/players/edit/${uid}`)}
-											className="dropdown-item action-edit"
-											to={`/app/players/edit/${uid}`}>
-											<i className="dropdown-icon fa fa-pen" /> Düzenle
-										</Link>
-										<a className="dropdown-item action-all-salary-info" href="javascript:void(0)">
-											<i className="dropdown-icon fa fa-receipt" /> Tüm Aidat Bilgisi
-										</a>
-										<Link
-											onClick={() => this.props.history.push(`/app/players/detail/${uid}`)}
-											to={`/app/players/detail/${uid}`}
-											className="dropdown-item action-all-info">
-											<i className="dropdown-icon fa fa-info-circle" /> Tüm Bilgileri
-										</Link>
-									</div>
-								</div>
+									)}
+								/>
 							</BrowserRouter>,
 							td
 						);
@@ -785,6 +644,8 @@ export class Add extends Component {
 	};
 
 	render() {
+		const { data, vacation, group_change } = this.state;
+		console.log(vacation, group_change);
 		return (
 			<div className="container">
 				<Modal />
@@ -831,6 +692,9 @@ export class Add extends Component {
 											</tr>
 										</thead>
 									</table>
+
+									{<GroupChange data={data} visible={group_change} history={this.props.history} />}
+									{<Vacation data={data} visible={vacation} history={this.props.history} />}
 								</div>
 							</div>
 						</div>
