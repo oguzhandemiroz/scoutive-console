@@ -22363,3 +22363,30 @@ svg {
 .fe-zoom-out:before {
 	content: "\ea06";
 }
+
+/**
+Divider
+ */
+.divider {
+	display: flex;
+	flex: 0;
+	align-items: center;
+	width: 100%;
+	margin: 1.5rem auto;
+	font-size: 0.875rem;
+	color: #888e9a;
+	letter-spacing: 0.5px;
+	font-weight: 400;
+}
+.divider::before,
+.divider::after {
+	flex-grow: 1;
+	content: "";
+	border-top: 1px solid rgba(0, 0, 0, 0.09);
+}
+.divider::before {
+	margin-right: 1rem;
+}
+.divider::after {
+	margin-left: 1rem;
+}

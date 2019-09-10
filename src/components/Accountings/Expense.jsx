@@ -73,9 +73,14 @@ export class Expense extends Component {
 								<span className="sr-only">Toggle Dropdown</span>
 							</button>
 							<div className="dropdown-menu">
-								<button className="dropdown-item">
-									<i className="dropdown-icon fa fa-receipt" /> Fatura
-								</button>
+								<Link
+									to="/app/accountings/expense/invoice"
+									className="dropdown-item cursor-not-allowed disabled">
+									<i className="dropdown-icon fa fa-receipt"></i> Fatura
+									<span className="ml-2">
+										(<i className="fe fe-lock mr-0" />)
+									</span>
+								</Link>
 								<Link to="/app/players/payment" className="dropdown-item">
 									<i className="dropdown-icon fa fa-money-bill-wave"></i> Maaş Ödemesi
 								</Link>
