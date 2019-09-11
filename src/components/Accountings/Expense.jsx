@@ -99,6 +99,7 @@ export class Expense extends Component {
 									<th>İşlem</th>
 									<th>Tutar</th>
 									<th>Tarih</th>
+									<th>Kasa/Banka</th>
 									<th></th>
 								</tr>
 							</thead>
@@ -111,10 +112,11 @@ export class Expense extends Component {
 														{el.accounting_type}
 														<div className="small text-muted text-break">{el.note}</div>
 													</td>
-													<td>{el.amount.format() + " ₺"}</td>
+													<td>-{el.amount.format() + " ₺"}</td>
 													<td className="text-nowrap">
 														{moment(el.payment_date).format("LL")}
 													</td>
+													<td className="text-break">{el.budget.budget_name}</td>
 													<td className="w-1">
 														<Link
 															to={"/app/accountings/income/detail/" + el.accounting_id}
@@ -129,7 +131,7 @@ export class Expense extends Component {
 							</tbody>
 							<tfoot>
 								<tr>
-									<td colSpan="4" className="text-right font-italic">
+									<td colSpan="5" className="text-right font-italic">
 										<Link to="#">
 											Tümünü görüntüle <i className="fe fe-arrow-right"></i>
 										</Link>

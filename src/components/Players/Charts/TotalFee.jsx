@@ -21,7 +21,7 @@ export class TotalFee extends Component {
 	listEmployees = data => {
 		var total = 0;
 		data.map(el => {
-			if (el.fee) {
+			if (el.status === 1 && el.fee) {
 				total += el.fee;
 			}
 		});
@@ -34,7 +34,7 @@ export class TotalFee extends Component {
 			<div
 				className="card-body p-3 text-center d-flex flex-column justify-content-center"
 				style={{ height: 140 }}>
-				<div className="h5">Toplam Aidat Geliri</div>
+				<div className="h5">Toplam Aktif Öğr. Aidat Geliri</div>
 				<div style={{ fontSize: "2.35rem" }} className="display-4 font-weight-bold mb-3">
 					{totalFee ? (
 						totalFee

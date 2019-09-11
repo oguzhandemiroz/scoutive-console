@@ -134,7 +134,8 @@ export class GeneralChart extends Component {
 					.format("YYYY-MM-DD"),
 				payment_date__lte: moment()
 					.endOf("month")
-					.format("YYYY-MM-DD")
+					.format("YYYY-MM-DD"),
+				accounting_type_id__gt: 1
 			}
 		}).then(response => {
 			if (response) {

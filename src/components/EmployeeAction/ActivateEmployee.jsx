@@ -87,7 +87,10 @@ const activatePlayer = (uid, to, name, history) => {
 						UpdateEmployee({
 							uid: uid,
 							to: to,
-							salary: parseFloat(results[2].split(",").join("."))
+							salary: parseFloat(results[2].split(",").join(".")),
+							attributes: {
+								salary: parseFloat(results[2].split(",").join("."))
+							}
 						})
 					]).then(([responseActivated, responseUpdated]) => {
 						if (responseActivated && responseUpdated) {

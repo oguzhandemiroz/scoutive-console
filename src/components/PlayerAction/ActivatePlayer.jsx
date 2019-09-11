@@ -87,7 +87,10 @@ const activatePlayer = (uid, to, name, history) => {
 						UpdatePlayer({
 							uid: uid,
 							to: to,
-							fee: parseFloat(results[2].split(",").join("."))
+							fee: parseFloat(results[2].split(",").join(".")),
+							attributes: {
+								fee: parseFloat(results[2].split(",").join("."))
+							}
 						})
 					]).then(([responseActivated, responseUpdated]) => {
 						if (responseActivated && responseUpdated) {

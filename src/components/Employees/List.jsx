@@ -40,7 +40,7 @@ class Table extends Component {
 			const UID = localStorage.getItem("UID");
 			$("#employee-list").DataTable({
 				dom: '<"top"f>rt<"bottom"ilp><"clear">',
-				responsive: true,
+				responsive: false,
 				order: [3, "asc"],
 				aLengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "Tümü"]],
 				stateSave: false, // change true

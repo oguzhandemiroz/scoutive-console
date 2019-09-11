@@ -12,10 +12,9 @@ import ActionButton from "../Players/ActionButton";
 import Inputmask from "inputmask";
 import moment from "moment";
 import "moment/locale/tr";
-import "datatables.net-buttons/js/buttons.print";
-import "datatables.net-buttons/js/buttons.colVis";
+import "../../assets/css/datatables.responsive.css";
 const $ = require("jquery");
-$.DataTable = require("datatables.net-buttons");
+$.DataTable = require("datatables.net-responsive");
 
 var dailyType = {
 	"-1": ["Tanımsız", "secondary"],
@@ -123,23 +122,26 @@ class Table extends Component {
 			const { uid } = this.state;
 			const table = $("#player-list").DataTable({
 				dom: '<"top"<"filterTools">f>rt<"bottom"ilp><"clear">',
-				/*buttons: [
-					{
-						text: "My button",
-						className: "btn btn-secondary",
-						action: function(e, dt, node, config) {
-							$.fn.dataTable.ext.search = [];
-							$.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
-								if (dt.ajax.json().data[dataIndex].status === 1) return true;
-								else return false;
-							});
-							dt.draw();
+				responsive: {
+					details: {
+						type: "column",
+						target: 2,
+						renderer: function(api, rowIdx, columns) {
+							var data = $.map(columns, function(col, i) {
+								return col.hidden
+									? `<tr data-dt-row="${col.rowIndex}" data-dt-column="${col.columnIndex}">
+									<th>${col.title}</th> 
+									<td>${col.data}</td>
+								</tr>`
+									: ``;
+							}).join("");
+
+							return data ? $("<table/>").append(data) : false;
 						}
 					}
-				],*/
-				responsive: true,
+				},
 				fixedHeader: true,
-				order: [3, "asc"],
+				order: [4, "asc"],
 				aLengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "Tümü"]],
 				stateSave: false, // change true
 				language: {
@@ -188,11 +190,17 @@ class Table extends Component {
 						visible: false
 					},
 					{
+						className: "control",
+						orderable: false,
+						targets: [2]
+					},
+					{
 						targets: "no-sort",
 						orderable: false
 					},
 					{
 						targets: "action",
+						responsivePriority: 2,
 						createdCell: (td, cellData, rowData) => {
 							const fullname = fullnameGenerator(rowData.name, rowData.surname);
 							const { uid, group, status, is_trial } = rowData;
@@ -248,17 +256,14 @@ class Table extends Component {
 						data: "security_id"
 					},
 					{
+						data: null,
+						defaultContent: ""
+					},
+					{
 						data: "image",
 						class: "text-center",
 						render: function(data, type, row) {
 							var status = row.status;
-							var bg_class_type = {
-								"0": "secondary",
-								"1": "success",
-								"2": "warning",
-								"3": "danger",
-								"4": "info"
-							};
 							if (data === null) {
 								return `<span class="avatar avatar-placeholder">
 										<span class="avatar-status ${row.is_trial ? statusType[3] : statusType[status]}"></span>
@@ -272,6 +277,7 @@ class Table extends Component {
 					},
 					{
 						data: "name",
+						responsivePriority: 1,
 						class: "w-1",
 						render: function(data, type, row) {
 							const fullname = fullnameGenerator(data, row.surname);
@@ -288,7 +294,7 @@ class Table extends Component {
 							const fullname = fullnameGenerator(row.name, row.surname);
 							var elem = "";
 							var j = 0;
-							
+
 							if (data) {
 								var myselfAddedData = data;
 								myselfAddedData.push({
@@ -315,6 +321,7 @@ class Table extends Component {
 					},
 					{
 						data: "fee",
+						responsivePriority: 10009,
 						render: function(data, type, row) {
 							if (type === "sort" || type === "type") {
 								return data;
@@ -325,6 +332,8 @@ class Table extends Component {
 					},
 					{
 						data: "point",
+						responsivePriority: 10010,
+						className: "none",
 						render: function(data) {
 							if (data && data !== "") return data;
 							else return "&mdash;";
@@ -332,6 +341,7 @@ class Table extends Component {
 					},
 					{
 						data: "birthday",
+						responsivePriority: 10008,
 						render: function(data, type, row) {
 							if (type === "sort" || type === "type") {
 								return data ? data.split(".")[0] : data;
@@ -343,6 +353,7 @@ class Table extends Component {
 					},
 					{
 						data: "group",
+						responsivePriority: 10007,
 						render: function(data) {
 							if (data && data !== "") return data;
 							else return "&mdash;";
@@ -350,6 +361,7 @@ class Table extends Component {
 					},
 					{
 						data: "daily",
+						responsivePriority: 10001,
 						render: function(data, type, row) {
 							return (
 								'<span class="status-icon bg-' + dailyType[data][1] + '"></span>' + dailyType[data][0]
@@ -359,13 +371,7 @@ class Table extends Component {
 					{
 						data: null
 					}
-				],
-				drawCallback: function(settings) {
-					var api = this.api();
-
-					// Output the data for the visible rows to the browser's console
-					console.log(api.rows({ status: 1 }).data());
-				}
+				]
 			});
 
 			$("div.filterTools").html(`
@@ -425,6 +431,7 @@ class Table extends Component {
 						<tr>
 							<th>ID</th>
 							<th className="w-1 no-sort">T.C.</th>
+							<th className="w-1 no-sort control" />
 							<th className="w-1 text-center no-sort">#</th>
 							<th className="w-1 name">AD SOYAD</th>
 							<th className="emergency">İLETİŞİM</th>

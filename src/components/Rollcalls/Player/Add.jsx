@@ -15,8 +15,9 @@ import ep from "../../../assets/js/urls";
 import { fatalSwal, errorSwal, showSwal, Toast } from "../../Alert.jsx";
 import { fullnameGenerator } from "../../../services/Others";
 import ActionButton from "../../Players/ActionButton";
+import "../../../assets/css/datatables.responsive.css";
 const $ = require("jquery");
-$.DataTable = require("datatables.net");
+$.DataTable = require("datatables.net-responsive");
 
 var statusType = {
 	0: "bg-gray",
@@ -29,6 +30,26 @@ const initialState = {
 	vacation: false,
 	group_change: false
 };
+
+var _childNodeStore = {};
+function _childNodes(dt, row, col) {
+	var name = row + "-" + col;
+
+	if (_childNodeStore[name]) {
+		return _childNodeStore[name];
+	}
+
+	// https://jsperf.com/childnodes-array-slice-vs-loop
+	var nodes = [];
+	var children = dt.cell(row, col).node().childNodes;
+	for (var i = 0, ien = children.length; i < ien; i++) {
+		nodes.push(children[i]);
+	}
+
+	_childNodeStore[name] = nodes;
+
+	return nodes;
+}
 
 export class Add extends Component {
 	constructor(props) {
@@ -83,8 +104,29 @@ export class Add extends Component {
 		const { rcid } = this.props.match.params;
 		const table = $("#rollcall-list").DataTable({
 			dom: '<"top"f>rt<"bottom"ilp><"clear">',
-			responsive: true,
-			order: [3, "asc"],
+			responsive: {
+				details: {
+					type: "column",
+					target: 2,
+					renderer: function(api, rowIdx, columns) {
+						var tbl = $("<table/>");
+						var found = false;
+						var data = $.map(columns, function(col, i) {
+							if (col.hidden) {
+								$(`<tr data-dt-row="${col.rowIndex}" data-dt-column="${col.columnIndex}">
+										<th>${col.title}</th> 
+								</tr>`)
+									.append($("<td/>").append(_childNodes(api, col.rowIndex, col.columnIndex)))
+									.appendTo(tbl);
+								found = true;
+							}
+						});
+
+						return found ? tbl : false;
+					}
+				}
+			},
+			order: [4, "asc"],
 			aLengthMenu: [[30, 50, 100, -1], [30, 50, 100, "Tümü"]],
 			stateSave: false, // change true
 			language: {
@@ -146,11 +188,17 @@ export class Add extends Component {
 					visible: false
 				},
 				{
+					className: "control",
+					orderable: false,
+					targets: [2]
+				},
+				{
 					targets: "no-sort",
 					orderable: false
 				},
 				{
 					targets: "rollcalls",
+					responsivePriority: 10002,
 					createdCell: (td, cellData, rowData) => {
 						const status_type = {
 							0: { icon: "fe-x", badge: "badge-danger", text: "Gelmedi" },
@@ -183,6 +231,7 @@ export class Add extends Component {
 				},
 				{
 					targets: "fees",
+					responsivePriority: 10001,
 					createdCell: (td, cellData, rowData) => {
 						const status_type = {
 							0: { icon: "fe-x", badge: "badge-danger", text: "Ödenmedi", color: "text-danger" },
@@ -228,6 +277,7 @@ export class Add extends Component {
 				},
 				{
 					targets: "status",
+					responsivePriority: 2,
 					class: "w-1",
 					createdCell: (td, cellData, rowData) => {
 						const { uid } = rowData;
@@ -285,6 +335,7 @@ export class Add extends Component {
 				},
 				{
 					targets: "action",
+					responsivePriority: 10003,
 					class: "pr-4 pl-1 w-1",
 					createdCell: (td, cellData, rowData) => {
 						const fullname = fullnameGenerator(rowData.name, rowData.surname);
@@ -340,6 +391,10 @@ export class Add extends Component {
 					data: "security_id"
 				},
 				{
+					data: null,
+					defaultContent: ""
+				},
+				{
 					data: "image",
 					class: "text-center",
 					render: function(data, type, row) {
@@ -357,6 +412,7 @@ export class Add extends Component {
 				},
 				{
 					data: "name",
+					responsivePriority: 1,
 					render: function(data, type, row) {
 						const fullname = fullnameGenerator(data, row.surname);
 						if (type === "sort" || type === "type") {
@@ -368,6 +424,8 @@ export class Add extends Component {
 				},
 				{
 					data: "emergency",
+					responsivePriority: 10006,
+					className: "none",
 					render: function(data, type, row) {
 						const fullname = fullnameGenerator(row.name, row.surname);
 						var elem = "";
@@ -399,6 +457,7 @@ export class Add extends Component {
 				},
 				{
 					data: "birthday",
+					responsivePriority: 10005,
 					class: "w-1",
 					render: function(data, type, row) {
 						if (type === "sort" || type === "type") {
@@ -411,6 +470,7 @@ export class Add extends Component {
 				},
 				{
 					data: "group",
+					responsivePriority: 10004,
 					render: function(data) {
 						if (data && data !== "")
 							return `<a class="text-inherit" href="/app/groups/detail/${data.group_id}">${data.name}</a>`;
@@ -430,7 +490,14 @@ export class Add extends Component {
 		});
 
 		$("#rollcall-list").on("draw.dt", function() {
-			console.log("draw.dt");
+			$('[data-toggle="tooltip"]').tooltip();
+			$('[data-toggle="popover"]').popover({
+				html: true,
+				trigger: "hover"
+			});
+		});
+
+		table.on("responsive-display", function(e, datatable, row, showHide, update) {
 			$('[data-toggle="tooltip"]').tooltip();
 			$('[data-toggle="popover"]').popover({
 				html: true,
@@ -680,6 +747,7 @@ export class Add extends Component {
 											<tr>
 												<th>ID</th>
 												<th className="w-1 no-sort">T.C.</th>
+												<th className="w-1 no-sort control" />
 												<th className="w-1 text-center no-sort"></th>
 												<th className="name">AD SOYAD</th>
 												<th className="emergency">İLETİŞİM</th>
