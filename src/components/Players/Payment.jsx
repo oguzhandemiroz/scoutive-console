@@ -8,6 +8,7 @@ import DatePicker, { registerLocale } from "react-datepicker";
 import { withRouter } from "react-router-dom";
 import Select, { components } from "react-select";
 import "react-datepicker/dist/react-datepicker.css";
+import { selectCustomStyles, selectCustomStylesError, formValid } from "../../assets/js/core";
 import tr from "date-fns/locale/tr";
 import moment from "moment";
 import Inputmask from "inputmask";
@@ -40,33 +41,6 @@ const InputmaskDefaultOptions = {
 	showMaskOnFocus: false,
 	placeholder: "0,00",
 	autoUnmask: true
-};
-
-const formValid = ({ formErrors, ...rest }) => {
-	let valid = true;
-
-	Object.values(formErrors).forEach(val => {
-		val.length > 0 && (valid = false);
-	});
-
-	Object.values(rest).forEach(val => {
-		val === null && (valid = false);
-	});
-
-	return valid;
-};
-
-const customStyles = {
-	control: styles => ({ ...styles, borderColor: "rgba(0, 40, 100, 0.12)", borderRadius: 3 })
-};
-
-const customStylesError = {
-	control: styles => ({
-		...styles,
-		borderColor: "#cd201f",
-		borderRadius: 3,
-		":hover": { ...styles[":hover"], borderColor: "#cd201f" }
-	})
 };
 
 const { Option } = components;
@@ -162,7 +136,19 @@ export class Payment extends Component {
 	handleSubmit = e => {
 		try {
 			e.preventDefault();
-			const { uid, to, player, fee, necessary_fee, paid_date, period, month, payment_type, budget } = this.state;
+			const {
+				uid,
+				to,
+				player,
+				fee,
+				necessary_fee,
+				paid_date,
+				period,
+				month,
+				payment_type,
+				note,
+				budget
+			} = this.state;
 			let required = { ...this.state };
 			delete required.pastData;
 			if (formValid(required)) {
@@ -183,7 +169,8 @@ export class Payment extends Component {
 								.format("YYYY-MM-DD"),
 							paid_date: moment(paid_date).format("YYYY-MM-DD"),
 							payment_type: payment_type,
-							budget_id: budget.value
+							budget_id: budget.value,
+							note: note
 						}).then(response => {
 							if (response) {
 								const status = response.status;
@@ -581,8 +568,8 @@ export class Payment extends Component {
 														placeholder="Öğrenci Seç..."
 														styles={
 															formErrors.player === true
-																? customStylesError
-																: customStyles
+																? selectCustomStylesError
+																: selectCustomStyles
 														}
 														isSearchable={true}
 														autoSize
@@ -627,7 +614,7 @@ export class Payment extends Component {
 																options={select.months}
 																name="month"
 																placeholder="Ay Seç..."
-																styles={customStyles}
+																styles={selectCustomStyles}
 																isSearchable={true}
 																autoSize
 																isDisabled={select.months ? false : true}
@@ -708,8 +695,8 @@ export class Payment extends Component {
 															placeholder="Kasa Seç..."
 															styles={
 																formErrors.budget === true
-																	? customStylesError
-																	: customStyles
+																	? selectCustomStylesError
+																	: selectCustomStyles
 															}
 															isSearchable={true}
 															autoSize
@@ -719,6 +706,16 @@ export class Payment extends Component {
 															}
 															components={{ Option: IconOption }}
 														/>
+													</div>
+
+													<div className="col-12">
+														<label className="form-label">Not</label>
+														<textarea
+															className="form-control resize-none"
+															placeholder="Not..."
+															name="note"
+															onChange={this.handleChange}
+															maxLength="100"></textarea>
 													</div>
 												</div>
 											</div>

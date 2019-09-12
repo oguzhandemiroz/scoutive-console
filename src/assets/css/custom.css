@@ -229,3 +229,7 @@ figure span.player-number {
 .text-first-letter::first-letter {
 	text-transform: capitalize;
 }
+
+.resize-none {
+	resize: none !important;
+}

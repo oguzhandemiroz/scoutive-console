@@ -244,7 +244,22 @@ export class Detail extends Component {
 									<div className="loader" />
 									<div className="dimmer-content">
 										<div className="form-group mb-5">
-											<div className="card-value float-right text-blue">+5%</div>
+											<div className="float-right d-flex flex-column">
+												<button
+													className="btn btn-sm btn-icon btn-success mb-1"
+													data-toggle="tooltip"
+													data-placement="left"
+													title="Para Girişi Ekle">
+													<i className="fe fe-plus" />
+												</button>
+												<button
+													className="btn btn-sm btn-icon btn-danger"
+													data-toggle="tooltip"
+													data-placement="left"
+													title="Para Çıkışı Ekle">
+													<i className="fe fe-minus" />
+												</button>
+											</div>
 											<h3 className="mb-1">{balance.format() + " " + getCurrencyType.sign}</h3>
 											<div className="text-muted">Bakiye</div>
 										</div>
@@ -291,9 +306,11 @@ export class Detail extends Component {
 												<div className="form-group">
 													<label className="form-label">IBAN</label>
 													<div className="form-control-plaintext">
-														{iban ? Inputmask.format(iban, {
-															mask: "AA99 9999 9999 9999 9999 99"
-														}) : "—"}
+														{iban
+															? Inputmask.format(iban, {
+																	mask: "AA99 9999 9999 9999 9999 99"
+															  })
+															: "—"}
 													</div>
 												</div>
 											</div>
