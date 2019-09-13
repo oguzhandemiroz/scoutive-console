@@ -4,6 +4,7 @@ import List from "../../components/Budgets/List";
 import TotalCaseAmount from "../../components/Budgets/Charts/TotalCaseAmount";
 import TotalBankAmount from "../../components/Budgets/Charts/TotalBankAmount";
 import TotalAmount from "../../components/Budgets/Charts/TotalAmount";
+import TransferModal from "../../components/Budgets/Modals/TransferModal";
 import { ListBudgets } from "../../services/Budget";
 
 export class Budgets extends Component {
@@ -36,9 +37,19 @@ export class Budgets extends Component {
 			<div className="container">
 				<div className="page-header">
 					<h1 className="page-title">Kasa ve Bankalar</h1>
-					<Link to="/app/budgets/add" className="btn btn-sm btn-success ml-auto">
-						Yeni Oluştur
-					</Link>
+					<div className=" ml-auto">
+						<TransferModal bid={0} history={this.props.history} />
+						<button
+							data-toggle="modal"
+							data-target="#transferModal"
+							className="btn btn-sm btn-icon btn-azure mr-2">
+							<i className="fa fa-exchange-alt mr-1" />
+							Hesaplar Arası Transfer
+						</button>
+						<Link to="/app/budgets/add" className="btn btn-sm btn-success">
+							Yeni Oluştur
+						</Link>
+					</div>
 				</div>
 
 				<div className="row row-cards">
@@ -54,7 +65,7 @@ export class Budgets extends Component {
 						<TotalAmount data={data} />
 					</div>
 				</div>
-				
+
 				<div className="row row-cards">
 					<div className="col">
 						<div className="card">

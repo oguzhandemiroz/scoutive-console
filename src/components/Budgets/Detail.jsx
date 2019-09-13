@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { GetBudget, MakeDefaultBudget } from "../../services/Budget";
+import { GetBudget, MakeDefaultBudget, UpdateBudget } from "../../services/Budget";
 import { nullCheck } from "../../services/Others";
 import { Link } from "react-router-dom";
 import "jquery";
@@ -8,6 +8,10 @@ import "../../assets/css/c3.min.css";
 import sc from "../../assets/js/sc";
 import Inputmask from "inputmask";
 import moment from "moment";
+import AmountIncreaseModal from "./Modals/AmountIncreaseModal";
+import AmountDecreaseModal from "./Modals/AmountDecreaseModal";
+import TransferModal from "./Modals/TransferModal";
+const $ = require("jquery");
 
 const budgetType = {
 	"-1": { icon: "", text: "—" },
@@ -245,20 +249,61 @@ export class Detail extends Component {
 									<div className="dimmer-content">
 										<div className="form-group mb-5">
 											<div className="float-right d-flex flex-column">
-												<button
-													className="btn btn-sm btn-icon btn-success mb-1"
+												<span
 													data-toggle="tooltip"
 													data-placement="left"
 													title="Para Girişi Ekle">
-													<i className="fe fe-plus" />
-												</button>
-												<button
-													className="btn btn-sm btn-icon btn-danger"
+													<button
+														className="btn btn-sm btn-icon btn-success"
+														data-toggle="modal"
+														data-target="#amountIncreaseModal">
+														<i className="fe fe-plus" />
+													</button>
+													<AmountIncreaseModal
+														history={this.props.history}
+														bid={this.props.match.params.bid}
+														budget={{
+															name: budget_name,
+															balance: balance,
+															currency: getCurrencyType.sign
+														}}
+													/>
+												</span>
+												<span
 													data-toggle="tooltip"
 													data-placement="left"
 													title="Para Çıkışı Ekle">
-													<i className="fe fe-minus" />
-												</button>
+													<button
+														className="btn btn-sm btn-icon btn-danger my-1"
+														data-toggle="modal"
+														data-target="#amountDecreaseModal">
+														<i className="fe fe-minus" />
+													</button>
+													<AmountDecreaseModal
+														history={this.props.history}
+														bid={this.props.match.params.bid}
+														budget={{
+															name: budget_name,
+															balance: balance,
+															currency: getCurrencyType.sign
+														}}
+													/>
+												</span>
+												<span
+													data-toggle="tooltip"
+													data-placement="left"
+													title="Hesaplar Arası Transfer">
+													<button
+														className="btn btn-sm btn-icon btn-azure"
+														data-toggle="modal"
+														data-target="#transferModal">
+														<i className="fa fa-exchange-alt" />
+													</button>
+													<TransferModal
+														history={this.props.history}
+														bid={this.props.match.params.bid}
+													/>
+												</span>
 											</div>
 											<h3 className="mb-1">{balance.format() + " " + getCurrencyType.sign}</h3>
 											<div className="text-muted">Bakiye</div>

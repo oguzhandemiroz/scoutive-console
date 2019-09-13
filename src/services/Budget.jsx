@@ -97,4 +97,56 @@ const MakeDefaultBudget = data => {
 	}
 };
 
-export { GetBudget, CreateBudget, ListBudgets, MakeDefaultBudget };
+const UpdateBudget = data => {
+	try {
+		return fetch(ep.BUDGET_UPDATE, {
+			method: "PATCH",
+			body: JSON.stringify(data),
+			headers: h
+		})
+			.then(res => res.json())
+			.then(response => {
+				if (response) {
+					const status = response.status;
+					if (status.code !== 1020) errorSwal(status);
+					else
+						Toast.fire({
+							type: "success",
+							title: "İşlem başarılı..."
+						});
+					return response;
+				}
+			})
+			.catch(e => fatalSwal(true));
+	} catch (e) {
+		fatalSwal(true);
+	}
+};
+
+const TransferBudget = data => {
+	try {
+		return fetch(ep.BUDGET_TRANSFER, {
+			method: "POST",
+			body: JSON.stringify(data),
+			headers: h
+		})
+			.then(res => res.json())
+			.then(response => {
+				if (response) {
+					const status = response.status;
+					if (status.code !== 1020) errorSwal(status);
+					else
+						Toast.fire({
+							type: "success",
+							title: "İşlem başarılı..."
+						});
+					return response;
+				}
+			})
+			.catch(e => fatalSwal(true));
+	} catch (e) {
+		fatalSwal(true);
+	}
+};
+
+export { GetBudget, CreateBudget, ListBudgets, MakeDefaultBudget, UpdateBudget, TransferBudget };

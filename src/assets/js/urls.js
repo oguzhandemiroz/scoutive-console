@@ -74,6 +74,8 @@ var ep = {
     BUDGET_GET: host + api_version + "get/budget",
     BUDGET_CREATE: host + api_version + "create/budget",
     BUDGET_DEFAULT: host + api_version + "set/default/budget",
+    BUDGET_UPDATE: host + api_version + "update/budget",
+    BUDGET_TRANSFER: host + api_version + "transfer/budget",
     SALARY_CREATE: host + api_version + "create/salary",
     SALARY_LIST: host + api_version + "list/employee/salaries",
     FEE_CREATE: host + api_version + "pay/player/fee",
