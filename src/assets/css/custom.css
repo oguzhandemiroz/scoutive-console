@@ -1,235 +1,243 @@
 .imagecheck-image.rollcall-img {
-	width: 100%;
-	height: 120px;
-	object-fit: cover;
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
 }
 
 figure span.player-number {
-	position: absolute;
-	top: 0;
-	bottom: 0;
-	left: 0;
-	right: 0;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	font-size: 2rem;
-	font-weight: bold;
-	z-index: 999;
-	text-shadow: 0 0 10px #fff;
-	user-select: none;
-	pointer-events: none;
-	color: #000 !important;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2rem;
+    font-weight: bold;
+    z-index: 999;
+    text-shadow: 0 0 10px #fff;
+    user-select: none;
+    pointer-events: none;
+    color: #000 !important;
 }
 
 #ScoutiveLogo {
-	width: 120px;
+    width: 120px;
 }
 
 #header-menu #ScoutiveLogo {
-	width: 110px;
+    width: 110px;
 }
 
 #daily-employee .c3-chart-arc text {
-	font-size: 15px;
-	font-weight: 600;
+    font-size: 15px;
+    font-weight: 600;
 }
 
 #budget-report.c3-area {
-	opacity: 1 !important;
+    opacity: 1 !important;
 }
 
 .swal2-input.activation-input {
-	width: 150px;
-	text-align: center;
-	font-size: 24px;
-	font-weight: 700;
-	letter-spacing: 5px;
+    width: 150px;
+    text-align: center;
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: 5px;
 }
 
 .swal2-actions {
-	margin: 1.25em auto 0;
+    margin: 1.25em auto 0;
 }
 
 .swal2-actions.activation-actions {
-	margin: 0 auto;
+    margin: 0 auto;
 }
 
 .webkit-scroll {
-	-webkit-overflow-scrolling: touch;
+    -webkit-overflow-scrolling: touch;
 }
 
 #action-dropdown {
-	position: static !important;
+    position: static !important;
 }
 
 .disable-overlay {
-	user-select: none;
-	cursor: none;
-	pointer-events: none;
+    user-select: none;
+    cursor: none;
+    pointer-events: none;
 }
 
 #root {
-	height: 100%;
+    height: 100%;
 }
 
 .table-responsive.employee-list {
-	-webkit-overflow-scrolling: auto !important;
+    -webkit-overflow-scrolling: auto !important;
 }
 
 .cursor-pointer {
-	cursor: pointer !important;
+    cursor: pointer !important;
 }
 
 .cursor-not-allowed {
-	cursor: not-allowed !important;
+    cursor: not-allowed !important;
 }
 
 .react-datepicker-popper {
-	z-index: 9999 !important;
+    z-index: 9999 !important;
 }
 
 .react-datepicker-wrapper,
 .react-datepicker__input-container {
-	display: block !important;
+    display: block !important;
 }
 
 .employeeActionNav {
-	margin-bottom: -1px;
+    margin-bottom: -1px;
 }
 
 .employeeActionNav .nav-tabs {
-	margin: 0;
+    margin: 0;
 }
 
 .employeeActionNav .nav-item {
-	margin-right: 20px;
+    margin-right: 20px;
 }
 
 .employeeActionModal .modal-header {
-	padding: 0 1rem;
+    padding: 0 1rem;
 }
 .employeeActionModal .modal-header .close {
-	margin-top: 0;
+    margin-top: 0;
 }
 
 #passwordEmployeeAction {
-	font-size: 30px;
-	height: 60px;
-	line-height: 1;
-	font-weight: 600;
-	text-align: center;
+    font-size: 30px;
+    height: 60px;
+    line-height: 1;
+    font-weight: 600;
+    text-align: center;
 }
 
 .FABs-wrapper {
-	display: flex;
-	justify-content: center;
-	align-items: flex-start;
-	position: fixed;
-	z-index: 9999;
-	margin: 0 auto;
-	bottom: -65px;
-	left: 50%;
-	width: 150px;
-	height: 100px;
-	-webkit-transition: all 0.5s ease;
-	-moz-transition: all 0.5s ease;
-	-ms-transition: all 0.5s ease;
-	-o-transition: all 0.5s ease;
-	transition: all 0.5s ease;
-	-webkit-transform: translate(-50%, 0);
-	-ms-transform: translate(-50%, 0);
-	-moz-transform: translate(-50%, 0);
-	-o-transform: translate(-50%, 0);
-	transform: translate(-50%, 0);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    position: fixed;
+    z-index: 9999;
+    margin: 0 auto;
+    bottom: -65px;
+    left: 50%;
+    width: 150px;
+    height: 100px;
+    -webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    -ms-transition: all 0.5s ease;
+    -o-transition: all 0.5s ease;
+    transition: all 0.5s ease;
+    -webkit-transform: translate(-50%, 0);
+    -ms-transform: translate(-50%, 0);
+    -moz-transform: translate(-50%, 0);
+    -o-transform: translate(-50%, 0);
+    transform: translate(-50%, 0);
 }
 
 .FABs-wrapper:hover {
-	bottom: -10px;
+    bottom: -10px;
 }
 
 .FABs-wrapper.fixed {
-	bottom: -10px;
+    bottom: -10px;
 }
 
 #FABs {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	border-radius: 50%;
-	width: 60px;
-	height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
 }
 
 #FABs i {
-	font-size: 1.55rem;
+    font-size: 1.55rem;
 }
 
 .FABs-wrapper .dropdown-header {
-	font-size: 1rem !important;
+    font-size: 1rem !important;
 }
 
 .FABs-wrapper .dropup .dropdown-menu {
-	margin-bottom: 0.5rem !important;
-	width: 200px;
-	margin-left: -100px;
-	left: 50% !important;
+    margin-bottom: 0.5rem !important;
+    width: 200px;
+    margin-left: -100px;
+    left: 50% !important;
 }
 
 .FABs-pin {
-	display: none;
+    display: none;
 }
 
 .FABs-wrapper.fixed .FABs-pin {
-	position: absolute;
-	right: 0;
-	background: #495057;
-	padding: 5px;
-	border-radius: 50%;
-	width: 22px;
-	height: 22px;
-	font-size: 0.6rem;
-	text-align: center;
-	display: block;
+    position: absolute;
+    right: 0;
+    background: #495057;
+    padding: 5px;
+    border-radius: 50%;
+    width: 22px;
+    height: 22px;
+    font-size: 0.6rem;
+    text-align: center;
+    display: block;
 }
 
 @media (max-width: 992px) {
-	.FABs-wrapper {
-		left: 0px;
-		bottom: 0px;
-	}
+    .FABs-wrapper {
+        left: 0px;
+        bottom: 0px;
+    }
 
-	.FABs-wrapper:hover {
-		left: 45px;
-		bottom: 20px;
-	}
+    .FABs-wrapper:hover {
+        left: 45px;
+        bottom: 20px;
+    }
 
-	.FABs-wrapper .dropup .dropdown-menu {
-		margin-left: 0 !important;
-		left: 0 !important;
-	}
+    .FABs-wrapper .dropup .dropdown-menu {
+        margin-left: 0 !important;
+        left: 0 !important;
+    }
 }
 
 #player-list_wrapper .top {
-	display: flex;
+    display: flex;
 }
 
 #player-list_wrapper .filterTools {
-	margin: 0 1.5rem;
-	display: flex;
-	flex: 1;
-	justify-content: flex-start;
-	align-items: center;
+    margin: 0 1.5rem;
+    display: flex;
+    flex: 1;
+    justify-content: flex-start;
+    align-items: center;
 }
 
 .tick tspan {
-	font-size: 0.75rem;
+    font-size: 0.75rem;
 }
 
 .text-first-letter::first-letter {
-	text-transform: capitalize;
+    text-transform: capitalize;
 }
 
 .resize-none {
-	resize: none !important;
+    resize: none !important;
+}
+
+.c3-tooltip {
+    font-size: 14px !important;
+}
+
+.border-radius-0 {
+    border-radius: 0 !important;
 }

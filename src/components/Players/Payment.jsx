@@ -78,7 +78,7 @@ const noRow = loading =>
 const initialState = {
 	fee_date: new Date(),
 	paid_date: new Date(),
-	fee: null,
+	fee: "0",
 	player: null,
 	month: { label: moment().format("MMMM"), value: moment().format("M") },
 	payment_type: 0,
@@ -189,7 +189,6 @@ export class Payment extends Component {
 			} else {
 				console.error("ERROR FORM");
 				let formErrors = { ...this.state.formErrors };
-				formErrors.fee = fee ? "" : "is-invalid";
 				formErrors.player = player ? "" : "is-invalid";
 				formErrors.paid_date = paid_date ? "" : "is-invalid";
 				formErrors.budget = budget ? false : true;
@@ -204,10 +203,6 @@ export class Payment extends Component {
 			const { player, fee } = this.state;
 			let formErrors = { ...this.state.formErrors };
 			switch (name) {
-				case "fee":
-					formErrors.fee = value ? "" : "is-invalid";
-					this.setState({ [name]: value === "0,00" ? null : value });
-					break;
 				case "period":
 					this.setState({
 						[name]: value,
@@ -348,7 +343,7 @@ export class Payment extends Component {
 						...prevState.select,
 						budgets: response
 					},
-					budget: response.find(x => x.default === 1)
+					budget: response.find(x => x.default === 1) || null
 				}));
 			});
 		} catch (e) {}
@@ -651,11 +646,10 @@ export class Payment extends Component {
 														<div className="form-group">
 															<label className="form-label">
 																Ödenen Tutar
-																<span className="form-required">*</span>
 															</label>
 															<input
 																name="fee"
-																className={`form-control ${formErrors.fee}`}
+																className="form-control"
 																type="text"
 																value={fee || ""}
 																onChange={this.handleChange}
@@ -670,6 +664,7 @@ export class Payment extends Component {
 																<span className="form-required">*</span>
 															</label>
 															<DatePicker
+                                                autoComplete="off"
 																selected={paid_date}
 																selectsStart
 																startDate={paid_date}

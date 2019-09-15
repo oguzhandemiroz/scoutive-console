@@ -818,6 +818,7 @@ export class Salary extends Component {
 														<span className="form-required">*</span>
 													</label>
 													<DatePicker
+                                                autoComplete="off"
 														selected={salary_date}
 														selectsStart
 														startDate={salary_date}
@@ -849,6 +850,7 @@ export class Salary extends Component {
 															<span className="form-required">*</span>
 														</label>
 														<DatePicker
+                                                autoComplete="off"
 															selected={paid_date}
 															selectsStart
 															startDate={paid_date}

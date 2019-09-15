@@ -283,6 +283,7 @@ export class Fast extends Component {
 												İşlem Tarihi <span className="form-required">*</span>
 											</label>
 											<DatePicker
+                                                autoComplete="off"
 												selected={payment_date}
 												selectsStart
 												startDate={payment_date}

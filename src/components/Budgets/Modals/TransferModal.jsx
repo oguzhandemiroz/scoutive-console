@@ -169,7 +169,7 @@ export class TransferModal extends Component {
 		const { select, from_budget_id, to_budget_id, formErrors, loadingButton } = this.state;
 		return (
 			<div>
-				<div className="modal fade" id="transferModal" tabindex="-1" role="dialog">
+				<div className="modal fade" id="transferModal" tabIndex="-1" role="dialog">
 					<form className="modal-dialog" role="document" onSubmit={this.handleSubmit}>
 						<div className="modal-content">
 							<div className="modal-header">
@@ -224,7 +224,7 @@ export class TransferModal extends Component {
 										/>
 									</div>
 									<div className="form-group col-12">
-										<label for="recipient-name" className="form-label">
+										<label className="form-label">
 											Aktarılacak Tutar <span className="form-required">*</span>
 										</label>
 										<input
@@ -235,7 +235,7 @@ export class TransferModal extends Component {
 										/>
 									</div>
 									<div className="form-group col-12">
-										<label for="message-text" className="form-label">
+										<label className="form-label">
 											Not:
 										</label>
 										<textarea

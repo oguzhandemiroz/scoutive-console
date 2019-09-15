@@ -645,6 +645,7 @@ export class Add extends Component {
 									</label>
 
 									<DatePicker
+                                                autoComplete="off"
 										selected={start_date}
 										selectsEnd
 										startDate={start_date}

@@ -90,6 +90,7 @@ export class Invoice extends Component {
 												Düzenleme Tarihi <span className="form-required">*</span>
 											</label>
 											<DatePicker
+                                                autoComplete="off"
 												todayButton="Bugün"
 												selected={invoice_date}
 												selectsStart
@@ -111,6 +112,7 @@ export class Invoice extends Component {
 											<div className="row gutters-md">
 												<div className="col-sm-12 col-md-6 col-lg-6 mb-sm-3 mb-lg-0">
 													<DatePicker
+                                                autoComplete="off"
 														todayButton="Bugün"
 														selected={expiry_date}
 														selectsStart

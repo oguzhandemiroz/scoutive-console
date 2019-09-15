@@ -202,7 +202,7 @@ export class RegisterPage extends Component {
 													noValidate
 												/>
 												<span className="custom-control-label">
-													<Link to="/auth/terms">Üyelik sözleşmesini </Link>
+													<Link to="/auth/terms" target="_blank">Üyelik sözleşmesini </Link>
 													okudum ve onaylıyorum
 													<span className="form-required">*</span>
 												</span>

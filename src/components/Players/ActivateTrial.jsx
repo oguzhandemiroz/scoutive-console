@@ -751,6 +751,7 @@ export class ActivateTrial extends Component {
 												<span className="form-required">*</span>
 											</label>
 											<DatePicker
+                                                autoComplete="off"
 												selected={start_date}
 												selectsEnd
 												startDate={start_date}

@@ -7,146 +7,167 @@ h.append("XIP", sessionStorage.getItem("IPADDR"));
 h.append("Authorization", localStorage.getItem("UID"));
 
 const GetBudget = data => {
-	try {
-		return fetch(ep.BUDGET_GET, {
-			method: "POST",
-			body: JSON.stringify(data),
-			headers: h
-		})
-			.then(res => res.json())
-			.then(response => {
-				if (response) {
-					const status = response.status;
-					if (status.code !== 1020) errorSwal(status);
-					return response;
-				}
-			})
-			.catch(e => fatalSwal(true));
-	} catch (e) {
-		fatalSwal(true);
-	}
+    try {
+        return fetch(ep.BUDGET_GET, {
+            method: "POST",
+            body: JSON.stringify(data),
+            headers: h
+        })
+            .then(res => res.json())
+            .then(response => {
+                if (response) {
+                    const status = response.status;
+                    if (status.code !== 1020) errorSwal(status);
+                    return response;
+                }
+            })
+            .catch(e => fatalSwal(true));
+    } catch (e) {
+        fatalSwal(true);
+    }
 };
 
 const CreateBudget = data => {
-	try {
-		return fetch(ep.BUDGET_CREATE, {
-			method: "POST",
-			body: JSON.stringify(data),
-			headers: h
-		})
-			.then(res => res.json())
-			.then(response => {
-				if (response) {
-					const status = response.status;
-					if (status.code !== 1020) errorSwal(status);
-					return response;
-				}
-			})
-			.catch(e => fatalSwal(true));
-	} catch (e) {
-		fatalSwal(true);
-	}
+    try {
+        return fetch(ep.BUDGET_CREATE, {
+            method: "POST",
+            body: JSON.stringify(data),
+            headers: h
+        })
+            .then(res => res.json())
+            .then(response => {
+                if (response) {
+                    const status = response.status;
+                    if (status.code !== 1020) errorSwal(status);
+                    return response;
+                }
+            })
+            .catch(e => fatalSwal(true));
+    } catch (e) {
+        fatalSwal(true);
+    }
 };
 
 const ListBudgets = uid => {
-	try {
-		return fetch(ep.BUDGET_LIST, {
-			method: "POST",
-			body: JSON.stringify({
-				uid: uid
-			}),
-			headers: h
-		})
-			.then(res => res.json())
-			.then(response => {
-				if (response) {
-					const status = response.status;
-					if (status.code !== 1020) errorSwal(status);
-					return response;
-				}
-			})
-			.catch(e => fatalSwal(true));
-	} catch (e) {
-		fatalSwal(true);
-	}
+    try {
+        return fetch(ep.BUDGET_LIST, {
+            method: "POST",
+            body: JSON.stringify({
+                uid: uid
+            }),
+            headers: h
+        })
+            .then(res => res.json())
+            .then(response => {
+                if (response) {
+                    const status = response.status;
+                    if (status.code !== 1020) errorSwal(status);
+                    return response;
+                }
+            })
+            .catch(e => fatalSwal(true));
+    } catch (e) {
+        fatalSwal(true);
+    }
 };
 
 const MakeDefaultBudget = data => {
-	try {
-		return fetch(ep.BUDGET_DEFAULT, {
-			method: "POST",
-			body: JSON.stringify(data),
-			headers: h
-		})
-			.then(res => res.json())
-			.then(response => {
-				if (response) {
-					const status = response.status;
-					if (status.code !== 1020) errorSwal(status);
-					else
-						Toast.fire({
-							type: "success",
-							title: "İşlem başarılı..."
-						});
-					return response;
-				}
-			})
-			.catch(e => fatalSwal(true));
-	} catch (e) {
-		fatalSwal(true);
-	}
+    try {
+        return fetch(ep.BUDGET_DEFAULT, {
+            method: "POST",
+            body: JSON.stringify(data),
+            headers: h
+        })
+            .then(res => res.json())
+            .then(response => {
+                if (response) {
+                    const status = response.status;
+                    if (status.code !== 1020) errorSwal(status);
+                    else
+                        Toast.fire({
+                            type: "success",
+                            title: "İşlem başarılı..."
+                        });
+                    return response;
+                }
+            })
+            .catch(e => fatalSwal(true));
+    } catch (e) {
+        fatalSwal(true);
+    }
 };
 
 const UpdateBudget = data => {
-	try {
-		return fetch(ep.BUDGET_UPDATE, {
-			method: "PATCH",
-			body: JSON.stringify(data),
-			headers: h
-		})
-			.then(res => res.json())
-			.then(response => {
-				if (response) {
-					const status = response.status;
-					if (status.code !== 1020) errorSwal(status);
-					else
-						Toast.fire({
-							type: "success",
-							title: "İşlem başarılı..."
-						});
-					return response;
-				}
-			})
-			.catch(e => fatalSwal(true));
-	} catch (e) {
-		fatalSwal(true);
-	}
+    try {
+        return fetch(ep.BUDGET_UPDATE, {
+            method: "PATCH",
+            body: JSON.stringify(data),
+            headers: h
+        })
+            .then(res => res.json())
+            .then(response => {
+                if (response) {
+                    const status = response.status;
+                    if (status.code !== 1020) errorSwal(status);
+                    else
+                        Toast.fire({
+                            type: "success",
+                            title: "İşlem başarılı..."
+                        });
+                    return response;
+                }
+            })
+            .catch(e => fatalSwal(true));
+    } catch (e) {
+        fatalSwal(true);
+    }
 };
 
 const TransferBudget = data => {
-	try {
-		return fetch(ep.BUDGET_TRANSFER, {
-			method: "POST",
-			body: JSON.stringify(data),
-			headers: h
-		})
-			.then(res => res.json())
-			.then(response => {
-				if (response) {
-					const status = response.status;
-					if (status.code !== 1020) errorSwal(status);
-					else
-						Toast.fire({
-							type: "success",
-							title: "İşlem başarılı..."
-						});
-					return response;
-				}
-			})
-			.catch(e => fatalSwal(true));
-	} catch (e) {
-		fatalSwal(true);
-	}
+    try {
+        return fetch(ep.BUDGET_TRANSFER, {
+            method: "POST",
+            body: JSON.stringify(data),
+            headers: h
+        })
+            .then(res => res.json())
+            .then(response => {
+                if (response) {
+                    const status = response.status;
+                    if (status.code !== 1020) errorSwal(status);
+                    else
+                        Toast.fire({
+                            type: "success",
+                            title: "İşlem başarılı..."
+                        });
+                    return response;
+                }
+            })
+            .catch(e => fatalSwal(true));
+    } catch (e) {
+        fatalSwal(true);
+    }
 };
 
-export { GetBudget, CreateBudget, ListBudgets, MakeDefaultBudget, UpdateBudget, TransferBudget };
+const BalanceHistoryBudget = data => {
+    try {
+        return fetch(ep.BUDGET_BALANCE_HISTORY, {
+            method: "POST",
+            body: JSON.stringify(data),
+            headers: h
+        })
+            .then(res => res.json())
+            .then(response => {
+                if (response) {
+                    const status = response.status;
+                    if (status.code !== 1020) errorSwal(status);
+                    return response;
+                }
+            })
+            .catch(e => fatalSwal(true));
+    } catch (e) {
+        fatalSwal(true);
+    }
+};
+
+export { GetBudget, CreateBudget, ListBudgets, MakeDefaultBudget, UpdateBudget, TransferBudget, BalanceHistoryBudget };

@@ -350,6 +350,7 @@ export class AdvancePayment extends Component {
 											</label>
 
 											<DatePicker
+                                                autoComplete="off"
 												selected={startDate}
 												selectsStart
 												startDate={startDate}
