@@ -14,7 +14,9 @@ const chartOptions = {
         left: -1,
         right: -1
     },
-    legend: false,
+    legend: {
+        padding: 0
+    },
     transition: {
         duration: 0
     },
