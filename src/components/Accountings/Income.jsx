@@ -132,7 +132,7 @@ export class Income extends Component {
 							<tfoot>
 								<tr>
 									<td colSpan="5" className="text-right font-italic">
-										<Link to="#">
+										<Link to="/app/accountings/income/list">
 											Tümünü görüntüle <i className="fe fe-arrow-right"></i>
 										</Link>
 									</td>

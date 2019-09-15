@@ -51,311 +51,327 @@ import IncomeFast from "../components/Accountings/Income/Fast";
 import ExpenseFast from "../components/Accountings/Expense/Fast";
 import IncomeInvoice from "../components/Accountings/Income/Invoice";
 import ExpenseInvoice from "../components/Accountings/Expense/Invoice";
+import IncomeList from "../components/Accountings/Income/List";
+import ExpenseList from "../components/Accountings/Expense/List";
 
 var indexRoutes = [
-	{
-		path: "/login",
-		name: "Login",
-		component: LoginPage,
-		layout: "/auth",
-		prop: { exact: true }
-	},
-	{
-		path: "/register",
-		name: "Register",
-		component: RegisterPage,
-		layout: "/auth",
-		prop: { exact: true }
-	},
-	{
-		path: "/forgot-password",
-		name: "Forgot Password",
-		component: ForgotPassword,
-		layout: "/auth",
-		prop: { exact: true }
-	},
-	{
-		path: "/reset-password/:uid",
-		name: "Reset Password",
-		component: ResetPassword,
-		layout: "/auth",
-		prop: { exact: true }
-	},
-	{
-		path: "/terms",
-		name: "Terms",
-		component: Terms,
-		layout: "/auth",
-		prop: { exact: true }
-	},
-	{
-		path: "/dashboard",
-		name: "Dashboard",
-		component: Dashboard,
-		layout: "/app",
-		prop: { exact: true }
-	},
-	{
-		path: "/profile/:uid",
-		name: "Profile",
-		component: Profile,
-		layout: "/account",
-		prop: { exact: true }
-	},
-	{
-		path: "/password/change",
-		name: "Change Password",
-		component: ChangePassword,
-		layout: "/account",
-		prop: { exact: true }
-	},
-	{
-		path: "/employees",
-		name: "Employees",
-		component: Employees,
-		layout: "/app",
-		prop: { exact: true }
-	},
-	{
-		path: "/employees/add",
-		name: "Add Employees",
-		component: AddEmployee,
-		layout: "/app",
-		prop: { exact: true }
-	},
-	{
-		path: "/employees/detail/:uid",
-		name: "Detail Employee",
-		component: DetailEmployee,
-		layout: "/app",
-		prop: { exact: true }
-	},
-	{
-		path: "/employees/vacation/:uid",
-		name: "Vacation Employee",
-		component: VacationEmployee,
-		layout: "/app",
-		prop: { exact: true }
-	},
-	{
-		path: "/employees/edit/:uid",
-		name: "Edit Employee",
-		component: EditEmployee,
-		layout: "/app",
-		prop: { exact: true }
-	},
-	{
-		path: "/employees/salary/:uid?",
-		name: "Pay Salary",
-		component: SalaryEmployee,
-		layout: "/app",
-		prop: { exact: false }
-	},
-	{
-		path: "/employees/salary-detail/:uid?",
-		name: "Detail Salary",
-		component: SalaryDetailEmployee,
-		layout: "/app"
-	},
-	{
-		path: "/players",
-		name: "Players",
-		component: Players,
-		layout: "/app",
-		prop: { exact: true }
-	},
-	{
-		path: "/players/add",
-		name: "Add Players",
-		component: AddPlayer,
-		layout: "/app",
-		prop: { exact: true }
-	},
-	{
-		path: "/players/add/trial",
-		name: "Trial Players",
-		component: TrialPlayer,
-		layout: "/app",
-		prop: { exact: true }
-	},
-	{
-		path: "/players/trial/activate/:uid",
-		name: "Activate Trial Players",
-		component: ActivateTrial,
-		layout: "/app",
-		prop: { exact: true }
-	},
-	{
-		path: "/players/detail/:uid",
-		name: "Detail Players",
-		component: DetailPlayer,
-		layout: "/app",
-		prop: { exact: true }
-	},
-	{
-		path: "/players/edit/:uid",
-		name: "Edit Players",
-		component: EditPlayer,
-		layout: "/app",
-		prop: { exact: true }
-	},
-	{
-		path: "/players/payment/:uid?",
-		name: "Receive Payment",
-		component: PaymentPlayer,
-		layout: "/app"
-	},
-	{
-		path: "/groups",
-		name: "Groups",
-		component: Groups,
-		layout: "/app",
-		prop: { exact: true }
-	},
-	{
-		path: "/groups/add",
-		name: "Groups",
-		component: GroupAdd,
-		layout: "/app",
-		prop: { exact: true }
-	},
-	{
-		path: "/groups/detail/:gid",
-		name: "Groups",
-		component: GroupDetail,
-		layout: "/app",
-		prop: { exact: true }
-	},
-	{
-		path: "/groups/edit/:gid",
-		name: "Groups",
-		component: GroupEdit,
-		layout: "/app",
-		prop: { exact: true }
-	},
-	{
-		path: "/profile",
-		name: "Profile",
-		component: Profile,
-		layout: "/account",
-		prop: { exact: true }
-	},
-	{
-		path: "/settings",
-		name: "Settings",
-		component: Settings,
-		layout: "/account",
-		prop: { exact: false }
-	},
-	{
-		path: "/rollcalls/employee",
-		component: EmployeesRollcallList,
-		layout: "/app",
-		prop: { exact: true }
-	},
-	{
-		path: "/rollcalls/employee/add/:rcid",
-		component: EmployeesRollcallAdd,
-		layout: "/app",
-		prop: { exact: true }
-	},
-	{
-		path: "/rollcalls/employee/detail/:rcid",
-		name: "Employees Rollcalls",
-		component: EmployeesRollcallDetail,
-		layout: "/app",
-		prop: { exact: true }
-	},
-	{
-		path: "/rollcalls/player",
-		name: "Players Rollcalls",
-		component: PlayersRollcallList,
-		layout: "/app",
-		prop: { exact: true }
-	},
-	{
-		path: "/rollcalls/player/add/:rcid",
-		name: "Players Rollcalls",
-		component: PlayersRollcallAdd,
-		layout: "/app",
-		prop: { exact: true }
-	},
-	{
-		path: "/rollcalls/player/detail/:rcid",
-		name: "Players Rollcalls Past",
-		component: PlayersRollcallDetail,
-		layout: "/app",
-		prop: { exact: true }
-	},
-	{
-		path: "/budgets",
-		name: "Budgets",
-		component: Budgets,
-		layout: "/app",
-		prop: { exact: true }
-	},
-	{
-		path: "/budgets/add",
-		name: "Add Budget",
-		component: BudgetAdd,
-		layout: "/app",
-		prop: { exact: true }
-	},
-	{
-		path: "/budgets/detail/:bid",
-		name: "Detail Budget",
-		component: BudgetDetail,
-		layout: "/app",
-		prop: { exact: true }
-	},
-	{
-		path: "/players/attr/:pid",
-		name: "Detail Attributes",
-		component: Attributes,
-		layout: "/app",
-		prop: { exact: true }
-	},
-	{
-		path: "/accountings",
-		name: "Accountings",
-		component: Accountings,
-		layout: "/app",
-		prop: { exact: true }
-	},
-	{
-		path: "/accountings/income/fast",
-		name: "Hızlı Gelir İşlemi",
-		component: IncomeFast,
-		layout: "/app",
-		prop: { exact: true }
-	},
-	{
-		path: "/accountings/income/invoice",
-		name: "Gelir - Fatura",
-		component: IncomeInvoice,
-		layout: "/app",
-		prop: { exact: true }
-	},
-	{
-		path: "/accountings/expense/fast",
-		name: "Hızlı Gider İşlemi",
-		component: ExpenseFast,
-		layout: "/app",
-		prop: { exact: true }
-	},
-	{
-		path: "/accountings/expense/invoice",
-		name: "Gider - Fatura",
-		component: ExpenseInvoice,
-		layout: "/app",
-		prop: { exact: true }
-	},
-	{
-		path: "*",
-		layout: "",
-		name: "404",
-		component: _404
-	}
+    {
+        path: "/login",
+        name: "Login",
+        component: LoginPage,
+        layout: "/auth",
+        prop: { exact: true }
+    },
+    {
+        path: "/register",
+        name: "Register",
+        component: RegisterPage,
+        layout: "/auth",
+        prop: { exact: true }
+    },
+    {
+        path: "/forgot-password",
+        name: "Forgot Password",
+        component: ForgotPassword,
+        layout: "/auth",
+        prop: { exact: true }
+    },
+    {
+        path: "/reset-password/:uid",
+        name: "Reset Password",
+        component: ResetPassword,
+        layout: "/auth",
+        prop: { exact: true }
+    },
+    {
+        path: "/terms",
+        name: "Terms",
+        component: Terms,
+        layout: "/auth",
+        prop: { exact: true }
+    },
+    {
+        path: "/dashboard",
+        name: "Dashboard",
+        component: Dashboard,
+        layout: "/app",
+        prop: { exact: true }
+    },
+    {
+        path: "/profile/:uid",
+        name: "Profile",
+        component: Profile,
+        layout: "/account",
+        prop: { exact: true }
+    },
+    {
+        path: "/password/change",
+        name: "Change Password",
+        component: ChangePassword,
+        layout: "/account",
+        prop: { exact: true }
+    },
+    {
+        path: "/employees",
+        name: "Employees",
+        component: Employees,
+        layout: "/app",
+        prop: { exact: true }
+    },
+    {
+        path: "/employees/add",
+        name: "Add Employees",
+        component: AddEmployee,
+        layout: "/app",
+        prop: { exact: true }
+    },
+    {
+        path: "/employees/detail/:uid",
+        name: "Detail Employee",
+        component: DetailEmployee,
+        layout: "/app",
+        prop: { exact: true }
+    },
+    {
+        path: "/employees/vacation/:uid",
+        name: "Vacation Employee",
+        component: VacationEmployee,
+        layout: "/app",
+        prop: { exact: true }
+    },
+    {
+        path: "/employees/edit/:uid",
+        name: "Edit Employee",
+        component: EditEmployee,
+        layout: "/app",
+        prop: { exact: true }
+    },
+    {
+        path: "/employees/salary/:uid?",
+        name: "Pay Salary",
+        component: SalaryEmployee,
+        layout: "/app",
+        prop: { exact: false }
+    },
+    {
+        path: "/employees/salary-detail/:uid?",
+        name: "Detail Salary",
+        component: SalaryDetailEmployee,
+        layout: "/app"
+    },
+    {
+        path: "/players",
+        name: "Players",
+        component: Players,
+        layout: "/app",
+        prop: { exact: true }
+    },
+    {
+        path: "/players/add",
+        name: "Add Players",
+        component: AddPlayer,
+        layout: "/app",
+        prop: { exact: true }
+    },
+    {
+        path: "/players/add/trial",
+        name: "Trial Players",
+        component: TrialPlayer,
+        layout: "/app",
+        prop: { exact: true }
+    },
+    {
+        path: "/players/trial/activate/:uid",
+        name: "Activate Trial Players",
+        component: ActivateTrial,
+        layout: "/app",
+        prop: { exact: true }
+    },
+    {
+        path: "/players/detail/:uid",
+        name: "Detail Players",
+        component: DetailPlayer,
+        layout: "/app",
+        prop: { exact: true }
+    },
+    {
+        path: "/players/edit/:uid",
+        name: "Edit Players",
+        component: EditPlayer,
+        layout: "/app",
+        prop: { exact: true }
+    },
+    {
+        path: "/players/payment/:uid?",
+        name: "Receive Payment",
+        component: PaymentPlayer,
+        layout: "/app"
+    },
+    {
+        path: "/groups",
+        name: "Groups",
+        component: Groups,
+        layout: "/app",
+        prop: { exact: true }
+    },
+    {
+        path: "/groups/add",
+        name: "Groups",
+        component: GroupAdd,
+        layout: "/app",
+        prop: { exact: true }
+    },
+    {
+        path: "/groups/detail/:gid",
+        name: "Groups",
+        component: GroupDetail,
+        layout: "/app",
+        prop: { exact: true }
+    },
+    {
+        path: "/groups/edit/:gid",
+        name: "Groups",
+        component: GroupEdit,
+        layout: "/app",
+        prop: { exact: true }
+    },
+    {
+        path: "/profile",
+        name: "Profile",
+        component: Profile,
+        layout: "/account",
+        prop: { exact: true }
+    },
+    {
+        path: "/settings",
+        name: "Settings",
+        component: Settings,
+        layout: "/account",
+        prop: { exact: false }
+    },
+    {
+        path: "/rollcalls/employee",
+        component: EmployeesRollcallList,
+        layout: "/app",
+        prop: { exact: true }
+    },
+    {
+        path: "/rollcalls/employee/add/:rcid",
+        component: EmployeesRollcallAdd,
+        layout: "/app",
+        prop: { exact: true }
+    },
+    {
+        path: "/rollcalls/employee/detail/:rcid",
+        name: "Employees Rollcalls",
+        component: EmployeesRollcallDetail,
+        layout: "/app",
+        prop: { exact: true }
+    },
+    {
+        path: "/rollcalls/player",
+        name: "Players Rollcalls",
+        component: PlayersRollcallList,
+        layout: "/app",
+        prop: { exact: true }
+    },
+    {
+        path: "/rollcalls/player/add/:rcid",
+        name: "Players Rollcalls",
+        component: PlayersRollcallAdd,
+        layout: "/app",
+        prop: { exact: true }
+    },
+    {
+        path: "/rollcalls/player/detail/:rcid",
+        name: "Players Rollcalls Past",
+        component: PlayersRollcallDetail,
+        layout: "/app",
+        prop: { exact: true }
+    },
+    {
+        path: "/budgets",
+        name: "Budgets",
+        component: Budgets,
+        layout: "/app",
+        prop: { exact: true }
+    },
+    {
+        path: "/budgets/add",
+        name: "Add Budget",
+        component: BudgetAdd,
+        layout: "/app",
+        prop: { exact: true }
+    },
+    {
+        path: "/budgets/detail/:bid",
+        name: "Detail Budget",
+        component: BudgetDetail,
+        layout: "/app",
+        prop: { exact: true }
+    },
+    {
+        path: "/players/attr/:pid",
+        name: "Detail Attributes",
+        component: Attributes,
+        layout: "/app",
+        prop: { exact: true }
+    },
+    {
+        path: "/accountings",
+        name: "Accountings",
+        component: Accountings,
+        layout: "/app",
+        prop: { exact: true }
+    },
+    {
+        path: "/accountings/income/fast",
+        name: "Hızlı Gelir İşlemi",
+        component: IncomeFast,
+        layout: "/app",
+        prop: { exact: true }
+    },
+    {
+        path: "/accountings/income/invoice",
+        name: "Gelir - Fatura",
+        component: IncomeInvoice,
+        layout: "/app",
+        prop: { exact: true }
+    },
+    {
+        path: "/accountings/income/list",
+        name: "Gelir - Tüm List",
+        component: IncomeList,
+        layout: "/app",
+        prop: { exact: true }
+    },
+    {
+        path: "/accountings/expense/fast",
+        name: "Hızlı Gider İşlemi",
+        component: ExpenseFast,
+        layout: "/app",
+        prop: { exact: true }
+    },
+    {
+        path: "/accountings/expense/invoice",
+        name: "Gider - Fatura",
+        component: ExpenseInvoice,
+        layout: "/app",
+        prop: { exact: true }
+    },
+    {
+        path: "/accountings/expense/list",
+        name: "Gider - Tüm List",
+        component: ExpenseList,
+        layout: "/app",
+        prop: { exact: true }
+    },
+    {
+        path: "*",
+        layout: "",
+        name: "404",
+        component: _404
+    }
 ];
 
 export default indexRoutes;

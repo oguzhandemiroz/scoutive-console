@@ -39,7 +39,7 @@ export class List extends Component {
 			const { uid } = this.state;
 			$("#budget-list").DataTable({
 				dom: '<"top"f>rt<"bottom"ilp><"clear">',
-				responsive: true,
+				responsive: false,
 				order: [0, "asc"],
 				aLengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "Tümü"]],
 				stateSave: false, // change true

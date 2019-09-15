@@ -63,7 +63,7 @@ export class Add extends Component {
 		const { rcid } = this.props.match.params;
 		const table = $("#rollcall-list").DataTable({
 			dom: '<"top"f>rt<"bottom"ilp><"clear">',
-			responsive: true,
+			responsive: false,
 			order: [3, "asc"],
 			aLengthMenu: [[30, 50, 100, -1], [30, 50, 100, "Tümü"]],
 			stateSave: false, // change true
