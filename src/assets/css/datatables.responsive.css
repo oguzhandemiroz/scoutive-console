@@ -65,12 +65,10 @@ table.dataTable.dtr-column > tbody > tr > th.control:before {
 	height: 20px;
 	width: 20px;
 	margin-top: -10px;
-	margin-left: -10px;
+	margin-left: -5px;
 	position: absolute;
 	color: white;
-	border: 1px solid white;
 	border-radius: 14px;
-	box-shadow: 0 0 3px #444;
 	box-sizing: content-box;
 	text-align: center;
 	text-indent: 0 !important;

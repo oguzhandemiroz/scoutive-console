@@ -116,7 +116,13 @@ export class Expense extends Component {
 													<td className="text-nowrap">
 														{moment(el.payment_date).format("LL")}
 													</td>
-													<td className="text-break">{el.budget.budget_name}</td>
+													<td className="text-break">
+														<Link
+															className="text-inherit"
+															to={"/app/budgets/detail/" + el.budget.budget_id}>
+															{el.budget.budget_name}
+														</Link>
+													</td>
 													<td className="w-1">
 														<Link
 															to={"/app/accountings/income/detail/" + el.accounting_id}

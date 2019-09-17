@@ -619,6 +619,20 @@ export class Detail extends Component {
 							</div>
 							<div className="card-footer">
 								<ActionButton
+									vacationButton={data =>
+										this.setState({
+											...initialState,
+											vacation: true,
+											data: data
+										})
+									}
+									groupChangeButton={data =>
+										this.setState({
+											...initialState,
+											group_change: true,
+											data: data
+										})
+									}
 									history={this.props.history}
 									dropdown={false}
 									data={{
@@ -629,6 +643,9 @@ export class Detail extends Component {
 										group: group
 									}}
 								/>
+
+								<Vacation data={data} visible={vacation} history={this.props.history} />
+								<GroupChange data={data} visible={group_change} history={this.props.history} />
 							</div>
 						</div>
 					</div>

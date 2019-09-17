@@ -15,7 +15,7 @@ export class ListFilter extends Component {
 			feeConditionButtonText: "Koşul",
 			pointConditionButtonText: "Koşul",
 			filter: {
-				status: null,
+				status: [1],
 				is_trial: null,
 				group: null,
 				fee: null,
@@ -63,6 +63,7 @@ export class ListFilter extends Component {
 		const { name, checked, value } = e.target;
 		const filter = { ...this.state.filter };
 		filter[name] = filter[name] || [];
+		console.log(name, checked, value);
 
 		if (checked) filter[name].push(parseInt(value));
 		else filter[name] = filter[name].filter(x => x !== parseInt(value));
@@ -75,7 +76,6 @@ export class ListFilter extends Component {
 	handleCondition = (e, name, value, buttonText) => {
 		e.preventDefault();
 		const filter = { ...this.state.filter };
-		console.log(name, value);
 
 		if (value !== "clear") {
 			filter[name] = filter[name] || {};
@@ -116,6 +116,7 @@ export class ListFilter extends Component {
 													className="custom-control-input"
 													name="status"
 													value="1"
+													checked={filter.status ? filter.status.indexOf(1) > -1 : false}
 													onChange={this.handleCheck}
 												/>
 												<span className="custom-control-label text-green">Aktif</span>
@@ -306,7 +307,9 @@ export class ListFilter extends Component {
 													<div role="separator" className="dropdown-divider"></div>
 													<button
 														className="dropdown-item"
-														onClick={e => this.handleCondition(e, "point", "clear", "Koşul")}>
+														onClick={e =>
+															this.handleCondition(e, "point", "clear", "Koşul")
+														}>
 														Temizle
 													</button>
 												</div>

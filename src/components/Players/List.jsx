@@ -25,15 +25,37 @@ var dailyType = {
 };
 
 var statusType = {
-	0: "bg-gray",
-	1: "bg-success",
-	2: "bg-azure",
-	3: "bg-indigo"
+	0: { bg: "bg-danger", title: "Pasif" },
+	1: { bg: "bg-success", title: "Aktif" },
+	2: { bg: "bg-azure", title: "Donuk" },
+	3: { bg: "bg-indigo", title: "Deneme" }
 };
 
 const initialState = {
 	vacation: false,
 	group_change: false
+};
+
+const filteredList = () => {
+	if (!document.getElementById("clearFilter")) {
+		$("div.filterTools").append(
+			`<a href="javascript:void(0)" id="clearFilter" class="btn btn-link text-truncate">Filtreyi temizle</a>`
+		);
+
+		$(".filterTools #clearFilter").on("click", function() {
+			$.fn.dataTable.ext.search = [];
+			$("#player-list")
+				.DataTable()
+				.draw();
+			$(this).remove();
+		});
+	}
+
+	$("#player-list")
+		.DataTable()
+		.draw();
+
+	$("#playerListFilterMenu").modal("hide");
 };
 
 class Table extends Component {
@@ -54,6 +76,7 @@ class Table extends Component {
 
 		Object.keys(filterFromModal).map(el => {
 			$.fn.dataTable.ext.search.push(function(settings, searchData, index, rowData, counter) {
+				if (settings.nTable.id !== "player-list") return true;
 				if (["status", "group", "is_trial"].indexOf(el) > -1) {
 					return filterFromModal[el] ? (filterFromModal[el].indexOf(rowData[el]) > -1 ? true : false) : true;
 				} else if (el === "birthday") {
@@ -96,24 +119,7 @@ class Table extends Component {
 			});
 		});
 
-		if (!document.getElementById("clearFilter")) {
-			console.log("yok");
-			$("div.filterTools").append(
-				`<a href="javascript:void(0)" id="clearFilter" class="btn btn-link">Filtreyi temizle</a>`
-			);
-
-			$(".filterTools #clearFilter").on("click", function() {
-				$.fn.dataTable.ext.search = [];
-				$("#player-list")
-					.DataTable()
-					.draw();
-				$(this).remove();
-			});
-		}
-
-		$("#player-list")
-			.DataTable()
-			.draw();
+		filteredList();
 		$("#playerListFilterMenu").modal("hide");
 	};
 
@@ -130,13 +136,13 @@ class Table extends Component {
 							var data = $.map(columns, function(col, i) {
 								return col.hidden
 									? `<tr data-dt-row="${col.rowIndex}" data-dt-column="${col.columnIndex}">
-									<th>${col.title}</th> 
+									<th class="w-1">${col.title}</th> 
 									<td>${col.data}</td>
 								</tr>`
 									: ``;
 							}).join("");
 
-							return data ? $("<table/>").append(data) : false;
+							return data ? $('<table class="w-100"/>').append(data) : false;
 						}
 					}
 				},
@@ -264,21 +270,18 @@ class Table extends Component {
 						class: "text-center",
 						render: function(data, type, row) {
 							var status = row.status;
-							if (data === null) {
-								return `<span class="avatar avatar-placeholder">
-										<span class="avatar-status ${row.is_trial ? statusType[3] : statusType[status]}"></span>
-									</span>`;
-							} else {
-								return `<div class="avatar" style="background-image: url(${data})">
-										<span class="avatar-status ${row.is_trial ? statusType[3] : statusType[status]}"></span>
+							var renderBg = row.is_trial ? statusType[3].bg : statusType[status].bg;
+							var renderTitle = row.is_trial
+								? statusType[status].title + " & Deneme Öğrenci"
+								: statusType[status].title + " Öğrenci";
+							return `<div class="avatar" style="background-image: url(${data || ""})">
+										<span class="avatar-status ${renderBg}" data-toggle="tooltip" title="${renderTitle}"></span>
 									</div>`;
-							}
 						}
 					},
 					{
 						data: "name",
 						responsivePriority: 1,
-						class: "w-1",
 						render: function(data, type, row) {
 							const fullname = fullnameGenerator(data, row.surname);
 							if (type === "sort" || type === "type") {
@@ -347,7 +350,7 @@ class Table extends Component {
 								return data ? data.split(".")[0] : data;
 							}
 
-							if (data && data !== "") return moment(data).format("DD-MM-YYYY");
+							if (data && data !== "") return moment(data).format("LL");
 							else return "&mdash;";
 						}
 					},
@@ -363,49 +366,33 @@ class Table extends Component {
 						data: "daily",
 						responsivePriority: 10001,
 						render: function(data, type, row) {
-							return (
-								'<span class="status-icon bg-' + dailyType[data][1] + '"></span>' + dailyType[data][0]
-							);
+							return `<span class="status-icon bg-${dailyType[data][1]}"></span> ${dailyType[data][0]}`;
 						}
 					},
 					{
 						data: null
 					}
-				]
+				],
+
+				initComplete: function() {
+					$.fn.dataTable.ext.search.push(function(settings, searchData, index, rowData, counter) {
+						if (settings.nTable.id !== "player-list") return true;
+						return rowData["status"] === 1 ? true : false;
+					});
+					filteredList();
+				}
 			});
 
 			$("div.filterTools").html(`
                 <button type="button" class="btn btn-yellow" data-toggle="modal" data-target="#playerListFilterMenu"><i class="fe fe-filter mr-2"></i>Filtre</button> 
 			`);
 
-			$("#activePlayers").on("change", function() {
-				if ($(this).is(":checked")) {
-					$.fn.dataTable.ext.search.push(function(settings, searchData, index, rowData, counter) {
-						return rowData.status === 1;
-					});
-				} else {
-					$.fn.dataTable.ext.search.pop();
-				}
-				table.draw();
-			});
-
-			$("#trialPlayers").on("change", function() {
-				if ($(this).is(":checked")) {
-					$.fn.dataTable.ext.search.push(function(settings, searchData, index, rowData, counter) {
-						return rowData.is_trial === 1;
-					});
-				} else {
-					$.fn.dataTable.ext.search.pop();
-				}
-				table.draw();
-			});
-
 			$.fn.DataTable.ext.errMode = "none";
-			$("#player-list").on("error.dt", function(e, settings, techNote, message) {
+			table.on("error.dt", function(e, settings, techNote, message) {
 				console.log("An error has been reported by DataTables: ", message, techNote);
 			});
 
-			$("#player-list").on("draw.dt", function() {
+			table.on("draw.dt", function() {
 				$('[data-toggle="tooltip"]').tooltip();
 			});
 		} catch (e) {
@@ -426,11 +413,11 @@ class Table extends Component {
 			<div>
 				<table
 					id="player-list"
-					className="table card-table w-100 table-vcenter table-striped text-nowrap datatable">
+					className="table card-table w-100 table-vcenter table-striped text-nowrap datatable dataTable">
 					<thead>
 						<tr>
 							<th>ID</th>
-							<th className="w-1 no-sort">T.C.</th>
+							<th className="no-sort">T.C.</th>
 							<th className="w-1 no-sort control" />
 							<th className="w-1 text-center no-sort">#</th>
 							<th className="w-1 name">AD SOYAD</th>
@@ -439,7 +426,7 @@ class Table extends Component {
 							<th className="point">GENEL PUAN</th>
 							<th className="birthday">YAŞ</th>
 							<th className="group">GRUP</th>
-							<th className="status">DURUM</th>
+							<th className="daily">DURUM</th>
 							<th className="no-sort action" />
 						</tr>
 					</thead>

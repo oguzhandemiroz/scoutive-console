@@ -67,9 +67,9 @@ export class TotalPlayerCount extends Component {
 		let freeze = [];
 		let trial = [];
 
-		passive = data.filter(x => x.status === 0);
-		active = data.filter(x => x.status === 1);
-		freeze = data.filter(x => x.status === 2);
+		passive = data.filter(x => x.status === 0 && x.is_trial === 0);
+		active = data.filter(x => x.status === 1 && x.is_trial === 0);
+		freeze = data.filter(x => x.status === 2 && x.is_trial === 0);
 		trial = data.filter(x => x.is_trial === 1);
 
 		this.setState({
@@ -103,8 +103,8 @@ export class TotalPlayerCount extends Component {
 					// name of each serie
 					//total: "Toplam",
 					active: "Aktif",
-					passive: "Silinen",
-					freeze: "Pasif",
+					passive: "Pasif",
+					freeze: "Donuk",
 					trial: "Deneme"
 				}
 			},

@@ -14,12 +14,19 @@ import Inputmask from "inputmask";
 const $ = require("jquery");
 $.DataTable = require("datatables.net");
 
-var statusType = {
+var dailyType = {
 	"-1": ["Tanımsız", "secondary"],
 	"0": ["Gelmedi", "danger"],
 	"1": ["Geldi", "success"],
-	"2": ["İzinli", "warning"],
-	"3": ["İzinli", "warning"]
+	"2": ["T. Gün İzinli", "warning"],
+	"3": ["Y. Gün İzinli", "warning"]
+};
+
+var statusType = {
+	0: "bg-danger",
+	1: "bg-success",
+	2: "bg-azure",
+	3: "bg-indigo"
 };
 
 const initialState = {
@@ -63,7 +70,7 @@ class Table extends Component {
 						createdCell: (td, cellData, rowData) => {
 							const fullname = fullnameGenerator(rowData.name, rowData.surname);
 							const { uid, status } = rowData;
-							
+
 							ReactDOM.render(
 								<BrowserRouter>
 									<ActionButton
@@ -159,29 +166,14 @@ class Table extends Component {
 						class: "text-center",
 						render: function(data, type, row) {
 							var status = row.status;
-							var bg_class_type = {
-								"0": "secondary",
-								"1": "success",
-								"2": "warning",
-								"3": "danger",
-								"4": "info"
-							};
 							if (data === null) {
-								return (
-									'<span class="avatar avatar-placeholder">' +
-									'<span class="avatar-status bg-' +
-									bg_class_type[status] +
-									'"></span></span>'
-								);
+								return `<span class="avatar avatar-placeholder">
+										<span class="avatar-status ${statusType[status]}"></span>
+									</span>`;
 							} else {
-								return (
-									'<div class="avatar" style="background-image: url(' +
-									data +
-									')">' +
-									'<span class="avatar-status bg-' +
-									bg_class_type[status] +
-									'"></span></div>'
-								);
+								return `<div class="avatar" style="background-image: url(${data})">
+										<span class="avatar-status ${statusType[status]}"></span>
+									</div>`;
 							}
 						}
 					},
@@ -225,7 +217,7 @@ class Table extends Component {
 						data: "daily",
 						render: function(data, type, row) {
 							return (
-								'<span class="status-icon bg-' + statusType[data][1] + '"></span>' + statusType[data][0]
+								'<span class="status-icon bg-' + dailyType[data][1] + '"></span>' + dailyType[data][0]
 							);
 						}
 					},
