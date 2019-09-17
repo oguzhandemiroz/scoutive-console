@@ -102,6 +102,9 @@ const initialState = {
 	body_measure: [],
 	position: null,
 	group: null,
+	is_active: 1,
+	is_scholarship: 0,
+	note: null,
 	imagePreview: null,
 	start_date: null
 };
@@ -250,6 +253,9 @@ export class Add extends Component {
 			foot,
 			foot_no,
 			emergency,
+			is_scholarship,
+			is_active,
+			note,
 			body_measure,
 			formErrors,
 			addContinuously,
@@ -343,6 +349,8 @@ export class Add extends Component {
 				foot: foot,
 				birthday: checkBirthday,
 				start_date: moment(start_date).format("YYYY-MM-DD"),
+				is_scholarship: is_scholarship ? 1 : 0,
+				note: note,
 				attributes: attributesData
 			}).then(response => {
 				const formData = new FormData();
@@ -359,11 +367,11 @@ export class Add extends Component {
 						UploadFile(formData).then(response => {
 							this.setState({ uploadedFile: true, loadingButton: "" });
 							if (response)
-								if (!addContinuously) this.props.history.push("/app/players");
+								if (!addContinuously) this.props.history.push("/app/players/detail/" + response.uid);
 								else this.reload();
 						});
 					} else if (addContinuously) this.reload();
-					else this.props.history.push("/app/players");
+					else this.props.history.push("/app/players/detail/" + response.uid);
 				} else this.setState({ loadingButton: "" });
 			});
 		} else {
@@ -383,8 +391,6 @@ export class Add extends Component {
 			formErrors.phone = phone ? (phone.length !== 10 ? "is-invalid" : "") : "";
 			formErrors.fee = fee ? "" : "is-invalid";
 			formErrors.start_date = start_date ? "" : "is-invalid";
-			//formErrors.point = point ? "" : "is-invalid-iconless";
-			//select
 			formErrors.position = position ? "" : true;
 			formErrors.branch = branch ? "" : true;
 			formErrors.day = day ? "" : true;
@@ -418,8 +424,9 @@ export class Add extends Component {
 		}
 		if (name === "fee") {
 			this.setState({ formErrors, [name]: value });
-		} else if (name.indexOf(".") === -1) this.setState({ formErrors, [name]: value });
-		else {
+		} else if (name.indexOf(".") === -1) {
+			this.setState({ formErrors, [name]: value });
+		} else {
 			const splitName = name.split(".");
 			this.setState(prevState => {
 				return (prevState[splitName[0]][splitName[2]][splitName[1]] = value);
@@ -460,15 +467,12 @@ export class Add extends Component {
 				case "branch":
 					formErrors.branch = value ? false : true;
 					break;
-
 				case "day":
 					formErrors.day = value ? false : true;
 					break;
-
 				case "month":
 					formErrors.month = value ? false : true;
 					break;
-
 				case "year":
 					formErrors.year = value ? false : true;
 					break;
@@ -482,6 +486,9 @@ export class Add extends Component {
 
 	handleCheck = e => {
 		const { name, checked } = e.target;
+		if (name === "is_scholarship" && checked) {
+			this.setState({ fee: "0,00" });
+		}
 		this.setState({ [name]: checked });
 	};
 
@@ -532,6 +539,9 @@ export class Add extends Component {
 			body_measure,
 			select,
 			emergency,
+			is_scholarship,
+			is_active,
+			note,
 			formErrors,
 			uploadedFile,
 			imagePreview,
@@ -674,26 +684,51 @@ export class Add extends Component {
 								</div>
 
 								<div className="form-group">
-									<label className="form-label">
-										Aidat
-										<span className="form-required">*</span>
-									</label>
-									<input
-										type="text"
-										className={`form-control ${formErrors.fee}`}
-										onChange={this.handleChange}
-										placeholder="Aidat"
-										name="fee"
-										value={fee || "0,00"}
-									/>
+									<label className="form-label">Aidat</label>
+									<div className="row gutters-xs">
+										<div className="col">
+											<input
+												type="text"
+												className={`form-control ${formErrors.fee}`}
+												onChange={this.handleChange}
+												placeholder="Aidat"
+												name="fee"
+												value={fee || "0,00"}
+												disabled={is_scholarship}
+											/>
+										</div>
+										<div className="col-auto">
+											<label className="selectgroup-item" data-toggle="tooltip" title="Burslu">
+												<input
+													type="checkbox"
+													name="is_scholarship"
+													checked={is_scholarship}
+													className="selectgroup-input"
+													onChange={this.handleCheck}
+												/>
+												<span className="selectgroup-button selectgroup-button-icon">
+													<i className="fa fa-user-graduate"></i>
+												</span>
+											</label>
+										</div>
+									</div>
 								</div>
+								{is_scholarship ? (
+									<div className="alert alert-icon alert-primary" role="alert">
+										<i className="fe fe-alert-triangle mr-2" aria-hidden="true"></i>
+										<p>
+											<b>Öğrenci, burslu olarak tanımlandı!</b>
+										</p>
+										Burslu öğrenciler aidat ödemesinden muaf tutulur.
+									</div>
+								) : null}
 								<div className="form-group">
 									<label className="form-label">
 										Okula Başlama Tarihi
 										<span className="form-required">*</span>
 									</label>
 									<DatePicker
-                                                autoComplete="off"
+										autoComplete="off"
 										selected={start_date}
 										selectsEnd
 										startDate={start_date}
@@ -1059,6 +1094,19 @@ export class Add extends Component {
 													})}
 												</tbody>
 											</table>
+										</div>
+									</div>
+									<div className="col-12 mt-3">
+										<div className="form-group">
+											<label className="form-label">Not</label>
+											<textarea
+												className="form-control"
+												name="note"
+												onChange={this.handleChange}
+												rows={3}
+												maxLength="1000"
+												value={note || ""}
+											/>
 										</div>
 									</div>
 								</div>

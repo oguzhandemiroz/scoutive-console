@@ -78,6 +78,8 @@ let initialState = {
 	foot_no: null,
 	body_weight: null,
 	body_height: null,
+	is_scholarship: 0,
+	note: null,
 	fee: null,
 	point: null,
 	start_date: null,
@@ -175,6 +177,8 @@ export class ActivateTrial extends Component {
 				point,
 				emergency,
 				body_measure,
+				is_scholarship,
+				note,
 				formErrors,
 				responseData,
 				start_date
@@ -264,6 +268,8 @@ export class ActivateTrial extends Component {
 					image: image,
 					start_date: moment(start_date).format("YYYY-MM-DD"),
 					is_trial: 0,
+					is_scholarship: is_scholarship,
+					note: note,
 					attributes: attributesData
 				}).then(code => {
 					this.setState({ loadingButton: "" });
@@ -288,7 +294,6 @@ export class ActivateTrial extends Component {
 					: "is-invalid";
 				formErrors.email = email ? (!emailRegEx.test(email) ? "is-invalid" : "") : "";
 				formErrors.phone = phone ? (phone.length !== 10 ? "is-invalid" : "") : "";
-				formErrors.fee = fee ? "" : "is-invalid";
 				formErrors.start_date = start_date ? "" : "is-invalid";
 				//select
 				formErrors.branch = branch ? "" : true;
@@ -323,9 +328,6 @@ export class ActivateTrial extends Component {
 				break;
 			case "phone":
 				formErrors.phone = value.length !== 10 ? "is-invalid" : "";
-				break;
-			case "fee":
-				formErrors.fee = value ? "" : "is-invalid";
 				break;
 			default:
 				break;
@@ -401,6 +403,9 @@ export class ActivateTrial extends Component {
 
 	handleCheck = e => {
 		const { name, checked } = e.target;
+		if (name === "is_scholarship" && checked) {
+			this.setState({ fee: "0,00" });
+		}
 		this.setState({ [name]: checked });
 	};
 
@@ -481,6 +486,7 @@ export class ActivateTrial extends Component {
 						return null;
 					}
 					initialState = Object.assign({}, initialState, data, { uid: uid });
+					initialState.group = data.group ? { value: data.group.group_id, label: data.group.name } : null;
 					initialState.imagePreview = data.image;
 					initialState.body_height = data.attributes.body_height;
 					initialState.body_weight = data.attributes.body_weight;
@@ -548,6 +554,8 @@ export class ActivateTrial extends Component {
 			fee,
 			point,
 			emergency,
+			is_scholarship,
+			note,
 			body_measure,
 			select,
 			formErrors,
@@ -703,19 +711,47 @@ export class ActivateTrial extends Component {
 											/>
 										</div>
 										<div className="form-group">
-											<label className="form-label">
-												Aidat
-												<span className="form-required">*</span>
-											</label>
-											<input
-												type="text"
-												className={`form-control ${formErrors.fee}`}
-												onChange={this.handleChange}
-												placeholder="Aidat"
-												name="fee"
-												value={fee || 0}
-											/>
+											<label className="form-label">Aidat</label>
+											<div className="row gutters-xs">
+												<div className="col">
+													<input
+														type="text"
+														className="form-control"
+														onChange={this.handleChange}
+														placeholder="Aidat"
+														name="fee"
+														value={fee || "0,00"}
+														disabled={is_scholarship}
+													/>
+												</div>
+												<div className="col-auto">
+													<label
+														className="selectgroup-item"
+														data-toggle="tooltip"
+														title="Burslu">
+														<input
+															type="checkbox"
+															name="is_scholarship"
+															checked={is_scholarship}
+															className="selectgroup-input"
+															onChange={this.handleCheck}
+														/>
+														<span className="selectgroup-button selectgroup-button-icon">
+															<i className="fa fa-user-graduate"></i>
+														</span>
+													</label>
+												</div>
+											</div>
 										</div>
+										{is_scholarship ? (
+											<div className="alert alert-icon alert-primary" role="alert">
+												<i className="fe fe-alert-triangle mr-2" aria-hidden="true"></i>
+												<p>
+													<b>Öğrenci, burslu olarak tanımlandı!</b>
+												</p>
+												Burslu öğrenciler aidat ödemesinden muaf tutulur.
+											</div>
+										) : null}
 										<div className="form-group">
 											<label className="form-label">Genel Puanı</label>
 											<div className="row align-items-center">
@@ -751,7 +787,7 @@ export class ActivateTrial extends Component {
 												<span className="form-required">*</span>
 											</label>
 											<DatePicker
-                                                autoComplete="off"
+												autoComplete="off"
 												selected={start_date}
 												selectsEnd
 												startDate={start_date}
@@ -1113,6 +1149,19 @@ export class ActivateTrial extends Component {
 															})}
 														</tbody>
 													</table>
+												</div>
+											</div>
+											<div className="col-12 mt-5">
+												<div className="form-group">
+													<label className="form-label">Not</label>
+													<textarea
+														className="form-control"
+														name="note"
+														onChange={this.handleChange}
+														rows={3}
+														maxLength="1000"
+														value={note || ""}
+													/>
 												</div>
 											</div>
 										</div>

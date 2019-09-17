@@ -23,10 +23,10 @@ var dailyType = {
 };
 
 var statusType = {
-	0: "bg-danger",
-	1: "bg-success",
-	2: "bg-azure",
-	3: "bg-indigo"
+	0: { bg: "bg-danger", title: "Pasif" },
+	1: { bg: "bg-success", title: "Aktif" },
+	2: { bg: "bg-azure", title: "Donuk" },
+	3: { bg: "bg-indigo", title: "Deneme" }
 };
 
 const initialState = {
@@ -165,16 +165,15 @@ class Table extends Component {
 						data: "image",
 						class: "text-center",
 						render: function(data, type, row) {
+							var name = row.name;
+							var surname = row.surname;
 							var status = row.status;
-							if (data === null) {
-								return `<span class="avatar avatar-placeholder">
-										<span class="avatar-status ${statusType[status]}"></span>
-									</span>`;
-							} else {
-								return `<div class="avatar" style="background-image: url(${data})">
-										<span class="avatar-status ${statusType[status]}"></span>
+							var renderBg = statusType[status].bg;
+							var renderTitle = statusType[status].title + " Personel";
+							return `<div class="avatar text-uppercase" style="background-image: url(${data || ""})">
+										${data ? "" : name.slice(0, 1) + surname.slice(0, 1)}
+										<span class="avatar-status ${renderBg}" data-toggle="tooltip" title="${renderTitle}"></span>
 									</div>`;
-							}
 						}
 					},
 					{

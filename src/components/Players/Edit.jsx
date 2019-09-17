@@ -105,6 +105,8 @@ const initialState = {
 	fee: null,
 	point: null,
 	start_date: null,
+	is_scholarship: 0,
+	note: null,
 	emergency: [],
 	body_measure: []
 };
@@ -220,9 +222,11 @@ export class Edit extends Component {
 						initialState.body_height = data.attributes.body_height;
 						initialState.body_weight = data.attributes.body_weight;
 						initialState.foot_no = data.attributes.foot_no;
+						initialState.is_scholarship = data.is_scholarship;
 						initialState.fee = Inputmask.format(data.fee.toString(), { alias: "decimal" });
 						initialState.point = data.point;
 						initialState.foot = data.foot;
+						initialState.note = data.note;
 						initialState.position = getSelectValue(select.positions, data.position, "label");
 						initialState.branch = getSelectValue(select.branchs, data.branch, "label");
 						initialState.group = data.group
@@ -311,6 +315,8 @@ export class Edit extends Component {
 				body_measure,
 				select,
 				formErrors,
+				is_scholarship,
+				note,
 				loadingButton,
 				addContinuously,
 				onLoadedData,
@@ -399,6 +405,8 @@ export class Edit extends Component {
 					birthday: checkBirthday,
 					image: image,
 					start_date: moment(start_date).format("YYYY-MM-DD"),
+					is_scholarship: is_scholarship,
+					note: note,
 					attributes: attributesData
 				}).then(code => {
 					this.setState({ loadingButton: "" });
@@ -536,6 +544,9 @@ export class Edit extends Component {
 
 	handleCheck = e => {
 		const { name, checked } = e.target;
+		if (name === "is_scholarship" && checked) {
+			this.setState({ fee: "0,00" });
+		}
 		this.setState({ [name]: checked });
 	};
 
@@ -582,6 +593,8 @@ export class Edit extends Component {
 			body_measure,
 			select,
 			formErrors,
+			is_scholarship,
+			note,
 			loadingButton,
 			onLoadedData,
 			uploadedFile,
@@ -727,19 +740,47 @@ export class Edit extends Component {
 											/>
 										</div>
 										<div className="form-group">
-											<label className="form-label">
-												Aidat
-												<span className="form-required">*</span>
-											</label>
-											<input
-												type="text"
-												className={`form-control ${formErrors.fee}`}
-												onChange={this.handleChange}
-												placeholder="Aidat"
-												name="fee"
-												value={fee || 0}
-											/>
+											<label className="form-label">Aidat</label>
+											<div className="row gutters-xs">
+												<div className="col">
+													<input
+														type="text"
+														className={`form-control ${formErrors.fee}`}
+														onChange={this.handleChange}
+														placeholder="Aidat"
+														name="fee"
+														value={fee || "0,00"}
+														disabled={is_scholarship}
+													/>
+												</div>
+												<div className="col-auto">
+													<label
+														className="selectgroup-item"
+														data-toggle="tooltip"
+														title="Burslu">
+														<input
+															type="checkbox"
+															name="is_scholarship"
+															checked={is_scholarship}
+															className="selectgroup-input"
+															onChange={this.handleCheck}
+														/>
+														<span className="selectgroup-button selectgroup-button-icon">
+															<i className="fa fa-user-graduate"></i>
+														</span>
+													</label>
+												</div>
+											</div>
 										</div>
+										{is_scholarship ? (
+											<div className="alert alert-icon alert-primary" role="alert">
+												<i className="fe fe-alert-triangle mr-2" aria-hidden="true"></i>
+												<p>
+													<b>Öğrenci, burslu olarak tanımlandı!</b>
+												</p>
+												Burslu öğrenciler aidat ödemesinden muaf tutulur.
+											</div>
+										) : null}
 										<div className="form-group">
 											<label className="form-label">Genel Puanı</label>
 											<div className="row align-items-center">
@@ -775,7 +816,7 @@ export class Edit extends Component {
 												<span className="form-required">*</span>
 											</label>
 											<DatePicker
-                                                autoComplete="off"
+												autoComplete="off"
 												selected={start_date}
 												selectsEnd
 												startDate={start_date}
@@ -1137,6 +1178,19 @@ export class Edit extends Component {
 															})}
 														</tbody>
 													</table>
+												</div>
+											</div>
+											<div className="col-12 mt-3">
+												<div className="form-group">
+													<label className="form-label">Not</label>
+													<textarea
+														className="form-control"
+														name="note"
+														onChange={this.handleChange}
+														rows={3}
+														maxLength="1000"
+														value={note || ""}
+													/>
 												</div>
 											</div>
 										</div>

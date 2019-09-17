@@ -269,12 +269,15 @@ class Table extends Component {
 						data: "image",
 						class: "text-center",
 						render: function(data, type, row) {
+							var name = row.name;
+							var surname = row.surname;
 							var status = row.status;
 							var renderBg = row.is_trial ? statusType[3].bg : statusType[status].bg;
 							var renderTitle = row.is_trial
 								? statusType[status].title + " & Deneme Öğrenci"
 								: statusType[status].title + " Öğrenci";
-							return `<div class="avatar" style="background-image: url(${data || ""})">
+							return `<div class="avatar text-uppercase" style="background-image: url(${data || ""})">
+										${data ? "" : name.slice(0, 1) + surname.slice(0, 1)}
 										<span class="avatar-status ${renderBg}" data-toggle="tooltip" title="${renderTitle}"></span>
 									</div>`;
 						}

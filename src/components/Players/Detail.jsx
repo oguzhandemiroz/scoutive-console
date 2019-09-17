@@ -53,6 +53,8 @@ export class Detail extends Component {
 			foot: "—",
 			foot_no: "—",
 			branch: "—",
+			note: "—",
+			is_scholarship: 0,
 			body_measure: null,
 			emergency: null,
 			is_trial: 1,
@@ -94,6 +96,8 @@ export class Detail extends Component {
 					stateData.foot_no = data.attributes.foot_no || "—";
 					stateData.emergency = data.emergency;
 					stateData.is_trial = data.is_trial;
+					stateData.is_scholarship = data.is_scholarship;
+					stateData.note = data.note || "—";
 					stateData.status = data.status;
 					stateData.body_measure = data.attributes.body_measure;
 					stateData.onLoadedData = true;
@@ -103,395 +107,6 @@ export class Detail extends Component {
 			this.setState({ ...stateData });
 		});
 	}
-
-	reload = () => {
-		const current = this.props.history.location.pathname;
-		this.props.history.replace(`/`);
-		setTimeout(() => {
-			this.props.history.replace(current);
-		});
-	};
-
-	deletePlayer = () => {
-		try {
-			const { uid, to, name } = this.state;
-			showSwal({
-				type: "warning",
-				title: "Emin misiniz?",
-				html: `<b>${name}</b> adlı öğrencinin kaydını silmek istediğinize emin misiniz?`,
-				confirmButtonText: "Evet",
-				cancelButtonText: "Hayır",
-				confirmButtonColor: "#cd201f",
-				cancelButtonColor: "#868e96",
-				showCancelButton: true,
-				reverseButtons: true
-			}).then(result => {
-				if (result.value) {
-					DeletePlayer({
-						uid: uid,
-						to: to
-					}).then(response => {
-						if (response) {
-							const status = response.status;
-							if (status.code === 1020) {
-								Toast.fire({
-									type: "success",
-									title: "İşlem başarılı..."
-								});
-								setTimeout(() => this.props.history.push("/app/players"), 1000);
-							}
-						}
-					});
-				}
-			});
-		} catch (e) {}
-	};
-
-	freezePlayer = (to, name) => {
-		try {
-			const { uid } = this.state;
-			showSwal({
-				type: "warning",
-				title: "Emin misiniz?",
-				html: `<b>${name}</b> adlı öğrencinin <b>kaydını dondurmak</b> istediğinize emin misiniz?`,
-				confirmButtonText: "Evet",
-				cancelButtonText: "Hayır",
-				cancelButtonColor: "#868e96",
-				confirmButtonColor: "#cd201f",
-				showCancelButton: true,
-				reverseButtons: true
-			}).then(result => {
-				if (result.value) {
-					FreezePlayer({
-						uid: uid,
-						to: to
-					}).then(response => {
-						if (response) {
-							const status = response.status;
-							if (status.code === 1020) {
-								Toast.fire({
-									type: "success",
-									title: "İşlem başarılı..."
-								});
-								setTimeout(() => this.reload(), 1000);
-							}
-						}
-					});
-				}
-			});
-		} catch (e) {}
-	};
-
-	refreshPlayer = (to, name) => {
-		try {
-			const { uid } = this.state;
-			showSwal({
-				type: "warning",
-				title: "Emin misiniz?",
-				html: `<b>${name}</b> adlı öğrencinin <b>kaydını yenilemek</b> istediğinize emin misiniz?`,
-				confirmButtonText: "Evet",
-				cancelButtonText: "Hayır",
-				cancelButtonColor: "#868e96",
-				confirmButtonColor: "#cd201f",
-				showCancelButton: true,
-				reverseButtons: true
-			}).then(result => {
-				if (result.value) {
-					RefreshPlayer({
-						uid: uid,
-						to: to
-					}).then(response => {
-						if (response) {
-							const status = response.status;
-							if (status.code === 1020) {
-								Toast.fire({
-									type: "success",
-									title: "İşlem başarılı..."
-								});
-								setTimeout(() => this.reload(), 1000);
-							}
-						}
-					});
-				}
-			});
-		} catch (e) {}
-	};
-
-	renderActionButton = () => {
-		const { to, name, is_trial, status, group } = this.state;
-		const fullname = name;
-
-		const dropdownDivider = key => <div role="separator" className="dropdown-divider" key={key.toString()} />;
-		const lock = (
-			<span className="ml-1">
-				(<i className="fe fe-lock mr-0" />)
-			</span>
-		);
-
-		const actionMenu = [
-			{
-				tag: "Link",
-				elementAttr: {
-					className: "dropdown-item",
-					to: `/app/players/payment/${to}`,
-					onClick: () => this.props.history.push(`/app/players/payment/${to}`)
-				},
-				childText: "Ödeme Al",
-				child: {
-					className: "dropdown-icon fa fa-hand-holding-usd"
-				},
-				lock: false,
-				condition: !is_trial
-			},
-			{
-				divider: key => dropdownDivider(key),
-				condition: !is_trial && status === 0
-			},
-			{
-				tag: "button",
-				elementAttr: {
-					className: "dropdown-item cursor-not-allowed disabled",
-					onClick: () => console.log("Ödeme İkazı")
-				},
-				childText: "Ödeme İkazı",
-				child: {
-					className: "dropdown-icon fa fa-exclamation-triangle"
-				},
-				lock: lock,
-				condition: !is_trial && status !== 0
-			},
-			{
-				divider: key => dropdownDivider(key),
-				condition: !is_trial && status !== 0
-			},
-			{
-				tag: "button",
-				elementAttr: {
-					className: "dropdown-item",
-					onClick: () => this.freezePlayer(to, fullname)
-				},
-				childText: "Kaydı Dondur",
-				child: {
-					className: "dropdown-icon fa fa-snowflake"
-				},
-				lock: false,
-				condition: !is_trial && status === 1
-			},
-			{
-				tag: "button",
-				elementAttr: {
-					className: "dropdown-item",
-					onClick: () => this.refreshPlayer(to, fullname)
-				},
-				childText: "Kaydı Yenile",
-				child: {
-					className: "dropdown-icon fa fa-sync-alt"
-				},
-				lock: false,
-				condition: !is_trial && status === 2
-			},
-			{
-				tag: "button",
-				elementAttr: {
-					className: "dropdown-item",
-					onClick: () => this.deletePlayer(to, fullname)
-				},
-				childText: "Kaydı Sil",
-				child: {
-					className: "dropdown-icon fa fa-user-times"
-				},
-				lock: false,
-				condition: status !== 0
-			},
-			{
-				divider: key => dropdownDivider(key),
-				condition: status !== 0
-			},
-			{
-				tag: "button",
-				elementAttr: {
-					className: "dropdown-item",
-					onClick: () =>
-						this.setState({
-							...initialState,
-							vacation: true,
-							data: { name: fullname, uid: to }
-						})
-				},
-				childText: "İzin Yaz",
-				child: {
-					className: "dropdown-icon fa fa-coffee"
-				},
-				lock: false,
-				condition: !is_trial && status === 1
-			},
-			{
-				divider: key => dropdownDivider(key),
-				condition: !is_trial && status === 1
-			},
-			{
-				tag: "button",
-				elementAttr: {
-					className: "dropdown-item cursor-not-allowed disabled",
-					onClick: () => console.log("Not (Puan) Ver")
-				},
-				childText: "Not (Puan) Ver",
-				child: {
-					className: "dropdown-icon fa fa-notes-medical"
-				},
-				lock: lock,
-				condition: !is_trial && status === 1
-			},
-			{
-				divider: key => dropdownDivider(key),
-				condition: !is_trial && status === 1
-			},
-			{
-				tag: "button",
-				elementAttr: {
-					className: "dropdown-item cursor-not-allowed disabled",
-					onClick: () => console.log("Veliye Mesaj Gönder")
-				},
-				childText: "Veliye Mesaj Gönder",
-				child: {
-					className: "dropdown-icon fa fa-paper-plane"
-				},
-				lock: lock,
-				condition: true
-			},
-			{
-				divider: key => dropdownDivider(key),
-				condition: true
-			},
-			{
-				tag: "Link",
-				elementAttr: {
-					className: "dropdown-item",
-					to: `/app/players/edit/${to}`,
-					onClick: () => this.props.history.push(`/app/players/edit/${to}`)
-				},
-				childText: "Düzenle",
-				child: {
-					className: "dropdown-icon fa fa-pen"
-				},
-				lock: false,
-				condition: true
-			},
-			{
-				tag: "button",
-				elementAttr: {
-					className: "dropdown-item",
-					onClick: () =>
-						this.setState({
-							...initialState,
-							group_change: true,
-							data: {
-								name: fullname,
-								uid: to,
-								group: group ? group.name : null,
-								group_id: group ? group.group_id : null
-							}
-						})
-				},
-				childText: "Grup Değişikliği",
-				child: {
-					className: "dropdown-icon fa fa-user-cog"
-				},
-				lock: false,
-				condition: !is_trial && status !== 0
-			},
-			{
-				divider: key => dropdownDivider(key),
-				condition: !is_trial && status !== 0
-			},
-			{
-				tag: "button",
-				elementAttr: {
-					className: "dropdown-item cursor-not-allowed disabled",
-					onClick: () => console.log("Öğrenci Belgesi")
-				},
-				childText: "Öğrenci Belgesi",
-				child: {
-					className: "dropdown-icon fa fa-id-card-alt"
-				},
-				lock: lock,
-				condition: true
-			},
-			{
-				tag: "Link",
-				elementAttr: {
-					className: "dropdown-item",
-					to: `/app/players/fee-detail/${to}`,
-					onClick: () => this.props.history.push(`/app/players/fee-detail/${to}`)
-				},
-				childText: "Tüm Aidat Bilgisi",
-				child: {
-					className: "dropdown-icon fa fa-receipt"
-				},
-				lock: false,
-				condition: true
-			},
-			{
-				tag: "Link",
-				elementAttr: {
-					className: "dropdown-item",
-					to: `/app/players/detail/${to}`,
-					onClick: () => this.props.history.push(`/app/players/detail/${to}`)
-				},
-				childText: "Tüm Bilgileri",
-				child: {
-					className: "dropdown-icon fa fa-info-circle"
-				},
-				lock: false,
-				condition: true
-			}
-		];
-
-		return (
-			<div className="dropdown dropup btn-block" id="action-dropdown">
-				<button
-					type="button"
-					id="player-action"
-					className="btn btn-gray-dark btn-block dropdown-toggle"
-					data-toggle="dropdown"
-					aria-haspopup="true"
-					aria-expanded="false">
-					İşlem
-				</button>
-				<div
-					className="dropdown-menu dropdown-menu-right"
-					aria-labelledby="player-action"
-					x-placement="top-end">
-					<a className="dropdown-item disabled text-azure" href="javascript:void(0)">
-						<i className="dropdown-icon fa fa-user text-azure" />
-						{fullname}
-					</a>
-					<div role="separator" className="dropdown-divider" />
-					{actionMenu.map((el, key) => {
-						if (el.condition) {
-							if (el.tag === "Link") {
-								return (
-									<Link {...el.elementAttr} key={key.toString()}>
-										<i {...el.child} /> {el.childText}
-										{el.lock}
-									</Link>
-								);
-							} else if (el.tag === "button") {
-								return (
-									<button {...el.elementAttr} key={key.toString()}>
-										<i {...el.child} /> {el.childText}
-										{el.lock}
-									</button>
-								);
-							} else {
-								return el.divider(key);
-							}
-						}
-					})}
-				</div>
-			</div>
-		);
-	};
 
 	render() {
 		const {
@@ -520,6 +135,8 @@ export class Detail extends Component {
 			foot_no,
 			start_date,
 			is_trial,
+			note,
+			is_scholarship,
 			status,
 			end_date,
 			onLoadedData
@@ -547,7 +164,7 @@ export class Detail extends Component {
 											<span
 												className="avatar avatar-xxl mr-4"
 												style={{ backgroundImage: `url(${image})` }}>
-												<span class={`avatar-sm avatar-status ${statusType[status]}`} />
+												<span className={`avatar-sm avatar-status ${statusType[status]}`} />
 											</span>
 											<div className="media-body">
 												<h4 className="m-0">{name}</h4>
@@ -596,7 +213,9 @@ export class Detail extends Component {
 										</div>
 										<div className="form-group">
 											<label className="form-label">Aidat</label>
-											<div className="form-control-plaintext">{fee}</div>
+											<div className="form-control-plaintext">
+												{is_scholarship ? "BURSLU" : fee}
+											</div>
 										</div>
 										<div className="form-group">
 											<label className="form-label">Branş</label>
@@ -790,6 +409,12 @@ export class Detail extends Component {
 																: null}
 														</tbody>
 													</table>
+												</div>
+											</div>
+											<div className="col-12 mt-5">
+												<div className="form-group">
+													<label className="form-label">Not</label>
+													<div className="form-control-plaintext">{note}</div>
 												</div>
 											</div>
 										</div>
