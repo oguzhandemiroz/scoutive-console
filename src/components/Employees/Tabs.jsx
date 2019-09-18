@@ -19,7 +19,7 @@ const tabList = [
 	},
 	{
 		text: "Yoklama Geçmişi",
-		path: "rollcall-detail",
+		path: "rollcall",
 		icon: "fa fa-check-square"
 	},
 	{

@@ -16,6 +16,7 @@ import EditEmployee from "../components/Employees/Edit";
 import VacationEmployee from "../components/Employees/Vacation";
 import SalaryEmployee from "../components/Employees/Salary";
 import SalaryDetailEmployee from "../components/Employees/SalaryDetail";
+import RollcallEmployee from "../components/Employees/Rollcall";
 
 import AddPlayer from "../components/Players/Add";
 import TrialPlayer from "../components/Players/Trial";
@@ -139,6 +140,13 @@ var indexRoutes = [
 		path: "/employees/vacation/:uid",
 		name: "Vacation Employee",
 		component: VacationEmployee,
+		layout: "/app",
+		prop: { exact: true }
+	},
+	{
+		path: "/employees/rollcall/:uid",
+		name: "Rollcall Employee",
+		component: RollcallEmployee,
 		layout: "/app",
 		prop: { exact: true }
 	},
