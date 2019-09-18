@@ -448,7 +448,7 @@ export class Vacation extends Component {
 																<span className="form-required">*</span>
 															</label>
 															<DatePicker
-                                                autoComplete="off"
+																autoComplete="off"
 																selected={startDate}
 																selectsStart
 																startDate={startDate}
@@ -467,7 +467,7 @@ export class Vacation extends Component {
 																<span className="form-required">*</span>
 															</label>
 															<DatePicker
-                                                autoComplete="off"
+																autoComplete="off"
 																selected={endDate}
 																selectsEnd
 																startDate={startDate}

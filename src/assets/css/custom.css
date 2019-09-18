@@ -241,3 +241,51 @@ figure span.player-number {
 .border-radius-0 {
 	border-radius: 0 !important;
 }
+
+.selectgroup-input:checked + .selectgroup-button.success {
+	border-color: #5eba00;
+	color: #5eba00;
+	background: #eff8e6;
+}
+
+.selectgroup-input:focus + .selectgroup-button.success {
+	border-color: #5eba00;
+	color: #5eba00;
+	box-shadow: 0 0 0 2px rgba(93, 186, 0, 0.251);
+}
+
+.selectgroup-input:checked + .selectgroup-button.danger {
+	border-color: #cd201f;
+	color: #cd201f;
+	background: #fae9e9;
+}
+
+.selectgroup-input:focus + .selectgroup-button.danger {
+	border-color: #cd201f;
+	color: #cd201f;
+	box-shadow: 0 0 0 2px rgba(205, 31, 31, 0.251);
+}
+
+.selectgroup-input:checked + .selectgroup-button.azure {
+	border-color: #45aaf2;
+	color: #45aaf2;
+	background: #ecf7fe;
+}
+
+.selectgroup-input:focus + .selectgroup-button.azure {
+	border-color: #45aaf2;
+	color: #45aaf2;
+	box-shadow: 0 0 0 2px rgba(69, 170, 242, 0.251);
+}
+
+.selectgroup-input:checked + .selectgroup-button.indigo {
+	border-color: #6574cd;
+	color: #6574cd;
+	background: #f0f1fa;
+}
+
+.selectgroup-input:focus + .selectgroup-button.indigo {
+	border-color: #6574cd;
+	color: #6574cd;
+	box-shadow: 0 0 0 2px rgba(101, 117, 205, 0.251);
+}

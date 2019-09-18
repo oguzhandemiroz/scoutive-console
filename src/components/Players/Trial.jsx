@@ -41,6 +41,7 @@ const initialState = {
 	surname: null,
 	security_id: null,
 	phone: null,
+	note: null,
 	emergency: [
 		{
 			kinship: "Anne",
@@ -105,7 +106,7 @@ export class Trial extends Component {
 
 	handleSubmit = e => {
 		e.preventDefault();
-		const { uid, name, surname, security_id, phone, emergency, formErrors } = this.state;
+		const { uid, name, surname, security_id, phone, note, emergency, formErrors } = this.state;
 		const requiredData = {};
 
 		requiredData.name = name;
@@ -122,6 +123,7 @@ export class Trial extends Component {
 				security_id: security_id,
 				phone: phone,
 				password: "0000",
+				note: note,
 				emergency: JSON.stringify(emergency)
 			}).then(response => {
 				if (response) {
@@ -186,7 +188,7 @@ export class Trial extends Component {
 	};
 
 	render() {
-		const { name, surname, security_id, phone, emergency, formErrors, select, loadingButton } = this.state;
+		const { name, surname, security_id, phone, note, emergency, formErrors, select, loadingButton } = this.state;
 		return (
 			<div className="container">
 				<div className="page-header">
@@ -335,6 +337,20 @@ export class Trial extends Component {
 													})}
 												</tbody>
 											</table>
+										</div>
+									</div>
+
+									<div className="col-12 mt-3">
+										<div className="form-group">
+											<label className="form-label">Not</label>
+											<textarea
+												className="form-control"
+												name="note"
+												onChange={this.handleChange}
+												rows={2}
+												maxLength="1000"
+												value={note || ""}
+											/>
 										</div>
 									</div>
 								</div>

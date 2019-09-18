@@ -20,9 +20,10 @@ const footToText = {
 };
 
 const statusType = {
-	0: "bg-gray",
+	0: "bg-danger",
 	1: "bg-green",
-	2: "bg-azure"
+	2: "bg-azure",
+	3: "bg-indigo"
 };
 
 const initialState = {
@@ -164,7 +165,11 @@ export class Detail extends Component {
 											<span
 												className="avatar avatar-xxl mr-4"
 												style={{ backgroundImage: `url(${image})` }}>
-												<span className={`avatar-sm avatar-status ${statusType[status]}`} />
+												<span
+													className={`avatar-sm avatar-status ${
+														is_trial ? statusType[3] : statusType[status]
+													}`}
+												/>
 											</span>
 											<div className="media-body">
 												<h4 className="m-0">{name}</h4>
@@ -414,7 +419,13 @@ export class Detail extends Component {
 											<div className="col-12 mt-5">
 												<div className="form-group">
 													<label className="form-label">Not</label>
-													<div className="form-control-plaintext">{note}</div>
+													<textarea
+														type="text"
+														row={3}
+														className="form-control resize-none"
+														disabled
+														value={note}
+													/>
 												</div>
 											</div>
 										</div>

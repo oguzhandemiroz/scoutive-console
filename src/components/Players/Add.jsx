@@ -103,10 +103,11 @@ const initialState = {
 	position: null,
 	group: null,
 	is_active: 1,
+	is_trial: 0,
 	is_scholarship: 0,
 	note: null,
 	imagePreview: null,
-	start_date: null
+	start_date: new Date()
 };
 
 export class Add extends Component {
@@ -261,6 +262,7 @@ export class Add extends Component {
 			addContinuously,
 			file,
 			start_date,
+			end_date,
 			imagePreview
 		} = this.state;
 
@@ -277,6 +279,9 @@ export class Add extends Component {
 		requiredData.month = month ? month.value : null;
 		requiredData.year = year ? year.value : null;
 		requiredData.start_date = start_date;
+		if (is_active === 0) {
+			requiredData.end_date = end_date;
+		}
 		requiredData.formErrors = formErrors;
 
 		//attributes data
@@ -349,7 +354,10 @@ export class Add extends Component {
 				foot: foot,
 				birthday: checkBirthday,
 				start_date: moment(start_date).format("YYYY-MM-DD"),
+				end_date: moment(end_date).format("YYYY-MM-DD"),
 				is_scholarship: is_scholarship ? 1 : 0,
+				is_active: is_active,
+				is_trial: is_active === 3 ? 1 : 0,
 				note: note,
 				attributes: attributesData
 			}).then(response => {
@@ -391,6 +399,7 @@ export class Add extends Component {
 			formErrors.phone = phone ? (phone.length !== 10 ? "is-invalid" : "") : "";
 			formErrors.fee = fee ? "" : "is-invalid";
 			formErrors.start_date = start_date ? "" : "is-invalid";
+			formErrors.end_date = is_active === 0 ? (end_date ? "" : "is-invalid") : "";
 			formErrors.position = position ? "" : true;
 			formErrors.branch = branch ? "" : true;
 			formErrors.day = day ? "" : true;
@@ -502,7 +511,15 @@ export class Add extends Component {
 
 	handleDate = (date, name) => {
 		let formErrors = { ...this.state.formErrors };
-		formErrors.start_date = date ? "" : "is-invalid";
+		formErrors[name] = date ? "" : "is-invalid";
+		switch (name) {
+			case "start_date":
+				this.setState({ end_date: null });
+				break;
+
+			default:
+				break;
+		}
 		this.setState({ formErrors, [name]: date });
 	};
 
@@ -547,6 +564,7 @@ export class Add extends Component {
 			imagePreview,
 			addContinuously,
 			start_date,
+			end_date,
 			loadingButton
 		} = this.state;
 		return (
@@ -668,22 +686,6 @@ export class Add extends Component {
 								</div>
 
 								<div className="form-group">
-									<label className="form-label">Mevkii</label>
-									<Select
-										value={position}
-										onChange={val => this.handleSelect(val, "position")}
-										options={select.positions}
-										name="position"
-										placeholder="Seç..."
-										styles={customStyles}
-										isClearable={true}
-										isSearchable={true}
-										isDisabled={select.positions ? false : true}
-										noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
-									/>
-								</div>
-
-								<div className="form-group">
 									<label className="form-label">Aidat</label>
 									<div className="row gutters-xs">
 										<div className="col">
@@ -722,6 +724,7 @@ export class Add extends Component {
 										Burslu öğrenciler aidat ödemesinden muaf tutulur.
 									</div>
 								) : null}
+
 								<div className="form-group">
 									<label className="form-label">
 										Okula Başlama Tarihi
@@ -769,6 +772,104 @@ export class Add extends Component {
 										</div>
 									</div>
 								</div>
+
+								<div class="form-group">
+									<label class="form-label">Kayıt Durumu</label>
+									<div class="selectgroup w-100">
+										<label
+											class="selectgroup-item"
+											data-toggle="tooltip"
+											title="Kaydı Aktif Öğrenci">
+											<input
+												type="radio"
+												name="is_active"
+												value="1"
+												class="selectgroup-input"
+												checked={is_active === 1}
+												onChange={this.handleRadio}
+											/>
+											<span class="selectgroup-button success">Aktif</span>
+										</label>
+										<label
+											class="selectgroup-item"
+											data-toggle="tooltip"
+											title="Kaydı Silinmiş Öğrenci">
+											<input
+												type="radio"
+												name="is_active"
+												value="0"
+												class="selectgroup-input"
+												checked={is_active === 0}
+												onChange={this.handleRadio}
+											/>
+											<span class="selectgroup-button danger">Pasif</span>
+										</label>
+										<label
+											class="selectgroup-item"
+											data-toggle="tooltip"
+											title="Kaydı Dondurulmuş Öğrenci">
+											<input
+												type="radio"
+												name="is_active"
+												value="2"
+												class="selectgroup-input"
+												checked={is_active === 2}
+												onChange={this.handleRadio}
+											/>
+											<span class="selectgroup-button azure">Donuk</span>
+										</label>
+										<label
+											class="selectgroup-item"
+											data-toggle="tooltip"
+											title="Kaydı Deneme Öğrenci">
+											<input
+												type="radio"
+												name="is_active"
+												value="3"
+												class="selectgroup-input"
+												checked={is_active === 3}
+												onChange={this.handleRadio}
+											/>
+											<span class="selectgroup-button indigo">Deneme</span>
+										</label>
+									</div>
+								</div>
+
+								{is_active === 0 || is_active === 2 ? (
+									<fieldset class="form-fieldset">
+										{is_active === 0 ? (
+											<div className="form-group">
+												<label className="form-label">
+													Okuldan Ayrılma Tarihi
+													<span className="form-required">*</span>
+												</label>
+												<DatePicker
+													autoComplete="off"
+													selected={end_date}
+													selectsEnd
+													startDate={start_date}
+													minDate={start_date}
+													name="end_date"
+													locale="tr"
+													dateFormat="dd/MM/yyyy"
+													onChange={date => this.handleDate(date, "end_date")}
+													className={`form-control ${formErrors.end_date}`}
+												/>
+											</div>
+										) : null}
+										<div class="form-group mb-0">
+											<label class="form-label">
+												{is_active === 0 ? "Okuldan Ayrılma Nedeni" : "Dondurma Nedeni"}
+											</label>
+											<button
+												type="button"
+												onClick={() => $('[name="note"]').focus()}
+												className="btn btn-icon btn-secondary btn-block">
+												<i className="fe fe-edit"></i> Not Gir
+											</button>
+										</div>
+									</fieldset>
+								) : null}
 							</div>
 						</div>
 					</div>
@@ -870,6 +971,22 @@ export class Add extends Component {
 										</div>
 									</div>
 									<div className="col-lg-6 col-md-12">
+										<div className="form-group">
+											<label className="form-label">Mevkii</label>
+											<Select
+												value={position}
+												onChange={val => this.handleSelect(val, "position")}
+												options={select.positions}
+												name="position"
+												placeholder="Seç..."
+												styles={customStyles}
+												isClearable={true}
+												isSearchable={true}
+												isDisabled={select.positions ? false : true}
+												noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
+											/>
+										</div>
+										
 										<div className="form-group">
 											<label className="form-label">Vücut Metrikleri (Boy & Kilo)</label>
 											<div className="row gutters-xs">
@@ -1149,7 +1266,7 @@ export class Add extends Component {
 												className="form-help"
 												data-toggle="popover"
 												data-placement="top"
-												data-content='<p><b>"Sürekli Ekle"</b> aktif olduğunda; işlem tamamlandıktan sonra ekleme yapmaya devam edebilirsiniz.</p><p>Pasif olduğunda; işlem tamamlandıktan sonra <b>"Öğrenciler"</b> sayfasına yönlendirilirsiniz.</p>'>
+												data-content='<p><b>"Sürekli Ekle"</b> aktif olduğunda; işlem tamamlandıktan sonra ekleme yapmaya devam edebilirsiniz.</p><p>Pasif olduğunda; işlem tamamlandıktan sonra <b>"Öğrenci Detay"</b> sayfasına yönlendirilirsiniz.</p>'>
 												?
 											</span>
 										</span>
