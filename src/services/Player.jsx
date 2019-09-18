@@ -252,6 +252,27 @@ const ListPlayers = uid => {
 	} catch (e) {}
 };
 
+const ListPlayerFees = data => {
+	try {
+		return fetch(ep.FEE_LIST, {
+			method: "POST",
+			body: JSON.stringify(data),
+			headers: h
+		})
+			.then(res => res.json())
+			.then(response => {
+				if (response) {
+					const status = response.status;
+					if (status.code !== 1020) errorSwal(status);
+					return response;
+				}
+			})
+			.catch(e => fatalSwal(true));
+	} catch (e) {
+		fatalSwal(true);
+	}
+};
+
 export {
 	CreatePlayer,
 	CreateTrialPlayer,
@@ -262,5 +283,6 @@ export {
 	FreezePlayer,
 	RefreshPlayer,
 	ActivatePlayer,
-	ListPlayers
+	ListPlayers,
+	ListPlayerFees
 };

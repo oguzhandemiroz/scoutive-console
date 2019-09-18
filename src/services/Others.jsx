@@ -82,6 +82,16 @@ const nullCheck = (data, instead) => {
 	}
 };
 
+const formatDate = (date, format) => {
+	if (!format) format = "DD-MM-YYYY";
+	return date ? moment(date).format(format) : "—";
+};
+
+const formatMoney = (money, currency) => {
+	if (!currency) currency = "₺";
+	return money ? (!isNaN(money) ? money.format() + " " + currency : money) : "—";
+};
+
 const fullnameGenerator = (name, surname) => {
 	try {
 		const fullname = nullCheck(name) + " " + nullCheck(surname);
@@ -140,6 +150,8 @@ export {
 	ObjectIsEqual,
 	systemClock,
 	nullCheck,
+	formatDate,
+	formatMoney,
 	fullnameGenerator,
 	groupAgeSplit
 };

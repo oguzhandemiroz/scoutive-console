@@ -354,7 +354,7 @@ export class Add extends Component {
 				foot: foot,
 				birthday: checkBirthday,
 				start_date: moment(start_date).format("YYYY-MM-DD"),
-				end_date: moment(end_date).format("YYYY-MM-DD"),
+				end_date: end_date ? moment(end_date).format("YYYY-MM-DD") : null,
 				is_scholarship: is_scholarship ? 1 : 0,
 				is_active: is_active,
 				is_trial: is_active === 3 ? 1 : 0,
@@ -986,7 +986,7 @@ export class Add extends Component {
 												noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
 											/>
 										</div>
-										
+
 										<div className="form-group">
 											<label className="form-label">Vücut Metrikleri (Boy & Kilo)</label>
 											<div className="row gutters-xs">

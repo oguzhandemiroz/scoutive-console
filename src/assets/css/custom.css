@@ -289,3 +289,206 @@ figure span.player-number {
 	color: #6574cd;
 	box-shadow: 0 0 0 2px rgba(101, 117, 205, 0.251);
 }
+
+.list-timeline {
+	position: relative;
+	padding: 0;
+	margin: 0;
+	list-style: none;
+}
+
+.list-timeline > li {
+	position: relative;
+	margin-bottom: 1.5rem;
+}
+.list-timeline > li:last-child {
+	margin-bottom: 0;
+}
+
+.list-timeline-time {
+	float: right;
+	margin-left: 1rem;
+	color: #888e9a;
+}
+
+.list-timeline-icon {
+	position: absolute;
+	top: 0;
+	left: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 2.5rem;
+	height: 2.5rem;
+	color: #fff;
+	text-align: center;
+	background: #adb5bd;
+	border-radius: 50%;
+}
+.list-timeline-icon .icon {
+	width: 1rem;
+	height: 1rem;
+}
+
+.list-timeline-title {
+	margin: 0;
+	font-weight: 600;
+}
+
+.list-timeline-content {
+	margin-left: 3.5rem;
+}
+
+@media screen and (min-width: 768px) {
+	.list-timeline:not(.list-timeline-simple)::before {
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		left: calc(7.5rem + 2px);
+		z-index: 1;
+		display: block;
+		width: 4px;
+		content: "";
+		background-color: #f8fafb;
+	}
+	.list-timeline:not(.list-timeline-simple) > li {
+		z-index: 2;
+		min-height: 40px;
+	}
+	.list-timeline:not(.list-timeline-simple) .list-timeline-time {
+		position: absolute;
+		top: 0.5rem;
+		left: 0;
+		width: 5.5rem;
+		margin: 0;
+		text-align: right;
+	}
+	.list-timeline:not(.list-timeline-simple) .list-timeline-icon {
+		top: 0;
+		left: 6.5rem;
+	}
+	.list-timeline:not(.list-timeline-simple) .list-timeline-content {
+		padding: 0.625rem 0 0 10rem;
+		margin: 0;
+	}
+}
+
+/**
+SOCIAL COLORS
+ */
+.bg-facebook {
+	color: #fff !important;
+	background: #3b5998 !important;
+}
+
+.text-facebook {
+	color: #3b5998 !important;
+}
+
+.bg-twitter {
+	color: #fff !important;
+	background: #1da1f2 !important;
+}
+
+.text-twitter {
+	color: #1da1f2 !important;
+}
+
+.bg-google {
+	color: #fff !important;
+	background: #dc4e41 !important;
+}
+
+.text-google {
+	color: #dc4e41 !important;
+}
+
+.bg-youtube {
+	color: #fff !important;
+	background: #f00 !important;
+}
+
+.text-youtube {
+	color: #f00 !important;
+}
+
+.bg-vimeo {
+	color: #fff !important;
+	background: #1ab7ea !important;
+}
+
+.text-vimeo {
+	color: #1ab7ea !important;
+}
+
+.bg-dribbble {
+	color: #fff !important;
+	background: #ea4c89 !important;
+}
+
+.text-dribbble {
+	color: #ea4c89 !important;
+}
+
+.bg-github {
+	color: #fff !important;
+	background: #181717 !important;
+}
+
+.text-github {
+	color: #181717 !important;
+}
+
+.bg-instagram {
+	color: #fff !important;
+	background: #e4405f !important;
+}
+
+.text-instagram {
+	color: #e4405f !important;
+}
+
+.bg-pinterest {
+	color: #fff !important;
+	background: #bd081c !important;
+}
+
+.text-pinterest {
+	color: #bd081c !important;
+}
+
+.bg-vk {
+	color: #fff !important;
+	background: #6383a8 !important;
+}
+
+.text-vk {
+	color: #6383a8 !important;
+}
+
+.bg-rss {
+	color: #fff !important;
+	background: #ffa500 !important;
+}
+
+.text-rss {
+	color: #ffa500 !important;
+}
+
+.bg-flickr {
+	color: #fff !important;
+	background: #0063dc !important;
+}
+
+.text-flickr {
+	color: #0063dc !important;
+}
+
+.bg-bitbucket {
+	color: #fff !important;
+	background: #0052cc !important;
+}
+
+.text-bitbucket {
+	color: #0052cc !important;
+}

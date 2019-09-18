@@ -1,28 +1,21 @@
 import React, { Component } from "react";
-import { DetailEmployee, DeleteEmployee } from "../../services/Employee.jsx";
+import { DetailEmployee } from "../../services/Employee.jsx";
 import { ListSalaries } from "../../services/EmployeeAction";
 import { fullnameGenerator } from "../../services/Others";
-import { Vacation as ModalVacation } from "../EmployeeAction/Vacation";
 import { Link } from "react-router-dom";
-import { showSwal, Toast } from "../Alert.jsx";
 import Tabs from "../../components/Employees/Tabs";
 import moment from "moment";
 const CryptoJS = require("crypto-js");
 
-const noRow = loading => (
-	<tr style={{ height: 80 }}>
-		<td colSpan="6" className="text-center text-muted font-italic">
-			{loading ? (
-				<div className={`dimmer active`}>
-					<div className="loader" />
-					<div className="dimmer-content" />
-				</div>
-			) : (
-				"Kayıt bulunamadı..."
-			)}
-		</td>
-	</tr>
-);
+const noRow = loading =>
+	loading ? (
+		<div className={`dimmer active p-3`}>
+			<div className="loader" />
+			<div className="dimmer-content" />
+		</div>
+	) : (
+		<div className="text-center text-muted font-italic">Kayıt bulunamadı...</div>
+	);
 
 export class SalaryDetail extends Component {
 	constructor(props) {
@@ -59,7 +52,7 @@ export class SalaryDetail extends Component {
 			if (response) {
 				const status = response.status;
 				if (status.code === 1020) {
-					this.setState({ list: response.data });
+					this.setState({ list: response.data.reverse() });
 				}
 			}
 		});
@@ -241,28 +234,44 @@ export class SalaryDetail extends Component {
 								</button>
 							</div>
 							<div className="card-body">
-								<div className="table-responsive">
-									<table className="table table-hover table-outline table-vcenter text-nowrap card-table text-center">
-										<thead>
-											<tr>
-												<th className="w-1"></th>
-												<th className="w-1">Ödenen Tarih</th>
-												<th className="w-1">Ödenen Tutar</th>
-											</tr>
-										</thead>
-										<tbody>
-											{list.length > 0
-												? list.map((el, key) => (
-														<tr key={key.toString()}>
-															<td className="text-muted">#{key + 1}</td>
-															<td>{moment(el.payment_date).format("LL")}</td>
-															<td>{el.amount.format() + " ₺"}</td>
-														</tr>
-												  ))
-												: noRow()}
-										</tbody>
-									</table>
-								</div>
+								{list ? (
+									list.length > 0 ? (
+										<ul className="timeline mb-0">
+											{list.map((el, key) => (
+												<li className="timeline-item" key={key.toString()}>
+													<div
+														className={`timeline-badge ${
+															el.is_future === 0 ? "bg-success" : ""
+														}`}
+													/>
+													<div>
+														<strong>{el.amount ? el.amount.format() + " ₺" : null}</strong>{" "}
+														maaş ödendi
+													</div>
+													<div className="timeline-time">
+														{moment(el.payment_date).format("DD-MM-YYYY")}
+													</div>
+
+													<div>
+														{el.is_future === 1 ? (
+															<button
+																type="button"
+																data-toggle="tooltip"
+																title="Maaşı Öde"
+																className="btn btn-sm btn-success btn-icon p-1">
+																<i className="fa fa-money-bill-wave"></i>
+															</button>
+														) : null}
+													</div>
+												</li>
+											))}
+										</ul>
+									) : (
+										noRow()
+									)
+								) : (
+									noRow(true)
+								)}
 							</div>
 						</div>
 					</div>

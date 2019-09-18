@@ -20,10 +20,10 @@ const $ = require("jquery");
 $.DataTable = require("datatables.net-responsive");
 
 var statusType = {
-	0: "bg-gray",
-	1: "bg-success",
-	2: "bg-azure",
-	3: "bg-indigo"
+	0: { bg: "bg-danger", title: "Pasif" },
+	1: { bg: "bg-success", title: "Aktif" },
+	2: { bg: "bg-azure", title: "Donuk" },
+	3: { bg: "bg-indigo", title: "Deneme" }
 };
 
 const initialState = {
@@ -201,10 +201,10 @@ export class Add extends Component {
 					responsivePriority: 10002,
 					createdCell: (td, cellData, rowData) => {
 						const status_type = {
-							0: { icon: "fe-x", badge: "badge-danger", text: "Gelmedi" },
-							1: { icon: "fe-check", badge: "badge-success", text: "Geldi" },
-							2: { icon: "fe-alert-circle", badge: "badge-warning", text: "Tam Gün" },
-							3: { icon: "fe-alert-circle", badge: "badge-warning", text: "Yarın Gün" }
+							0: { icon: "fe-x", badge: "bg-red-light", text: "Gelmedi" },
+							1: { icon: "fe-check", badge: "bg-green-light", text: "Geldi" },
+							2: { icon: "fe-alert-circle", badge: "bg-yellow-light", text: "Tam Gün" },
+							3: { icon: "fe-alert-circle", badge: "bg-yellow-light", text: "Yarın Gün" }
 						};
 
 						ReactDOM.render(
@@ -234,11 +234,11 @@ export class Add extends Component {
 					responsivePriority: 10001,
 					createdCell: (td, cellData, rowData) => {
 						const status_type = {
-							0: { icon: "fe-x", badge: "badge-danger", text: "Ödenmedi", color: "text-danger" },
-							1: { icon: "fe-check", badge: "badge-success", text: "Ödendi", color: "text-success" },
+							0: { icon: "fe-x", badge: "bg-red-light", text: "Ödenmedi", color: "text-danger" },
+							1: { icon: "fe-check", badge: "bg-green-light", text: "Ödendi", color: "text-success" },
 							2: {
 								icon: "fe-alert-circle",
-								badge: "badge-warning",
+								badge: "bg-yellow-light",
 								text: "Eksik Ödendi",
 								color: "text-warning"
 							}
@@ -414,16 +414,17 @@ export class Add extends Component {
 					data: "image",
 					class: "text-center",
 					render: function(data, type, row) {
+						var name = row.name;
+						var surname = row.surname;
 						var status = row.status;
-						if (data === null) {
-							return `<span class="avatar avatar-placeholder">
-									<span class="avatar-status ${row.is_trial ? statusType[3] : statusType[status]}"></span>
-								</span>`;
-						} else {
-							return `<div class="avatar" style="background-image: url(${data})">
-									<span class="avatar-status ${statusType[status]}"></span>
+						var renderBg = row.is_trial ? statusType[3].bg : statusType[status].bg;
+						var renderTitle = row.is_trial
+							? statusType[status].title + " & Deneme Öğrenci"
+							: statusType[status].title + " Öğrenci";
+						return `<div class="avatar text-uppercase" style="background-image: url(${data || ""})">
+									${data ? "" : name.slice(0, 1) + surname.slice(0, 1)}
+									<span class="avatar-status ${renderBg}" data-toggle="tooltip" title="${renderTitle}"></span>
 								</div>`;
-						}
 					}
 				},
 				{
@@ -474,7 +475,6 @@ export class Add extends Component {
 				{
 					data: "birthday",
 					responsivePriority: 10005,
-					class: "w-1",
 					render: function(data, type, row) {
 						if (type === "sort" || type === "type") {
 							return data ? data.split(".")[0] : data;
@@ -768,7 +768,7 @@ export class Add extends Component {
 												<th className="w-1 text-center no-sort"></th>
 												<th className="name">AD SOYAD</th>
 												<th className="emergency">İLETİŞİM</th>
-												<th className="w-1 birthday">DOĞUM TARİHİ</th>
+												<th className="birthday">DOĞUM YILI</th>
 												<th className="group">GRUP</th>
 												<th className="no-sort rollcalls">SON 3 YOKLAMA</th>
 												<th className="no-sort fees">SON 3 ÖDEME</th>
