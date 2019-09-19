@@ -1,92 +1,277 @@
 import React, { Component } from "react";
-import { ListRollcallType } from "../../../services/Rollcalls";
-import { CompleteRollcall, CreateRollcall } from "../../../services/Rollcalls";
-import { Link } from "react-router-dom";
-import { showSwal, Toast } from "../../Alert";
+import ReactDOM from "react-dom";
+import { BrowserRouter, Link, withRouter } from "react-router-dom";
+import Inputmask from "inputmask";
 import moment from "moment";
 import "moment/locale/tr";
+import { WarningModal as Modal } from "../WarningModal";
+import { datatable_turkish } from "../../../assets/js/core";
+import ep from "../../../assets/js/urls";
+import { fatalSwal, errorSwal } from "../../Alert.jsx";
+import { fullnameGenerator } from "../../../services/Others";
+const $ = require("jquery");
+$.DataTable = require("datatables.net");
 
-const statusType = {
+const dailyType = {
 	"-1": { icon: "help-circle", color: "gray", text: "Tanımsız" },
 	"0": { icon: "x", color: "danger", text: "Gelmedi" },
 	"1": { icon: "check", color: "success", text: "Geldi" },
-	"2": { icon: "alert-circle", color: "warning", text: "İzinli" },
-	"3": { icon: "alert-circle", color: "warning", text: "İzinli" }
+	"2": { icon: "alert-circle", color: "warning", text: "T. Gün İzinli" },
+	"3": { icon: "alert-circle", color: "warning", text: "Y. Gün İzinli" }
+};
+var statusType = {
+	0: { bg: "bg-danger", title: "Pasif" },
+	1: { bg: "bg-success", title: "Aktif" },
+	2: { bg: "bg-azure", title: "Donuk" },
+	3: { bg: "bg-indigo", title: "Deneme" }
 };
 
-const noRow = loading => (
-	<tr style={{ height: 80 }}>
-		<td colSpan="5" className="text-center text-muted font-italic">
-			{loading ? (
-				<div className={`dimmer active`}>
-					<div className="loader" />
-					<div className="dimmer-content" />
-				</div>
-			) : (
-				"Kayıt bulunamadı..."
-			)}
-		</td>
-	</tr>
-);
+const initialState = {
+	advance: false
+};
 
-export class EmployeesRollcalls extends Component {
+export class Detail extends Component {
 	constructor(props) {
 		super(props);
-
 		this.state = {
 			uid: localStorage.getItem("UID"),
+			...initialState,
 			employees: null,
+			statuses: [],
 			onLoadedData: false,
-			loadingButton: false
+			loadingButtons: []
 		};
 	}
 
-	renderEmployeeList = () => {
-		const { uid, employees } = this.state;
-		const { rcid } = this.props.match.params;
-		ListRollcallType(
-			{
-				uid: uid,
-				rollcall_id: rcid
-			},
-			"employees"
-		).then(response => {
-			if (response) {
-				const data = response.data;
-				const status = response.status;
-				const dataList = [];
-				if (status.code === 1020) {
-					data.map(el => {
-						dataList.push({
-							uid: el.uid,
-							name: el.name,
-							surname: el.surname,
-							position: el.position,
-							phone: el.phone,
-							image: el.image,
-							status: el.daily
-						});
-					});
-					this.setState({
-						employees: dataList,
-						onLoadedData: true
-					});
-				}
-			}
+	componentDidMount() {
+		this.renderDataTable();
+	}
+
+	componentWillUnmount() {
+		$(".data-table-wrapper")
+			.find("table")
+			.DataTable()
+			.destroy(true);
+	}
+
+	reload = () => {
+		const current = this.props.history.location.pathname;
+		this.props.history.replace(`/`);
+		setTimeout(() => {
+			this.props.history.replace(current);
 		});
 	};
 
-	componentDidMount() {
-		this.renderEmployeeList();
-	}
+	renderDataTable = () => {
+		const { uid } = this.state;
+		const { rcid } = this.props.match.params;
+		const table = $("#rollcall-list").DataTable({
+			dom: '<"top"f>rt<"bottom"ilp><"clear">',
+			responsive: false,
+			order: [3, "asc"],
+			aLengthMenu: [[30, 50, 100, -1], [30, 50, 100, "Tümü"]],
+			stateSave: false, // change true
+			language: {
+				...datatable_turkish,
+				decimal: ",",
+				thousands: "."
+			},
+			ajax: {
+				url: ep.ROLLCALL_LIST_TYPE + "employees",
+				type: "POST",
+				datatype: "json",
+				beforeSend: function(request) {
+					request.setRequestHeader("Content-Type", "application/json");
+					request.setRequestHeader("XIP", sessionStorage.getItem("IPADDR"));
+					request.setRequestHeader("Authorization", localStorage.getItem("UID"));
+				},
+				data: function(d) {
+					return JSON.stringify({
+						uid: uid,
+						rollcall_id: rcid
+					});
+				},
+				contentType: "application/json",
+				complete: function(res) {
+					try {
+						console.log(res);
+						if (res.responseJSON.status.code !== 1020) {
+							if (res.status !== 200) fatalSwal();
+							else errorSwal(res.responseJSON.status);
+						}
+					} catch (e) {
+						fatalSwal(true);
+					}
+				},
+				dataSrc: d => {
+					console.log(d);
+					if (d.status.code !== 1020) {
+						errorSwal(d.status);
+						return [];
+					} else {
+						if (d.extra_data === 2) this.props.history.goBack();
+						const statusList = [];
+						d.data.map(el => {
+							statusList.push({
+								uid: el.uid,
+								status: el.daily
+							});
+						});
+						this.setState({ statuses: statusList, rollcall: d.data });
+						return d.extra_data === 2 ? [] : d.data.filter(x => x.status === 1);
+					}
+				}
+			},
+			columnDefs: [
+				{
+					targets: [0, 1],
+					visible: false
+				},
+				{
+					targets: "no-sort",
+					orderable: false
+				},
+				{
+					targets: "rollcalls",
+					responsivePriority: 10002,
+					createdCell: (td, cellData, rowData) => {
+						const status_type = {
+							0: { icon: "fe-x", badge: "bg-red-light", text: "Gelmedi" },
+							1: { icon: "fe-check", badge: "bg-green-light", text: "Geldi" },
+							2: { icon: "fe-alert-circle", badge: "bg-yellow-light", text: "Tam Gün" },
+							3: { icon: "fe-alert-circle", badge: "bg-yellow-light", text: "Yarın Gün" }
+						};
+						ReactDOM.render(
+							<div>
+								{cellData.rollcalls.map((el, key) => {
+									return (
+										<span
+											key={key.toString()}
+											title={
+												status_type[el.status].text +
+												": " +
+												moment(el.rollcall_date).format("LL")
+											}
+											data-toggle="tooltip"
+											className={`d-inline-flex justify-content-center align-items-center mr-1 badge ${status_type[el.status].badge}`}>
+											<i className={`fe ${status_type[el.status].icon}`} />
+										</span>
+									);
+								})}
+							</div>,
+							td
+						);
+					}
+				}
+			],
+			columns: [
+				{
+					data: "uid"
+				},
+				{
+					data: "security_id"
+				},
+				{
+					data: "image",
+					class: "text-center",
+					render: function(data, type, row) {
+						var name = row.name;
+						var surname = row.surname;
+						var status = row.status;
+						var renderBg = row.is_trial ? statusType[3].bg : statusType[status].bg;
+						var renderTitle = row.is_trial
+							? statusType[status].title + " & Deneme Personel"
+							: statusType[status].title + " Personel";
+						return `<div class="avatar text-uppercase" style="background-image: url(${data || ""})">
+									${data ? "" : name.slice(0, 1) + surname.slice(0, 1)}
+									<span class="avatar-status ${renderBg}" data-toggle="tooltip" title="${renderTitle}"></span>
+								</div>`;
+					}
+				},
+				{
+					data: "name",
+					render: function(data, type, row) {
+						const fullname = fullnameGenerator(data, row.surname);
+						if (type === "sort" || type === "type") {
+							return fullname;
+						}
+						if (data)
+							return `<a class="text-inherit" href="/app/employees/detail/${row.uid}">${fullname}</a>`;
+					}
+				},
+				{
+					data: "phone",
+					render: function(data, type, row) {
+						const formatPhone = data ? Inputmask.format(data, { mask: "(999) 999 9999" }) : null;
+						if (formatPhone) return `<a href="tel:${data}" class="text-inherit">${formatPhone}</a>`;
+						else return "&mdash;";
+					}
+				},
+				{
+					data: "position"
+				},
+				{
+					data: null
+				},
+				{
+					data: "note",
+					render: function(data, type, row) {
+						return `<div class="text-break">${data || "—"}</div>`;
+					}
+				},
+				{
+					data: "daily",
+					class: "text-center",
+					render: function(data, type, row) {
+						return `<div
+									data-toggle="tooltip"
+									title="${dailyType[data].text}"
+									class="text-${dailyType[data].color}"
+									style="font-size: 20px">
+									<i class="fe fe-${dailyType[data].icon}"/>
+								</div>`;
+					}
+				}
+			]
+		});
+
+		$.fn.DataTable.ext.errMode = "none";
+		$("#rollcall-list").on("error.dt", function(e, settings, techNote, message) {
+			console.log("An error has been reported by DataTables: ", message, techNote);
+		});
+
+		$("#rollcall-list").on("draw.dt", function() {
+			console.log("draw.dt");
+			$('[data-toggle="tooltip"]').tooltip();
+		});
+	};
+
+	generateRollcallTotalCount = (rollcall, status, text) => {
+		let total = 0;
+		if (rollcall) {
+			rollcall.map(el => {
+				if (Array.isArray(status)) {
+					if (status.indexOf(el.daily) > -1) total++;
+				} else {
+					if (el.daily === status) total++;
+				}
+			});
+		}
+
+		return (
+			<h4 className="m-0">
+				{total} <small>{text}</small>
+			</h4>
+		);
+	};
 
 	render() {
-		const { employees, onLoadedData } = this.state;
+		const { rollcall } = this.state;
 		return (
 			<div className="container">
 				<div className="page-header">
 					<h1 className="page-title">
-						Yoklamalar &mdash; Personel &mdash; Yoklama Geçmişi (#{this.props.match.params.rcid || 0})
+						Yoklamalar &mdash; Personel &mdash; Yoklama Al (#{this.props.match.params.rcid})
 					</h1>
 				</div>
 				<div className="row">
@@ -100,76 +285,90 @@ export class EmployeesRollcalls extends Component {
 										className="form-help bg-gray-dark text-white"
 										data-toggle="popover"
 										data-placement="bottom"
-										data-content='<p>Yoklama yapılırken, sisteme <b>"geldi"</b>, <b>"izinli"</b> veya <b>"gelmedi"</b> olarak giriş yapabilirsiniz.</p><p>Yoklamalar gün sonunda otomatik olarak tamamlanır. İşaretlenmemiş olanlar, sisteme <b>"gelmedi"</b> şeklinde tanımlanır.</p><p><b class="text-red">Not:</b> Yoklama tamamlana kadar değişiklik yapabilirsiniz. Tamamlanan yoklamalarda değişiklik <b><u><i>yapılamaz.</i></u></b></p>'>
+										data-content='<p>Yoklama yapılırken, sisteme <b>"geldi"</b>, <b>"izinli"</b> veya <b>"gelmedi"</b> olarak giriş yapabilirsiniz.</p><p>Yoklamalar gün sonunda otomatik olarak tamamlanır. İşaretlenmemiş olanlar, sisteme <b>"gelmedi"</b> şeklinde tanımlanır.</p><p><b className="text-red">Not:</b> Yoklama tamamlana kadar değişiklik yapabilirsiniz. Tamamlanan yoklamalarda değişiklik <b><u><i>yapılamaz.</i></u></b></p>'>
 										!
 									</span>
+									<Modal />
 								</div>
 							</div>
 							<div className="card-body">
+								<div className="row">
+									<div class="col-sm-12 col-md-6 col-lg-3">
+										<div class="card p-3 mb-2">
+											<div class="d-flex align-items-center">
+												<span class="stamp stamp-md bg-green-light d-flex justify-content-center align-items-center mr-3">
+													<i class="fe fe-check"></i>
+												</span>
+												<div className="d-flex flex-column">
+													<div className="small text-muted">Toplam</div>
+													<div>{this.generateRollcallTotalCount(rollcall, 1, "Geldi")}</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="col-sm-12 col-md-6 col-lg-3">
+										<div class="card p-3 mb-2">
+											<div class="d-flex align-items-center">
+												<span class="stamp stamp-md bg-red-light d-flex justify-content-center align-items-center mr-3">
+													<i class="fe fe-x"></i>
+												</span>
+												<div className="d-flex flex-column">
+													<div className="small text-muted">Toplam</div>
+													<div>{this.generateRollcallTotalCount(rollcall, 0, "Gelmedi")}</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="col-sm-12 col-md-6 col-lg-3">
+										<div class="card p-3 mb-2">
+											<div class="d-flex align-items-center">
+												<span class="stamp stamp-md bg-yellow-light d-flex justify-content-center align-items-center mr-3">
+													<i class="fe fe-alert-circle"></i>
+												</span>
+												<div className="d-flex flex-column">
+													<div className="small text-muted">Toplam</div>
+													<div>
+														{this.generateRollcallTotalCount(rollcall, [2, 3], "İzinli")}
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="col-sm-12 col-md-6 col-lg-3">
+										<div class="card p-3 mb-2">
+											<div class="d-flex align-items-center">
+												<span class="stamp stamp-md bg-gray d-flex justify-content-center align-items-center mr-3">
+													<i class="fe fe-help-circle"></i>
+												</span>
+												<div className="d-flex flex-column">
+													<div className="small text-muted">Toplam</div>
+													<div>
+														{this.generateRollcallTotalCount(rollcall, -1, "Tanımsız")}
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div className="card-body p-0">
 								<div className="table-responsive">
-									<table className="table table-hover table-striped table-outline table-vcenter text-nowrap card-table mb-0">
+									<table
+										id="rollcall-list"
+										className="table card-table w-100 table-vcenter table-hover datatable">
 										<thead>
 											<tr>
-												<th className="pl-0 w-1" />
-												<th>Ad Soyad</th>
-												<th>Pozisyon</th>
-												<th>Telefon</th>
-												<th className="w-1">Durum</th>
+												<th>ID</th>
+												<th className="w-1 no-sort">T.C.</th>
+												<th className="w-1 text-center no-sort"></th>
+												<th className="name">AD SOYAD</th>
+												<th className="phone">TELEFON</th>
+												<th className="position">POZİSYON</th>
+												<th className="no-sort rollcalls">SON 3 YOKLAMA</th>
+												<th className="w-10 no-sort note">NOT</th>
+												<th className="w-2 no-sort daily">DURUM</th>
 											</tr>
 										</thead>
-										<tbody>
-											{employees
-												? employees.length > 0
-													? employees.map((el, key) => {
-															console.log(el);
-															const name = el.name || "";
-															const surname = el.surname || "";
-															return (
-																<tr key={key.toString()}>
-																	<td className="text-center">
-																		<div
-																			className="avatar d-block"
-																			style={{
-																				backgroundImage: `url(${el.image})`
-																			}}
-																		/>
-																	</td>
-																	<td>
-																		<Link
-																			className="text-inherit"
-																			to={`/app/employees/detail/${el.uid}`}>
-																			{name + " " + surname}
-																		</Link>
-																	</td>
-																	<td>{el.position}</td>
-																	<td>
-																		{el.phone ? (
-																			<a
-																				href={`tel:${el.phone}`}
-																				title={el.phone}>
-																				{el.phone}
-																			</a>
-																		) : (
-																			"—"
-																		)}
-																	</td>
-																	<td className="text-center">
-																		<div
-																			data-toggle="tooltip"
-																			title={statusType[el.status].text}
-																			className={`text-${statusType[el.status].color}`}
-																			style={{ fontSize: 20 }}>
-																			<i
-																				className={`fe fe-${statusType[el.status].icon}`}
-																			/>
-																		</div>
-																	</td>
-																</tr>
-															);
-													  })
-													: noRow()
-												: noRow(true)}
-										</tbody>
 									</table>
 								</div>
 							</div>
@@ -181,4 +380,4 @@ export class EmployeesRollcalls extends Component {
 	}
 }
 
-export default EmployeesRollcalls;
+export default withRouter(Detail);

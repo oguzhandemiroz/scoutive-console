@@ -4,6 +4,7 @@ import { ListPlayers } from "../../services/Player";
 import { Link } from "react-router-dom";
 import DailyPlayer from "../../components/Players/Charts/DailyPlayer";
 import TotalFee from "../../components/Players/Charts/TotalFee";
+import DailyCreatedPlayer from "../../components/Players/Charts/DailyCreatedPlayer";
 import TotalPlayerCount from "../../components/Players/Charts/TotalPlayerCount";
 
 class Players extends Component {
@@ -63,6 +64,9 @@ class Players extends Component {
 					<div className="col-sm-6 col-md-4">
 						<div className="card">
 							<TotalFee data={data} />
+						</div>
+						<div className="card">
+							<DailyCreatedPlayer data={data} />
 						</div>
 					</div>
 				</div>

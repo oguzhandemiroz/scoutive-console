@@ -30,11 +30,6 @@ const statusType = {
 	3: "bg-indigo"
 };
 
-const initialState = {
-	vacation: false,
-	group_change: false
-};
-
 export class Rollcall extends Component {
 	constructor(props) {
 		super(props);
@@ -42,7 +37,6 @@ export class Rollcall extends Component {
 		this.state = {
 			uid: localStorage.getItem("UID"),
 			to: props.match.params.uid,
-			...initialState,
 			data: {},
 			loading: "active"
 		};
@@ -140,8 +134,6 @@ export class Rollcall extends Component {
 			group,
 			image,
 			data,
-			vacation,
-			group_change,
 			is_trial,
 			status,
 			rollcalls,
@@ -263,15 +255,11 @@ export class Rollcall extends Component {
 								<ActionButton
 									vacationButton={data =>
 										this.setState({
-											...initialState,
-											vacation: true,
 											data: data
 										})
 									}
 									groupChangeButton={data =>
 										this.setState({
-											...initialState,
-											group_change: true,
 											data: data
 										})
 									}
@@ -286,8 +274,8 @@ export class Rollcall extends Component {
 									}}
 								/>
 
-								<Vacation data={data} visible={vacation} history={this.props.history} />
-								<GroupChange data={data} visible={group_change} history={this.props.history} />
+								<Vacation data={data} history={this.props.history} />
+								<GroupChange data={data} history={this.props.history} />
 							</div>
 						</div>
 					</div>

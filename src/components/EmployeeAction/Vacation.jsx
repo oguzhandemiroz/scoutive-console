@@ -119,24 +119,12 @@ export class Vacation extends Component {
 	componentDidMount() {
 		if (document.querySelectorAll("#vacation-past-tab.active").length > 0)
 			this.renderVacationList(this.props.data.uid);
-
-		if (this.props.visible)
-			$("#vacationModal").modal({
-				keyboard: false,
-				backdrop: "static"
-			});
 		this.setState({ ...this.props });
 	}
 
 	componentWillReceiveProps(nextProps) {
 		if (document.querySelectorAll("#vacation-past-tab.active").length > 0)
 			this.renderVacationList(nextProps.data.uid);
-
-		if (nextProps.visible)
-			$("#vacationModal").modal({
-				keyboard: false,
-				backdrop: "static"
-			});
 		this.setState({ ...nextProps, ...initialState });
 	}
 
@@ -566,7 +554,7 @@ export class Vacation extends Component {
 														className="form-control"
 														name="note"
 														onChange={this.handleChange}
-														rows="3"
+														rows="1"
 														maxLength="255"
 														placeholder="Not.."></textarea>
 												</div>

@@ -29,17 +29,11 @@ var statusType = {
 	3: { bg: "bg-indigo", title: "Deneme" }
 };
 
-const initialState = {
-	vacation: false,
-	password: false,
-	advance: false
-};
-
 class Table extends Component {
 	constructor(props) {
 		super(props);
 
-		this.state = { data: {}, ...initialState };
+		this.state = { data: {} };
 	}
 
 	componentDidMount() {
@@ -76,22 +70,16 @@ class Table extends Component {
 									<ActionButton
 										advancePaymentButton={data =>
 											this.setState({
-												...initialState,
-												advance: true,
 												data: data
 											})
 										}
 										vacationButton={data =>
 											this.setState({
-												...initialState,
-												vacation: true,
 												data: data
 											})
 										}
 										passwordButton={data =>
 											this.setState({
-												...initialState,
-												password: true,
 												data: data
 											})
 										}
@@ -247,7 +235,7 @@ class Table extends Component {
 	}
 
 	render() {
-		const { vacation, password, advance, data } = this.state;
+		const { data } = this.state;
 		return (
 			<div>
 				<table
@@ -267,9 +255,9 @@ class Table extends Component {
 						</tr>
 					</thead>
 				</table>
-				{<Vacation data={data} visible={vacation} history={this.props.history} />}
-				{<Password data={data} visible={password} history={this.props.history} />}
-				{advance ? <AdvancePayment data={data} visible={advance} history={this.props.history} /> : null}
+				<Vacation data={data} history={this.props.history} />
+				<Password data={data} history={this.props.history} />
+				<AdvancePayment data={data} history={this.props.history} />
 			</div>
 		);
 	}

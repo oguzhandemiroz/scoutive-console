@@ -37,22 +37,9 @@ const menu = [
 	{
 		li: "nav-item",
 		navlink: { to: "/app/rollcalls", exact: false, activeClassName: "active", className: "nav-link" },
-		dataToggle: "dropdown",
 		icon: "fe fe-check-square",
 		text: "Yoklamalar",
-		childDividerClass: "dropdown-menu dropdown-menu-arrow",
-		item: [
-			{
-				to: "/app/rollcalls/player",
-				className: "dropdown-item",
-				childText: "Öğrenci Yoklaması"
-			},
-			{
-				to: "/app/rollcalls/employee",
-				className: "dropdown-item",
-				childText: "Personel Yoklaması"
-			}
-		],
+		item: null,
 		condition: true
 	},
 	{

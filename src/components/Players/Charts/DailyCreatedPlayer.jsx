@@ -1,12 +1,13 @@
 import React, { Component } from "react";
+import moment from "moment";
+import "moment/locale/tr";
 
-export class TotalFee extends Component {
+export class listPlayers extends Component {
 	constructor(props) {
 		super(props);
 
 		this.state = {
 			uid: localStorage.getItem("UID"),
-			totalFee: null,
 			totalCount: null
 		};
 	}
@@ -21,23 +22,38 @@ export class TotalFee extends Component {
 	listPlayers = data => {
 		var total = 0;
 		data.map(el => {
-			if (el.status === 1 && el.fee) {
-				total += el.fee;
+			console.log(
+				moment(el.created_date, "YYYY-MM-DD HH:mm:ss").isAfter(
+					moment()
+						.subtract(1, "days")
+						.endOf("day")
+						.format("YYYY-MM-DD HH:mm:ss")
+				)
+			);
+			if (
+				moment(el.created_date, "YYYY-MM-DD HH:mm:ss").isAfter(
+					moment()
+						.subtract(1, "days")
+						.endOf("day")
+						.format("YYYY-MM-DD HH:mm:ss")
+				)
+			) {
+				total++;
 			}
 		});
-		this.setState({ totalFee: total.format() + " ₺", totalCount: data.length });
+		this.setState({ totalCount: total });
 	};
 
 	render() {
-		const { totalFee } = this.state;
+		const { totalCount } = this.state;
 		return (
 			<div
 				className="card-body p-3 text-center d-flex flex-column justify-content-center"
 				style={{ height: 140 }}>
-				<div className="h5">Toplam Aktif Öğr. Aidat Geliri</div>
+				<div className="h5">Bugün Kayıt Olan Öğrenci</div>
 				<div style={{ fontSize: "2.35rem" }} className="display-4 font-weight-bold mb-3">
-					{totalFee ? (
-						totalFee
+					{totalCount ? (
+						totalCount
 					) : (
 						<div className="d-flex justify-content-center">
 							<div className="loader"></div>
@@ -49,4 +65,4 @@ export class TotalFee extends Component {
 	}
 }
 
-export default TotalFee;
+export default listPlayers;

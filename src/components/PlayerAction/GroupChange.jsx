@@ -35,36 +35,11 @@ export class GroupChange extends Component {
 	}
 
 	componentDidMount() {
-		let select = { ...this.state.select };
-
-		if (this.props.visible) {
-			$("#groupChangeModal").modal({
-				keyboard: false,
-				backdrop: "static"
-			});
-			Groups().then(response => {
-				select.groups = response;
-				this.setState({ select, loadingButton: false });
-			});
-		}
-		console.log(this.props.data);
-		this.setState({ ...this.props });
+		this.getGroups(this.props);
 	}
 
 	componentWillReceiveProps(nextProps) {
-		let select = { ...this.state.select };
-
-		if (nextProps.visible) {
-			$("#groupChangeModal").modal({
-				keyboard: false,
-				backdrop: "static"
-			});
-			Groups().then(response => {
-				select.groups = response;
-				this.setState({ select, loadingButton: false });
-			});
-		}
-		this.setState({ ...nextProps });
+		this.getGroups(nextProps);
 	}
 
 	handleSubmit = e => {
@@ -115,6 +90,19 @@ export class GroupChange extends Component {
 		this.props.history.replace(`/`);
 		setTimeout(() => {
 			this.props.history.replace(current);
+		});
+	};
+
+	getGroups = prop => {
+		Groups().then(response => {
+			this.setState(prevState => ({
+				select: {
+					...prevState.select,
+					groups: response
+				},
+				loadingButton: false,
+				...prop
+			}));
 		});
 	};
 

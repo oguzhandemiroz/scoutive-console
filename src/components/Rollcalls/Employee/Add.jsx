@@ -1,29 +1,28 @@
 import React, { Component } from "react";
 import ReactDOM from "react-dom";
-import { BrowserRouter, Link, withRouter } from "react-router-dom";
+import { BrowserRouter, withRouter } from "react-router-dom";
 import Inputmask from "inputmask";
 import moment from "moment";
 import "moment/locale/tr";
-import { MakeRollcall } from "../../../services/Rollcalls";
+import { MakeRollcall, SetNoteRollcall, DeleteRollcall } from "../../../services/Rollcalls";
 import { CreateVacation, UpdateVacation } from "../../../services/EmployeeAction";
 import { WarningModal as Modal } from "../WarningModal";
 import { datatable_turkish } from "../../../assets/js/core";
 import ep from "../../../assets/js/urls";
-import { fatalSwal, errorSwal } from "../../Alert.jsx";
 import AdvancePayment from "../../EmployeeAction/AdvancePayment";
+import { fatalSwal, errorSwal, Toast, showSwal } from "../../Alert.jsx";
+import Vacation from "../../EmployeeAction/Vacation";
+import Password from "../../EmployeeAction/Password";
+import ActionButton from "../../Employees/ActionButton";
 import { fullnameGenerator } from "../../../services/Others";
 const $ = require("jquery");
 $.DataTable = require("datatables.net");
 
 var statusType = {
-	0: "bg-gray",
-	1: "bg-success",
-	2: "bg-azure",
-	3: "bg-indigo"
-};
-
-const initialState = {
-	advance: false
+	0: { bg: "bg-danger", title: "Pasif" },
+	1: { bg: "bg-success", title: "Aktif" },
+	2: { bg: "bg-azure", title: "Donuk" },
+	3: { bg: "bg-indigo", title: "Deneme" }
 };
 
 export class Add extends Component {
@@ -31,10 +30,10 @@ export class Add extends Component {
 		super(props);
 		this.state = {
 			uid: localStorage.getItem("UID"),
-			...initialState,
 			employees: null,
 			statuses: [],
 			onLoadedData: false,
+			data: {},
 			loadingButtons: []
 		};
 	}
@@ -127,23 +126,27 @@ export class Add extends Component {
 					targets: "no-sort",
 					orderable: false
 				},
-				/*{
+				{
 					targets: "rollcalls",
+					responsivePriority: 10002,
 					createdCell: (td, cellData, rowData) => {
 						const status_type = {
-							0: { icon: "fe-x", badge: "badge-danger" },
-							1: { icon: "fe-check", badge: "badge-success" },
-							2: { icon: "fe-alert-circle", badge: "badge-warning" },
-							3: { icon: "fe-alert-circle", badge: "badge-warning" }
+							0: { icon: "fe-x", badge: "bg-red-light", text: "Gelmedi" },
+							1: { icon: "fe-check", badge: "bg-green-light", text: "Geldi" },
+							2: { icon: "fe-alert-circle", badge: "bg-yellow-light", text: "Tam Gün" },
+							3: { icon: "fe-alert-circle", badge: "bg-yellow-light", text: "Yarın Gün" }
 						};
-
 						ReactDOM.render(
 							<div>
-								{cellData.rollcalls.reverse().map((el, key) => {
+								{cellData.rollcalls.map((el, key) => {
 									return (
 										<span
 											key={key.toString()}
-											title={el.rollcall_date}
+											title={
+												status_type[el.status].text +
+												": " +
+												moment(el.rollcall_date).format("LL")
+											}
 											data-toggle="tooltip"
 											className={`d-inline-flex justify-content-center align-items-center mr-1 badge ${status_type[el.status].badge}`}>
 											<i className={`fe ${status_type[el.status].icon}`} />
@@ -154,7 +157,7 @@ export class Add extends Component {
 							td
 						);
 					}
-				},*/
+				},
 				{
 					targets: "status",
 					class: "w-1",
@@ -213,83 +216,74 @@ export class Add extends Component {
 					}
 				},
 				{
-					targets: "action",
-					class: "pr-4 pl-1 w-1",
+					targets: "note",
+					class: "py-1 text-center",
 					createdCell: (td, cellData, rowData) => {
-						const fullname = fullnameGenerator(rowData.name, rowData.surname);
-						const { uid } = rowData;
+						const { uid, name, surname, note, daily } = rowData;
 						ReactDOM.render(
 							<BrowserRouter>
-								<div className="dropdown btn-block" id="action-dropdown">
-									<a
-										href="javascript:void(0)"
-										className="icon"
-										data-toggle="dropdown"
-										aria-haspopup="true"
-										aria-expanded="false">
-										<i className="fe fe-more-vertical"></i>
-									</a>
-									<div
-										className="dropdown-menu dropdown-menu-right"
-										aria-labelledby="employee-action"
-										x-placement="top-end">
-										<a className="dropdown-item disabled text-azure" href="javascript:void(0)">
-											<i className="dropdown-icon fa fa-user text-azure" />
-											{fullname}
-										</a>
-										<div role="separator" className="dropdown-divider" />
-										<Link
-											onClick={() => this.props.history.push(`/app/employees/salary/${uid}`)}
-											className="dropdown-item action-pay-salary"
-											to={`/app/employees/salary/${uid}`}>
-											<i className="dropdown-icon fa fa-money-bill-wave" /> Maaş Öde
-										</Link>
-										<button
-											onClick={() =>
-												this.setState({
-													...initialState,
-													advance: true,
-													data: { name: fullname, uid: uid }
-												})
-											}
-											className="dropdown-item action-advance-payment">
-											<i className="dropdown-icon fa fa-hand-holding-usd" /> Avans Ver
-										</button>
-										<div role="separator" className="dropdown-divider" />
+								{daily !== -1 ? (
+									<span
+										onClick={() => this.removeRollcallStatus(uid)}
+										className="icon cursor-pointer"
+										data-toggle="tooltip"
+										title="Yoklamayı Kaldır">
+										<i className="fe fe-x" />
+									</span>
+								) : null}
+								<span
+									onClick={() => this.setRollcallNote(fullnameGenerator(name, surname), uid)}
+									className="icon cursor-pointer ml-2"
+									data-toggle="tooltip"
+									title={note ? "Not: " + note : "Not Gir"}>
+									<i className={`fe fe-edit ${note ? "text-orange" : ""}`} />
+								</span>
+							</BrowserRouter>,
+							td
+						);
+					}
+				},
+				{
+					targets: "action",
+					createdCell: (td, cellData, rowData) => {
+						const fullname = fullnameGenerator(rowData.name, rowData.surname);
+						const { uid, status } = rowData;
+						ReactDOM.render(
+							<BrowserRouter>
+								<ActionButton
+									advancePaymentButton={data =>
+										this.setState({
+											data: data
+										})
+									}
+									vacationButton={data =>
+										this.setState({
+											data: data
+										})
+									}
+									passwordButton={data =>
+										this.setState({
+											data: data
+										})
+									}
+									history={this.props.history}
+									dropdown={true}
+									data={{
+										to: uid,
+										name: fullname,
+										status: status
+									}}
+									renderButton={() => (
 										<a
-											className="dropdown-item action-send-message cursor-not-allowed disabled"
-											href="javascript:void(0)">
-											<i className="dropdown-icon fa fa-paper-plane" /> Mesaj Gönder
-											<span className="ml-1">
-												(<i className="fe fe-lock mr-0" />)
-											</span>
+											href="javascript:void(0)"
+											className="icon"
+											data-toggle="dropdown"
+											aria-haspopup="true"
+											aria-expanded="false">
+											<i className="fe fe-more-vertical"></i>
 										</a>
-										<a
-											className="dropdown-item action-warning cursor-not-allowed disabled"
-											href="javascript:void(0)">
-											<i className="dropdown-icon fa fa-exclamation-triangle" /> İkaz Et
-											<span className="ml-1">
-												(<i className="fe fe-lock mr-0" />)
-											</span>
-										</a>
-										<div role="separator" className="dropdown-divider" />
-										<Link
-											onClick={() => this.props.history.push(`/app/employees/edit/${uid}`)}
-											className="dropdown-item action-edit"
-											to={`/app/employees/edit/${uid}`}>
-											<i className="dropdown-icon fa fa-pen" /> Düzenle
-										</Link>
-										<a className="dropdown-item action-all-salary-info" href="javascript:void(0)">
-											<i className="dropdown-icon fa fa-receipt" /> Tüm Maaş Bilgisi
-										</a>
-										<Link
-											onClick={() => this.props.history.push(`/app/employees/detail/${uid}`)}
-											to={`/app/employees/detail/${uid}`}
-											className="dropdown-item action-all-info">
-											<i className="dropdown-icon fa fa-info-circle" /> Tüm Bilgileri
-										</Link>
-									</div>
-								</div>
+									)}
+								/>
 							</BrowserRouter>,
 							td
 						);
@@ -307,16 +301,17 @@ export class Add extends Component {
 					data: "image",
 					class: "text-center",
 					render: function(data, type, row) {
+						var name = row.name;
+						var surname = row.surname;
 						var status = row.status;
-						if (data === null) {
-							return `<span class="avatar avatar-placeholder">
-									<span class="avatar-status ${row.is_trial ? statusType[3] : statusType[status]}"></span>
-								</span>`;
-						} else {
-							return `<div class="avatar" style="background-image: url(${data})">
-									<span class="avatar-status ${statusType[status]}"></span>
+						var renderBg = row.is_trial ? statusType[3].bg : statusType[status].bg;
+						var renderTitle = row.is_trial
+							? statusType[status].title + " & Deneme Personel"
+							: statusType[status].title + " Personel";
+						return `<div class="avatar text-uppercase" style="background-image: url(${data || ""})">
+									${data ? "" : name.slice(0, 1) + surname.slice(0, 1)}
+									<span class="avatar-status ${renderBg}" data-toggle="tooltip" title="${renderTitle}"></span>
 								</div>`;
-						}
 					}
 				},
 				{
@@ -341,6 +336,8 @@ export class Add extends Component {
 				{
 					data: "position"
 				},
+				{ data: null },
+				{ data: null },
 				{ data: null },
 				{ data: null }
 			]
@@ -561,8 +558,69 @@ export class Add extends Component {
 		}
 	};
 
+	setRollcallNote = (name, to) => {
+		const { uid } = this.state;
+		const { rcid } = this.props.match.params;
+		showSwal({
+			type: "info",
+			title: "Not Giriniz",
+			html: `<b>${name}</b> adlı personel için not giriniz:`,
+			confirmButtonText: "Onayla",
+			showCancelButton: true,
+			cancelButtonText: "İptal",
+			confirmButtonColor: "#467fcf",
+			cancelButtonColor: "#868e96",
+			reverseButtons: true,
+			input: "text",
+			inputPlaceholder: "...",
+			inputAttributes: {
+				max: 100
+			},
+			inputValidator: value => {
+				return new Promise(resolve => {
+					if (value.length > 0 && value.length <= 100) {
+						SetNoteRollcall(
+							{
+								uid: uid,
+								to: to,
+								rollcall_id: rcid,
+								note: value
+							},
+							"employee"
+						).then(response => {
+							if (response) {
+								if (response.status.code === 1020) {
+									Toast.fire({
+										type: "success",
+										title: "Not ekleme başarılı!"
+									});
+								} else {
+									Toast.fire({
+										type: "danger",
+										title: "Not ekleme başarısız!"
+									});
+								}
+								setTimeout(this.reload, 1000);
+							}
+						});
+					} else {
+						resolve("Hatalı değer!");
+					}
+				});
+			}
+		});
+	};
+
+	removeRollcallStatus = to => {
+		const { uid } = this.state;
+		const { rcid } = this.props.match.params;
+		DeleteRollcall({ uid: uid, to: to, rollcall_id: rcid }, "employee").then(response =>
+			setTimeout(this.reload, 1000)
+		);
+	};
+
 	render() {
-		const { advance, data } = this.state;
+		const { data } = this.state;
 		return (
 			<div className="container">
 				<div className="page-header">
@@ -587,7 +645,7 @@ export class Add extends Component {
 									<Modal />
 								</div>
 							</div>
-							<div className="card-body pt-0">
+							<div className="card-body p-0">
 								<div className="table-responsive">
 									<table
 										id="rollcall-list"
@@ -598,17 +656,18 @@ export class Add extends Component {
 												<th className="w-1 no-sort">T.C.</th>
 												<th className="w-1 text-center no-sort"></th>
 												<th className="name">AD SOYAD</th>
-												{/* <th className="no-sort rollcalls">SON 5 YOKLAMA</th> */}
 												<th className="phone">TELEFON</th>
 												<th className="position">POZİSYON</th>
+												<th className="no-sort rollcalls">SON 3 YOKLAMA</th>
 												<th className="w-1 no-sort status">DURUM</th>
+												<th className="pr-2 no-sort note"></th>
 												<th className="pr-2 w-1 no-sort action"></th>
 											</tr>
 										</thead>
 									</table>
-									{advance ? (
-										<AdvancePayment data={data} visible={advance} history={this.props.history} />
-									) : null}
+									<Vacation data={data} history={this.props.history} />
+									<Password data={data} history={this.props.history} />
+									<AdvancePayment data={data} history={this.props.history} />
 								</div>
 							</div>
 						</div>

@@ -44,7 +44,9 @@ export class ActionButton extends Component {
 				tag: "button",
 				elementAttr: {
 					className: "dropdown-item",
-					onClick: () => this.props.advancePaymentButton({ name: fullname, uid: to })
+					onClick: () => this.props.advancePaymentButton({ name: fullname, uid: to }),
+					"data-toggle": "modal",
+					"data-target": "#advancePaymentModal"
 				},
 				childText: "Avans Ver",
 				child: {
@@ -61,7 +63,9 @@ export class ActionButton extends Component {
 				tag: "button",
 				elementAttr: {
 					className: "dropdown-item",
-					onClick: () => this.props.vacationButton({ name: fullname, uid: to })
+					onClick: () => this.props.vacationButton({ name: fullname, uid: to }),
+					"data-toggle": "modal",
+					"data-target": "#vacationModal"
 				},
 				childText: "İzin Yaz",
 				child: {
@@ -156,7 +160,9 @@ export class ActionButton extends Component {
 				tag: "button",
 				elementAttr: {
 					className: "dropdown-item cursor-not-allowed disabled",
-					onClick: () => this.props.passwordButton({ name: fullname, uid: uid })
+					onClick: () => this.props.passwordButton({ name: fullname, uid: uid }),
+					"data-toggle": "modal",
+					"data-target": "#passwordModal"
 				},
 				childText: "Şifre Değiştir",
 				child: {

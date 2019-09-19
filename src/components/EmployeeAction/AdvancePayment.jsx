@@ -126,27 +126,6 @@ export class AdvancePayment extends Component {
 		};
 	}
 
-	reload = () => {
-		const current = this.props.history.location.pathname;
-		this.props.history.replace(`/`);
-		setTimeout(() => {
-			this.props.history.replace(current);
-		});
-	};
-
-	fieldMasked = () => {
-		try {
-			console.log("e");
-			const elemArray = {
-				amount: $("[name=amount]")
-			};
-			Inputmask({
-				alias: "try",
-				...InputmaskDefaultOptions
-			}).mask(elemArray.amount);
-		} catch (e) {}
-	};
-
 	componentDidMount() {
 		let select = { ...this.state.select };
 		this.listBudgets(select);
@@ -155,11 +134,6 @@ export class AdvancePayment extends Component {
 			this.renderAdvancePaymentList(this.props.data.uid);
 
 		this.fieldMasked();
-		if (this.props.visible)
-			$("#advancePaymentModal").modal({
-				keyboard: false,
-				backdrop: "static"
-			});
 		this.setState({ ...this.props });
 	}
 
@@ -171,11 +145,6 @@ export class AdvancePayment extends Component {
 			this.renderAdvancePaymentList(nextProps.data.uid);
 
 		this.fieldMasked();
-		if (nextProps.visible)
-			$("#advancePaymentModal").modal({
-				keyboard: false,
-				backdrop: "static"
-			});
 		this.setState({ ...nextProps, ...initialState });
 	}
 
@@ -288,6 +257,27 @@ export class AdvancePayment extends Component {
 		} catch (e) {}
 	};
 
+	reload = () => {
+		const current = this.props.history.location.pathname;
+		this.props.history.replace(`/`);
+		setTimeout(() => {
+			this.props.history.replace(current);
+		});
+	};
+
+	fieldMasked = () => {
+		try {
+			console.log("e");
+			const elemArray = {
+				amount: $("[name=amount]")
+			};
+			Inputmask({
+				alias: "try",
+				...InputmaskDefaultOptions
+			}).mask(elemArray.amount);
+		} catch (e) {}
+	};
+
 	render() {
 		const { select, budget, startDate, amount, note, loadingButton, list, data, formErrors } = this.state;
 		return (
@@ -350,7 +340,7 @@ export class AdvancePayment extends Component {
 											</label>
 
 											<DatePicker
-                                                autoComplete="off"
+												autoComplete="off"
 												selected={startDate}
 												selectsStart
 												startDate={startDate}
@@ -404,7 +394,7 @@ export class AdvancePayment extends Component {
 												className="form-control"
 												name="note"
 												onChange={this.handleChange}
-												rows="3"
+												rows="1"
 												maxLength="255"
 												placeholder="Not.."></textarea>
 										</div>

@@ -385,7 +385,7 @@ export class Add extends Component {
                                         className="form-control"
                                         name="note"
                                         onChange={this.handleChange}
-                                        rows="3"
+                                        rows="1"
                                         onChange={this.handleChange}
                                         maxLength="255"
                                         placeholder="Not.."></textarea>

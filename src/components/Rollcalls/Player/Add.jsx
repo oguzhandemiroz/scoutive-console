@@ -25,11 +25,6 @@ var statusType = {
 	3: { bg: "bg-indigo", title: "Deneme" }
 };
 
-const initialState = {
-	vacation: false,
-	group_change: false
-};
-
 var _childNodeStore = {};
 function _childNodes(dt, row, col) {
 	var name = row + "-" + col;
@@ -55,7 +50,6 @@ export class Add extends Component {
 		super(props);
 		this.state = {
 			uid: localStorage.getItem("UID"),
-			...initialState,
 			players: null,
 			counter: 0,
 			statuses: [],
@@ -127,7 +121,7 @@ export class Add extends Component {
 			},
 			order: [4, "asc"],
 			aLengthMenu: [[30, 50, 100, -1], [30, 50, 100, "Tümü"]],
-			stateSave: false, // change true
+			stateSave: true, // change true
 			language: {
 				...datatable_turkish,
 				decimal: ",",
@@ -372,15 +366,11 @@ export class Add extends Component {
 								<ActionButton
 									vacationButton={data =>
 										this.setState({
-											...initialState,
-											vacation: true,
 											data: data
 										})
 									}
 									groupChangeButton={data =>
 										this.setState({
-											...initialState,
-											group_change: true,
 											data: data
 										})
 									}
@@ -801,15 +791,14 @@ export class Add extends Component {
 
 	reload = () => {
 		const current = this.props.history.location.pathname;
-		this.props.history.replace(`/`);
+		this.props.history.replace(`/app/rollcalls/player`);
 		setTimeout(() => {
 			this.props.history.replace(current);
 		});
 	};
 
 	render() {
-		const { data, vacation, group_change } = this.state;
-		console.log(vacation, group_change);
+		const { data } = this.state;
 		return (
 			<div className="container">
 				<Modal />
@@ -835,7 +824,7 @@ export class Add extends Component {
 									<Modal />
 								</div>
 							</div>
-							<div className="card-body pt-0">
+							<div className="card-body p-0">
 								<div className="table-responsive">
 									<table
 										id="rollcall-list"
@@ -859,8 +848,8 @@ export class Add extends Component {
 										</thead>
 									</table>
 
-									{<GroupChange data={data} visible={group_change} history={this.props.history} />}
-									{<Vacation data={data} visible={vacation} history={this.props.history} />}
+									<GroupChange data={data} history={this.props.history} />
+									<Vacation data={data} history={this.props.history} />
 								</div>
 							</div>
 						</div>

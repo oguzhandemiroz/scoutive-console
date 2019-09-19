@@ -47,7 +47,6 @@ export class Vacation extends Component {
 			onLoadedData: false,
 			list: [],
 			data: {},
-			vacation: false
 		};
 	}
 
@@ -210,7 +209,6 @@ export class Vacation extends Component {
 			to,
 			list,
 			onLoadedData,
-			vacation,
 			data
 		} = this.state;
 		const { match } = this.props;
@@ -332,7 +330,6 @@ export class Vacation extends Component {
 								<button
 									onClick={() =>
 										this.setState({
-											vacation: true,
 											data: { name: name, uid: to }
 										})
 									}
@@ -340,7 +337,7 @@ export class Vacation extends Component {
 									İzin Oluştur
 								</button>
 
-								{<ModalVacation data={data} visible={vacation} history={this.props.history} />}
+								{<ModalVacation data={data} history={this.props.history} />}
 							</div>
 							<div className="card-body">
 								<div className="table-responsive">

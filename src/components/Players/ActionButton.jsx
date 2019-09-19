@@ -5,10 +5,6 @@ import freezePlayer from "../PlayerAction/FreezePlayer";
 import refreshPlayer from "../PlayerAction/RefreshPlayer";
 import activatePlayer from "../PlayerAction/ActivatePlayer";
 
-const initialState = {
-	vacation: false,
-	group_change: false
-};
 
 export class ActionButton extends Component {
 	constructor(props) {
@@ -16,7 +12,6 @@ export class ActionButton extends Component {
 
 		this.state = {
 			uid: localStorage.getItem("UID"),
-			...initialState,
 			data: {}
 		};
 	}
@@ -143,7 +138,9 @@ export class ActionButton extends Component {
 				tag: "button",
 				elementAttr: {
 					className: "dropdown-item",
-					onClick: () => this.props.vacationButton({ name: fullname, uid: to })
+					onClick: () => this.props.vacationButton({ name: fullname, uid: to }),
+					"data-toggle": "modal",
+					"data-target": "#vacationModal"
 				},
 				childText: "İzin Yaz",
 				child: {
@@ -214,7 +211,9 @@ export class ActionButton extends Component {
 							uid: to,
 							group: typeof group === "string" ? group : group ? group.name : null,
 							group_id: group ? group.group_id : null
-						})
+						}),
+					"data-toggle": "modal",
+					"data-target": "#groupChangeModal"
 				},
 				childText: "Grup Değişikliği",
 				child: {

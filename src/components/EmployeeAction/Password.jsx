@@ -33,20 +33,10 @@ export class Password extends Component {
 	}
 
 	componentDidMount() {
-		if (this.props.visible)
-			$("#passwordModal").modal({
-				keyboard: false,
-				backdrop: "static"
-			});
 		this.setState({ ...this.props });
 	}
 
 	componentWillReceiveProps(nextProps) {
-		if (nextProps.visible)
-			$("#passwordModal").modal({
-				keyboard: false,
-				backdrop: "static"
-			});
 		this.setState({ ...nextProps, password: null });
 	}
 

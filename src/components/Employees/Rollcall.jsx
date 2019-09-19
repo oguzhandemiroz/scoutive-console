@@ -21,17 +21,6 @@ const noRow = loading => (
 	</tr>
 );
 
-const statusType = {
-	0: "bg-danger",
-	1: "bg-green",
-	2: "bg-azure",
-	3: "bg-indigo"
-};
-
-const initialState = {
-	vacation: false,
-	group_change: false
-};
 
 export class Rollcall extends Component {
 	constructor(props) {
@@ -40,7 +29,6 @@ export class Rollcall extends Component {
 		this.state = {
 			uid: localStorage.getItem("UID"),
 			to: props.match.params.uid,
-			...initialState,
 			data: {},
 			loading: "active"
 		};
@@ -175,22 +163,13 @@ export class Rollcall extends Component {
 			surname,
 			security_id,
 			position,
-			fee,
-			is_scholarship,
-			point,
 			branch,
 			start_date,
 			end_date,
 			email,
 			phone,
-			group,
 			image,
-			data,
-			vacation,
-			group_change,
 			salary,
-			is_trial,
-			status,
 			rollcalls,
 			loading
 		} = this.state;

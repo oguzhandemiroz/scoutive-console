@@ -26,11 +26,6 @@ const statusType = {
 	3: "bg-indigo"
 };
 
-const initialState = {
-	vacation: false,
-	group_change: false
-};
-
 export class Detail extends Component {
 	constructor(props) {
 		super(props);
@@ -38,7 +33,6 @@ export class Detail extends Component {
 		this.state = {
 			uid: localStorage.getItem("UID"),
 			to: props.match.params.uid,
-			...initialState,
 			image: "",
 			name: "—",
 			email: "—",
@@ -123,8 +117,6 @@ export class Detail extends Component {
 			fee,
 			branch,
 			birthday,
-			vacation,
-			group_change,
 			address,
 			body,
 			gender,
@@ -245,15 +237,11 @@ export class Detail extends Component {
 								<ActionButton
 									vacationButton={data =>
 										this.setState({
-											...initialState,
-											vacation: true,
 											data: data
 										})
 									}
 									groupChangeButton={data =>
 										this.setState({
-											...initialState,
-											group_change: true,
 											data: data
 										})
 									}
@@ -268,8 +256,8 @@ export class Detail extends Component {
 									}}
 								/>
 
-								<Vacation data={data} visible={vacation} history={this.props.history} />
-								<GroupChange data={data} visible={group_change} history={this.props.history} />
+								<Vacation data={data} history={this.props.history} />
+								<GroupChange data={data} history={this.props.history} />
 							</div>
 						</div>
 					</div>

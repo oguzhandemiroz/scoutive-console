@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { DetailPlayer, ListPlayerFees } from "../../services/Player";
 import { fullnameGenerator, formatDate, formatMoney, nullCheck } from "../../services/Others";
 import { CreatePaymentFee, UpdatePaymentFee, ListFees } from "../../services/PlayerAction";
+import { GetBudgets } from "../../services/FillSelect";
 import { Link } from "react-router-dom";
 import Vacation from "../PlayerAction/Vacation";
 import GroupChange from "../PlayerAction/GroupChange";
@@ -28,11 +29,6 @@ const statusType = {
 	3: "bg-indigo"
 };
 
-const initialState = {
-	vacation: false,
-	group_change: false
-};
-
 export class FeeDetail extends Component {
 	constructor(props) {
 		super(props);
@@ -40,7 +36,6 @@ export class FeeDetail extends Component {
 		this.state = {
 			uid: localStorage.getItem("UID"),
 			to: props.match.params.uid,
-			...initialState,
 			data: {},
 			loading: "active"
 		};
@@ -49,6 +44,7 @@ export class FeeDetail extends Component {
 	componentDidMount() {
 		this.getPlayerDetail();
 		this.listPlayerFees();
+		this.listBudgets();
 	}
 
 	getPlayerDetail = () => {
@@ -71,6 +67,7 @@ export class FeeDetail extends Component {
 
 	listPlayerFees = () => {
 		const { uid, to } = this.state;
+		this.setState({ loading: "active" });
 		ListPlayerFees({
 			uid: uid,
 			to: to
@@ -79,7 +76,7 @@ export class FeeDetail extends Component {
 				const status = response.status;
 				const data = response.data;
 				if (status.code === 1020) {
-					this.setState({ fees: data.reverse() });
+					this.setState({ fees: data.reverse(), loading: "" });
 				}
 			}
 		});
@@ -99,7 +96,7 @@ export class FeeDetail extends Component {
 	};
 
 	completeFee = data => {
-		const { uid, to, player, fee, paid_date, period, month, payment_type, budget } = this.state;
+		const { uid, to, name, surname, fee, paid_date, period, month, payment_type, budget } = this.state;
 		if (fee === null) {
 			Toast.fire({
 				type: "error",
@@ -111,9 +108,10 @@ export class FeeDetail extends Component {
 		showSwal({
 			type: "question",
 			title: "Ödeme Tutarı",
-			html: `<b>${
-				player.label
-			}</b> adlı öğrencinin, <b>${totalDept.format()} ₺</b> tutarında borcu bulunmaktadır.<hr>Ne kadarını ödemek istiyorsunuz?`,
+			html: `<b>${fullnameGenerator(
+				name,
+				surname
+			)}</b> adlı öğrencinin, <b>${totalDept.format()} ₺</b> tutarında borcu bulunmaktadır.<hr>Ne kadarını ödemek istiyorsunuz?`,
 			input: "number",
 			inputValue: totalDept,
 			inputAttributes: {
@@ -126,9 +124,10 @@ export class FeeDetail extends Component {
 						showSwal({
 							type: "info",
 							title: "Bilgi",
-							html: `<b>${
-								player.label
-							}</b> adlı öğrencinin, <b>${totalDept.format()} ₺</b> tutarındaki borcu için toplamda <b>${parseFloat(
+							html: `<b>${fullnameGenerator(
+								name,
+								surname
+							)}</b> adlı öğrencinin, <b>${totalDept.format()} ₺</b> tutarındaki borcu için toplamda <b>${parseFloat(
 								value
 							).format()} ₺</b> ödeme yapılacaktır.<br>
 			Onaylıyor musunuz?`,
@@ -142,7 +141,7 @@ export class FeeDetail extends Component {
 							if (re.value) {
 								UpdatePaymentFee({
 									uid: uid,
-									to: player.value,
+									to: to,
 									fee_id: data.fee_id,
 									amount: parseFloat(value.replace(",", ".")),
 									paid_date: moment().format("YYYY-MM-DD"),
@@ -150,7 +149,7 @@ export class FeeDetail extends Component {
 									budget_id: budget.value
 								}).then(response => {
 									if (response) {
-										this.listPastPayment(to);
+										this.listPlayerFees();
 									}
 								});
 							}
@@ -161,6 +160,20 @@ export class FeeDetail extends Component {
 				});
 			}
 		});
+	};
+
+	listBudgets = () => {
+		try {
+			GetBudgets().then(response => {
+				this.setState(prevState => ({
+					select: {
+						...prevState.select,
+						budgets: response
+					},
+					budget: response.find(x => x.default === 1) || null
+				}));
+			});
+		} catch (e) {}
 	};
 
 	render() {
@@ -181,8 +194,6 @@ export class FeeDetail extends Component {
 			group,
 			image,
 			data,
-			vacation,
-			group_change,
 			is_trial,
 			status,
 			fees,
@@ -304,15 +315,11 @@ export class FeeDetail extends Component {
 								<ActionButton
 									vacationButton={data =>
 										this.setState({
-											...initialState,
-											vacation: true,
 											data: data
 										})
 									}
 									groupChangeButton={data =>
 										this.setState({
-											...initialState,
-											group_change: true,
 											data: data
 										})
 									}
@@ -327,8 +334,8 @@ export class FeeDetail extends Component {
 									}}
 								/>
 
-								<Vacation data={data} visible={vacation} history={this.props.history} />
-								<GroupChange data={data} visible={group_change} history={this.props.history} />
+								<Vacation data={data} history={this.props.history} />
+								<GroupChange data={data} history={this.props.history} />
 							</div>
 						</div>
 					</div>

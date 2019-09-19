@@ -31,11 +31,6 @@ var statusType = {
 	3: { bg: "bg-indigo", title: "Deneme" }
 };
 
-const initialState = {
-	vacation: false,
-	group_change: false
-};
-
 const filteredList = () => {
 	if (!document.getElementById("clearFilter")) {
 		$("div.filterTools").append(
@@ -65,8 +60,7 @@ class Table extends Component {
 		this.state = {
 			uid: localStorage.getItem("UID"),
 			data: {},
-			filter: {},
-			...initialState
+			filter: {}
 		};
 	}
 
@@ -215,15 +209,11 @@ class Table extends Component {
 									<ActionButton
 										vacationButton={data =>
 											this.setState({
-												...initialState,
-												vacation: true,
 												data: data
 											})
 										}
 										groupChangeButton={data =>
 											this.setState({
-												...initialState,
-												group_change: true,
 												data: data
 											})
 										}
@@ -411,7 +401,7 @@ class Table extends Component {
 	}
 
 	render() {
-		const { vacation, group_change, data } = this.state;
+		const { data } = this.state;
 		return (
 			<div>
 				<table
@@ -434,9 +424,9 @@ class Table extends Component {
 						</tr>
 					</thead>
 				</table>
-				{<Vacation data={data} visible={vacation} history={this.props.history} />}
-				{<GroupChange data={data} visible={group_change} history={this.props.history} />}
-				{<ListFilter filterState={this.generateFilter} />}
+				<Vacation data={data} history={this.props.history} />
+				<GroupChange data={data} history={this.props.history} />
+				<ListFilter filterState={this.generateFilter} />
 			</div>
 		);
 	}
