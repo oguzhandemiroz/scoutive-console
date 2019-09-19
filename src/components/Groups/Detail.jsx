@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import List from "./List";
 import { DetailGroup, ListPlayers, DeleteGroup } from "../../services/Group";
-import { CreateRollcall } from "../../services/Rollcalls";
+import { nullCheck, formatDate, fullnameGenerator } from "../../services/Others";
 import { Toast, showSwal } from "../Alert";
 import { Link } from "react-router-dom";
 import moment from "moment";
@@ -21,16 +21,8 @@ export class Detail extends Component {
 
 		this.state = {
 			uid: localStorage.getItem("UID"),
-			detail: {
-				name: "—",
-				age: "—",
-				time: "—",
-				created_date: null,
-				employee: {},
-				image: null
-			},
 			players: [],
-			loadingData: true,
+			loading: "active",
 			onLoadedData: true,
 			loadingButton: false
 		};
@@ -45,7 +37,7 @@ export class Detail extends Component {
 	componentWillReceiveProps(nextProps) {
 		if (nextProps.match.params.gid !== this.props.match.params.gid) {
 			this.setState({
-				loadingData: true
+				loading: "active"
 			});
 			this.renderGroupDetail(nextProps.match.params.gid);
 			this.renderPlayerList(nextProps.match.params.gid);
@@ -63,8 +55,8 @@ export class Detail extends Component {
 					const status = response.status;
 					if (status.code === 1020) {
 						this.setState({
-							detail: response.data,
-							loadingData: false
+							...response.data,
+							loading: ""
 						});
 					}
 				}
@@ -85,58 +77,9 @@ export class Detail extends Component {
 					const status = response.status;
 					if (status.code === 1020) {
 						const data = response.data;
-						this.setState({ players: data, loadingData: false });
+						this.setState({ players: data, loading: "" });
 					}
 				}
-			});
-		} catch (e) {}
-	};
-
-	createRollcall = () => {
-		try {
-			const { uid } = this.state;
-			const { gid } = this.props.match.params;
-			this.setState({
-				loadingButton: true
-			});
-			CreateRollcall({
-				uid: uid,
-				group_id: parseInt(gid),
-				type: 0
-			}).then(response => {
-				if (response) {
-					const status = response.status;
-					if (status.code === 1020) {
-						Toast.fire({
-							type: "success",
-							title: "İşlem başarılı..."
-						});
-						this.props.history.push({
-							pathname: `/app/rollcalls/player/add/${gid}`,
-							state: { rcid: response.rollcall_id }
-						});
-					} else if (status.code === 2010) {
-						showSwal({
-							type: "warning",
-							title: "Uyarı",
-							text: status.description,
-							reverseButtons: true,
-							showCancelButton: true,
-							confirmButtonText: "Yoklamaya devam et",
-							cancelButtonText: "Kapat"
-						}).then(result => {
-							if (result.value) {
-								this.props.history.push({
-									pathname: `/app/rollcalls/player/add/${gid}`,
-									state: { rcid: response.rollcall_id }
-								});
-							}
-						});
-					}
-				}
-				this.setState({
-					loadingButton: false
-				});
 			});
 		} catch (e) {}
 	};
@@ -144,12 +87,12 @@ export class Detail extends Component {
 	deleteGroup = e => {
 		try {
 			e.preventDefault();
-			const { uid, detail } = this.state;
+			const { uid, name } = this.state;
 			const { gid } = this.props.match.params;
 			showSwal({
 				type: "warning",
 				title: "Emin misiniz?",
-				html: `<b>${detail.name || ""}</b> adlı grubu silmek istediğinize emin misiniz?`,
+				html: `<b>${name || ""}</b> adlı grubu silmek istediğinize emin misiniz?`,
 				confirmButtonText: "Evet",
 				cancelButtonText: "Hayır",
 				cancelButtonColor: "#868e96",
@@ -180,7 +123,7 @@ export class Detail extends Component {
 
 	render() {
 		const { gid } = this.props.match.params;
-		const { detail, loadingData, players, onLoadedData, loadingButton } = this.state;
+		const { name, area, start_time, end_time, age, employee, loading, created_date, image, players } = this.state;
 		return (
 			<div className="container">
 				<div className="page-header">
@@ -193,30 +136,26 @@ export class Detail extends Component {
 							Grup Ekle
 						</Link>
 						<List match={this.props.match} />
-						<div className="d-none d-lg-block mt-6">
-							<Link to="/app/groups" className="text-muted float-right">
-								Başa dön
-							</Link>
-						</div>
 					</div>
 
 					<div className="col-lg-9">
 						<div className="card">
 							<div className="card-header">
 								<div className="card-status bg-teal" />
-								<h3 className="card-title">{detail.name || ""}</h3>
+								<h3 className="card-title">{nullCheck(name, "—")}</h3>
 								<div className="card-options">
 									<span
 										className="tag tag-gray-dark"
 										data-original-title="Antrenman Saati"
 										data-offset="-35"
 										data-toggle="tooltip">
-										{detail.time.slice(0, -3)}
+										{start_time ? moment(start_time, "HH:mm").format("HH:mm") : ""} &mdash;{" "}
+										{end_time ? moment(end_time, "HH:mm").format("HH:mm") : ""}
 									</span>
 								</div>
 							</div>
 							<div className="card-body">
-								<div className={`dimmer ${loadingData ? "active" : ""}`}>
+								<div className={`dimmer ${loading}`}>
 									<div className="loader" />
 									<div className="dimmer-content">
 										<div className="row">
@@ -227,25 +166,29 @@ export class Detail extends Component {
 														border: "none",
 														outline: "none",
 														fontSize: ".875rem",
-														backgroundImage: `url(${detail.image})`
+														backgroundImage: `url(${image})`
 													}}>
-													{detail.image ? "" : "Logo"}
+													{image ? "" : "Logo"}
 												</span>
 											</div>
-											<div className="col d-flex flex-column justify-content-center">
-												<div className="form-inline">
+											<div className="col d-flex flex-column">
+												<div className="form-inline mb-1">
 													<label className="form-label">Grup Yaş Aralığı: </label>
-													<div className="ml-2">{detail.age}</div>
+													<div className="ml-2">{age}</div>
 												</div>
-												<div className="form-inline">
+												<div className="form-inline mb-1">
+													<label className="form-label">Antrenman Sahası:</label>
+													<div className="ml-2">{area ? area.name : "—"}</div>
+												</div>
+											</div>
+											<div className="col d-flex flex-column">
+												<div className="form-inline mb-1">
 													<label className="form-label">Sorumlu Antrenör: </label>
-													{detail.employee ? (
+													{employee ? (
 														<Link
-															to={"/app/employees/detail/" + detail.employee.uid}
+															to={"/app/employees/detail/" + employee.uid}
 															className="ml-2">
-															{(detail.employee.name || "") +
-																" " +
-																(detail.employee.surname || "")}
+															{fullnameGenerator(employee.name, employee.surname)}
 														</Link>
 													) : (
 														<span className="ml-2">&mdash;</span>
@@ -253,8 +196,8 @@ export class Detail extends Component {
 												</div>
 											</div>
 										</div>
-										<div className="row mt-5">
-											<div className="col-12 mt-3">
+										<div className="row mt-1">
+											<div className="col-12">
 												<label
 													className="form-label text-center"
 													style={{ fontSize: "1.15rem" }}>
@@ -338,8 +281,8 @@ export class Detail extends Component {
 									<div className="dropdown-menu">
 										<Link
 											to={{
-												pathname: "/app/groups/edit/" + gid,
-												state: { type: "edit", detailGroup: detail }
+												pathname: "/app/groups/edit/" + gid
+												//state: { type: "edit", detailGroup: detail }
 											}}
 											className="dropdown-item">
 											<i className="fe fe-edit mr-2"></i> Grubu Düzenle
@@ -351,7 +294,7 @@ export class Detail extends Component {
 									<div className="ml-auto d-flex align-items-center">
 										Oluşturma tarihi:
 										<strong className="m-2 font-italic">
-											{detail.created_date ? moment(detail.created_date).format("LLL") : "—"}
+											{created_date ? moment(created_date).format("LLL") : "—"}
 										</strong>
 									</div>
 								</div>

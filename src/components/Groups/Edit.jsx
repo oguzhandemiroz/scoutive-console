@@ -3,50 +3,25 @@ import Select, { components } from "react-select";
 import { withRouter, Link } from "react-router-dom";
 import { UpdateGroup, ListPlayers, DetailGroup } from "../../services/Group";
 import { UpdatePlayers } from "../../services/Player";
-import { Hours, Minutes, DateRange, GetEmployees, GetPlayers } from "../../services/FillSelect";
-import { getSelectValue, UploadFile, groupAgeSplit } from "../../services/Others";
+import { Areas, GetEmployees, GetPlayers } from "../../services/FillSelect";
+import { selectCustomStyles, selectCustomStylesError, formValid } from "../../assets/js/core";
+import { getSelectValue, UploadFile, nullCheck, fullnameGenerator } from "../../services/Others";
 import { Toast, showSwal } from "../../components/Alert";
 import List from "./List";
 import moment from "moment";
 import "moment/locale/tr";
 
-const formValid = ({ formErrors, ...rest }) => {
-	let valid = true;
-
-	Object.values(formErrors).forEach(val => {
-		val.length > 0 && (valid = false);
-	});
-
-	Object.values(rest).forEach(val => {
-		val === null && (valid = false);
-	});
-
-	return valid;
-};
-
-const customStyles = {
-	control: styles => ({ ...styles, borderColor: "rgba(0, 40, 100, 0.12)", borderRadius: 3 })
-};
-
-const customStylesError = {
-	control: styles => ({
-		...styles,
-		borderColor: "#cd201f",
-		borderRadius: 3,
-		":hover": { ...styles[":hover"], borderColor: "#cd201f" }
-	})
-};
-
 const { Option } = components;
 const ImageOptionPlayer = props => (
 	<Option {...props}>
 		<span className="avatar avatar-sm mr-2" style={{ backgroundImage: `url(${props.data.image})` }} />
-		{props.data.label} ({props.data.birthday? moment(props.data.birthday).format("YYYY") : null})
+		{props.data.label} ({props.data.birthday ? moment(props.data.birthday).format("YYYY") : null})
 		<div className="small text-muted mt-1">
 			Mevcut Grup: <b className="text-blue">{props.data.group || "—"}</b>
 		</div>
 	</Option>
 );
+
 const ImageOptionEmployee = props => (
 	<Option {...props}>
 		<span className="avatar avatar-sm mr-2" style={{ backgroundImage: `url(${props.data.image})` }} />
@@ -57,22 +32,12 @@ const ImageOptionEmployee = props => (
 	</Option>
 );
 
-const initialState = {
-	name: null,
-	hour: null,
-	minute: null,
-	employee: null,
-	imagePreview: null,
-	players: null
-};
-
 export class Edit extends Component {
 	_isMounted = false;
 	constructor(props) {
 		super(props);
 		this.state = {
 			uid: localStorage.getItem("UID"),
-			...initialState,
 			select: {
 				hours: null,
 				minutes: null,
@@ -87,10 +52,10 @@ export class Edit extends Component {
 				end_age: "",
 				employee: ""
 			},
-			group_id: null,
 			uploadedFile: true,
 			loadingButton: "",
-			onLoadedData: false,
+			loadingImage: "",
+			loading: "active",
 			players: [],
 			playerList: [],
 			addGroup: [],
@@ -119,7 +84,7 @@ export class Edit extends Component {
 									placeholder="Seç..."
 									name="player"
 									autosize
-									styles={customStyles}
+									styles={selectCustomStyles}
 									options={select.players}
 									noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
 									components={{ Option: ImageOptionPlayer }}
@@ -173,53 +138,9 @@ export class Edit extends Component {
 	};
 
 	componentDidMount() {
-		const { uid, select } = this.state;
-		const { gid } = this.props.match.params;
-		const stateData = {};
-
-		select.hours = Hours();
-		select.minutes = Minutes();
-
-		this.setState({ select });
-
-		Promise.all([
-			GetEmployees(),
-			GetPlayers(),
-			DetailGroup({
-				uid: uid,
-				group_id: parseInt(gid)
-			})
-		]).then(([responseEmployees, responsePlayers, reponseDetail]) => {
-			if (responseEmployees) {
-				select.employees = responseEmployees;
-				this.setState({ select });
-			}
-			if (responsePlayers) {
-				select.players = responsePlayers;
-				this.setState({ select }, () => {
-					this.renderPlayerList();
-				});
-			}
-			if (reponseDetail) {
-				const status = reponseDetail.status;
-				console.log(reponseDetail);
-				if (status.code === 1020) {
-					const data = reponseDetail.data;
-					stateData.name = data.name;
-					stateData.hour = getSelectValue(select.hours, data.time.slice(0, 2), "label");
-					stateData.minute = getSelectValue(select.minutes, data.time.slice(3, -3), "label");
-					stateData.employee = getSelectValue(
-						responseEmployees,
-						data.employee ? data.employee.employee_id : null,
-						"value"
-					);
-					stateData.start_age = groupAgeSplit(data.age).start;
-					stateData.end_age = groupAgeSplit(data.age).end;
-					stateData.imagePreview = data.image ? data.image : null;
-					this.setState({ ...stateData, onLoadedData: true });
-				}
-			}
-		});
+		this.getFillSelect();
+		this.renderPlayerList();
+		this.getGroupDetail();
 	}
 
 	renderPlayerList = () => {
@@ -254,32 +175,36 @@ export class Edit extends Component {
 			const {
 				uid,
 				name,
-				hour,
-				minute,
+				start_time,
+				end_time,
 				employee,
 				image,
 				players,
-				addGroup,
+				area,
 				start_age,
 				end_age,
-				removeGroup,
-				formErrors
+				removeGroup
 			} = this.state;
 			const { gid } = this.props.match.params;
 
-			const requiredData = {};
+			const require = { ...this.state };
+			delete require.imagePreview;
+			delete require.image;
+			delete require.area;
+
 			const playersArr = [];
 
-			//required data
-			requiredData.name = name;
-			requiredData.hour = hour;
-			requiredData.minute = minute;
-			requiredData.employee = employee;
-			requiredData.start_age = start_age;
-			requiredData.end_age = end_age;
-			requiredData.formErrors = formErrors;
-
-			if (formValid(requiredData)) {
+			if (
+				moment(end_time, "HH:mm", true).isValid("HH:mm") &&
+				moment(start_time, "HH:mm", true).isValid("HH:mm") &&
+				!moment(end_time, "HH:mm").isAfter(moment(start_time, "HH:mm"))
+			) {
+				Toast.fire({
+					type: "warning",
+					title: "Bitiş saati, Başlangıç saatinden büyük olmalı!",
+					timer: 3000
+				});
+			} else if (formValid(require)) {
 				this.setState({ loadingButton: "btn-loading" });
 				players.map(el => {
 					if (el.security_id && el.security_id !== "") playersArr.push(el.security_id);
@@ -292,10 +217,12 @@ export class Edit extends Component {
 						group_id: gid,
 						uid: uid,
 						name: name,
-						time: `${hour.value}:${minute.value}`,
+						start_time: start_time,
+						end_time: end_time,
 						employee_id: employee.value,
 						age: `${start_age}-${end_age}`,
-						image: image
+						image: image,
+						area_id: area ? area.value : 1
 					}),
 					UpdatePlayers({
 						uid: uid,
@@ -319,9 +246,6 @@ export class Edit extends Component {
 						}
 					})
 				]).then(([responseGroup, responsePlayers, responsePlayersRemove]) => {
-					console.log(responseGroup);
-					console.log(responsePlayers);
-					console.log(responsePlayersRemove);
 					if (responseGroup && responsePlayers && responsePlayersRemove) {
 						if (
 							responseGroup.status.code === 1020 &&
@@ -338,17 +262,17 @@ export class Edit extends Component {
 					}
 				});
 			} else {
-				console.error("FORM INVALID - DISPLAY ERROR");
-				let formErrors = { ...this.state.formErrors };
-
-				formErrors.name = !name ? "is-invalid" : "";
-				formErrors.hour = hour ? "" : true;
-				formErrors.minute = minute ? "" : true;
-				formErrors.employee = employee ? "" : true;
-				formErrors.start_age = start_age ? "" : "is-invalid";
-				formErrors.end_age = end_age ? "" : "is-invalid";
-
-				this.setState({ formErrors });
+				this.setState(prevState => ({
+					formErrors: {
+						...prevState.formErrors,
+						employee: employee ? false : true,
+						name: name ? "" : "is-invalid",
+						start_time: moment(start_time, "HH:mm", true).isValid("HH:mm") ? "" : "is-invalid-iconless",
+						end_time: moment(end_time, "HH:mm", true).isValid("HH:mm") ? "" : "is-invalid-iconless",
+						start_age: start_age ? "" : "is-invalid",
+						end_age: end_age ? "" : "is-invalid"
+					}
+				}));
 			}
 		} catch (e) {}
 	};
@@ -357,13 +281,17 @@ export class Edit extends Component {
 		try {
 			e.preventDefault();
 			const { value, name } = e.target;
-			const formErrors = { ...this.state.formErrors };
+			let formErrors = { ...this.state.formErrors };
 
 			switch (name) {
-				case "name":
-					formErrors.name = !value ? "is-invalid" : "";
+				case "start_time":
+					formErrors[name] = moment(value, "HH:mm", true).isValid("HH:mm") ? "" : "is-invalid-iconless";
+					break;
+				case "end_time":
+					formErrors[name] = moment(value, "HH:mm", true).isValid("HH:mm") ? "" : "is-invalid-iconless";
 					break;
 				default:
+					formErrors[name] = value ? "" : "is-invalid";
 					break;
 			}
 			this.setState({ formErrors, [name]: value });
@@ -383,7 +311,7 @@ export class Edit extends Component {
 					this.setState({
 						imagePreview: reader.result
 					});
-					this.setState({ uploadedFile: false, loadingButton: "btn-loading" });
+					this.setState({ loadingImage: "btn-loading", loadingButton: "btn-loading" });
 				}
 				formData.append("image", file);
 				formData.append("uid", uid);
@@ -399,9 +327,9 @@ export class Edit extends Component {
 									title: "Görsel yüklenemedi..."
 								});
 						}
-						this.setState({ uploadedFile: true, loadingButton: "" });
+						this.setState({ loadingImage: "", loadingButton: "" });
 					})
-					.catch(e => this.setState({ uploadedFile: true, loadingButton: "" }));
+					.catch(e => this.setState({ loadingImage: "", loadingButton: "" }));
 			};
 
 			reader.readAsDataURL(file);
@@ -421,11 +349,73 @@ export class Edit extends Component {
 		}
 	};
 
+	getGroupDetail = () => {
+		const { uid } = this.state;
+		const { gid } = this.props.match.params;
+		DetailGroup({
+			uid: uid,
+			group_id: parseInt(gid)
+		}).then(response => {
+			if (response) {
+				const status = response.status;
+				const data = response.data;
+				if (status.code === 1020) {
+					this.setState({
+						...data,
+						start_time: moment(data.start_time, "HH:mm").format("HH:mm"),
+						end_time: moment(data.end_time, "HH:mm").format("HH:mm"),
+						start_age: data.age.split("-")[0],
+						end_age: data.age.split("-")[1],
+						area: data.area ? { label: data.area.name, value: data.area.area_id } : null,
+						employee: data.employee
+							? {
+									label: fullnameGenerator(data.employee.name, data.employee.surname),
+									value: data.employee.security_id
+							  }
+							: null,
+
+						loading: ""
+					});
+				}
+			}
+		});
+	};
+
+	getFillSelect = () => {
+		Areas().then(response => {
+			this.setState(prevState => ({
+				select: {
+					...prevState.select,
+					areas: response
+				}
+			}));
+		});
+
+		GetEmployees().then(response => {
+			this.setState(prevState => ({
+				select: {
+					...prevState.select,
+					employees: response
+				}
+			}));
+		});
+
+		GetPlayers().then(response => {
+			this.setState(prevState => ({
+				select: {
+					...prevState.select,
+					players: response
+				}
+			}));
+		});
+	};
+
 	render() {
 		const {
 			name,
-			hour,
-			minute,
+			start_time,
+			end_time,
+			area,
 			employee,
 			start_age,
 			end_age,
@@ -434,8 +424,9 @@ export class Edit extends Component {
 			imagePreview,
 			playerList,
 			loadingButton,
+			loadingImage,
 			formErrors,
-			onLoadedData
+			loading
 		} = this.state;
 		return (
 			<div className="container">
@@ -449,11 +440,6 @@ export class Edit extends Component {
 							Grup Ekle
 						</Link>
 						<List match={this.props.match} />
-						<div className="d-none d-lg-block mt-6">
-							<Link to="/app/groups" className="text-muted float-right">
-								Başa dön
-							</Link>
-						</div>
 					</div>
 
 					<div className="col-lg-9">
@@ -468,56 +454,50 @@ export class Edit extends Component {
 										placeholder="Grup Adı *"
 										name="name"
 										onChange={this.handleChange}
-										value={name || ""}
+										value={nullCheck(name, "—")}
 									/>
 								</h3>
 								<div className="card-options mr-0">
-									<div style={{ width: "5rem" }}>
-										<Select
-											value={hour}
-											isSearchable={true}
-											isDisabled={select.hours ? false : true}
-											onChange={val => this.handleSelect(val, "hour")}
-											placeholder="00"
-											name="hour"
-											autosize
-											styles={formErrors.hour === true ? customStylesError : customStyles}
-											options={select.hours}
-											noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
+									<div style={{ width: "4rem" }}>
+										<input
+											type="text"
+											name="start_time"
+											className={`form-control ${formErrors.start_time} text-center`}
+											placeholder="08:00"
+											data-toggle="tooltip"
+											title="Antrenman Başlangıç Saati"
+											onChange={this.handleChange}
+											value={start_time}
 										/>
 									</div>
 									<span
 										className="mx-2 font-weight-bold d-flex align-items-center"
-										style={{ fontSize: "1.3rem" }}>
-										:
+										style={{ fontSize: ".75rem", color: "#6e7687" }}>
+										&mdash;
 									</span>
-									<div style={{ width: "5rem" }}>
-										<Select
-											value={minute}
-											isSearchable={true}
-											isDisabled={select.minutes ? false : true}
-											onChange={val => this.handleSelect(val, "minute")}
-											placeholder="00"
-											name="minute"
-											autosize
-											styles={formErrors.minute === true ? customStylesError : customStyles}
-											options={select.minutes}
-											noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
+									<div style={{ width: "4rem" }}>
+										<input
+											type="text"
+											name="end_time"
+											className={`form-control ${formErrors.end_time} text-center`}
+											placeholder="08:30"
+											data-toggle="tooltip"
+											title="Antrenman Bitiş Saati"
+											onChange={this.handleChange}
+											value={end_time}
 										/>
 									</div>
 								</div>
 							</div>
 							<div className="card-body">
-								<div className={`dimmer ${!onLoadedData ? "active" : ""}`}>
+								<div className={`dimmer ${loading}`}>
 									<div className="loader" />
 									<div className="dimmer-content">
 										<div className="row">
 											<div className="col-auto">
 												<label
 													htmlFor="image"
-													className={`avatar ${
-														uploadedFile ? "" : "btn-loading"
-													} avatar-xxxl cursor-pointer disabled`}
+													className={`avatar ${loadingImage} avatar-xxxl cursor-pointer disabled`}
 													style={{
 														border: "none",
 														outline: "none",
@@ -551,7 +531,7 @@ export class Edit extends Component {
 																className={`form-control ${formErrors.start_age}`}
 																name="start_age"
 																onChange={this.handleChange}
-																value={start_age || ""}
+																value={nullCheck(start_age)}
 															/>
 														</div>
 														<span
@@ -568,16 +548,36 @@ export class Edit extends Component {
 																className={`form-control ${formErrors.end_age}`}
 																name="end_age"
 																onChange={this.handleChange}
-																value={end_age || ""}
+																value={nullCheck(end_age)}
 															/>
 														</div>
 													</div>
 												</div>
+												<div className="form-group">
+													<label className="form-label">Antrenman Sahası</label>
+													<Select
+														value={area}
+														options={select.areas}
+														isSearchable={true}
+														isDisabled={select.areas ? false : true}
+														isLoading={select.areas ? false : true}
+														placeholder="Seç..."
+														onChange={val => this.handleSelect(val, "area")}
+														name="area"
+														autosize
+														styles={
+															formErrors.areas === true
+																? selectCustomStylesError
+																: selectCustomStyles
+														}
+														noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
+													/>
+												</div>
 											</div>
-											<div className="col d-flex flex-column justify-content-center">
+											<div className="col d-flex flex-column justify-content-start">
 												<div className="form-group">
 													<label className="form-label">
-														Sorumlu Antrenör:
+														Sorumlu Antrenör
 														<span className="form-required">*</span>
 													</label>
 													<Select
@@ -590,8 +590,8 @@ export class Edit extends Component {
 														autosize
 														styles={
 															formErrors.employee === true
-																? customStylesError
-																: customStyles
+																? selectCustomStylesError
+																: selectCustomStyles
 														}
 														options={select.employees}
 														noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}

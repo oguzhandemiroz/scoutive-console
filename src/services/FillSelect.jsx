@@ -99,6 +99,43 @@ const Branchs = () => {
     } catch (e) {}
 };
 
+
+const Areas = () => {
+    try {
+        return fetch(ep.AREA, {
+            method: "POST",
+            body: JSON.stringify({
+                uid: localStorage.getItem("UID")
+            }),
+            headers: h
+        })
+            .then(res => res.json())
+            .then(response => {
+                const data = response.data;
+                const status = response.status;
+                const selectData = [];
+
+                if (status.code !== 1020) {
+                    Toast.fire({
+                        type: "error",
+                        title: '"Sahalar" yüklenemedi'
+                    });
+                } else {
+                    data.map(el => {
+                        const value = el.area_id;
+                        const label = el.name;
+                        selectData.push({
+                            value: value,
+                            label: label
+                        });
+                    })
+                    return selectData;
+                }
+            })
+            .catch(e => fatalSwal(true));
+    } catch (e) {}
+};
+
 const EmployeePositions = () => {
     try {
         return fetch(ep.EMPLOYEE_POSITION_TYPE, {
@@ -570,5 +607,6 @@ export {
     Minutes,
     GetEmployees,
     GetPlayers,
-    GetBudgets
+    GetBudgets,
+    Areas
 };

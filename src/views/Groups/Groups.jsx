@@ -17,11 +17,6 @@ export class Groups extends Component {
 							Grup Ekle
 						</Link>
 						<List match={this.props.match} />
-						<div className="d-none d-lg-block mt-6">
-							<Link to="/app/groups" className="text-muted float-right">
-								Başa dön
-							</Link>
-						</div>
 					</div>
 
 					<div className="col-lg-9">

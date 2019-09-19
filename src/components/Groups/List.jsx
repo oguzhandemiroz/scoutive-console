@@ -61,7 +61,7 @@ export class List extends Component {
                                               {el.name}
                                           </span>
                                           <span className="float-right tag tag-gray">
-                                              {el.time.slice(0, -3)}
+                                              {el.start_time.slice(0, -3)} - {el.end_time.slice(0, -3)}
                                           </span>
                                       </Link>
                                   );
