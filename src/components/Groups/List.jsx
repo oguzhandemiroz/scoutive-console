@@ -19,7 +19,7 @@ export class List extends Component {
                 if (response) {
                     let sortData = response.data;
                     sortData = sortData.sort((a, b) => {
-                        return parseInt(a.time) > parseInt(b.time) ? 1 : -1;
+                        return parseInt(a.start_time) > parseInt(b.start_time) ? 1 : -1;
                     });
                     this.setState({list: sortData});
                 }

@@ -155,14 +155,14 @@ export class ActionButton extends Component {
 			{
 				tag: "button",
 				elementAttr: {
-					className: "dropdown-item",
+					className: "dropdown-item cursor-not-allowed disabled",
 					onClick: () => this.props.passwordButton({ name: fullname, uid: uid })
 				},
 				childText: "Şifre Değiştir",
 				child: {
 					className: "dropdown-icon fa fa-key"
 				},
-				lock: false,
+				lock: lock,
 				condition: true
 			},
 			{

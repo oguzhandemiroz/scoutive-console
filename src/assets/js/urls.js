@@ -60,6 +60,8 @@ var ep = {
     CREATE_ROLLCALL: host + api_version + "create/rollcall",
     LIST_ROLLCALL: host + api_version + "list/rollcalls",
     ROLLCALL_MAKE: host + api_version + "create/rollcall/",
+    ROLLCALL_NOTE: host + api_version + "create/rollcall/",
+    ROLLCALL_DELETE: host + api_version + "delete/rollcall/",
     ROLLCALL_LIST_TYPE: host + api_version + "list/rollcall/",
     ROLLCALL_ACTIVE: host + api_version + "active/rollcall/",
     UPLOAD_FILE: host + api_version + "upload/file",

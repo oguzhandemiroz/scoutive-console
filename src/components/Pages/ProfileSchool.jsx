@@ -638,9 +638,9 @@ export class Profile extends Component {
 
                             <div className="card-footer text-right">
                                 <div className="d-flex" style={{justifyContent: "space-between"}}>
-                                    <a href="javascript:void(0)" className="btn btn-link">
+                                    <Link to={"/app/dashboard"} className="btn btn-link">
                                         İptal
-                                    </a>
+                                    </Link>
                                     <button
                                         style={{width: 100}}
                                         type="submit"

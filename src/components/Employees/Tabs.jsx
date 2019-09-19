@@ -21,11 +21,6 @@ const tabList = [
 		text: "Yoklama Geçmişi",
 		path: "rollcall",
 		icon: "fa fa-check-square"
-	},
-	{
-		text: "Zaman Çizelgesi",
-		path: "timeline",
-		icon: "fa fa-stream"
 	}
 ];
 

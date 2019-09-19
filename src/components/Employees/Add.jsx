@@ -304,7 +304,7 @@ export class Add extends Component {
 				uid: uid,
 				name: name,
 				surname: surname,
-				password: "0000",
+				password: "151117",
 				security_id: securityNo,
 				email: email,
 				permission_id: position.value,

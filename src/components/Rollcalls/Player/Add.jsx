@@ -1,20 +1,19 @@
 import React, { Component } from "react";
 import ReactDOM from "react-dom";
 import { BrowserRouter, Link } from "react-router-dom";
+import { MakeRollcall, SetNoteRollcall, DeleteRollcall } from "../../../services/Rollcalls";
+import { CreateVacation, UpdateVacation } from "../../../services/PlayerAction";
+import { fullnameGenerator } from "../../../services/Others";
+import { WarningModal as Modal } from "../WarningModal";
+import { datatable_turkish } from "../../../assets/js/core";
+import { fatalSwal, errorSwal, Toast, showSwal } from "../../Alert.jsx";
+import GroupChange from "../../PlayerAction/GroupChange";
+import Vacation from "../../PlayerAction/Vacation";
+import ep from "../../../assets/js/urls";
+import ActionButton from "../../Players/ActionButton";
 import Inputmask from "inputmask";
 import moment from "moment";
 import "moment/locale/tr";
-import { MakeRollcall } from "../../../services/Rollcalls";
-import { WarningModal as Modal } from "../WarningModal";
-import GroupChange from "../../PlayerAction/GroupChange";
-import Vacation from "../../PlayerAction/Vacation";
-import { CreateVacation, UpdateVacation } from "../../../services/PlayerAction";
-import { DeletePlayer, FreezePlayer, RefreshPlayer } from "../../../services/Player";
-import { datatable_turkish } from "../../../assets/js/core";
-import ep from "../../../assets/js/urls";
-import { fatalSwal, errorSwal, showSwal, Toast } from "../../Alert.jsx";
-import { fullnameGenerator } from "../../../services/Others";
-import ActionButton from "../../Players/ActionButton";
 import "../../../assets/css/datatables.responsive.css";
 const $ = require("jquery");
 $.DataTable = require("datatables.net-responsive");
@@ -206,10 +205,9 @@ export class Add extends Component {
 							2: { icon: "fe-alert-circle", badge: "bg-yellow-light", text: "Tam Gün" },
 							3: { icon: "fe-alert-circle", badge: "bg-yellow-light", text: "Yarın Gün" }
 						};
-
 						ReactDOM.render(
 							<div>
-								{cellData.rollcalls.reverse().map((el, key) => {
+								{cellData.rollcalls.map((el, key) => {
 									return (
 										<span
 											key={key.toString()}
@@ -278,7 +276,7 @@ export class Add extends Component {
 				{
 					targets: "status",
 					responsivePriority: 2,
-					class: "w-1",
+					class: "w-1 pr-0",
 					createdCell: (td, cellData, rowData) => {
 						const { uid } = rowData;
 						const { statuses, loadingButtons } = this.state;
@@ -336,14 +334,27 @@ export class Add extends Component {
 				{
 					targets: "note",
 					responsivePriority: 10003,
-					class: "pr-4 pl-1 w-1",
+					class: "py-1 text-center",
 					createdCell: (td, cellData, rowData) => {
-						const { uid, group, status, is_trial } = rowData;
+						const { uid, name, surname, note, daily } = rowData;
 						ReactDOM.render(
 							<BrowserRouter>
-								<Link to="#" className="icon">
-									<i className="fe fe-edit" />
-								</Link>
+								{daily !== -1 ? (
+									<span
+										onClick={() => this.removeRollcallStatus(uid)}
+										className="icon cursor-pointer"
+										data-toggle="tooltip"
+										title="Yoklamayı Kaldır">
+										<i className="fe fe-x" />
+									</span>
+								) : null}
+								<span
+									onClick={() => this.setRollcallNote(fullnameGenerator(name, surname), uid)}
+									className="icon cursor-pointer ml-2"
+									data-toggle="tooltip"
+									title={note ? "Not: " + note : "Not Gir"}>
+									<i className={`fe fe-edit ${note ? "text-orange" : ""}`} />
+								</span>
 							</BrowserRouter>,
 							td
 						);
@@ -727,6 +738,75 @@ export class Add extends Component {
 		}
 	};
 
+	setRollcallNote = (name, to) => {
+		const { uid } = this.state;
+		const { rcid } = this.props.match.params;
+		showSwal({
+			type: "info",
+			title: "Not Giriniz",
+			html: `<b>${name}</b> adlı öğrenci için not giriniz:`,
+			confirmButtonText: "Onayla",
+			showCancelButton: true,
+			cancelButtonText: "İptal",
+			confirmButtonColor: "#467fcf",
+			cancelButtonColor: "#868e96",
+			reverseButtons: true,
+			input: "text",
+			inputPlaceholder: "...",
+			inputAttributes: {
+				max: 100
+			},
+			inputValidator: value => {
+				return new Promise(resolve => {
+					if (value.length > 0 && value.length <= 100) {
+						SetNoteRollcall(
+							{
+								uid: uid,
+								to: to,
+								rollcall_id: rcid,
+								note: value
+							},
+							"player"
+						).then(response => {
+							if (response) {
+								if (response.status.code === 1020) {
+									Toast.fire({
+										type: "success",
+										title: "Not ekleme başarılı!"
+									});
+								} else {
+									Toast.fire({
+										type: "danger",
+										title: "Not ekleme başarısız!"
+									});
+								}
+								setTimeout(this.reload, 1000);
+							}
+						});
+					} else {
+						resolve("Hatalı değer!");
+					}
+				});
+			}
+		});
+	};
+
+	removeRollcallStatus = to => {
+		const { uid } = this.state;
+		const { rcid } = this.props.match.params;
+		DeleteRollcall({ uid: uid, to: to, rollcall_id: rcid }, "player").then(response =>
+			setTimeout(this.reload, 1000)
+		);
+	};
+
+	reload = () => {
+		const current = this.props.history.location.pathname;
+		this.props.history.replace(`/`);
+		setTimeout(() => {
+			this.props.history.replace(current);
+		});
+	};
+
 	render() {
 		const { data, vacation, group_change } = this.state;
 		console.log(vacation, group_change);
@@ -772,9 +852,9 @@ export class Add extends Component {
 												<th className="group">GRUP</th>
 												<th className="no-sort rollcalls">SON 3 YOKLAMA</th>
 												<th className="no-sort fees">SON 3 ÖDEME</th>
-												<th className="w-1 no-sort status">DURUM</th>
-												<th className="pr-2 w-1 no-sort note"></th>
-												<th className="pr-2 w-1 no-sort action"></th>
+												<th className="w-1 pr-0 no-sort status">DURUM</th>
+												<th className="pr-2 no-sort note"></th>
+												<th className="pr-0 w-1 no-sort action"></th>
 											</tr>
 										</thead>
 									</table>

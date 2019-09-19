@@ -122,7 +122,7 @@ export class Trial extends Component {
 				surname: surname,
 				security_id: security_id,
 				phone: phone,
-				password: "0000",
+				password: "151117",
 				note: note,
 				emergency: JSON.stringify(emergency)
 			}).then(response => {

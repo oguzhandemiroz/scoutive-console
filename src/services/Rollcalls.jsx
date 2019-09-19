@@ -48,37 +48,6 @@ const ListRollcallType = (data, type) => {
 	}
 };
 
-const CompleteRollcall = uid => {
-	try {
-		/*return fetch(ep.COMPLETE_ROLLCALL, {
-			method: "POST",
-			body: JSON.stringify({
-				uid: uid
-			}),
-			headers: h
-		})
-			.then(res => res.json())
-			.then(response => {
-				if (response) {
-					const status = response.status;
-					if (status.code !== 1020) errorSwal();
-					return response;
-				}
-			})
-            .catch(e => fatalSwal(true));*/
-		return fetch("https://scoutive.online").then(res => {
-			return {
-				status: {
-					code: 1020,
-					description: "İşlem başarılı"
-				}
-			};
-		});
-	} catch (e) {
-		fatalSwal(true);
-	}
-};
-
 const CreateRollcall = data => {
 	try {
 		/*
@@ -132,6 +101,57 @@ const MakeRollcall = (data, type) => {
 	} catch (e) {}
 };
 
+const SetNoteRollcall = (data, type) => {
+	try {
+		/*
+			- type 0 -> player
+			- type 1 -> employee
+		*/
+		return fetch(ep.ROLLCALL_NOTE + type + "/note", {
+			method: "POST",
+			body: JSON.stringify(data),
+			headers: h
+		})
+			.then(res => res.json())
+			.then(response => {
+				if (response) {
+					const status = response.status;
+					if (status.code !== 1020) errorSwal(status);
+					return response;
+				}
+			})
+			.catch(e => fatalSwal(true));
+	} catch (e) {}
+};
+
+const DeleteRollcall = (data, type) => {
+	try {
+		/*
+			- type 0 -> player
+			- type 1 -> employee
+		*/
+		return fetch(ep.ROLLCALL_DELETE + type, {
+			method: "POST",
+			body: JSON.stringify(data),
+			headers: h
+		})
+			.then(res => res.json())
+			.then(response => {
+				if (response) {
+					const status = response.status;
+					if (status.code !== 1020) errorSwal(status);
+					else if (status.code === 1020)
+						Toast.fire({
+							type: "success",
+							title: "İşlem başarılı..."
+						});
+					return response;
+				}
+			})
+			.catch(e => fatalSwal(true));
+	} catch (e) {}
+};
+
 const ActiveRollcall = (data, type) => {
 	try {
 		/*
@@ -157,4 +177,12 @@ const ActiveRollcall = (data, type) => {
 	}
 };
 
-export { CompleteRollcall, CreateRollcall, ListRollcall, ListRollcallType, MakeRollcall, ActiveRollcall };
+export {
+	CreateRollcall,
+	ListRollcall,
+	DeleteRollcall,
+	SetNoteRollcall,
+	ListRollcallType,
+	MakeRollcall,
+	ActiveRollcall
+};

@@ -109,7 +109,6 @@ const noRow = loading =>
 	);
 
 const initialState = {
-	salary_date: new Date(),
 	paid_date: new Date(),
 	salary: null,
 	employee: null,
@@ -126,7 +125,6 @@ export class Salary extends Component {
 			...initialState,
 			formErrors: {
 				employee: "",
-				salary_date: "",
 				paid_date: ""
 			},
 			select: {
@@ -193,7 +191,6 @@ export class Salary extends Component {
 				salary,
 				budget,
 				employee,
-				salary_date,
 				paid_date,
 				payVacations,
 				payAdvancePayments
@@ -201,77 +198,90 @@ export class Salary extends Component {
 			const requiredData = {};
 			requiredData.salary = salary;
 			requiredData.employee = employee ? employee.value : null;
-			requiredData.salary_date = salary_date;
 			requiredData.paid_date = paid_date;
 			requiredData.budget = budget ? budget.value : null;
 			requiredData.formErrors = formErrors;
 
 			if (formValid(requiredData)) {
-				this.paySalaryAlert(employee, salary).then(re => {
+				showSwal({
+					type: "warning",
+					title: "Uyarı!",
+					text: "Ödenen maaş, alması gereken maaştan fazla! Devam etmek istiyor musunuz?",
+					confirmButtonText: "Evet",
+					showCancelButton: true,
+					cancelButtonText: "İptal",
+					confirmButtonColor: "#cd201f",
+					cancelButtonColor: "#868e96",
+					reverseButtons: true
+				}).then(re => {
 					if (re.value) {
-						this.setState({ loadingButton: "btn-loading" });
-						var statusOkay = {
-							salary: false,
-							vacation: false,
-							advance_payment: false
-						};
-						Promise.all([
-							CreateSalary({
-								uid: uid,
-								to: employee.value,
-								amount: parseFloat(salary.replace(",", ".")),
-								payment_date: moment(paid_date).format("YYYY-MM-DD"),
-								budget_id: budget.value
-							}),
-							PayVacations({
-								uid: uid,
-								vacation_id_array: payVacations
-							}),
-							PayAdvancePayments({
-								uid: uid,
-								advance_payments: payAdvancePayments
-							})
-						]).then(([responseSalary, responseVacation, responseAdvancePayment]) => {
-							if (responseSalary) {
-								const status = responseSalary.status;
-								if (status.code === 1020) statusOkay.salary = true;
-							}
-							if (responseVacation) {
-								const status = responseVacation.status;
-								if (status.code === 1020) {
-									statusOkay.vacation = true;
-									this.setState({ payVacations: [] });
-								}
-							}
+						this.paySalaryAlert(employee, salary).then(re => {
+							if (re.value) {
+								this.setState({ loadingButton: "btn-loading" });
+								var statusOkay = {
+									salary: false,
+									vacation: false,
+									advance_payment: false
+								};
+								Promise.all([
+									CreateSalary({
+										uid: uid,
+										to: employee.value,
+										amount: parseFloat(salary.replace(",", ".")),
+										payment_date: moment(paid_date).format("YYYY-MM-DD"),
+										budget_id: budget.value
+									}),
+									PayVacations({
+										uid: uid,
+										vacation_id_array: payVacations
+									}),
+									PayAdvancePayments({
+										uid: uid,
+										advance_payments: payAdvancePayments
+									})
+								]).then(([responseSalary, responseVacation, responseAdvancePayment]) => {
+									if (responseSalary) {
+										const status = responseSalary.status;
+										if (status.code === 1020) statusOkay.salary = true;
+									}
+									if (responseVacation) {
+										const status = responseVacation.status;
+										if (status.code === 1020) {
+											statusOkay.vacation = true;
+											this.setState({ payVacations: [] });
+										}
+									}
 
-							if (responseAdvancePayment) {
-								const status = responseAdvancePayment.status;
-								if (status.code === 1020) {
-									statusOkay.advance_payment = true;
-									this.setState({ payAdvancePayments: [] });
-								}
-							}
+									if (responseAdvancePayment) {
+										const status = responseAdvancePayment.status;
+										if (status.code === 1020) {
+											statusOkay.advance_payment = true;
+											this.setState({ payAdvancePayments: [] });
+										}
+									}
 
-							if (statusOkay.salary && statusOkay.vacation && statusOkay.advance_payment) {
-								Toast.fire({
-									type: "success",
-									title: "İşlem başarılı..."
-								});
-								this.renderSalaryTab();
-							} else {
-								Toast.fire({
-									type: "warning",
-									title: "Bir sorun oluştu..."
+									if (statusOkay.salary && statusOkay.vacation && statusOkay.advance_payment) {
+										Toast.fire({
+											type: "success",
+											title: "İşlem başarılı..."
+										});
+										this.renderSalaryTab();
+									} else {
+										Toast.fire({
+											type: "warning",
+											title: "Bir sorun oluştu..."
+										});
+									}
+									this.setState({
+										loadingButton: "",
+										salary: employee.salary
+											.format()
+											.toString()
+											.split(".")
+											.join("")
+									});
 								});
 							}
-							this.setState({
-								loadingButton: "",
-								salary: employee.salary
-									.format()
-									.toString()
-									.split(".")
-									.join("")
-							});
 						});
 					}
 				});
@@ -280,7 +290,6 @@ export class Salary extends Component {
 				let formErrors = { ...this.state.formErrors };
 				formErrors.salary = salary ? "" : "is-invalid";
 				formErrors.employee = employee ? "" : "is-invalid";
-				formErrors.salary_date = salary_date ? "" : "is-invalid";
 				formErrors.salary = salary ? "" : "is-invalid";
 				formErrors.paid_date = paid_date ? "" : "is-invalid";
 				formErrors.budget = budget ? false : true;
@@ -315,9 +324,6 @@ export class Salary extends Component {
 	handleDate = (date, name) => {
 		let formErrors = { ...this.state.formErrors };
 		switch (name) {
-			case "salary_date":
-				formErrors[name] = date ? "" : "is-invalid";
-				break;
 			case "paid_date":
 				formErrors[name] = date ? "" : "is-invalid";
 				break;
@@ -386,7 +392,8 @@ export class Salary extends Component {
 								value: el.uid,
 								label: fullnameGenerator(el.name, el.surname),
 								image: el.image,
-								salary: el.salary
+								salary: el.salary,
+								salary_date: el.start_date
 							});
 						});
 						select.employees = selectData;
@@ -681,7 +688,7 @@ export class Salary extends Component {
 				},
 				inputValidator: value => {
 					return new Promise(resolve => {
-						if (value <= totalDeduction) {
+						if (value > 0 && value <= totalDeduction) {
 							console.log(value);
 							showSwal({
 								type: "info",
@@ -725,6 +732,15 @@ export class Salary extends Component {
 		} catch (e) {
 			console.log(e);
 		}
+	};
+
+	renderSalaryDay = () => {
+		const { employee } = this.state;
+		return employee
+			? employee.salary_date
+				? "Her ayın " + moment(employee.salary_date).format("D") + ". günü"
+				: "—"
+			: "—";
 	};
 
 	render() {
@@ -801,35 +817,28 @@ export class Salary extends Component {
 										</div>
 										<div className={`dimmer ${employee ? "" : "active"}`}>
 											<div className="dimmer-content">
-												<div className="form-group">
-													<label className="form-label">Maaş Bilgisi</label>
-													<div className="form-control-plaintext">
-														{employee
-															? employee.salary
-																? employee.salary.format() + " ₺"
-																: "—"
-															: "—"}
+												<div className="row">
+													<div className="col-lg-6 col-md-6 col-sm-12">
+														<div className="form-group">
+															<label className="form-label">Maaş Bilgisi</label>
+															<div className="form-control-plaintext">
+																{employee
+																	? employee.salary
+																		? employee.salary.format() + " ₺"
+																		: "—"
+																	: "—"}
+															</div>
+														</div>
+													</div>
+													<div className="col-lg-6 col-md-6 col-sm-12">
+														<div className="form-group">
+															<label className="form-label">Maaş Tarihi</label>
+															<div className="form-control-plaintext">
+																{this.renderSalaryDay()}
+															</div>
+														</div>
 													</div>
 												</div>
-
-												<div className="form-group">
-													<label className="form-label">
-														Maaş Tarihi
-														<span className="form-required">*</span>
-													</label>
-													<DatePicker
-                                                autoComplete="off"
-														selected={salary_date}
-														selectsStart
-														startDate={salary_date}
-														name="salary_date"
-														locale="tr"
-														dateFormat="dd/MM/yyyy"
-														onChange={date => this.handleDate(date, "salary_date")}
-														className={`form-control ${formErrors.salary_date}`}
-													/>
-												</div>
-
 												<div className="form-group">
 													<label className="form-label">
 														Alacağı Maaş
@@ -850,7 +859,7 @@ export class Salary extends Component {
 															<span className="form-required">*</span>
 														</label>
 														<DatePicker
-                                                autoComplete="off"
+															autoComplete="off"
 															selected={paid_date}
 															selectsStart
 															startDate={paid_date}

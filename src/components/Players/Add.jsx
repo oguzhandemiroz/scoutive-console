@@ -338,7 +338,7 @@ export class Add extends Component {
 				uid: uid,
 				name: name,
 				surname: surname,
-				password: "0000",
+				password: "151117",
 				security_id: securityNo,
 				position_id: position ? position.value : null,
 				branch_id: branch ? branch.value : null,
