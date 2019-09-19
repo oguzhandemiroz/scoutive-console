@@ -65,7 +65,7 @@ export class Add extends Component {
 			responsive: false,
 			order: [3, "asc"],
 			aLengthMenu: [[30, 50, 100, -1], [30, 50, 100, "Tümü"]],
-			stateSave: false, // change true
+			stateSave: true, // change true
 			language: {
 				...datatable_turkish,
 				decimal: ",",
