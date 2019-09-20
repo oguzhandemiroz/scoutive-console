@@ -46,7 +46,7 @@ export class TotalAmount extends Component {
 		console.log(total);
 		Object.keys(totalAmount).map(el => {
 			this.setState(prevState => ({
-				totalAmount: { ...prevState.totalAmount, [el]: total[el].format() + currencyType[el] }
+				totalAmount: { ...prevState.totalAmount, [el]: total[el].format(2, 3, '.', ',') + currencyType[el] }
 			}));
 		});
 	};

@@ -72,7 +72,7 @@ export class SalaryDetail extends Component {
 						...data,
 						salary: data.salary ? "∙∙∙∙∙∙" : null,
 						secretSalary: data.salary
-							? CryptoJS.AES.encrypt(data.salary.format(), "scSecretSalary").toString()
+							? CryptoJS.AES.encrypt(data.salary.format(2, 3, '.', ','), "scSecretSalary").toString()
 							: null,
 						onLoadedData: true
 					});
@@ -245,7 +245,7 @@ export class SalaryDetail extends Component {
 														}`}
 													/>
 													<div>
-														<strong>{el.amount ? el.amount.format() + " ₺" : null}</strong>{" "}
+														<strong>{el.amount ? el.amount.format(2, 3, '.', ',') + " ₺" : null}</strong>{" "}
 														maaş ödendi
 													</div>
 													<div className="timeline-time">

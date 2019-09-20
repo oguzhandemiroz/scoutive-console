@@ -76,7 +76,7 @@ export class Detail extends Component {
 					stateData.phone = data.phone || "—";
 					stateData.birthday = data.birthday || "—";
 					stateData.group = data.group || "—";
-					stateData.fee = data.fee ? data.fee.format() + " ₺" : "—";
+					stateData.fee = data.fee ? data.fee.format(2, 3, '.', ',') + " ₺" : "—";
 					stateData.position = data.position || "—";
 					stateData.branch = data.branch || "—";
 					stateData.point = data.point || "—";

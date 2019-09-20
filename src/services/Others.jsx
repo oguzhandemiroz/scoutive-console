@@ -89,7 +89,7 @@ const formatDate = (date, format) => {
 
 const formatMoney = (money, currency) => {
 	if (!currency) currency = "₺";
-	return money ? (!isNaN(money) ? money.format() + " " + currency : money) : "—";
+	return money ? (!isNaN(money) ? money.format(2, 3, '.', ',') + " " + currency : money) : "—";
 };
 
 const fullnameGenerator = (name, surname) => {

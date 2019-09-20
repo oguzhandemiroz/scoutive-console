@@ -25,7 +25,7 @@ export class TotalSalary extends Component {
 				total += el.salary;
 			}
 		});
-		this.setState({ totalSalary: total.format() + " ₺", totalCount: data.filter(x => x.status === 1).length });
+		this.setState({ totalSalary: total.format(2, 3, '.', ',') + " ₺", totalCount: data.filter(x => x.status === 1).length });
 	};
 
 	render() {

@@ -1,8 +1,16 @@
-Number.prototype.format = function () {
-	var re = "\\d(?=(\\d{" + (3 || 3) + "})+" + (2 > 0 ? "\\D" : "₺") + ")",
-		num = this.toFixed(Math.max(0, ~~2));
+/**
+ * Number.prototype.format(d, w, s, c)
+ * 
+ * @param integer d: length of decimal
+ * @param integer w: length of whole part
+ * @param mixed   s: sections delimiter
+ * @param mixed   c: decimal delimiter
+ */
+Number.prototype.format = function (d, w, s, c) {
+	var re = '\\d(?=(\\d{' + (w || 3) + '})+' + (d > 0 ? '\\b' : '$') + ')',
+		num = this.toFixed(Math.max(0, ~~d));
 
-	return ("," ? num.replace(".", ",") : num).replace(new RegExp(re, "g"), "$&" + ("." || ","));
+	return (c ? num.replace('.', c) : num).replace(new RegExp(re, 'g'), '$&' + (s || ','));
 };
 
 function getCookie(cname) {

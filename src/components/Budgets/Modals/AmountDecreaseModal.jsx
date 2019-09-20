@@ -93,7 +93,7 @@ export class AmountIncreaseModal extends Component {
         const { amount } = this.state;
         const { budget } = this.props;
         const checkAmount = amount ? parseFloat(amount) : 0;
-        return (budget.balance - checkAmount).format() + " " + budget.currency;
+        return (budget.balance - checkAmount).format(2, 3, '.', ',') + " " + budget.currency;
     };
 
     render() {
@@ -125,7 +125,7 @@ export class AmountIncreaseModal extends Component {
                                     <div className="form-group col-6">
                                         <label className="form-label">Mevcut Bakiye</label>
                                         <div className="form-control-plaintext">
-                                            {budget.balance.format() + " " + budget.currency}
+                                            {budget.balance.format(2, 3, '.', ',') + " " + budget.currency}
                                         </div>
                                     </div>
                                     <div className="form-group col-12">

@@ -197,7 +197,7 @@ export class Detail extends Component {
 													/>
 												</span>
 											</div>
-											<h3 className="mb-1">{balance.format() + " " + getCurrencyType.sign}</h3>
+											<h3 className="mb-1">{balance.format(2, 3, '.', ',') + " " + getCurrencyType.sign}</h3>
 											<div className="text-muted">Bakiye</div>
 										</div>
 

@@ -72,7 +72,7 @@ export class Detail extends Component {
 					stateData.body.weight = data.attributes.body_weight ? data.attributes.body_weight : "—";
 					stateData.salary = data.salary ? "∙∙∙∙∙∙" : null;
 					stateData.secretSalary = data.salary
-						? CryptoJS.AES.encrypt(data.salary.format(), "scSecretSalary").toString()
+						? CryptoJS.AES.encrypt(data.salary.format(2, 3, '.', ','), "scSecretSalary").toString()
 						: null;
 					stateData.onLoadedData = true;
 

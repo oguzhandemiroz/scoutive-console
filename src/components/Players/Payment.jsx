@@ -59,7 +59,7 @@ const IconOption = props => (
 			/>
 			{props.data.label}
 			<div className="small text-muted">
-				Bütçe: <b>{props.data.balance.format() + " ₺"}</b>
+				Bütçe: <b>{props.data.balance.format(2, 3, '.', ',') + " ₺"}</b>
 			</div>
 		</span>
 	</Option>
@@ -208,12 +208,12 @@ export class Payment extends Component {
 						[name]: value,
 						fee: player
 							? player.fee
-								? (player.fee * parseInt(value)).format().replace(".", "")
+								? (player.fee * parseInt(value)).format(2, 3, '.', ',').replace(".", "")
 								: null
 							: null,
 						necessary_fee: player
 							? player.fee
-								? (player.fee * parseInt(value)).format().replace(".", "")
+								? (player.fee * parseInt(value)).format(2, 3, '.', ',').replace(".", "")
 								: null
 							: null
 					});
@@ -253,14 +253,14 @@ export class Payment extends Component {
 							[name]: value,
 							fee: value.fee
 								? value.fee
-										.format()
+										.format(2, 3, '.', ',')
 										.toString()
 										.split(".")
 										.join("")
 								: null,
 							necessary_fee: value.fee
 								? value.fee
-										.format()
+										.format(2, 3, '.', ',')
 										.toString()
 										.split(".")
 										.join("")
@@ -313,7 +313,7 @@ export class Payment extends Component {
 							fee: to
 								? getFee
 									? getFee
-											.format()
+											.format(2, 3, '.', ',')
 											.toString()
 											.split(".")
 											.join("")
@@ -322,7 +322,7 @@ export class Payment extends Component {
 							necessary_fee: to
 								? getFee
 									? getFee
-											.format()
+											.format(2, 3, '.', ',')
 											.toString()
 											.split(".")
 											.join("")
@@ -415,7 +415,7 @@ export class Payment extends Component {
 			title: "Ödeme Tutarı",
 			html: `<b>${
 				player.label
-			}</b> adlı öğrencinin, <b>${totalDept.format()} ₺</b> tutarında borcu bulunmaktadır.<hr>Ne kadarını ödemek istiyorsunuz?`,
+			}</b> adlı öğrencinin, <b>${totalDept.format(2, 3, '.', ',')} ₺</b> tutarında borcu bulunmaktadır.<hr>Ne kadarını ödemek istiyorsunuz?`,
 			input: "number",
 			inputValue: totalDept,
 			inputAttributes: {
@@ -430,9 +430,9 @@ export class Payment extends Component {
 							title: "Bilgi",
 							html: `<b>${
 								player.label
-							}</b> adlı öğrencinin, <b>${totalDept.format()} ₺</b> tutarındaki borcu için toplamda <b>${parseFloat(
+							}</b> adlı öğrencinin, <b>${totalDept.format(2, 3, '.', ',')} ₺</b> tutarındaki borcu için toplamda <b>${parseFloat(
 								value
-							).format()} ₺</b> ödeme yapılacaktır.<br>
+							).format(2, 3, '.', ',')} ₺</b> ödeme yapılacaktır.<br>
 			Onaylıyor musunuz?`,
 							confirmButtonText: "Onaylıyorum",
 							cancelButtonText: "İptal",
@@ -467,7 +467,7 @@ export class Payment extends Component {
 
 	renderPlayerFee = () => {
 		const { player } = this.state;
-		return player ? (player.fee ? player.fee.format() + " ₺" : "—") : "—";
+		return player ? (player.fee ? player.fee.format(2, 3, '.', ',') + " ₺" : "—") : "—";
 	};
 
 	renderFeeDay = () => {
@@ -481,7 +481,7 @@ export class Payment extends Component {
 
 	renderNecessaryFeeAmount = () => {
 		const { player, period } = this.state;
-		return player ? (player.fee ? (player.fee * parseInt(period || 1)).format() + " ₺" : "—") : "—";
+		return player ? (player.fee ? (player.fee * parseInt(period || 1)).format(2, 3, '.', ',') + " ₺" : "—") : "—";
 	};
 
 	feePaymentAlert = (player, fee) => {
@@ -492,7 +492,7 @@ export class Payment extends Component {
 				html: `Aidat ödemesi yapmadan önce <b>Geçmiş İşlemler'i</b> kontrol et. 
 					Tamamlanmamış ödeme var ise yeni bir ödeme <u>alınmayacaktır.</u> Ödemeleri tamamladıktan sonra devam edebilirsin.
 					<hr>
-					<b>${player.label}</b> adlı öğrencinin <b>${parseFloat(fee.replace(",", ".")).format() +
+					<b>${player.label}</b> adlı öğrencinin <b>${parseFloat(fee.replace(",", ".")).format(2, 3, '.', ',') +
 					" ₺"}</b> ödemesi alınacaktır.`,
 				confirmButtonText: "Devam et",
 				cancelButtonText: "Kontrol et",
@@ -746,15 +746,15 @@ export class Payment extends Component {
 														<li className="timeline-item" key={key.toString()}>
 															<div className="timeline-badge bg-warning" />
 															<div>
-																<strong>{el.fee.format() + " ₺ "}</strong>
+																<strong>{el.fee.format(2, 3, '.', ',') + " ₺ "}</strong>
 																ödemenin, <br />
 																<strong className="text-blue">
-																	{el.amount.format() + " ₺ "}
+																	{el.amount.format(2, 3, '.', ',') + " ₺ "}
 																</strong>
 																ödemesi yapıldı.
 																<br />
 																<strong className="text-red">
-																	{(el.fee - el.amount).format() + " ₺ "}
+																	{(el.fee - el.amount).format(2, 3, '.', ',') + " ₺ "}
 																</strong>
 																borcu kaldı.
 																<div className="small text-muted">
@@ -778,7 +778,7 @@ export class Payment extends Component {
 														<li className="timeline-item" key={key.toString()}>
 															<div className="timeline-badge bg-success" />
 															<div>
-																<strong>{el.amount.format() + " ₺ "}</strong>
+																<strong>{el.amount.format(2, 3, '.', ',') + " ₺ "}</strong>
 																ödendi
 																<div className="small text-muted">
 																	{this.formatPaidDate(el.month)}

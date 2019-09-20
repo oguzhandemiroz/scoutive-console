@@ -43,7 +43,7 @@ const BudgetIconOption = props => (
 			/>
 			{props.data.label}
 			<div className="small text-muted">
-				Bütçe: <b>{props.data.balance.format() + " ₺"}</b>
+				Bütçe: <b>{props.data.balance.format(2, 3, '.', ',') + " ₺"}</b>
 			</div>
 		</span>
 	</Option>

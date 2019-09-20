@@ -90,7 +90,7 @@ export class List extends Component {
 						if (type === "sort" || type === "type") {
 							return data;
 						}
-						if (data !== null && data !== "") return data.format() + " ₺";
+						if (data !== null && data !== "") return data.format(2, 3, '.', ',') + " ₺";
 					}
 				},
 				{

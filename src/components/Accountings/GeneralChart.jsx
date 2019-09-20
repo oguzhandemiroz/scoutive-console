@@ -28,7 +28,7 @@ const chartOptions = {
 	tooltip: {
 		format: {
 			value: function(value, ratio, id, index) {
-				return value.format() + " ₺";
+				return value.format(2, 3, '.', ',') + " ₺";
 			}
 		},
 		horizontal: true

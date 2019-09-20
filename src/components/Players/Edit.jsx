@@ -223,7 +223,7 @@ export class Edit extends Component {
 						initialState.body_weight = data.attributes.body_weight;
 						initialState.foot_no = data.attributes.foot_no;
 						initialState.is_scholarship = data.is_scholarship;
-						initialState.fee = Inputmask.format(data.fee.toString(), { alias: "decimal" });
+						initialState.fee = Inputmask.format(data.fee ? data.fee.toString() : "0", { alias: "decimal" });
 						initialState.point = data.point;
 						initialState.foot = data.foot;
 						initialState.note = data.note;
@@ -268,8 +268,7 @@ export class Edit extends Component {
 							}
 						}
 
-						this.setState({ ...initialState });
-						this.setState({ onLoadedData: true });
+						this.setState({ ...initialState, onLoadedData: true });
 					}
 				} catch (e) {}
 			});
@@ -280,7 +279,6 @@ export class Edit extends Component {
 		select.kinships = Kinship();
 
 		this.setState({ select });
-		console.log(this.state.select);
 	}
 
 	handleSubmit = e => {

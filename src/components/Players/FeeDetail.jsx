@@ -111,7 +111,7 @@ export class FeeDetail extends Component {
 			html: `<b>${fullnameGenerator(
 				name,
 				surname
-			)}</b> adlı öğrencinin, <b>${totalDept.format()} ₺</b> tutarında borcu bulunmaktadır.<hr>Ne kadarını ödemek istiyorsunuz?`,
+			)}</b> adlı öğrencinin, <b>${totalDept.format(2, 3, '.', ',')} ₺</b> tutarında borcu bulunmaktadır.<hr>Ne kadarını ödemek istiyorsunuz?`,
 			input: "number",
 			inputValue: totalDept,
 			inputAttributes: {
@@ -127,9 +127,9 @@ export class FeeDetail extends Component {
 							html: `<b>${fullnameGenerator(
 								name,
 								surname
-							)}</b> adlı öğrencinin, <b>${totalDept.format()} ₺</b> tutarındaki borcu için toplamda <b>${parseFloat(
+							)}</b> adlı öğrencinin, <b>${totalDept.format(2, 3, '.', ',')} ₺</b> tutarındaki borcu için toplamda <b>${parseFloat(
 								value
-							).format()} ₺</b> ödeme yapılacaktır.<br>
+							).format(2, 3, '.', ',')} ₺</b> ödeme yapılacaktır.<br>
 			Onaylıyor musunuz?`,
 							confirmButtonText: "Onaylıyorum",
 							cancelButtonText: "İptal",
@@ -360,15 +360,15 @@ export class FeeDetail extends Component {
 														<li className="timeline-item" key={key.toString()}>
 															<div className="timeline-badge bg-warning" />
 															<div>
-																<strong>{el.fee.format() + " ₺ "}</strong>
+																<strong>{el.fee.format(2, 3, '.', ',') + " ₺ "}</strong>
 																ödemenin, <br />
 																<strong className="text-blue">
-																	{el.amount.format() + " ₺ "}
+																	{el.amount.format(2, 3, '.', ',') + " ₺ "}
 																</strong>
 																ödemesi yapıldı.
 																<br />
 																<strong className="text-red">
-																	{(el.fee - el.amount).format() + " ₺ "}
+																	{(el.fee - el.amount).format(2, 3, '.', ',') + " ₺ "}
 																</strong>
 																borcu kaldı.
 																<div className="small text-muted">
@@ -392,7 +392,7 @@ export class FeeDetail extends Component {
 														<li className="timeline-item" key={key.toString()}>
 															<div className="timeline-badge bg-success" />
 															<div>
-																<strong>{el.amount.format() + " ₺ "}</strong>
+																<strong>{el.amount.format(2, 3, '.', ',') + " ₺ "}</strong>
 																ödendi
 																<div className="small text-muted">
 																	{this.formatPaidDate(el.month)}

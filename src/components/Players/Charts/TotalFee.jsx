@@ -25,7 +25,7 @@ export class TotalFee extends Component {
 				total += el.fee;
 			}
 		});
-		this.setState({ totalFee: total.format() + " ₺", totalCount: data.length });
+		this.setState({ totalFee: total.format(2, 3, '.', ',') + " ₺", totalCount: data.length });
 	};
 
 	render() {

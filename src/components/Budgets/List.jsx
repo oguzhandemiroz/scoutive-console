@@ -134,7 +134,7 @@ export class List extends Component {
 							if (type === "sort" || type === "type") {
 								return data;
 							} else {
-								var convert = typeof data === "number" ? data.format() : data;
+								var convert = typeof data === "number" ? data.format(2, 3, '.', ',') : data;
 								convert = convert ? convert + " " + currencyType[row.currency].sign : "&mdash;";
 								return convert;
 							}
