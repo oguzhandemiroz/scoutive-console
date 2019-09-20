@@ -2,24 +2,16 @@ import React, { Component } from "react";
 import logo from "../../assets/images/logo.svg";
 import { Link } from "react-router-dom";
 import { RequestRegister } from "../../services/Register.jsx";
-
-// eslint-disable-next-line
-const emailRegEx = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
-const taxNoRegEx = /^\d+$/;
-
-const formValid = ({ formErrors, ...rest }) => {
-	let valid = true;
-
-	Object.values(formErrors).forEach(val => {
-		val.length > 0 && (valid = false);
-	});
-
-	Object.values(rest).forEach(val => {
-		val === null && (valid = false);
-	});
-
-	return valid;
-};
+import {
+	formValid,
+	emailRegEx,
+	securityNoRegEx,
+	selectCustomStyles,
+	selectCustomStylesError
+} from "../../assets/js/core";
+import Select from "react-select";
+import { Branchs } from "../../services/FillSelect";
+import { ActivateSchool } from "../../services/Others";
 
 export class RegisterPage extends Component {
 	constructor(props) {
@@ -28,60 +20,66 @@ export class RegisterPage extends Component {
 		this.state = {
 			name: null,
 			email: null,
-			taxNo: null,
+			tax_no: null,
 			password: null,
 			terms: null,
+			branch: null,
 			formErrors: {
 				name: "",
 				email: "",
-				taxNo: "",
+				tax_no: "",
 				password: "",
-				terms: ""
+				terms: "",
+				branch: false
+			},
+			select: {
+				branchs: null
 			},
 			loadingButton: ""
 		};
 	}
 
+	componentDidMount() {
+		this.getBranchs();
+	}
+
 	handleSubmit = e => {
+		const { name, email, tax_no, password, terms, branch } = this.state;
 		e.preventDefault();
 
 		if (formValid(this.state)) {
 			this.setState({ loadingButton: "btn-loading" });
 
 			RequestRegister({
-				name: this.state.name,
-				email: this.state.email,
-				tax_no: this.state.taxNo,
-				password: this.state.password
-			}).then(code => {
+				name: name,
+				email: email,
+				tax_no: tax_no,
+				password: password,
+				branch_id: branch.value
+			}).then(response => {
+				if (response) {
+					const data = response.data;
+					const status = response.status;
+
+					if (status.code === 1020) {
+						localStorage.setItem("sRemember", tax_no);
+						ActivateSchool("Hesabınız Oluşturuldu", { username: tax_no, password: password }, data);
+					}
+				}
 				this.setState({ loadingButton: "" });
 			});
 		} else {
-			console.error("FORM INVALID - DISPLAY ERROR");
-			const { value } = e.target;
-			let formErrors = { ...this.state.formErrors };
-
-			formErrors.name = this.state.name ? (this.state.name.length < 3 ? "is-invalid" : "") : "is-invalid";
-			formErrors.email = this.state.email
-				? !emailRegEx.test(this.state.email.toLowerCase())
-					? "is-invalid"
-					: ""
-				: "is-invalid";
-			formErrors.taxNo = this.state.taxNo
-				? this.state.taxNo.length < 9
-					? "is-invalid"
-					: taxNoRegEx.test(this.state.taxNo)
-					? ""
-					: "is-invalid"
-				: "is-invalid";
-			formErrors.password = this.state.password
-				? this.state.password.length < 3
-					? "is-invalid"
-					: ""
-				: "is-invalid";
-			formErrors.terms = this.state.terms ? "" : "is-invalid";
-
-			this.setState({ formErrors });
+			this.setState(prevState => ({
+				formErrors: {
+					...prevState.formErrors,
+					name: name ? (name.length < 3 ? "is-invalid" : "") : "is-invalid",
+					email: email ? (emailRegEx.test(email.toLowerCase()) ? "" : "is-invalid") : "is-invalid",
+					tax_no: securityNoRegEx.test(tax_no) ? (tax_no.length < 9 ? "is-invalid" : "") : "is-invalid",
+					password: password ? (password.length < 3 ? "is-invalid" : "") : "is-invalid",
+					terms: terms ? "" : "is-invalid",
+					branch: branch ? false : true
+				}
+			}));
 		}
 	};
 
@@ -96,8 +94,8 @@ export class RegisterPage extends Component {
 			case "email":
 				formErrors.email = !emailRegEx.test(value.toLowerCase()) ? "is-invalid" : "";
 				break;
-			case "taxNo":
-				formErrors.taxNo = value.length < 9 ? "is-invalid" : taxNoRegEx.test(value) ? "" : "is-invalid";
+			case "tax_no":
+				formErrors.tax_no = value.length < 9 ? "is-invalid" : securityNoRegEx.test(value) ? "" : "is-invalid";
 				break;
 			case "password":
 				formErrors.password = value.length < 3 ? "is-invalid" : "";
@@ -105,24 +103,44 @@ export class RegisterPage extends Component {
 			default:
 				break;
 		}
+
 		this.setState({ formErrors, [name]: value });
+	};
+
+	handleSelect = (value, name) => {
+		this.setState(prevState => ({
+			formErrors: {
+				...prevState.formErrors,
+				[name]: value ? false : true
+			},
+			[name]: value
+		}));
 	};
 
 	handleCheck = e => {
 		const { name, checked } = e.target;
-		let formErrors = { ...this.state.formErrors };
-
-		switch (name) {
-			case "terms":
-				formErrors.terms = !checked ? "is-invalid" : "";
-				break;
-			default:
-				break;
-		}
-		this.setState({ formErrors, [name]: checked });
+		this.setState(prevState => ({
+			formErrors: {
+				...prevState.formErrors,
+				terms: checked ? "" : "is-invalid"
+			},
+			[name]: checked
+		}));
 	};
+
+	getBranchs = () => {
+		Branchs().then(response => {
+			this.setState(prevState => ({
+				select: {
+					...prevState.select,
+					branchs: response
+				}
+			}));
+		});
+	};
+
 	render() {
-		const { formErrors } = this.state;
+		const { select, formErrors } = this.state;
 		return (
 			<div className="page">
 				<div className="page-single">
@@ -157,9 +175,9 @@ export class RegisterPage extends Component {
 											</label>
 											<input
 												type="text"
-												className={`form-control ${formErrors.taxNo}`}
+												className={`form-control ${formErrors.tax_no}`}
 												placeholder="Vergi Numarası"
-												name="taxNo"
+												name="tax_no"
 												maxLength="11"
 												noValidate
 												onChange={this.handleChange}
@@ -192,6 +210,27 @@ export class RegisterPage extends Component {
 											/>
 										</div>
 										<div className="form-group">
+											<label className="form-label">
+												Branş<span className="form-required">*</span>
+											</label>
+											<Select
+												onChange={val => this.handleSelect(val, "branch")}
+												options={select.branchs}
+												name="branch"
+												placeholder="Seç..."
+												styles={
+													formErrors.branch === true
+														? selectCustomStylesError
+														: selectCustomStyles
+												}
+												isClearable={true}
+												isSearchable={true}
+												isDisabled={select.branchs ? false : true}
+												isLoading={select.branchs ? false : true}
+												noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
+											/>
+										</div>
+										<div className="form-group">
 											<label className="custom-control custom-checkbox">
 												<input
 													type="checkbox"
@@ -202,7 +241,9 @@ export class RegisterPage extends Component {
 													noValidate
 												/>
 												<span className="custom-control-label">
-													<Link to="/auth/terms" target="_blank">Üyelik sözleşmesini </Link>
+													<Link to="/auth/terms" target="_blank">
+														Üyelik sözleşmesini{" "}
+													</Link>
 													okudum ve onaylıyorum
 													<span className="form-required">*</span>
 												</span>

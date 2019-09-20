@@ -93,7 +93,7 @@ const initialState = {
 	school_history: [],
 	certificate: [],
 	imagePreview: null,
-	start_date: null
+	start_date: new Date()
 };
 
 export class Add extends Component {
@@ -161,28 +161,8 @@ export class Add extends Component {
 	};
 
 	componentDidMount() {
-		setTimeout(() => {
-			this.fieldMasked();
-		}, 500);
-
-		let select = { ...this.state.select };
-		Bloods().then(response => {
-			console.log(response);
-			select.bloods = response;
-			this.setState({ select });
-		});
-
-		EmployeePositions().then(response => {
-			console.log(response);
-			select.positions = response;
-			this.setState({ select });
-		});
-
-		Branchs().then(response => {
-			console.log(response);
-			select.branchs = response;
-			this.setState({ select });
-		});
+		this.fieldMasked();
+		this.getFillSelect();
 
 		initialState.emergency.push({
 			kinship: "Anne",
@@ -210,13 +190,6 @@ export class Add extends Component {
 				corporation: ""
 			});
 		}
-
-		select.days = Days();
-		select.months = Months();
-		select.years = Years(true);
-		select.kinships = Kinship();
-
-		this.setState({ select });
 	}
 
 	componentWillUnmount() {
@@ -263,8 +236,8 @@ export class Add extends Component {
 		requiredData.surname = surname;
 		requiredData.securityNo = securityNo;
 		requiredData.email = email;
-		requiredData.position = position ? position.value : null;
-		requiredData.branch = branch ? branch.value : null;
+		requiredData.position = position;
+		requiredData.branch = branch;
 		requiredData.phone = phone;
 		requiredData.start_date = start_date;
 		requiredData.salary = salary;
@@ -312,7 +285,7 @@ export class Add extends Component {
 				address: address,
 				gender: gender,
 				blood: blood ? blood.value : null,
-				branch: branch ? branch.value : null,
+				branch: branch.value,
 				salary: parseFloat(salary.toString().replace(",", ".")),
 				birthday: checkBirthday,
 				emergency: emergency,
@@ -344,7 +317,6 @@ export class Add extends Component {
 			});
 		} else {
 			console.error("FORM INVALID - DISPLAY ERROR");
-			const { value } = e.target;
 			let formErrors = { ...this.state.formErrors };
 
 			formErrors.name = name ? (name.length < 2 ? "is-invalid" : "") : "is-invalid";
@@ -471,6 +443,46 @@ export class Add extends Component {
 		setTimeout(() => {
 			this.props.history.replace(current);
 		});
+	};
+
+	getFillSelect = () => {
+		EmployeePositions().then(response => {
+			this.setState(prevState => ({
+				select: {
+					...prevState.select,
+					positions: response
+				}
+			}));
+		});
+
+		Branchs().then(response => {
+			this.setState(prevState => ({
+				select: {
+					...prevState.select,
+					branchs: response
+				},
+				branch: response.filter(x => x.value === localStorage.getItem("sBranch"))
+			}));
+		});
+
+		Bloods().then(response => {
+			this.setState(prevState => ({
+				select: {
+					...prevState.select,
+					bloods: response
+				}
+			}));
+		});
+
+		this.setState(prevState => ({
+			select: {
+				...prevState.select,
+				days: Days(),
+				months: Months(),
+				years: Years(true),
+				kinships: Kinship()
+			}
+		}));
 	};
 
 	render() {
@@ -616,7 +628,6 @@ export class Add extends Component {
 										name="branch"
 										placeholder="Seç..."
 										styles={formErrors.branch === true ? customStylesError : customStyles}
-										isClearable={true}
 										isSearchable={true}
 										isDisabled={select.branchs ? false : true}
 										noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
@@ -645,7 +656,7 @@ export class Add extends Component {
 									</label>
 
 									<DatePicker
-                                                autoComplete="off"
+										autoComplete="off"
 										selected={start_date}
 										selectsEnd
 										startDate={start_date}
@@ -844,11 +855,11 @@ export class Add extends Component {
 															<tr key={key.toString()}>
 																<td className="pl-0 pr-0">
 																	<Select
-																	value={getSelectValue(
-																							select.kinships,
-																							el.kinship,
-																							"label"
-																						)}
+																		value={getSelectValue(
+																			select.kinships,
+																			el.kinship,
+																			"label"
+																		)}
 																		onChange={val =>
 																			this.handleSelect(
 																				val,

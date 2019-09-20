@@ -666,7 +666,6 @@ export class Edit extends Component {
 												name="branch"
 												placeholder="Seç..."
 												styles={formErrors.branch === true ? customStylesError : customStyles}
-												isClearable={true}
 												isSearchable={true}
 												isDisabled={select.branchs ? false : true}
 												noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}

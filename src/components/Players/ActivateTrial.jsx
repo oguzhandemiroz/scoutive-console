@@ -68,7 +68,6 @@ let initialState = {
 	image: null,
 	imagePreview: null,
 	position: null,
-	branch: null,
 	group: null,
 	blood: null,
 	day: null,
@@ -447,7 +446,8 @@ export class ActivateTrial extends Component {
 				select: {
 					...prevState.select,
 					branchs: response
-				}
+				},
+				branch: response.filter(x => x.value === localStorage.getItem("sBranch"))
 			}))
 		);
 
@@ -472,7 +472,7 @@ export class ActivateTrial extends Component {
 	};
 
 	getPlayerDetail = () => {
-		const { uid, to } = this.state;
+		const { uid, to, select } = this.state;
 		DetailPlayer({
 			uid: uid,
 			to: to
@@ -485,7 +485,10 @@ export class ActivateTrial extends Component {
 						this.props.history.goBack();
 						return null;
 					}
-					initialState = Object.assign({}, initialState, data, { uid: uid });
+					if (!data.branch) delete data.branch;
+					initialState = Object.assign({}, initialState, data, {
+						uid: uid
+					});
 					initialState.group = data.group ? { value: data.group.group_id, label: data.group.name } : null;
 					initialState.imagePreview = data.image;
 					initialState.body_height = data.attributes.body_height;

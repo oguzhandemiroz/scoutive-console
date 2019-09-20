@@ -168,35 +168,8 @@ export class Add extends Component {
 	};
 
 	componentDidMount() {
-		setTimeout(() => {
-			this.fieldMasked();
-		}, 500);
-
-		let select = { ...this.state.select };
-
-		Bloods().then(response => {
-			console.log(response);
-			select.bloods = response;
-			this.setState({ select });
-		});
-
-		Branchs().then(response => {
-			console.log(response);
-			select.branchs = response;
-			this.setState({ select });
-		});
-
-		Groups().then(response => {
-			console.log(response);
-			select.groups = response;
-			this.setState({ select });
-		});
-
-		PlayerPositions().then(response => {
-			console.log(response);
-			select.positions = response;
-			this.setState({ select });
-		});
+		this.fieldMasked();
+		this.getFillSelect();
 
 		initialState.emergency.push({
 			kinship: "Anne",
@@ -216,12 +189,6 @@ export class Add extends Component {
 				value: ""
 			});
 		}
-
-		select.days = Days();
-		select.months = Months();
-		select.years = Years(true);
-		select.kinships = Kinship();
-		this.setState({ select });
 	}
 
 	componentWillUnmount() {
@@ -409,6 +376,7 @@ export class Add extends Component {
 			this.setState({ formErrors });
 		}
 	};
+
 	handleChange = e => {
 		e.preventDefault();
 		const { value, name } = e.target;
@@ -529,6 +497,55 @@ export class Add extends Component {
 		setTimeout(() => {
 			this.props.history.replace(current);
 		});
+	};
+
+	getFillSelect = () => {
+		PlayerPositions().then(response => {
+			this.setState(prevState => ({
+				select: {
+					...prevState.select,
+					positions: response
+				}
+			}));
+		});
+
+		Branchs().then(response => {
+			this.setState(prevState => ({
+				select: {
+					...prevState.select,
+					branchs: response
+				},
+				branch: response.filter(x => x.value === localStorage.getItem("sBranch"))
+			}));
+		});
+
+		Bloods().then(response => {
+			this.setState(prevState => ({
+				select: {
+					...prevState.select,
+					bloods: response
+				}
+			}));
+		});
+
+		Groups().then(response => {
+			this.setState(prevState => ({
+				select: {
+					...prevState.select,
+					groups: response
+				}
+			}));
+		});
+
+		this.setState(prevState => ({
+			select: {
+				...prevState.select,
+				days: Days(),
+				months: Months(),
+				years: Years(true),
+				kinships: Kinship()
+			}
+		}));
 	};
 
 	render() {

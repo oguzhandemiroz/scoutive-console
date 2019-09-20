@@ -1,5 +1,7 @@
 import ep from "../assets/js/urls";
-import { fatalSwal, errorSwal } from "../components/Alert.jsx";
+import { fatalSwal, errorSwal, showSwal, Toast } from "../components/Alert";
+import { ActivationSchool } from "./School";
+import { RequestLogin, SetSchoolInfoToLocalStorage } from "./Login";
 import moment from "moment";
 import "moment/locale/tr";
 
@@ -32,6 +34,10 @@ const getSelectValue = (select, to, type, get) => {
 	} catch (e) {
 		return null;
 	}
+};
+
+const generateSelectValue = (value, label, custom) => {
+	return { value: value, label: label, ...custom };
 };
 
 const UploadFile = formData => {
@@ -89,7 +95,7 @@ const formatDate = (date, format) => {
 
 const formatMoney = (money, currency) => {
 	if (!currency) currency = "₺";
-	return money ? (!isNaN(money) ? money.format(2, 3, '.', ',') + " " + currency : money) : "—";
+	return money ? (!isNaN(money) ? money.format(2, 3, ".", ",") + " " + currency : money) : "—";
 };
 
 const fullnameGenerator = (name, surname) => {
@@ -142,10 +148,79 @@ function ObjectIsEqual(objA, objB) {
 	return true;
 }
 
+const ActivateSchool = (title, loginInfo, data) => {
+	try {
+		showSwal({
+			type: "success",
+			title: title,
+			text: "Aktifleştirmek için lütfen email hesabınıza gelen kodu giriniz: ",
+			confirmButtonText: "Devam et",
+			input: "text",
+			inputAttributes: {
+				minlength: 6,
+				maxlength: 6,
+				autocapitalize: "off",
+				autocorrect: "off"
+			},
+			customClass: {
+				input: "activation-input",
+				actions: "activation-actions"
+			},
+			showCloseButton: false,
+			allowEscapeKey: false,
+			allowOutsideClick: false,
+			showLoaderOnConfirm: true,
+			inputValidator: value => {
+				return new Promise(resolve => {
+					if ((value !== "") & (value.length === 6) & /^\d{6,6}/g.test(value)) {
+						ActivationSchool({
+							uid: data.uid,
+							code: value
+						}).then(response => {
+							if (response) {
+								const status = response.status;
+								if (status.code === 1020) {
+									showSwal({
+										type: "success",
+										title: "Onaylandı",
+										confirmButtonText: "Giriş yap",
+										showLoaderOnConfirm: true
+									}).then(re => {
+										if (re.value) {
+											RequestLogin(loginInfo, true).then(response => {
+												if (response) {
+													const data = response.data;
+													const status = response.status;
+													if (status.code === 1020) {
+														Toast.fire({
+															type: "success",
+															title: "Giriş yapılıyor..."
+														});
+														SetSchoolInfoToLocalStorage(data);
+													} else if (status.code === 1082) {
+														errorSwal(status);
+													}
+												}
+											});
+										}
+									});
+								}
+							}
+						});
+					} else {
+						resolve("Lütfen boş bırakmayınız ve 6 haneli kod giriniz");
+					}
+				});
+			}
+		});
+	} catch (e) {}
+};
+
 export {
 	SplitBirthday,
 	UploadFile,
 	getSelectValue,
+	generateSelectValue,
 	AttributeDataChecker,
 	ObjectIsEqual,
 	systemClock,
@@ -153,5 +228,6 @@ export {
 	formatDate,
 	formatMoney,
 	fullnameGenerator,
-	groupAgeSplit
+	groupAgeSplit,
+	ActivateSchool
 };
