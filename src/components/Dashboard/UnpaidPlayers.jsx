@@ -50,11 +50,10 @@ export class UnpaidPlayer extends Component {
 		const { list } = this.state;
 		return (
 			<div className="card">
-				<div className="card-body">
+				<div className="card-body py-4">
 					<div className="card-value float-right text-muted">
 						<i className="fa fa-hand-holding-usd text-green-light" />
 					</div>
-
 					<h4 className="mb-1">Aidat</h4>
 					<div className="text-muted">Ödeme Yapmayanlar</div>
 				</div>

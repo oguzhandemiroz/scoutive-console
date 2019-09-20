@@ -54,6 +54,7 @@ export class TrainingGroupList extends Component {
 											Grubu Şuan <strong>{el.area ? el.area.name + "'de" : ""}</strong>{" "}
 											Antrenmanda
 										</div>
+										<div>
 										<div className="row pt-4">
 											<div className="col-auto d-flex align-items-center">
 												<div
@@ -74,7 +75,7 @@ export class TrainingGroupList extends Component {
 													Sorumlu Antrenör
 												</span>
 											</div>
-											<div className="col-auto d-flex align-items-center">
+											<div className="col-auto pr-0 d-flex align-items-center">
 												<span
 													className="tag tag-gray-dark"
 													data-original-title="Antrenman Saati"
@@ -84,6 +85,7 @@ export class TrainingGroupList extends Component {
 													{moment(el.end_time, "HH:mm").format("HH:mm")}
 												</span>
 											</div>
+										</div>
 										</div>
 									</div>
 								);
