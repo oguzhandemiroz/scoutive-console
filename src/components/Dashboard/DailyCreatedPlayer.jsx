@@ -1,8 +1,8 @@
 import React, { Component } from "react";
-import { CreatedPlayers } from "../../../services/Report";
+import { CreatedPlayers } from "../../services/Report";
 import c3 from "c3";
-import "../../../assets/css/c3.min.css";
-import sc from "../../../assets/js/sc";
+import "../../assets/css/c3.min.css";
+import sc from "../../assets/js/sc";
 import moment from "moment";
 
 const chartOptions = {
@@ -145,20 +145,20 @@ export class DailyCreatedPlayer extends Component {
 	render() {
 		const { list, todayCount } = this.state;
 		return (
-			<div
-				className={`dimmer ${list ? "" : "active"}`}
-				style={{ borderTopWidth: 1, borderTopColor: "rgba(0, 40, 100, 0.12)", borderTopStyle: "solid" }}>
-				<div className="loader"></div>
-				<div className="dimmer-content">
-					<div className="card-body pt-4">
-						<div className="card-value float-right text-muted">
-							<i className="fe fe-users" />
+			<div className="card">
+				<div className={`dimmer ${list ? "" : "active"}`}>
+					<div className="loader"></div>
+					<div className="dimmer-content">
+						<div className="card-body pt-4">
+							<div className="card-value float-right text-muted">
+								<i className="fe fe-users" />
+							</div>
+							<h3 className="mb-1">{todayCount}</h3>
+							<div className="text-muted">Bugün Eklenen Öğrenci</div>
 						</div>
-						<h3 className="mb-1">{todayCount}</h3>
-						<div className="text-muted">Bugün Eklenen Öğrenci</div>
-					</div>
-					<div className="card-chart-bg">
-						<div id="daily-players" style={{ height: "100%" }} ref="daily-players" />
+						<div className="card-chart-bg">
+							<div id="daily-players" style={{ height: "100%" }} ref="daily-players" />
+						</div>
 					</div>
 				</div>
 			</div>

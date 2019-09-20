@@ -64,7 +64,7 @@ class Players extends Component {
 					<div className="col-sm-6 col-md-4">
 						<div className="card">
 							<TotalFee data={data} />
-							<DailyCreatedPlayer data={data} />
+							<DailyCreatedPlayer />
 						</div>
 					</div>
 				</div>

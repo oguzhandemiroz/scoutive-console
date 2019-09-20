@@ -107,6 +107,15 @@ const fullnameGenerator = (name, surname) => {
 	}
 };
 
+const avatarPlaceholder = (name, surname) => {
+	try {
+		const placeholder = nullCheck(name).slice(0, 1) + nullCheck(surname).slice(0, 1);
+		return placeholder;
+	} catch (e) {
+		return nullCheck(name).slice(0, 1) + nullCheck(surname).slice(0, 1);
+	}
+};
+
 const groupAgeSplit = age => {
 	try {
 		var result = {};
@@ -229,5 +238,6 @@ export {
 	formatMoney,
 	fullnameGenerator,
 	groupAgeSplit,
-	ActivateSchool
+	ActivateSchool,
+	avatarPlaceholder
 };

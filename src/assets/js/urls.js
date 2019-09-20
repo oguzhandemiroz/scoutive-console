@@ -87,7 +87,11 @@ var ep = {
     FEE_LIST: host + api_version + "list/player/fees",
     ACCOUNTING_CREATE: host + api_version + "create/accounting/record",
     ACCOUNTING_LIST: host + api_version + "list/accounting/records",
-    ACCOUNTING_TYPE_LIST: host + api_version + "list/accounting/types" 
+    ACCOUNTING_TYPE_LIST: host + api_version + "list/accounting/types",
+    REPORT_CREATED_PLAYERS: host + api_version + "report/created/players",
+    REPORT_BIRTHDAYS: host + api_version + "report/birthdays",
+    REPORT_UNPAID_PLAYERS: host + api_version + "report/unpaid/players",
+    REPORT_TRAINING_GROUPS: host + api_version + "report/training/groups",
 };
 
 export default ep;

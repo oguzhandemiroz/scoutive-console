@@ -329,7 +329,7 @@ class Table extends Component {
 							if (type === "sort" || type === "type") {
 								return data;
 							}
-							console.log(data);
+
 							if (!is_trial && !is_scholarship & (data !== null)) {
 								return data.format(2, 3, ".", ",") + " ₺";
 							} else if (is_trial) {

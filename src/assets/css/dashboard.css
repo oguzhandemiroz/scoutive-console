@@ -14737,6 +14737,10 @@ button.bg-green:focus {
 	color: #5eba00 !important;
 }
 
+.text-green-light {
+	color: #8ecf4d !important;
+}
+
 .bg-teal {
 	background-color: #2bcbba !important;
 }

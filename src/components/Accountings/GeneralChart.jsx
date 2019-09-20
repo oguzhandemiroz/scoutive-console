@@ -28,7 +28,7 @@ const chartOptions = {
 	tooltip: {
 		format: {
 			value: function(value, ratio, id, index) {
-				return value.format(2, 3, '.', ',') + " ₺";
+				return value.format(2, 3, ".", ",") + " ₺";
 			}
 		},
 		horizontal: true
@@ -166,6 +166,10 @@ export class GeneralChart extends Component {
 
 					this.getDays();
 					this.setState({ list: grouped });
+					console.log(
+						"data: ",
+						_.values(_.merge(_.keyBy(this.getDays(), "payment_date"), _.keyBy(grouped, "payment_date")))
+					);
 					this.renderChart(
 						_.values(_.merge(_.keyBy(this.getDays(), "payment_date"), _.keyBy(grouped, "payment_date")))
 					);
