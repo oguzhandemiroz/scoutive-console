@@ -59,7 +59,8 @@ export class UnpaidPlayer extends Component {
 				</div>
 				<div className="card-body">
 					<div className="pb-5">
-						<div className="row mb-3">
+					{noRow()}
+						{/* <div className="row mb-3">
 							<div className="col-auto d-flex align-items-center">
 								<span className="avatar" style={{ backgroundImage: `url(${null})` }}>
 									HB
@@ -104,7 +105,7 @@ export class UnpaidPlayer extends Component {
 									</div>
 								</div>
 							</div>
-						</div>
+						</div> */}
 						{/*list
 							? list.length > 0
 								? list.map((el, key) => {
