@@ -148,7 +148,7 @@ class Table extends Component {
 				},
 				fixedHeader: true,
 				order: [4, "asc"],
-				aLengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "Tümü"]],
+				aLengthMenu: [[20, 50, 100, -1], [20, 50, 100, "Tümü"]],
 				stateSave: false, // change true
 				language: {
 					...datatable_turkish,

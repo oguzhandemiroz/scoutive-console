@@ -120,7 +120,7 @@ export class Add extends Component {
 				}
 			},
 			order: [4, "asc"],
-			aLengthMenu: [[30, 50, 100, -1], [30, 50, 100, "Tümü"]],
+			aLengthMenu: [[20, 50, 100, -1], [20, 50, 100, "Tümü"]],
 			stateSave: true, // change true
 			language: {
 				...datatable_turkish,
@@ -825,7 +825,7 @@ export class Add extends Component {
 								</div>
 							</div>
 							<div className="card-body p-0">
-								<div className="table-responsive">
+								<div>
 									<table
 										id="rollcall-list"
 										className="table card-table w-100 table-vcenter table-hover text-nowrap datatable">

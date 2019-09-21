@@ -40,23 +40,23 @@ export class Birthdays extends Component {
 			const status = response.status;
 			if (status.code === 1020) {
 				this.setState({
-					list: data,
-					count: data.employees.length + data.players.length
+					list: data
 				});
 			}
 		});
 	};
 
 	render() {
-		const { list, count } = this.state;
+		const { list } = this.state;
 		return (
 			<div className="card">
 				<div className="card-body py-4">
 					<div className="card-value float-right text-muted">
 						<i className="fa fa-birthday-cake text-orange" />
 					</div>
-					<h3 className="mb-1">{count}</h3>
-					<div className="text-muted">Bugün Doğdu</div>
+
+					<h4 className="mb-1">Doğum Günü</h4>
+					<div className="text-muted">Mutlu Yıllar</div>
 				</div>
 				<div className="card-body">
 					<h5 className="text-muted font-weight-normal">Öğrenciler</h5>
