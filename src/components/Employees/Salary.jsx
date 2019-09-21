@@ -186,14 +186,11 @@ export class Salary extends Component {
 		try {
 			e.preventDefault();
 			const {
-				uid,
 				formErrors,
 				salary,
 				budget,
 				employee,
 				paid_date,
-				payVacations,
-				payAdvancePayments
 			} = this.state;
 			const requiredData = {};
 			requiredData.salary = salary;
@@ -203,94 +200,30 @@ export class Salary extends Component {
 			requiredData.formErrors = formErrors;
 
 			if (formValid(requiredData)) {
-				showSwal({
-					type: "warning",
-					title: "Uyarı!",
-					text: "Ödenen maaş, alması gereken maaştan fazla! Devam etmek istiyor musunuz?",
-					confirmButtonText: "Evet",
-					showCancelButton: true,
-					cancelButtonText: "İptal",
-					confirmButtonColor: "#cd201f",
-					cancelButtonColor: "#868e96",
-					reverseButtons: true
-				}).then(re => {
-					if (re.value) {
-						this.paySalaryAlert(employee, salary).then(re => {
-							if (re.value) {
-								this.setState({ loadingButton: "btn-loading" });
-								var statusOkay = {
-									salary: false,
-									vacation: false,
-									advance_payment: false
-								};
-								Promise.all([
-									CreateSalary({
-										uid: uid,
-										to: employee.value,
-										amount: parseFloat(salary.replace(",", ".")),
-										payment_date: moment(paid_date).format("YYYY-MM-DD"),
-										budget_id: budget.value
-									}),
-									PayVacations({
-										uid: uid,
-										vacation_id_array: payVacations
-									}),
-									PayAdvancePayments({
-										uid: uid,
-										advance_payments: payAdvancePayments
-									})
-								]).then(([responseSalary, responseVacation, responseAdvancePayment]) => {
-									if (responseSalary) {
-										const status = responseSalary.status;
-										if (status.code === 1020) statusOkay.salary = true;
-									}
-									if (responseVacation) {
-										const status = responseVacation.status;
-										if (status.code === 1020) {
-											statusOkay.vacation = true;
-											this.setState({ payVacations: [] });
-										}
-									}
-
-									if (responseAdvancePayment) {
-										const status = responseAdvancePayment.status;
-										if (status.code === 1020) {
-											statusOkay.advance_payment = true;
-											this.setState({ payAdvancePayments: [] });
-										}
-									}
-
-									if (statusOkay.salary && statusOkay.vacation && statusOkay.advance_payment) {
-										Toast.fire({
-											type: "success",
-											title: "İşlem başarılı..."
-										});
-										this.renderSalaryTab();
-									} else {
-										Toast.fire({
-											type: "warning",
-											title: "Bir sorun oluştu..."
-										});
-									}
-									this.setState({
-										loadingButton: "",
-										salary: employee.salary
-											.format(2, 3, '.', ',')
-											.toString()
-											.split(".")
-											.join("")
-									});
-								});
-							}
-						});
-					}
-				});
+				if(parseFloat(salary.replace(",", ".")) > employee.salary) {
+					showSwal({
+						type: "warning",
+						title: "Uyarı!",
+						text: "Ödenen maaş, alması gereken maaştan fazla! Devam etmek istiyor musunuz?",
+						confirmButtonText: "Evet",
+						showCancelButton: true,
+						cancelButtonText: "İptal",
+						confirmButtonColor: "#cd201f",
+						cancelButtonColor: "#868e96",
+						reverseButtons: true
+					}).then(re => {
+						if (re.value) {
+							this.paySalaryRequest();		
+						}
+					});
+				} else {
+					this.paySalaryRequest();
+				}				
 			} else {
 				console.error("ERROR FORM");
 				let formErrors = { ...this.state.formErrors };
 				formErrors.salary = salary ? "" : "is-invalid";
 				formErrors.employee = employee ? "" : "is-invalid";
-				formErrors.salary = salary ? "" : "is-invalid";
 				formErrors.paid_date = paid_date ? "" : "is-invalid";
 				formErrors.budget = budget ? false : true;
 				this.setState({ formErrors });
@@ -689,7 +622,6 @@ export class Salary extends Component {
 				inputValidator: value => {
 					return new Promise(resolve => {
 						if (value > 0 && value <= totalDeduction) {
-							console.log(value);
 							showSwal({
 								type: "info",
 								title: "Bilgi",
@@ -720,7 +652,7 @@ export class Salary extends Component {
 											}
 										]
 									});
-									this.setState({ salary: formatTotalSalary });
+									this.setState({ salary: formatTotalSalary > 0 ? formatTotalSalary : 0 });
 								}
 							});
 						} else {
@@ -742,6 +674,87 @@ export class Salary extends Component {
 				: "—"
 			: "—";
 	};
+
+	paySalaryRequest= () => {
+		const {
+			uid,
+			salary,
+			budget,
+			employee,
+			paid_date,
+			payVacations,
+			payAdvancePayments
+		} = this.state;
+
+		this.paySalaryAlert(employee, salary).then(re => {
+			if (re.value) {
+				this.setState({ loadingButton: "btn-loading" });
+				var statusOkay = {
+					salary: false,
+					vacation: false,
+					advance_payment: false
+				};
+				Promise.all([
+					CreateSalary({
+						uid: uid,
+						to: employee.value,
+						amount: parseFloat(salary.replace(",", ".")),
+						payment_date: moment(paid_date).format("YYYY-MM-DD"),
+						budget_id: budget.value
+					}),
+					PayVacations({
+						uid: uid,
+						vacation_id_array: payVacations
+					}),
+					PayAdvancePayments({
+						uid: uid,
+						advance_payments: payAdvancePayments
+					})
+				]).then(([responseSalary, responseVacation, responseAdvancePayment]) => {
+					if (responseSalary) {
+						const status = responseSalary.status;
+						if (status.code === 1020) statusOkay.salary = true;
+					}
+					if (responseVacation) {
+						const status = responseVacation.status;
+						if (status.code === 1020) {
+							statusOkay.vacation = true;
+							this.setState({ payVacations: [] });
+						}
+					}
+
+					if (responseAdvancePayment) {
+						const status = responseAdvancePayment.status;
+						if (status.code === 1020) {
+							statusOkay.advance_payment = true;
+							this.setState({ payAdvancePayments: [] });
+						}
+					}
+
+					if (statusOkay.salary && statusOkay.vacation && statusOkay.advance_payment) {
+						Toast.fire({
+							type: "success",
+							title: "İşlem başarılı..."
+						});
+						this.renderSalaryTab();
+					} else {
+						Toast.fire({
+							type: "warning",
+							title: "Bir sorun oluştu..."
+						});
+					}
+					this.setState({
+						loadingButton: "",
+						salary: employee.salary
+							.format(2, 3, '.', ',')
+							.toString()
+							.split(".")
+							.join("")
+					});
+				});
+			}
+		});
+	}
 
 	render() {
 		const {

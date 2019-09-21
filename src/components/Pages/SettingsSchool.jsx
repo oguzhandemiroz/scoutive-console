@@ -1,34 +1,48 @@
-import React, {Component} from "react";
-import {Link} from "react-router-dom";
+import React, { Component } from "react";
+import { Link } from "react-router-dom";
 import General from "../../components/Pages/Settings/General";
 import Notifications from "../../components/Pages/Settings/Notifications";
 import Permission from "../../components/Pages/Settings/Permission";
 import Membership from "../../components/Pages/Settings/Membership";
+
+const lock = (
+    <span className="ml-1">
+        (<i className="fe fe-lock mr-0" />)
+    </span>
+);
 
 const settingsMenu = [
     {
         title: "Genel",
         pathname: "/general",
         active: "general",
-        icon: "fa fa-cog"
+        icon: "fa fa-cog",
+        class: "",
+        lock: false
     },
     {
         title: "Bildirimler",
         pathname: "/notifications",
         active: "notifications",
-        icon: "fa fa-bell"
+        icon: "fa fa-bell",
+        class: "cursor-not-allowed disabled",
+        lock: lock
     },
     {
         title: "Yetkilendirme",
         pathname: "/permission",
         active: "permission",
-        icon: "fa fa-user-cog"
+        icon: "fa fa-user-cog",
+        class: "",
+        lock: false
     },
     {
         title: "Kullanım Detayı",
         pathname: "/membership",
         active: "membership",
-        icon: "fa fa-money-bill"
+        icon: "fa fa-money-bill",
+        class: "cursor-not-allowed disabled",
+        lock: lock
     }
 ];
 
@@ -36,14 +50,14 @@ const settingsComponentRender = {
     general: <General />,
     notifications: <Notifications />,
     permission: <Permission />,
-    membership: <Membership/>
+    membership: <Membership />
 };
 
 export class SettingsSchool extends Component {
     constructor(props) {
         super(props);
 
-        this.state = {uid: localStorage.getItem("UID")};
+        this.state = { uid: localStorage.getItem("UID") };
     }
 
     renderComponent = path => {
@@ -57,15 +71,13 @@ export class SettingsSchool extends Component {
 
     render() {
         console.log("Settings: ", this.props);
-        const {location, match} = this.props.props;
-        const {uid} = this.state;
+        const { location, match } = this.props.props;
+        const { uid } = this.state;
         const path = match.path + "/" + uid;
         return (
             <div className="container">
                 <div className="page-header">
-                    <h1 className="page-title">
-                        Ayarlar &mdash; {this.renderTitle(location.pathname.split("/")[4])}
-                    </h1>
+                    <h1 className="page-title">Ayarlar &mdash; {this.renderTitle(location.pathname.split("/")[4])}</h1>
                 </div>
                 <div className="row">
                     <div className="col-lg-9">{this.renderComponent(location.pathname.split("/")[4])}</div>
@@ -77,9 +89,9 @@ export class SettingsSchool extends Component {
                                     {settingsMenu.map((el, key) => {
                                         return (
                                             <Link
-                                                to={path + el.pathname}
+                                                to={el.lock ? "" : path + el.pathname}
                                                 key={key.toString()}
-                                                className={`list-group-item list-group-item-action d-flex ${
+                                                className={`list-group-item list-group-item-action d-flex ${el.class} ${
                                                     this.props.props.location.pathname.indexOf(el.active) > -1
                                                         ? "active"
                                                         : ""
@@ -87,7 +99,7 @@ export class SettingsSchool extends Component {
                                                 <span className="icon mr-3">
                                                     <i className={el.icon} />
                                                 </span>
-                                                {el.title}
+                                                {el.title} {el.lock}
                                             </Link>
                                         );
                                     })}
