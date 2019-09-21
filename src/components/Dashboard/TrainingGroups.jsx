@@ -47,7 +47,7 @@ export class TrainingGroupList extends Component {
 								return (
 									<div className="card-body" key={key.toString()}>
 										<div className="card-value float-right text-muted">
-											<i className="fa fa-running" />
+											<i className="fa fa-running text-green-light" />
 										</div>
 										<h4 className="mb-1">{el.name}</h4>
 										<div className="text-muted">

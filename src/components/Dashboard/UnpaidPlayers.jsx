@@ -52,7 +52,7 @@ export class UnpaidPlayer extends Component {
 			<div className="card">
 				<div className="card-body py-4">
 					<div className="card-value float-right text-muted">
-						<i className="fa fa-hand-holding-usd text-green-light" />
+						<i className="fa fa-hand-holding-usd text-danger" />
 					</div>
 					<h4 className="mb-1">Aidat</h4>
 					<div className="text-muted">Ödeme Yapmayanlar</div>

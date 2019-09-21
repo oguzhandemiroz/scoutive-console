@@ -16,11 +16,11 @@ class Dashboard extends Component {
 				</div>
 				<div className="row row-cards">
 					<div className="col-sm-12 col-lg-4">
-						<UnpaidPlayers />
-					</div>
-					<div className="col-sm-12 col-lg-4">
 						<EmployeeRollcall />
 						<PlayerRollcall />
+					</div>
+					<div className="col-sm-12 col-lg-4">
+						<UnpaidPlayers />
 					</div>
 					<div className="col-sm-12 col-lg-4">
 						<TrainingGroups />

@@ -53,7 +53,7 @@ export class Birthdays extends Component {
 			<div className="card">
 				<div className="card-body py-4">
 					<div className="card-value float-right text-muted">
-						<i className="fa fa-birthday-cake text-instagram" />
+						<i className="fa fa-birthday-cake text-orange" />
 					</div>
 					<h3 className="mb-1">{count}</h3>
 					<div className="text-muted">Bugün Doğdu</div>
