@@ -173,7 +173,7 @@ export class UnpaidPlayer extends Component {
                 {list ? (
                     list.length >= 5 ? (
                         <div className="card-footer text-right font-italic">
-                            <Link to="/app/players">
+                            <Link to="/app/reports/unpaid/players">
                                 Tümünü görüntüle <i className="fe fe-arrow-right"></i>
                             </Link>
                         </div>
