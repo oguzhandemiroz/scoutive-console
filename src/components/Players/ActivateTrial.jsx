@@ -248,8 +248,8 @@ export class ActivateTrial extends Component {
 				UpdatePlayer({
 					uid: uid,
 					to: to,
-					name: name,
-					surname: surname,
+					name: name.capitalize(),
+					surname: surname.toLocaleUpperCase('tr-TR'),
 					security_id: security_id,
 					position_id: position ? position.value : null,
 					branch_id: branch ? branch.value : null,

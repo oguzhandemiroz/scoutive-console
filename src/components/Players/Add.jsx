@@ -168,7 +168,7 @@ export class Add extends Component {
 	};
 
 	componentDidMount() {
-		this.fieldMasked();
+		setTimeout(() => this.fieldMasked(), 500)
 		this.getFillSelect();
 
 		initialState.emergency.push({
@@ -303,8 +303,8 @@ export class Add extends Component {
 
 			CreatePlayer({
 				uid: uid,
-				name: name,
-				surname: surname,
+				name: name.capitalize(),
+				surname: surname.toLocaleUpperCase('tr-TR'),
 				password: "151117",
 				security_id: securityNo,
 				position_id: position ? position.value : null,

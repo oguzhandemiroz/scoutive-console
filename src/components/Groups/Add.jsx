@@ -216,7 +216,7 @@ export class Add extends Component {
 				this.setState({ loadingButton: "btn-loading" });
 				CreateGroup({
 					uid: uid,
-					name: name,
+					name: name.capitalize(),
 					start_time: start_time,
 					end_time: end_time,
 					employee_id: employee.value,

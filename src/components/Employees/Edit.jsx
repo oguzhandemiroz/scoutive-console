@@ -162,7 +162,7 @@ export class Edit extends Component {
 	};
 
 	componentDidMount() {
-		this.fieldMasked();
+		setTimeout(() => this.fieldMasked(), 500)
 		this.getFillSelect();
 
 		const { uid, to } = this.state;
@@ -323,8 +323,8 @@ export class Edit extends Component {
 			UpdateEmployee({
 				uid: uid,
 				to: to,
-				name: name,
-				surname: surname,
+				name: name.capitalize(),
+				surname: surname.toLocaleUpperCase('tr-TR'),
 				security_id: securityNo,
 				email: email,
 				permission_id: getSelectValue(select.positions, position, "label").value,

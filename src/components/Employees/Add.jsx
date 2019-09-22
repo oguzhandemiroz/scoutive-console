@@ -161,7 +161,7 @@ export class Add extends Component {
 	};
 
 	componentDidMount() {
-		this.fieldMasked();
+		setTimeout(() => this.fieldMasked(), 500)
 		this.getFillSelect();
 
 		initialState.emergency.push({
@@ -275,8 +275,8 @@ export class Add extends Component {
 
 			CreateEmployee({
 				uid: uid,
-				name: name,
-				surname: surname,
+				name: name.capitalize(),
+				surname: surname.toLocaleUpperCase('tr-TR'),
 				password: "151117",
 				security_id: securityNo,
 				email: email,

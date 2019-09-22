@@ -167,9 +167,7 @@ export class Edit extends Component {
 	};
 
 	componentDidMount() {
-		setTimeout(() => {
-			this.fieldMasked();
-		}, 500);
+		setTimeout(() => this.fieldMasked(), 500)
 
 		const { uid, to } = this.state;
 		let select = { ...this.state.select };
@@ -385,8 +383,8 @@ export class Edit extends Component {
 				UpdatePlayer({
 					uid: uid,
 					to: to,
-					name: name,
-					surname: surname,
+					name: name.capitalize(),
+					surname: surname.toLocaleUpperCase('tr-TR'),
 					security_id: securityNo,
 					position_id: position ? position.value : null,
 					branch_id: branch ? branch.value : null,

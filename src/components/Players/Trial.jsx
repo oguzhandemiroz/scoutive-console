@@ -96,9 +96,7 @@ export class Trial extends Component {
 	};
 
 	componentDidMount() {
-		setTimeout(() => {
-			this.fieldMasked();
-		}, 500);
+		setTimeout(() => this.fieldMasked(), 500)
 		let select = { ...this.state.select };
 		select.kinships = Kinship();
 		this.setState({ select });
@@ -118,8 +116,8 @@ export class Trial extends Component {
 			this.setState({ loadingButton: "btn-loading" });
 			CreateTrialPlayer({
 				uid: uid,
-				name: name,
-				surname: surname,
+				name: name.capitalize(),
+				surname: surname.toLocaleUpperCase('tr-TR'),
 				security_id: security_id,
 				phone: phone,
 				password: "151117",

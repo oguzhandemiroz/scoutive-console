@@ -216,7 +216,7 @@ export class Edit extends Component {
 					UpdateGroup({
 						group_id: gid,
 						uid: uid,
-						name: name,
+						name: name.capitalize(),
 						start_time: start_time,
 						end_time: end_time,
 						employee_id: employee.value,
