@@ -8,7 +8,7 @@ const $ = require("jquery");
 
 const noRow = loading =>
     loading ? (
-        <div className={`dimmer active p-3`}>
+        <div className={`dimmer active p-3 mb-5`}>
             <div className="loader" />
             <div className="dimmer-content" />
         </div>
@@ -22,7 +22,8 @@ export class UnpaidPlayer extends Component {
 
         this.state = {
             uid: localStorage.getItem("UID"),
-            list: null
+            list: null,
+            count: 0
         };
     }
 
@@ -40,103 +41,144 @@ export class UnpaidPlayer extends Component {
             const status = response.status;
             if (status.code === 1020) {
                 this.setState({
-                    list: data
+                    list: data,
+                    count: data.length
                 });
             }
         });
     };
 
     render() {
-        const { list } = this.state;
+        const { list, count } = this.state;
         return (
             <div className="card">
                 <div className="card-body py-4">
                     <div className="card-value float-right text-muted">
-                        <i className="fa fa-hand-holding-usd text-danger" />
+                        <i className={`fa fa-hand-holding-usd ${count > 0 ? "text-danger" : ""}`} />
                     </div>
                     <h4 className="mb-1">Aidat</h4>
                     <div className="text-muted">Ödeme Yapmayanlar</div>
                 </div>
-                <div className="card-body">
-                    <div className="pb-5">
-                        {/* 
-                            <div className="row mb-3">
-                                <div className="col-auto d-flex align-items-center">
-                                    <span className="avatar" style={{ backgroundImage: `url(${null})` }}>
-                                        HB
-                                    </span>
-                                </div>
-                                <div className="col px-1">
-                                    <div className="text-body font-weight-600">Keke Keko</div>
-                                    <div className="text-body">
-                                        <strong className="text-red"></strong>
-                                    </div>
-                                    <span className="small text-muted" data-toggle="tooltip" title=""></span>
-                                </div>
-                                <div className="col-auto">
-                                    <a
-                                        href="javascript:void(0)"
-                                        className="icon"
-                                        data-toggle="dropdown"
-                                        aria-haspopup="true"
-                                        aria-expanded="false">
-                                        <i className="fe fe-more-vertical"></i>
-                                    </a>
-                                    <div className="item-action dropdown">
-                                        <div className="dropdown-menu dropdown-menu-right">
-                                            <Link to={"/app/players/payment/" + ""} className="dropdown-item">
-                                                <i className="dropdown-icon fa fa-hand-holding-usd" /> Ödeme Al
-                                            </Link>
-                                            <Link
-                                                to={"/app/players/detail/"}
-                                                className="dropdown-item cursor-not-allowed disabled">
-                                                <i className="dropdown-icon fa fa-exclamation-triangle"></i> Ödeme İkazı
-                                                <span className="ml-1">
-                                                    (<i className="fe fe-lock mr-0" />)
-                                                </span>
-                                            </Link>
-                                            <div role="separator" className="dropdown-divider" />
-                                            <Link to={"/app/players/fee-detail/" + ""} className="dropdown-item">
-                                                <i className="dropdown-icon fa fa-receipt" /> Tüm Aidat Bilgisi
-                                            </Link>
-                                            <Link to={"/app/players/detail/" + ""} className="dropdown-item">
-                                                <i className="dropdown-icon fa fa-info-circle" /> Tüm Bilgileri
-                                            </Link>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                         */}
-                        {/*list
-							? list.length > 0
-								? list.map((el, key) => {
-										return (
-											<div className="row mb-3" key={key.toString()}>
-												<div className="col-auto d-flex align-items-center">
-													<span
-														className="avatar"
-														style={{ backgroundImage: `url(${el.image})` }}>
-														{el.image ? "" : avatarPlaceholder(el.name, el.surname)}
-													</span>
-												</div>
-												<div className="col pl-1">
-													<div className="text-body font-weight-600">
-														{fullnameGenerator(el.name, el.surname)}
-													</div>
-													<span
-														className="small text-muted"
-														data-toggle="tooltip"
-														title={moment(el.birthday).format("LL")}>
-														{age} Yaşına Girdi
-													</span>
-												</div>
-											</div>
-										);
-								  })
-								: noRow()
-								: noRow(true)*/}
-                    </div>
+                <div className="card-body pb-1">
+                    {list
+                        ? list.length > 0
+                            ? list.map((el, key) => {
+                                  if (key > 4) return null;
+                                  const count = moment(new Date(), "YYYY-MM-DD").diff(
+                                      moment(el.required_payment_date, "YYYY-MM-DD"),
+                                      "days"
+                                  );
+                                  let badgeColor = "badge-secondary";
+                                  switch (true) {
+                                      case count <= 7:
+                                          badgeColor = "bg-red-light";
+                                          break;
+                                      case count >= 7 && count <= 30:
+                                          badgeColor = "bg-red";
+                                          break;
+                                      case count >= 30:
+                                          badgeColor = "bg-red-dark";
+                                          break;
+                                      default:
+                                          badgeColor = "badge-secondary";
+                                          break;
+                                  }
+                                  return (
+                                      <div className="row mb-4">
+                                          <div className="col-auto px-2">
+                                              <span
+                                                  className="avatar avatar-xs"
+                                                  style={{ backgroundImage: `url(${el.image})` }}>
+                                                  {el.image ? "" : avatarPlaceholder(el.name, el.surname)}
+                                              </span>
+                                          </div>
+                                          <div className="col px-1">
+                                              <div className="text-body font-weight-600">
+                                                  {fullnameGenerator(el.name, el.surname)}
+                                              </div>
+                                              <span
+                                                  className="small text-muted"
+                                                  data-toggle="popover"
+                                                  data-placement="top"
+                                                  data-content={
+                                                      "Ödemesi Gereken Tarih: " +
+                                                      moment(el.required_payment_date).format("LL")
+                                                  }>
+                                                  <span
+                                                      class={`badge mr-1 ${badgeColor} px-2 py-1`}
+                                                      style={{ fontSize: 12 }}>
+                                                      Ödemesi
+                                                      <strong className="font-weight-bolder" style={{ fontSize: 13 }}>
+                                                          &nbsp;{count}&nbsp;gün&nbsp;
+                                                      </strong>
+                                                      gecikmiş!
+                                                  </span>
+                                              </span>
+                                              <div className="small text-muted mt-1">
+                                                  Tutar: <strong>{el.fee.format() + " ₺"}</strong>, Ödenen:{" "}
+                                                  <strong>{el.amount.format() + " ₺"}</strong>
+                                              </div>
+
+                                              <div className="small text-muted">
+                                                  Kalan tutar:{" "}
+                                                  <strong className="text-body">
+                                                      {(el.fee - el.amount).format() + " ₺"}
+                                                  </strong>
+                                              </div>
+                                          </div>
+                                          <div className="col-auto">
+                                              <a
+                                                  href="javascript:void(0)"
+                                                  className="icon"
+                                                  data-toggle="dropdown"
+                                                  aria-haspopup="true"
+                                                  aria-expanded="false">
+                                                  <i className="fe fe-more-vertical"></i>
+                                              </a>
+                                              <div className="item-action dropdown">
+                                                  <div className="dropdown-menu dropdown-menu-right">
+                                                      <Link to={"/app/players/payment/" + el.uid} className="dropdown-item">
+                                                          <i className="dropdown-icon fa fa-hand-holding-usd" /> Ödeme
+                                                          Al
+                                                      </Link>
+                                                      <Link
+                                                          to={"/app/players/detail/" + el.uid}
+                                                          className="dropdown-item cursor-not-allowed disabled">
+                                                          <i className="dropdown-icon fa fa-exclamation-triangle"></i>{" "}
+                                                          Ödeme İkazı
+                                                          <span className="ml-1">
+                                                              (<i className="fe fe-lock mr-0" />)
+                                                          </span>
+                                                      </Link>
+                                                      <div role="separator" className="dropdown-divider" />
+                                                      <Link
+                                                          to={"/app/players/fee-detail/" + el.uid}
+                                                          className="dropdown-item">
+                                                          <i className="dropdown-icon fa fa-receipt" /> Tüm Aidat
+                                                          Bilgisi
+                                                      </Link>
+                                                      <Link to={"/app/players/detail/" + el.uid} className="dropdown-item">
+                                                          <i className="dropdown-icon fa fa-info-circle" /> Tüm
+                                                          Bilgileri
+                                                      </Link>
+                                                  </div>
+                                              </div>
+                                          </div>
+                                      </div>
+                                  );
+                              })
+                            : noRow()
+                        : noRow(true)}
                 </div>
+                {list ? (
+                    list.length >= 5 ? (
+                        <div className="card-footer text-right font-italic">
+                            <Link to="/app/players">
+                                Tümünü görüntüle <i className="fe fe-arrow-right"></i>
+                            </Link>
+                        </div>
+                    ) : null
+                ) : null}
             </div>
         );
     }

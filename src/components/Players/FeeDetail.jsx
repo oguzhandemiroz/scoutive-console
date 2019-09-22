@@ -343,7 +343,7 @@ export class FeeDetail extends Component {
 					<div className="col-lg-8 col-sm-12 col-md-12">
 						<div className="card">
 							<div className="card-header">
-								<h3 className="card-title">İzin Geçmişi</h3>
+								<h3 className="card-title">Aidat Geçmişi</h3>
 								<button
 									onClick={() => this.props.history.push("/app/players/payment/" + to)}
 									className="btn btn-sm btn-success ml-auto">

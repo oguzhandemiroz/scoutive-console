@@ -7,6 +7,10 @@
  * @param mixed   c: decimal delimiter
  */
 Number.prototype.format = function(d, w, s, c) {
+    d = 2;
+    w = 3;
+    s = ".";
+    c = ",";
     var re = "\\d(?=(\\d{" + (w || 3) + "})+" + (d > 0 ? "\\b" : "$") + ")",
         num = this.toFixed(Math.max(0, ~~d));
 

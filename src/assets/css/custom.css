@@ -511,3 +511,13 @@ SOCIAL COLORS
 .card-value-icon i {
     vertical-align: middle;
 }
+
+.avatar .icon {
+    font-size: 1.25em;
+    vertical-align: -0.1em;
+}
+
+.badge-red-dark {
+    color: #fff;
+    background-color: #cd201f;
+}

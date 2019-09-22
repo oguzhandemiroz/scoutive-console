@@ -331,7 +331,7 @@ class Table extends Component {
 							}
 
 							if (!is_trial && !is_scholarship & (data !== null)) {
-								return data.format(2, 3, ".", ",") + " ₺";
+								return data.format() + " ₺";
 							} else if (is_trial) {
 								return "<b>DENEME</b>";
 							} else if (is_scholarship) {

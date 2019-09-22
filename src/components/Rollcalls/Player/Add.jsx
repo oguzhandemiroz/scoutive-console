@@ -256,10 +256,10 @@ export class Add extends Component {
 													${status_type[this.getPaidStatus(el.fee, el.amount)].text}
 												</b>
 												<hr class="my-2"/>
-												<b>Ödemesi Gereken:</b> ${el.fee.format(2, 3, ".", ",") + " ₺"} <br>
-												<b>Ödenen:</b> ${el.amount.format(2, 3, ".", ",") + " ₺"} <br>
+												<b>Ödemesi Gereken:</b> ${el.fee.format() + " ₺"} <br>
+												<b>Ödenen:</b> ${el.amount.format() + " ₺"} <br>
 												<hr class="my-1"/>
-												<b>Borç:</b> ${(el.fee - el.amount).format(2, 3, ".", ",") + " ₺"} <br>
+												<b>Borç:</b> ${(el.fee - el.amount).format() + " ₺"} <br>
 											`}
                                                 data-toggle="popover"
                                                 className={`d-inline-flex justify-content-center align-items-center mr-1 badge ${status_type[this.getPaidStatus(el.fee, el.amount)].badge}`}>

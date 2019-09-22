@@ -153,7 +153,7 @@ export class DailyCreatedPlayer extends Component {
                     <div className="dimmer-content">
                         <div className="card-body pt-4">
                             <div className="card-value float-right text-muted">
-                                <i className="fe fe-users text-blue" />
+                                <i className={`fe fe-users ${todayCount > 0 ? "text-blue" : ""}`} />
                             </div>
                             <h3 className="mb-1">{todayCount}</h3>
                             <div className="text-muted">Bugün Eklenen Öğrenci</div>

@@ -92,7 +92,7 @@ const IconOption = props => (
             />
             {props.data.label}
             <div className="small text-muted">
-                Bütçe: <b>{props.data.balance.format(2, 3, ".", ",") + " ₺"}</b>
+                Bütçe: <b>{props.data.balance.format() + " ₺"}</b>
             </div>
         </span>
     </Option>
@@ -433,7 +433,7 @@ export class AdvancePayment extends Component {
                                                                   <td>
                                                                       {moment(el.advance_date).format("DD/MM/YYYY")}
                                                                   </td>
-                                                                  <td>{el.amount.format(2, 3, ".", ",")} ₺</td>
+                                                                  <td>{el.amount.format()} ₺</td>
                                                                   <td>
                                                                       <span
                                                                           className={`badge badge-${

@@ -71,7 +71,7 @@ export class Vacation extends Component {
                     stateData.image = data.image || "—";
                     stateData.salary = data.salary ? "∙∙∙∙∙∙" : null;
                     stateData.secretSalary = data.salary
-                        ? CryptoJS.AES.encrypt(data.salary.format(2, 3, ".", ","), "scSecretSalary").toString()
+                        ? CryptoJS.AES.encrypt(data.salary.format(), "scSecretSalary").toString()
                         : null;
                     stateData.onLoadedData = true;
 

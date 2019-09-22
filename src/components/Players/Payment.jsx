@@ -367,7 +367,9 @@ export class Payment extends Component {
 	generateMonthList = () => {
 		const months = moment.months();
 		const monthsForSelect = [];
-		months.map(el => {
+		const thisMonth = moment().month()
+		months.map((el,key) => {
+			if(key >thisMonth) return null;
 			monthsForSelect.push({
 				value: moment()
 					.month(el)
