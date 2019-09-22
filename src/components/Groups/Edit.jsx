@@ -67,9 +67,9 @@ export class Edit extends Component {
 		try {
 			const { playerList, players, removeGroup } = this.state;
 			const now = Date.now();
-			this.setState({
+			this.setState(prevState => ({
 				playerList: [
-					...playerList,
+					...prevState.playerList,
 					{
 						id: now,
 						select: states => {
@@ -109,11 +109,9 @@ export class Edit extends Component {
 						)
 					}
 				],
-				players: [...players, { key: now, security_id: security_id || "" }]
-			});
-			if (security_id) {
-				this.setState({ removeGroup: [...removeGroup, security_id] });
-			}
+				removeGroup: [...prevState.removeGroup, security_id],
+				players: [...prevState.players, { key: now, security_id: security_id || "" }]
+			}));
 		} catch (e) {}
 	};
 
@@ -139,7 +137,6 @@ export class Edit extends Component {
 
 	componentDidMount() {
 		this.getFillSelect();
-		this.renderPlayerList();
 		this.getGroupDetail();
 	}
 
@@ -163,9 +160,8 @@ export class Edit extends Component {
 						});
 					} else this.addItemList();
 				}
-
-				this.setState({ loadingData: false });
 			}
+			this.setState({ loadingData: false });
 		});
 	};
 
@@ -406,7 +402,7 @@ export class Edit extends Component {
 					...prevState.select,
 					players: response
 				}
-			}));
+			}), () => this.renderPlayerList());
 		});
 	};
 
