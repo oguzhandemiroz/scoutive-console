@@ -51,8 +51,8 @@ export class TrainingGroupList extends Component {
                                     <h4 className="mb-1">{el.name}</h4>
                                     <div className="text-muted">
                                         Grubu şu an&nbsp;
-                                        <strong className="text-body">{el.area ? el.area.name + "'de" : ""}</strong>
-                                        &nbsp;antrenmanda
+                                        <strong className="text-body">{el.area ? el.area.name + "'de " : ""}</strong>
+                                        antrenmanda
                                     </div>
                                     <div className="row clear-both pt-4">
                                         <div className="col-auto d-lg-flex align-items-center">
@@ -94,7 +94,7 @@ export class TrainingGroupList extends Component {
                                 <i className="fa fa-running" />
                             </div>
                             <div className="text-muted d-flex align-items-center" style={{ height: "3.4rem" }}>
-                                Şu an antrenmanda olan grup yok...
+                                Şu an antrenmanda olan grup bulunamadı...
                             </div>
                         </div>
                     )

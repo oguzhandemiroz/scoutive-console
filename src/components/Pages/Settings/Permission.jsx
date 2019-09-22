@@ -164,7 +164,7 @@ export class Permission extends Component {
 															<th className="pl-0">
 																<input
 																	type="text"
-																	className="form-control text-uppercase font-weight-600 text-dark"
+																	className="form-control text-capitalize font-weight-600 text-dark"
 																	name={`permission.${el.permission_id}`}
 																	placeholder={el.title}
 																	value={el.title}

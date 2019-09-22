@@ -56,7 +56,7 @@ class Players extends Component {
 
 				<div className="row row-cards">
 					<div className="col-sm-6 col-md-4">
-						<DailyPlayer data={data} />
+						<DailyPlayer data={data.filter(x => x.status === 1)} />
 					</div>
 					<div className="col-sm-6 col-md-4">
 						<TotalPlayerCount data={data} />

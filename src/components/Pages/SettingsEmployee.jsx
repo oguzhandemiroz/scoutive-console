@@ -1,13 +1,9 @@
-import React, { Component } from 'react'
+import React, { Component } from "react";
 
 export class SettingsEmployee extends Component {
     render() {
-        return (
-            <div>
-                SettingsEmployee
-            </div>
-        )
+        return <div className="container"></div>;
     }
 }
 
-export default SettingsEmployee
+export default SettingsEmployee;

@@ -162,40 +162,11 @@ export class Edit extends Component {
 	};
 
 	componentDidMount() {
-		setTimeout(() => {
-			this.fieldMasked();
-		}, 500);
+		this.fieldMasked();
+		this.getFillSelect();
 
 		const { uid, to } = this.state;
-		let select = { ...this.state.select };
-
-		Bloods().then(response => {
-			console.log(response);
-			select.bloods = response;
-			this.setState({ select });
-		});
-
-		EmployeePositions().then(response => {
-			console.log(response);
-			select.positions = response;
-			this.setState({ select });
-		});
-
-		Branchs().then(response => {
-			console.log(response);
-			select.branchs = response;
-			this.setState({ select });
-		});
-
-		select.days = Days();
-		select.months = Months();
-		select.years = Years(true);
-		select.kinships = Kinship();
-
-		this.setState({ select });
-
-		setTimeout(() => {
-			DetailEmployee({
+		DetailEmployee({
 				uid: uid,
 				to: to
 			}).then(response => {
@@ -273,7 +244,6 @@ export class Edit extends Component {
 					}
 				}
 			});
-		}, 100);
 	}
 
 	handleSubmit = e => {
@@ -513,6 +483,46 @@ export class Edit extends Component {
 		setTimeout(() => {
 			this.props.history.replace(current);
 		});
+	};
+
+	getFillSelect = () => {
+		EmployeePositions().then(response => {
+			this.setState(prevState => ({
+				select: {
+					...prevState.select,
+					positions: response
+				}
+			}));
+		});
+
+		Branchs().then(response => {
+			this.setState(prevState => ({
+				select: {
+					...prevState.select,
+					branchs: response
+				},
+				branch: response.filter(x => x.value === localStorage.getItem("sBranch"))
+			}));
+		});
+
+		Bloods().then(response => {
+			this.setState(prevState => ({
+				select: {
+					...prevState.select,
+					bloods: response
+				}
+			}));
+		});
+
+		this.setState(prevState => ({
+			select: {
+				...prevState.select,
+				days: Days(),
+				months: Months(),
+				years: Years(true),
+				kinships: Kinship()
+			}
+		}));
 	};
 
 	render() {
