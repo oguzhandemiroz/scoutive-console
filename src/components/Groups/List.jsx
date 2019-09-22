@@ -1,6 +1,7 @@
-import React, {Component} from "react";
-import {ListGroups} from "../../services/Group";
-import {Link, withRouter} from "react-router-dom";
+import React, { Component } from "react";
+import { ListGroups } from "../../services/Group";
+import { Link, withRouter } from "react-router-dom";
+const $ = require("jquery");
 
 export class List extends Component {
     constructor(props) {
@@ -14,22 +15,23 @@ export class List extends Component {
 
     componentDidMount() {
         try {
-            const {uid} = this.state;
+            const { uid } = this.state;
             ListGroups(uid).then(response => {
                 if (response) {
                     let sortData = response.data;
                     sortData = sortData.sort((a, b) => {
                         return parseInt(a.start_time) > parseInt(b.start_time) ? 1 : -1;
                     });
-                    this.setState({list: sortData});
+                    this.setState({ list: sortData });
+                    $('[data-toggle="tooltip"]').tooltip();
                 }
             });
         } catch (e) {}
     }
 
     render() {
-        const {list} = this.state;
-        const {location, match} = this.props;
+        const { list } = this.state;
+        const { location, match } = this.props;
         return (
             <div className={`dimmer ${!list ? "active" : ""}`}>
                 <div className="loader" />
@@ -57,10 +59,13 @@ export class List extends Component {
                                               data-original-title={el.name}
                                               data-toggle="tooltip"
                                               className="text-truncate pr-2"
-                                              style={{flex: 1}}>
+                                              style={{ flex: 1 }}>
                                               {el.name}
                                           </span>
-                                          <span className="float-right tag tag-gray">
+                                          <span
+                                              className="float-right tag tag-gray"
+                                              data-toggle="tooltip"
+                                              title={el.area ? el.area.name : "Kayıtlı Saha Yok"}>
                                               {el.start_time.slice(0, -3)} - {el.end_time.slice(0, -3)}
                                           </span>
                                       </Link>
