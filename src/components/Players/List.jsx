@@ -456,7 +456,7 @@ class Table extends Component {
 							<th className="position">MEVKİİ</th>
 							<th className="birthday">YAŞ</th>
 							<th className="group">GRUP</th>
-							<th className="daily">DURUM</th>
+							<th className="daily" title="Yoklama Durumu">YOKL. DURUM</th>
 							<th className="no-sort action" />
 						</tr>
 					</thead>

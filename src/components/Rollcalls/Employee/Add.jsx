@@ -18,11 +18,18 @@ import { fullnameGenerator } from "../../../services/Others";
 const $ = require("jquery");
 $.DataTable = require("datatables.net");
 
-var statusType = {
+const statusType = {
 	0: { bg: "bg-danger", title: "Pasif" },
 	1: { bg: "bg-success", title: "Aktif" },
 	2: { bg: "bg-azure", title: "Donuk" },
 	3: { bg: "bg-indigo", title: "Deneme" }
+};
+
+const dailyType = {
+	0: { icon: "fe-x", badge: "bg-red-light", text: "Gelmedi", color: "text-red" },
+	1: { icon: "fe-check", badge: "bg-green-light", text: "Geldi", color: "text-green" },
+	2: { icon: "fe-alert-circle", badge: "bg-yellow-light", text: "Tam Gün", color: "text-yellow" },
+	3: { icon: "fe-alert-circle", badge: "bg-yellow-light", text: "Yarın Gün", color: "text-yellow" }
 };
 
 export class Add extends Component {
@@ -130,26 +137,25 @@ export class Add extends Component {
 					targets: "rollcalls",
 					responsivePriority: 10002,
 					createdCell: (td, cellData, rowData) => {
-						const status_type = {
-							0: { icon: "fe-x", badge: "bg-red-light", text: "Gelmedi" },
-							1: { icon: "fe-check", badge: "bg-green-light", text: "Geldi" },
-							2: { icon: "fe-alert-circle", badge: "bg-yellow-light", text: "Tam Gün" },
-							3: { icon: "fe-alert-circle", badge: "bg-yellow-light", text: "Yarın Gün" }
-						};
 						ReactDOM.render(
 							<div>
 								{cellData.rollcalls.map((el, key) => {
 									return (
 										<span
 											key={key.toString()}
-											title={
-												status_type[el.status].text +
-												": " +
-												moment(el.rollcall_date).format("LL")
-											}
-											data-toggle="tooltip"
-											className={`d-inline-flex justify-content-center align-items-center mr-1 badge ${status_type[el.status].badge}`}>
-											<i className={`fe ${status_type[el.status].icon}`} />
+											data-placement="top"
+											data-content={`
+                                            <p><b>${moment(el.rollcall_date).format("LL, dddd")}</b></p>
+                                            Durum: <b class="${dailyType[el.status].color}">${
+												dailyType[el.status].text
+											}</b>
+                                            ${
+												el.note ? `<hr class="my-2"/><b>Not:</b> ${el.note}<br>` : ""
+											}                                            
+                                        `}
+											data-toggle="popover"
+											className={`d-inline-flex justify-content-center align-items-center mr-1 badge ${dailyType[el.status].badge}`}>
+											<i className={`fe ${dailyType[el.status].icon}`} />
 										</span>
 									);
 								})}
@@ -351,6 +357,10 @@ export class Add extends Component {
 		$("#rollcall-list").on("draw.dt", function() {
 			console.log("draw.dt");
 			$('[data-toggle="tooltip"]').tooltip();
+			$('[data-toggle="popover"]').popover({
+				html: true,
+				trigger: "hover"
+			});
 		});
 	};
 

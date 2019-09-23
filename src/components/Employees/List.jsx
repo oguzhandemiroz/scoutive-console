@@ -250,7 +250,7 @@ class Table extends Component {
 							<th className="phone">TELEFON</th>
 							<th className="position">POZİSYON</th>
 							<th className="salary">MAAŞ</th>
-							<th className="status">DURUM</th>
+							<th className="status" title="Yoklama Durumu">YOKL. DURUMU</th>
 							<th className="no-sort action" />
 						</tr>
 					</thead>
