@@ -99,7 +99,7 @@ export class VacationPlayer extends Component {
 	reload = () => {
 		setTimeout(() => {
 			const current = this.props.history.location.pathname;
-			this.props.history.replace(`/`);
+			this.props.history.replace("/app/reload");
 			setTimeout(() => {
 				this.props.history.replace(current);
 			});
@@ -200,7 +200,7 @@ export class VacationPlayer extends Component {
 											</span>
 											<div className="media-body">
 												<h4 className="m-0">{fullnameGenerator(name, surname)}</h4>
-												<p className="text-muted mb-0">{nullCheck(position, "—")}</p>
+												<p className="text-muted mb-0">{nullCheck(position)}</p>
 												<ul className="social-links list-inline mb-0 mt-2">
 													<li className="list-inline-item">
 														<a
@@ -208,10 +208,10 @@ export class VacationPlayer extends Component {
 															className="employee_email"
 															href={
 																email
-																	? `mailto:${nullCheck(email, "—")}`
+																	? `mailto:${nullCheck(email)}`
 																	: "javascript:void(0);"
 															}
-															data-original-title={nullCheck(email, "—")}
+															data-original-title={nullCheck(email)}
 															data-toggle="tooltip">
 															<i className="fa fa-envelope" />
 														</a>
@@ -221,10 +221,10 @@ export class VacationPlayer extends Component {
 															className="employee_phone"
 															href={
 																email
-																	? `tel:${nullCheck(phone, "—")}`
+																	? `tel:${nullCheck(phone)}`
 																	: "javascript:void(0);"
 															}
-															data-original-title={nullCheck(phone, "—")}
+															data-original-title={nullCheck(phone)}
 															data-toggle="tooltip">
 															<i className="fa fa-phone" />
 														</a>
@@ -249,7 +249,7 @@ export class VacationPlayer extends Component {
 													</Link>
 												) : (
 													<div className="form-control-plaintext">
-														{nullCheck(group, "—")}
+														{nullCheck(group)}
 													</div>
 												)}
 											</div>
@@ -262,7 +262,7 @@ export class VacationPlayer extends Component {
 										</div>
 										<div className="form-group">
 											<label className="form-label">Branş</label>
-											<div className="form-control-plaintext">{nullCheck(branch, "—")}</div>
+											<div className="form-control-plaintext">{nullCheck(branch)}</div>
 										</div>
 
 										<div className="form-group">

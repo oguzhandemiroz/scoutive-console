@@ -1,14 +1,22 @@
 import React, { Component } from "react";
-import { Bloods, Branchs, Days, Months, Years, EmployeePositions, Kinship } from "../../services/FillSelect.jsx";
-import { CreateEmployee } from "../../services/Employee.jsx";
-import { UploadFile, getSelectValue } from "../../services/Others.jsx";
-import { showSwal } from "../../components/Alert.jsx";
+import { Bloods, Branchs, Days, Months, Years, EmployeePositions, Kinship } from "../../services/FillSelect";
+import {
+	emailRegEx,
+	securityNoRegEx,
+	selectCustomStyles,
+	selectCustomStylesError,
+	formValid
+} from "../../assets/js/core";
+import { CreateEmployee } from "../../services/Employee";
+import { UploadFile, getSelectValue, clearMoney } from "../../services/Others";
+import { showSwal } from "../../components/Alert";
 import Select from "react-select";
 import Inputmask from "inputmask";
 import DatePicker, { registerLocale } from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import tr from "date-fns/locale/tr";
 import moment from "moment";
+import _ from "lodash";
 const $ = require("jquery");
 
 registerLocale("tr", tr);
@@ -40,69 +48,23 @@ const InputmaskDefaultOptions = {
 	placeholder: ""
 };
 
-// eslint-disable-next-line
-const emailRegEx = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
-const securityNoRegEx = /^\d+$/;
-
-const formValid = ({ formErrors, ...rest }) => {
-	let valid = true;
-
-	Object.values(formErrors).forEach(val => {
-		val.length > 0 && (valid = false);
-	});
-
-	Object.values(rest).forEach(val => {
-		val === null && (valid = false);
-	});
-
-	return valid;
-};
-
-const customStyles = {
-	control: styles => ({ ...styles, borderColor: "rgba(0, 40, 100, 0.12)", borderRadius: 3 })
-};
-
-const customStylesError = {
-	control: styles => ({
-		...styles,
-		borderColor: "#cd201f",
-		borderRadius: 3,
-		":hover": { ...styles[":hover"], borderColor: "#cd201f" }
-	})
-};
-
-const initialState = {
-	image: null,
-	name: null,
-	surname: null,
-	securityNo: null,
-	email: null,
-	phone: null,
-	salary: null,
-	position: null,
-	branch: null,
-	blood: null,
-	address: null,
-	body_height: null,
-	body_weight: null,
-	gender: null,
-	day: null,
-	month: null,
-	year: null,
-	emergency: [],
-	school_history: [],
-	certificate: [],
-	imagePreview: null,
-	start_date: new Date()
-};
-
 export class Add extends Component {
 	constructor(props) {
 		super(props);
-
 		this.state = {
 			uid: localStorage.getItem("UID"),
-			...initialState,
+			name: null,
+			surname: null,
+			security_id: null,
+			email: null,
+			position: null,
+			branch: null,
+			phone: null,
+			start_date: new Date(),
+			salary: null,
+			emergency: [],
+			school_history: [],
+			certificates: [],
 			select: {
 				bloods: null,
 				positions: null,
@@ -117,7 +79,7 @@ export class Add extends Component {
 			formErrors: {
 				name: "",
 				surname: "",
-				securityNo: "",
+				security_id: "",
 				email: "",
 				position: "",
 				branch: "",
@@ -125,8 +87,8 @@ export class Add extends Component {
 				salary: ""
 			},
 			loadingButton: "",
-			addContinuously: true,
-			uploadedFile: true
+			loadingImage: "",
+			addContinuously: true
 		};
 	}
 
@@ -137,18 +99,18 @@ export class Add extends Component {
 				surname: $("[name=surname]"),
 				phone: $("[name=phone]"),
 				email: $("[name=email]"),
-				securityNo: $("[name=securityNo]"),
+				security_id: $("[name=security_id]"),
 				salary: $("[name=salary]"),
 				emergency_phone: $("[name*='emergency.phone.']"),
 				emergency_name: $("[name*='emergency.name.']"),
 				school_history_name: $("[name*='school_history.name.']"),
-				certificate_type: $("[name*='certificate.type.']"),
-				certificate_corporation: $("[name*='certificate.corporation.']")
+				certificate_type: $("[name*='certificates.type.']"),
+				certificate_corporation: $("[name*='certificates.corporation.']")
 			};
 			const onlyString = "[a-zA-Z-ğüşöçİĞÜŞÖÇı ]*";
 			Inputmask({ mask: "(999) 999 9999", ...InputmaskDefaultOptions }).mask(elemArray.phone);
 			Inputmask({ mask: "(999) 999 9999", ...InputmaskDefaultOptions }).mask(elemArray.emergency_phone);
-			Inputmask({ mask: "99999999999", ...InputmaskDefaultOptions }).mask(elemArray.securityNo);
+			Inputmask({ mask: "99999999999", ...InputmaskDefaultOptions }).mask(elemArray.security_id);
 			Inputmask({ alias: "email", ...InputmaskDefaultOptions }).mask(elemArray.email);
 			Inputmask({ alias: "try", ...InputmaskDefaultOptions, placeholder: "0,00" }).mask(elemArray.salary);
 			Inputmask({ regex: "[a-zA-ZğüşöçİĞÜŞÖÇı]*", ...InputmaskDefaultOptions }).mask(elemArray.surname);
@@ -161,41 +123,12 @@ export class Add extends Component {
 	};
 
 	componentDidMount() {
-		setTimeout(() => this.fieldMasked(), 500)
 		this.getFillSelect();
-
-		initialState.emergency.push({
-			kinship: "Anne",
-			name: "",
-			phone: ""
-		});
-		initialState.emergency.push({
-			kinship: "Baba",
-			name: "",
-			phone: ""
-		});
-
-		for (var i = 0; i < 3; i++) {
-			initialState.school_history.push({
-				start: "",
-				end: "",
-				name: ""
-			});
-		}
-
-		for (var i = 0; i < 3; i++) {
-			initialState.certificate.push({
-				type: "",
-				year: "",
-				corporation: ""
-			});
-		}
+		setTimeout(this.fieldMasked, 150);
 	}
 
 	componentWillUnmount() {
-		initialState.emergency = [];
-		initialState.school_history = [];
-		initialState.certificate = [];
+		this.setState({ emergency: [], school_history: [], certificates: [] });
 	}
 
 	handleSubmit = e => {
@@ -204,7 +137,7 @@ export class Add extends Component {
 			uid,
 			name,
 			surname,
-			securityNo,
+			security_id,
 			email,
 			position,
 			branch,
@@ -216,69 +149,28 @@ export class Add extends Component {
 			day,
 			month,
 			year,
+			note,
 			body_height,
 			body_weight,
 			emergency,
 			school_history,
-			certificate,
-			formErrors,
+			certificates,
 			addContinuously,
 			imagePreview,
 			start_date,
 			file
 		} = this.state;
 
-		const requiredData = {};
-		const attributesData = {};
-
-		// require data
-		requiredData.name = name;
-		requiredData.surname = surname;
-		requiredData.securityNo = securityNo;
-		requiredData.email = email;
-		requiredData.position = position;
-		requiredData.branch = branch;
-		requiredData.phone = phone;
-		requiredData.start_date = start_date;
-		requiredData.salary = salary;
-		requiredData.formErrors = formErrors;
-
-		//attributes data
-		if (salary) {
-			attributesData.salary = parseFloat(salary.toString().replace(",", "."));
-		}
-
-		if (position) {
-			attributesData.position = position.value.toString();
-		}
-
-		if (email) {
-			attributesData.email = email.toString();
-		}
-
-		if (phone) {
-			attributesData.phone = phone.toString();
-		}
-
-		if (body_height) {
-			attributesData.body_height = body_height.toString();
-		}
-
-		if (body_weight) {
-			attributesData.body_weight = body_weight.toString();
-		}
-
-		const checkBirthday = year && month && day ? `${year.value}-${month.value}-${day.value}` : null;
-
-		if (formValid(requiredData)) {
+		if (formValid(this.state)) {
 			this.setState({ loadingButton: "btn-loading" });
+			const checkBirthday = year && month && day ? `${year.value}-${month.value}-${day.value}` : null;
 
 			CreateEmployee({
 				uid: uid,
 				name: name.capitalize(),
-				surname: surname.toLocaleUpperCase('tr-TR'),
+				surname: surname.toLocaleUpperCase("tr-TR"),
 				password: "151117",
-				security_id: securityNo,
+				security_id: security_id,
 				email: email,
 				permission_id: position.value,
 				phone: phone,
@@ -286,19 +178,27 @@ export class Add extends Component {
 				gender: gender,
 				blood: blood ? blood.value : null,
 				branch: branch.value,
-				salary: parseFloat(salary.toString().replace(",", ".")),
+				salary: clearMoney(salary),
 				birthday: checkBirthday,
+				note: note,
 				emergency: emergency,
 				school_history: school_history,
-				certificates: certificate,
+				certificates: certificates,
 				start_date: moment(start_date).format("YYYY-MM-DD"),
-				attributes: attributesData
+				attributes: _.pickBy({
+					salary: clearMoney(salary),
+					position: position.value,
+					email: email,
+					phone: phone,
+					body_height: body_height,
+					body_weight: body_weight
+				})
 			}).then(response => {
 				const formData = new FormData();
 				var imageUploading = false;
 				if (response) {
 					if (imagePreview) {
-						this.setState({ uploadedFile: false });
+						this.setState({ loadingImage: "btn-loading" });
 						imageUploading = true;
 						formData.append("image", file);
 						formData.append("uid", uid);
@@ -306,37 +206,34 @@ export class Add extends Component {
 						formData.append("type", "employee");
 						formData.append("update", true);
 						UploadFile(formData).then(response => {
-							this.setState({ uploadedFile: true, loadingButton: "" });
+							this.setState({ loadingImage: "", loadingButton: "" });
 							if (response)
-								if (!addContinuously) this.props.history.push("/app/employees");
+								if (!addContinuously) this.props.history.push("/app/employees/detail/" + response.uid);
 								else this.reload();
 						});
 					} else if (addContinuously) this.reload();
-					else this.props.history.push("/app/employees");
+					else this.props.history.push("/app/employees/detail/" + response.uid);
 				} else this.setState({ loadingButton: "" });
 			});
 		} else {
-			console.error("FORM INVALID - DISPLAY ERROR");
-			let formErrors = { ...this.state.formErrors };
-
-			formErrors.name = name ? (name.length < 2 ? "is-invalid" : "") : "is-invalid";
-			formErrors.surname = surname ? (surname.length < 2 ? "is-invalid" : "") : "is-invalid";
-			formErrors.securityNo = securityNo
-				? securityNo.length !== 11
-					? "is-invalid"
-					: !securityNoRegEx.test(securityNo)
-					? "is-invalid"
-					: ""
-				: "is-invalid";
-			formErrors.email = email ? (!emailRegEx.test(email) ? "is-invalid" : "") : "is-invalid";
-			formErrors.phone = phone ? (phone.length !== 10 ? "is-invalid" : "") : "is-invalid";
-			formErrors.salary = salary ? "" : "is-invalid";
-			formErrors.start_date = start_date ? "" : "is-invalid";
-			//select
-			formErrors.position = position ? "" : true;
-			formErrors.branch = branch ? "" : true;
-
-			this.setState({ formErrors });
+			this.setState(prevState => ({
+				formErrors: {
+					...prevState.formErrors,
+					name: name ? (name.length < 2 ? "is-invalid" : "") : "is-invalid",
+					surname: surname ? (surname.length < 2 ? "is-invalid" : "") : "is-invalid",
+					security_id: securityNoRegEx.test(security_id)
+						? security_id.length < 9
+							? "is-invalid"
+							: ""
+						: "is-invalid",
+					email: emailRegEx.test(email) ? "" : "is-invalid",
+					phone: phone ? (phone.length !== 10 ? "is-invalid" : "") : "is-invalid",
+					salary: salary ? "" : "is-invalid",
+					start_date: start_date ? "" : "is-invalid",
+					position: position ? false : true,
+					branch: branch ? false : true
+				}
+			}));
 		}
 	};
 
@@ -352,8 +249,8 @@ export class Add extends Component {
 			case "surname":
 				formErrors.surname = value.length < 2 ? "is-invalid" : "";
 				break;
-			case "securityNo":
-				formErrors.securityNo =
+			case "security_id":
+				formErrors.security_id =
 					value.length !== 11 ? "is-invalid" : !securityNoRegEx.test(value) ? "is-invalid" : "";
 				break;
 			case "email":
@@ -399,25 +296,18 @@ export class Add extends Component {
 	};
 
 	handleSelect = (value, name, extraData, arr) => {
-		let formErrors = { ...this.state.formErrors };
-
 		if (arr) {
 			this.setState(prevState => {
 				return (prevState[name][extraData].kinship = value.label);
 			});
 		} else {
-			switch (name) {
-				case "position":
-					formErrors.position = value ? false : true;
-					break;
-				case "branch":
-					formErrors.branch = value ? false : true;
-					break;
-				default:
-					break;
-			}
-
-			this.setState({ formErrors, [name]: value });
+			this.setState(prevState => ({
+				formErrors: {
+					...prevState.formErrors,
+					[name]: value ? false : true
+				},
+				[name]: value
+			}));
 		}
 	};
 
@@ -432,14 +322,18 @@ export class Add extends Component {
 	};
 
 	handleDate = (date, name) => {
-		let formErrors = { ...this.state.formErrors };
-		formErrors.start_date = date ? "" : "is-invalid";
-		this.setState({ formErrors, [name]: date });
+		this.setState(prevState => ({
+			formErrors: {
+				...prevState.formErrors,
+				[name]: date ? "" : "is-invalid"
+			},
+			[name]: date
+		}));
 	};
 
 	reload = () => {
 		const current = this.props.history.location.pathname;
-		this.props.history.replace(`/`);
+		this.props.history.replace("/app/reload");
 		setTimeout(() => {
 			this.props.history.replace(current);
 		});
@@ -461,7 +355,7 @@ export class Add extends Component {
 					...prevState.select,
 					branchs: response
 				},
-				branch: response.filter(x => x.value === localStorage.getItem("sBranch"))
+				branch: response.filter(x => x.value === localStorage.getItem("sBranch"))[0] || null
 			}));
 		});
 
@@ -481,37 +375,77 @@ export class Add extends Component {
 				months: Months(),
 				years: Years(true),
 				kinships: Kinship()
-			}
+			},
+			emergency: [
+				...prevState.emergency,
+				{
+					kinship: "Anne",
+					name: "",
+					phone: ""
+				},
+				{
+					kinship: "Baba",
+					name: "",
+					phone: ""
+				}
+			],
+			school_history: [
+				...prevState.school_history,
+				{
+					start: "",
+					end: "",
+					name: ""
+				},
+				{
+					start: "",
+					end: "",
+					name: ""
+				},
+				{
+					start: "",
+					end: "",
+					name: ""
+				}
+			],
+			certificates: [
+				...prevState.certificates,
+				{
+					type: "",
+					year: "",
+					corporation: ""
+				},
+				{
+					type: "",
+					year: "",
+					corporation: ""
+				},
+				{
+					type: "",
+					year: "",
+					corporation: ""
+				}
+			]
 		}));
 	};
 
 	render() {
 		const {
-			name,
-			surname,
-			securityNo,
-			email,
 			position,
 			branch,
 			blood,
-			phone,
 			gender,
-			address,
-			salary,
 			day,
 			month,
 			year,
-			body_height,
-			body_weight,
 			loadingButton,
 			addContinuously,
 			select,
 			imagePreview,
 			formErrors,
-			uploadedFile,
+			loadingImage,
 			emergency,
 			school_history,
-			certificate,
+			certificates,
 			start_date
 		} = this.state;
 		return (
@@ -530,9 +464,7 @@ export class Add extends Component {
 									<div className="col-auto m-auto">
 										<label
 											htmlFor="image"
-											className={`avatar ${
-												uploadedFile ? "" : "btn-loading"
-											} avatar-xxxl cursor-pointer disabled`}
+											className={`avatar ${loadingImage} avatar-xxxl cursor-pointer disabled`}
 											style={{
 												border: "none",
 												outline: "none",
@@ -563,7 +495,6 @@ export class Add extends Component {
 										onChange={this.handleChange}
 										placeholder="Adı"
 										name="name"
-										value={name || ""}
 									/>
 								</div>
 
@@ -578,7 +509,6 @@ export class Add extends Component {
 										onChange={this.handleChange}
 										placeholder="Soyadı"
 										name="surname"
-										value={surname || ""}
 									/>
 								</div>
 
@@ -589,11 +519,10 @@ export class Add extends Component {
 									</label>
 									<input
 										type="text"
-										className={`form-control ${formErrors.securityNo}`}
+										className={`form-control ${formErrors.security_id}`}
 										onChange={this.handleChange}
 										placeholder="T.C. Kimlik No"
-										name="securityNo"
-										value={securityNo || ""}
+										name="security_id"
 									/>
 								</div>
 
@@ -608,7 +537,9 @@ export class Add extends Component {
 										options={select.positions}
 										name="position"
 										placeholder="Seç..."
-										styles={formErrors.position === true ? customStylesError : customStyles}
+										styles={
+											formErrors.position === true ? selectCustomStylesError : selectCustomStyles
+										}
 										isClearable={true}
 										isSearchable={true}
 										isDisabled={select.positions ? false : true}
@@ -627,7 +558,9 @@ export class Add extends Component {
 										options={select.branchs}
 										name="branch"
 										placeholder="Seç..."
-										styles={formErrors.branch === true ? customStylesError : customStyles}
+										styles={
+											formErrors.branch === true ? selectCustomStylesError : selectCustomStyles
+										}
 										isSearchable={true}
 										isDisabled={select.branchs ? false : true}
 										noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
@@ -645,7 +578,6 @@ export class Add extends Component {
 										onChange={this.handleChange}
 										placeholder="Maaş"
 										name="salary"
-										value={salary || ""}
 									/>
 								</div>
 
@@ -654,7 +586,6 @@ export class Add extends Component {
 										İşe Başlama Tarihi
 										<span className="form-required">*</span>
 									</label>
-
 									<DatePicker
 										autoComplete="off"
 										selected={start_date}
@@ -690,7 +621,6 @@ export class Add extends Component {
 												onChange={this.handleChange}
 												name="email"
 												placeholder="Email"
-												value={email || ""}
 											/>
 										</div>
 										<div className="form-group">
@@ -704,7 +634,6 @@ export class Add extends Component {
 												onChange={this.handleChange}
 												name="phone"
 												placeholder="(535) 123 4567"
-												value={phone || ""}
 											/>
 										</div>
 										<div className="form-group">
@@ -717,7 +646,7 @@ export class Add extends Component {
 														options={select.days}
 														name="day"
 														placeholder="Gün"
-														styles={customStyles}
+														styles={selectCustomStyles}
 														isSearchable={true}
 														isDisabled={select.days ? false : true}
 														noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
@@ -730,7 +659,7 @@ export class Add extends Component {
 														options={select.months}
 														name="month"
 														placeholder="Ay"
-														styles={customStyles}
+														styles={selectCustomStyles}
 														isSearchable={true}
 														isDisabled={select.months ? false : true}
 														noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
@@ -743,7 +672,7 @@ export class Add extends Component {
 														options={select.years}
 														name="year"
 														placeholder="Yıl"
-														styles={customStyles}
+														styles={selectCustomStyles}
 														isSearchable={true}
 														isDisabled={select.years ? false : true}
 														noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
@@ -760,7 +689,6 @@ export class Add extends Component {
 												rows={6}
 												maxLength="1000"
 												placeholder="Adres"
-												value={address || ""}
 											/>
 										</div>
 									</div>
@@ -777,7 +705,6 @@ export class Add extends Component {
 														placeholder="Boy (cm)"
 														min="0"
 														max="250"
-														value={body_height || ""}
 													/>
 												</div>
 												<div className="col-6">
@@ -790,7 +717,6 @@ export class Add extends Component {
 														id="weight"
 														min="0"
 														max="250"
-														value={body_weight || ""}
 													/>
 												</div>
 											</div>
@@ -830,7 +756,7 @@ export class Add extends Component {
 												options={select.bloods}
 												name="blood"
 												placeholder="Seç..."
-												styles={customStyles}
+												styles={selectCustomStyles}
 												isClearable={true}
 												isSearchable={true}
 												isDisabled={select.bloods ? false : true}
@@ -871,7 +797,7 @@ export class Add extends Component {
 																		options={select.kinships}
 																		name="kinship"
 																		placeholder="Seç..."
-																		styles={customStyles}
+																		styles={selectCustomStyles}
 																		isSearchable={true}
 																		isDisabled={select.kinships ? false : true}
 																		noOptionsMessage={value =>
@@ -967,7 +893,7 @@ export class Add extends Component {
 													</tr>
 												</thead>
 												<tbody>
-													{certificate.map((el, key) => {
+													{certificates.map((el, key) => {
 														return (
 															<tr key={key.toString()}>
 																<td className="pl-0 pr-0">
@@ -976,7 +902,7 @@ export class Add extends Component {
 																		min="1950"
 																		max="2030"
 																		className="w-9 form-control"
-																		name={`certificate.year.${key}`}
+																		name={`certificates.year.${key}`}
 																		onChange={this.handleChange}
 																	/>
 																</td>
@@ -984,7 +910,7 @@ export class Add extends Component {
 																	<input
 																		type="text"
 																		className="form-control"
-																		name={`certificate.type.${key}`}
+																		name={`certificates.type.${key}`}
 																		onChange={this.handleChange}
 																	/>
 																</td>
@@ -992,7 +918,7 @@ export class Add extends Component {
 																	<input
 																		type="text"
 																		className="form-control"
-																		name={`certificate.corporation.${key}`}
+																		name={`certificates.corporation.${key}`}
 																		onChange={this.handleChange}
 																	/>
 																</td>
@@ -1001,6 +927,18 @@ export class Add extends Component {
 													})}
 												</tbody>
 											</table>
+										</div>
+									</div>
+									<div className="col-12 mt-3">
+										<div className="form-group">
+											<label className="form-label">Not</label>
+											<textarea
+												className="form-control resize-none"
+												name="note"
+												onChange={this.handleChange}
+												rows={3}
+												maxLength="1000"
+											/>
 										</div>
 									</div>
 								</div>
@@ -1043,7 +981,7 @@ export class Add extends Component {
 												className="form-help"
 												data-toggle="popover"
 												data-placement="top"
-												data-content='<p><b>"Sürekli Ekle"</b> aktif olduğunda; işlem tamamlandıktan sonra ekleme yapmaya devam edebilirsiniz.</p><p>Pasif olduğunda; işlem tamamlandıktan sonra <b>"Personeller"</b> sayfasına yönlendirilirsiniz.</p>'>
+												data-content='<p><b>"Sürekli Ekle"</b> aktif olduğunda; işlem tamamlandıktan sonra ekleme yapmaya devam edebilirsiniz.</p><p>Pasif olduğunda; işlem tamamlandıktan sonra <b>"Personel Detay"</b> sayfasına yönlendirilirsiniz.</p>'>
 												?
 											</span>
 										</span>

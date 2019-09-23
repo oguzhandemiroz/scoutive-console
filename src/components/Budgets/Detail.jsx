@@ -215,7 +215,7 @@ export class Detail extends Component {
 
 										<div className="form-group">
 											<label className="form-label">Not</label>
-											<div className="form-control-plaintext">{nullCheck(note, "—")}</div>
+											<div className="form-control-plaintext">{nullCheck(note)}</div>
 										</div>
 
 										{budget_type === 1 ? (
@@ -229,14 +229,14 @@ export class Detail extends Component {
 												<div className="form-group">
 													<label className="form-label">Banka Şubesi</label>
 													<div className="form-control-plaintext">
-														{nullCheck(bank_branch, "—")}
+														{nullCheck(bank_branch)}
 													</div>
 												</div>
 
 												<div className="form-group">
 													<label className="form-label">Banka Hesap Numarası</label>
 													<div className="form-control-plaintext">
-														{nullCheck(bank_account_number, "—")}
+														{nullCheck(bank_account_number)}
 													</div>
 												</div>
 

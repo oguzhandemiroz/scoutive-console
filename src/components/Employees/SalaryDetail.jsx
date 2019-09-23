@@ -1,11 +1,9 @@
 import React, { Component } from "react";
 import { DetailEmployee } from "../../services/Employee.jsx";
 import { ListSalaries } from "../../services/EmployeeAction";
-import { fullnameGenerator } from "../../services/Others";
-import { Link } from "react-router-dom";
 import Tabs from "../../components/Employees/Tabs";
 import moment from "moment";
-const CryptoJS = require("crypto-js");
+import PersonCard from "./PersonCard.jsx";
 
 const noRow = loading =>
 	loading ? (
@@ -24,17 +22,8 @@ export class SalaryDetail extends Component {
 		this.state = {
 			uid: localStorage.getItem("UID"),
 			to: props.match.params.uid,
-			name: "—",
-			email: "—",
-			phone: "—",
-			security_id: "—",
-			position: "—",
-			branch: "—",
-			image: "",
-			salary: null,
-			showSalary: false,
-			list: [],
-			onLoadedData: false
+			loading: "active",
+			list: []
 		};
 	}
 
@@ -70,46 +59,15 @@ export class SalaryDetail extends Component {
 					const data = response.data;
 					this.setState({
 						...data,
-						salary: data.salary ? "∙∙∙∙∙∙" : null,
-						secretSalary: data.salary
-							? CryptoJS.AES.encrypt(data.salary.format(2, 3, '.', ','), "scSecretSalary").toString()
-							: null,
-						onLoadedData: true
+						loading: ""
 					});
 				}
 			}
 		});
 	};
 
-	handleSalary = () => {
-		const { secretSalary, showSalary } = this.state;
-		const toggleShow = showSalary;
-		this.setState({ showSalary: !toggleShow });
-		if (!toggleShow) {
-			const decryptSalary = CryptoJS.AES.decrypt(secretSalary, "scSecretSalary");
-			const plaintext = decryptSalary.toString(CryptoJS.enc.Utf8);
-			this.setState({ salary: plaintext + " ₺" });
-		} else this.setState({ salary: "∙∙∙∙∙∙" });
-	};
-
 	render() {
-		const {
-			name,
-			surname,
-			email,
-			phone,
-			position,
-			security_id,
-			branch,
-			image,
-			salary,
-			showSalary,
-			to,
-			list,
-			onLoadedData,
-			vacation,
-			data
-		} = this.state;
+		const { to, list } = this.state;
 		const { match } = this.props;
 		return (
 			<div className="container">
@@ -122,106 +80,7 @@ export class SalaryDetail extends Component {
 				</div>
 
 				<div className="row">
-					<div className="col-lg-4 col-sm-12 col-md-12">
-						<div className="card">
-							<div className="card-header">
-								<h3 className="card-title">Genel Bilgiler</h3>
-							</div>
-							<div className="card-body">
-								<div className={`dimmer ${!onLoadedData ? "active" : ""}`}>
-									<div className="loader" />
-									<div className="dimmer-content">
-										<div className="media mb-5">
-											<span
-												className="avatar avatar-xxl mr-4"
-												style={{ backgroundImage: `url(${image})` }}
-											/>
-											<div className="media-body">
-												<h4 className="m-0">{fullnameGenerator(name, surname)}</h4>
-												<p className="text-muted mb-0">{position}</p>
-												<ul className="social-links list-inline mb-0 mt-2">
-													<li className="list-inline-item">
-														<a
-															className="employee_email"
-															href={`mailto:${email}`}
-															data-original-title={email}
-															data-toggle="tooltip">
-															<i className="fa fa-envelope" />
-														</a>
-													</li>
-													<li className="list-inline-item">
-														<a
-															className="employee_phone"
-															href={`tel:${phone}`}
-															data-original-title={phone}
-															data-toggle="tooltip">
-															<i className="fa fa-phone" />
-														</a>
-													</li>
-												</ul>
-											</div>
-										</div>
-										<div className="form-group">
-											<label className="form-label">T.C. Kimlik Numarası</label>
-											<div className="form-control-plaintext">{security_id}</div>
-										</div>
-										<div className="form-group">
-											<label className="form-label">Branşı</label>
-											<div className="form-control-plaintext">{branch}</div>
-										</div>
-										<div className="form-group">
-											<label className="form-label">
-												Maaşı
-												<span className="ml-1 align-self-center">
-													<span
-														className="form-help"
-														data-toggle="popover"
-														data-trigger="hover"
-														data-placement="top"
-														data-html="true"
-														data-content='<p>Maaş bölümünü sadece yöneticinin yetkilendirdiği kişiler görüntüleyebilir.</p><p>Yönetici ise maaşları şifreleri ile görüntüleyebilir.</p><b>"—"</b>: Belirtilmedi.'>
-														?
-													</span>
-												</span>
-											</label>
-											<div className="form-control-plaintext">
-												<span>{salary || "—"}</span>
-												{salary ? (
-													<button
-														type="button"
-														onClick={this.handleSalary}
-														className="btn btn-sm btn-icon btn-secondary ml-2">
-														<i className={`fe fe-${!showSalary ? "lock" : "unlock"}`} />
-													</button>
-												) : null}
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-							<div className="card-footer" style={{ padding: ".5rem 1.5rem" }}>
-								<div className="d-flex justify-content-center">
-									<Link
-										to={`/app/employees/edit/${to}`}
-										className={`btn ${!onLoadedData ? "disabled" : ""} btn-link btn-block`}>
-										Bilgileri Düzenle
-									</Link>
-								</div>
-							</div>
-							<div className="card-footer" style={{ padding: ".5rem 1.5rem" }}>
-								<div className="d-flex justify-content-center">
-									<button
-										onClick={this.deleteEmployee}
-										className={`btn ${
-											!onLoadedData ? "disabled" : ""
-										} text-danger btn-link btn-block`}>
-										<i className="fe fe-alert-octagon mr-1"></i>
-										İşten Çıkar
-									</button>
-								</div>
-							</div>
-						</div>
-					</div>
+					<PersonCard data={this.state} history={this.props.history} />
 
 					<div className="col-lg-8 col-sm-12 col-md-12">
 						<div className="card">
@@ -245,7 +104,9 @@ export class SalaryDetail extends Component {
 														}`}
 													/>
 													<div>
-														<strong>{el.amount ? el.amount.format(2, 3, '.', ',') + " ₺" : null}</strong>{" "}
+														<strong>
+															{el.amount ? el.amount.format(2, 3, ".", ",") + " ₺" : null}
+														</strong>{" "}
 														maaş ödendi
 													</div>
 													<div className="timeline-time">

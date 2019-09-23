@@ -13,7 +13,7 @@ const noRow = loading =>
             <div className="dimmer-content" />
         </div>
     ) : (
-        <div className="text-center text-muted font-italic">Kayıt bulunamadı...</div>
+        <div className="text-center text-muted font-italic pb-4">Kayıt bulunamadı...</div>
     );
 
 export class UnpaidPlayer extends Component {

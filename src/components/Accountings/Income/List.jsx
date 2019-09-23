@@ -81,7 +81,7 @@ export class List extends Component {
 				{
 					data: "accounting_type",
 					render: function(data, type, row) {
-						return `${data}<div class="small text-muted text-break">${nullCheck(row.note)}</div>`;
+						return `${data}<div class="small text-muted text-break">${nullCheck(row.note, "")}</div>`;
 					}
 				},
 				{

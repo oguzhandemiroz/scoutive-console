@@ -1,8 +1,15 @@
 import React, { Component } from "react";
-import { Bloods, Branchs, Days, Months, Years, EmployeePositions, Kinship } from "../../services/FillSelect.jsx";
-import { DetailEmployee, UpdateEmployee } from "../../services/Employee.jsx";
-import { SplitBirthday, UploadFile, getSelectValue, AttributeDataChecker } from "../../services/Others.jsx";
-import { showSwal } from "../../components/Alert.jsx";
+import {
+	formValid,
+	selectCustomStylesError,
+	selectCustomStyles,
+	emailRegEx,
+	securityNoRegEx
+} from "../../assets/js/core";
+import { Bloods, Branchs, Days, Months, Years, EmployeePositions, Kinship } from "../../services/FillSelect";
+import { DetailEmployee, UpdateEmployee } from "../../services/Employee";
+import { SplitBirthday, UploadFile, getSelectValue, AttributeDataChecker, clearMoney } from "../../services/Others";
+import { showSwal } from "../../components/Alert";
 import Select from "react-select";
 import { Link } from "react-router-dom";
 import Inputmask from "inputmask";
@@ -41,41 +48,10 @@ const InputmaskDefaultOptions = {
 	placeholder: ""
 };
 
-// eslint-disable-next-line
-const emailRegEx = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
-const securityNoRegEx = /^\d+$/;
-
-const formValid = ({ formErrors, ...rest }) => {
-	let valid = true;
-
-	Object.values(formErrors).forEach(val => {
-		val.length > 0 && (valid = false);
-	});
-
-	Object.values(rest).forEach(val => {
-		val === null && (valid = false);
-	});
-
-	return valid;
-};
-
-const customStyles = {
-	control: styles => ({ ...styles, borderColor: "rgba(0, 40, 100, 0.12)", borderRadius: 3 })
-};
-
-const customStylesError = {
-	control: styles => ({
-		...styles,
-		borderColor: "#cd201f",
-		borderRadius: 3,
-		":hover": { ...styles[":hover"], borderColor: "#cd201f" }
-	})
-};
-
 const initialState = {
 	name: null,
 	surname: null,
-	securityNo: null,
+	security_id: null,
 	email: null,
 	phone: null,
 	salary: null,
@@ -90,9 +66,10 @@ const initialState = {
 	gender: null,
 	emergency: null,
 	school_history: null,
-	certificate: null,
+	certificates: null,
 	image: null,
 	start_date: null,
+	end_date: null,
 	imagePreview: null
 };
 
@@ -104,7 +81,7 @@ export class Edit extends Component {
 			uid: localStorage.getItem("UID"),
 			to: props.match.params.uid,
 			...initialState,
-			responseData: {},
+			response_data: {},
 			select: {
 				bloods: null,
 				positions: null,
@@ -118,16 +95,16 @@ export class Edit extends Component {
 				image: "",
 				name: "",
 				surname: "",
-				securityNo: "",
+				security_id: "",
 				email: "",
 				position: "",
 				branch: "",
 				phone: "",
 				salary: ""
 			},
-			loadingButton: "",
-			onLoadedData: false,
-			uploadedFile: true
+			loading: "active",
+			loadingImage: "",
+			loadingButton: ""
 		};
 	}
 
@@ -138,18 +115,18 @@ export class Edit extends Component {
 				surname: $("[name=surname]"),
 				phone: $("[name=phone]"),
 				email: $("[name=email]"),
-				securityNo: $("[name=securityNo]"),
+				security_id: $("[name=security_id]"),
 				salary: $("[name=salary]"),
 				emergency_phone: $("[name*='emergency.phone.']"),
 				emergency_name: $("[name*='emergency.name.']"),
 				school_history_name: $("[name*='school_history.name.']"),
-				certificate_type: $("[name*='certificate.type.']"),
-				certificate_corporation: $("[name*='certificate.corporation.']")
+				certificate_type: $("[name*='certificates.type.']"),
+				certificate_corporation: $("[name*='certificates.corporation.']")
 			};
 			const onlyString = "[a-zA-Z-ğüşöçİĞÜŞÖÇı ]*";
 			Inputmask({ mask: "(999) 999 9999", ...InputmaskDefaultOptions }).mask(elemArray.phone);
 			Inputmask({ mask: "(999) 999 9999", ...InputmaskDefaultOptions }).mask(elemArray.emergency_phone);
-			Inputmask({ mask: "99999999999", ...InputmaskDefaultOptions }).mask(elemArray.securityNo);
+			Inputmask({ mask: "99999999999", ...InputmaskDefaultOptions }).mask(elemArray.security_id);
 			Inputmask({ alias: "email", ...InputmaskDefaultOptions }).mask(elemArray.email);
 			Inputmask({ alias: "try", ...InputmaskDefaultOptions, placeholder: "0,00" }).mask(elemArray.salary);
 			Inputmask({ regex: "[a-zA-ZğüşöçİĞÜŞÖÇı]*", ...InputmaskDefaultOptions }).mask(elemArray.surname);
@@ -162,88 +139,9 @@ export class Edit extends Component {
 	};
 
 	componentDidMount() {
-		setTimeout(() => this.fieldMasked(), 500)
+		setTimeout(this.fieldMasked, 150);
 		this.getFillSelect();
-
-		const { uid, to } = this.state;
-		DetailEmployee({
-				uid: uid,
-				to: to
-			}).then(response => {
-				if (response !== null) {
-					const status = response.status;
-					initialState.body = {};
-					if (status.code === 1020) {
-						const data = response.data;
-						this.setState({ responseData: data });
-						const getSplitBirthday = SplitBirthday(data.birthday);
-						initialState.name = data.name;
-						initialState.surname = data.surname;
-						initialState.securityNo = data.security_id;
-						initialState.phone = data.phone;
-						initialState.salary = data.salary ? data.salary.toString().replace(".", ",") : null;
-						initialState.imagePreview = data.image;
-						initialState.image = data.image;
-						initialState.email = data.email;
-						initialState.position = data.position;
-						initialState.branch = data.branch;
-						initialState.day = getSplitBirthday.day;
-						initialState.month = getSplitBirthday.month;
-						initialState.year = getSplitBirthday.year;
-						initialState.address = data.address;
-						initialState.gender = data.gender;
-						initialState.blood = data.blood;
-						initialState.emergency = data.emergency || [];
-						initialState.school_history = data.school_history || [];
-						initialState.certificate = data.certificates || [];
-						initialState.start_date = data.start_date
-							? data.start_date === "None"
-								? null
-								: moment(data.start_date).toDate()
-							: null;
-						if (initialState.emergency) {
-							const len = initialState.emergency.length;
-							if (len < 2) {
-								for (var i = 0; i < 2 - len; i++) {
-									initialState.emergency.push({
-										kinship: "",
-										name: "",
-										phone: ""
-									});
-								}
-							}
-						}
-						if (initialState.school_history) {
-							const len = initialState.school_history.length;
-							if (len < 3) {
-								for (var i = 0; i < 3 - len; i++) {
-									initialState.school_history.push({
-										start: "",
-										end: "",
-										name: ""
-									});
-								}
-							}
-						}
-						if (initialState.certificate) {
-							const len = initialState.certificate.length;
-							if (len < 3) {
-								for (var i = 0; i < 3 - len; i++) {
-									initialState.certificate.push({
-										type: "",
-										year: "",
-										corporation: ""
-									});
-								}
-							}
-						}
-						initialState.body_height = data.attributes.body_height;
-						initialState.body_weight = data.attributes.body_weight;
-						this.setState({ ...initialState });
-						this.setState({ onLoadedData: true });
-					}
-				}
-			});
+		this.getEmployeeDetail();
 	}
 
 	handleSubmit = e => {
@@ -252,7 +150,7 @@ export class Edit extends Component {
 			uid,
 			name,
 			surname,
-			securityNo,
+			security_id,
 			email,
 			position,
 			branch,
@@ -269,12 +167,13 @@ export class Edit extends Component {
 			body_weight,
 			emergency,
 			school_history,
-			certificate,
+			certificates,
 			formErrors,
 			to,
 			select,
 			start_date,
-			responseData
+			end_date,
+			response_data
 		} = this.state;
 		const requiredData = {};
 		const attributesData = {};
@@ -282,7 +181,7 @@ export class Edit extends Component {
 		// require data
 		requiredData.name = name;
 		requiredData.surname = surname;
-		requiredData.securityNo = securityNo;
+		requiredData.security_id = security_id;
 		requiredData.email = email;
 		requiredData.phone = phone;
 		requiredData.position = position ? position.value : null;
@@ -291,28 +190,22 @@ export class Edit extends Component {
 		requiredData.salary = salary;
 		requiredData.formErrors = formErrors;
 
-		const formatSalary = salary ? parseFloat(salary.toString().replace(",", ".")) : null;
-
-		//attributes data
-		if (AttributeDataChecker(responseData.salary, formatSalary)) {
-			attributesData.salary = formatSalary;
-		}
-		if (AttributeDataChecker(responseData.position, position ? position.label : null)) {
+		if (AttributeDataChecker(response_data.position, position ? position.label : null)) {
 			attributesData.position = position ? position.value : "";
 		}
-		if (AttributeDataChecker(responseData.email, email)) {
+		if (AttributeDataChecker(response_data.email, email)) {
 			attributesData.email = email;
 		}
-		if (AttributeDataChecker(responseData.phone, phone)) {
+		if (AttributeDataChecker(response_data.phone, phone)) {
 			attributesData.phone = phone;
 		}
-		if (AttributeDataChecker(responseData.image, image)) {
+		if (AttributeDataChecker(response_data.image, image)) {
 			attributesData.image = image;
 		}
-		if (AttributeDataChecker(responseData.attributes.body_height, body_height)) {
+		if (AttributeDataChecker(response_data.attributes.body_height, body_height)) {
 			attributesData.body_height = body_height;
 		}
-		if (AttributeDataChecker(responseData.attributes.body_weight, body_weight)) {
+		if (AttributeDataChecker(response_data.attributes.body_weight, body_weight)) {
 			attributesData.body_weight = body_weight;
 		}
 
@@ -324,13 +217,13 @@ export class Edit extends Component {
 				uid: uid,
 				to: to,
 				name: name.capitalize(),
-				surname: surname.toLocaleUpperCase('tr-TR'),
-				security_id: securityNo,
+				surname: surname.toLocaleUpperCase("tr-TR"),
+				security_id: security_id,
 				email: email,
 				permission_id: getSelectValue(select.positions, position, "label").value,
 				phone: phone,
 				image: image,
-				salary: formatSalary,
+				salary: clearMoney(salary),
 				address: address,
 				emergency: emergency,
 				blood_id: blood ? getSelectValue(select.bloods, blood, "label").value : null,
@@ -338,9 +231,12 @@ export class Edit extends Component {
 				gender: gender,
 				birthday: checkBirthday,
 				school_history: school_history,
-				certificates: certificate,
+				certificates: certificates,
 				start_date: moment(start_date).format("YYYY-MM-DD"),
-				attributes: attributesData
+				end_date: end_date ? moment(end_date).format("YYYY-MM-DD") : null,
+				attributes: {
+					salary: clearMoney(salary),
+				}
 			}).then(code => {
 				this.setState({ loadingButton: "" });
 				setTimeout(() => {
@@ -356,10 +252,10 @@ export class Edit extends Component {
 
 			formErrors.name = name ? (name.length < 2 ? "is-invalid" : "") : "is-invalid";
 			formErrors.surname = surname ? (surname.length < 2 ? "is-invalid" : "") : "is-invalid";
-			formErrors.securityNo = securityNo
-				? securityNo.length < 9
+			formErrors.security_id = security_id
+				? security_id.length < 9
 					? "is-invalid"
-					: !securityNoRegEx.test(securityNo)
+					: !securityNoRegEx.test(security_id)
 					? "is-invalid"
 					: ""
 				: "is-invalid";
@@ -387,8 +283,8 @@ export class Edit extends Component {
 			case "surname":
 				formErrors.surname = value.length < 2 ? "is-invalid" : "";
 				break;
-			case "securityNo":
-				formErrors.securityNo =
+			case "security_id":
+				formErrors.security_id =
 					value.length < 9 ? "is-invalid" : !securityNoRegEx.test(value) ? "is-invalid" : "";
 				break;
 			case "email":
@@ -427,7 +323,7 @@ export class Edit extends Component {
 					this.setState({
 						imagePreview: reader.result
 					});
-					this.setState({ uploadedFile: false, loadingButton: "btn-loading" });
+					this.setState({ loadingImage: "btn-loading", loadingButton: "btn-loading" });
 				}
 				formData.append("image", file);
 				formData.append("uid", uid);
@@ -435,7 +331,7 @@ export class Edit extends Component {
 				formData.append("type", "employee");
 				UploadFile(formData).then(response => {
 					if (response) this.setState({ image: response.data });
-					this.setState({ uploadedFile: true, loadingButton: "" });
+					this.setState({ loadingImage: "", loadingButton: "" });
 				});
 			};
 
@@ -479,7 +375,7 @@ export class Edit extends Component {
 
 	reload = () => {
 		const current = this.props.history.location.pathname;
-		this.props.history.replace(`/`);
+		this.props.history.replace("/app/reload");
 		setTimeout(() => {
 			this.props.history.replace(current);
 		});
@@ -525,11 +421,81 @@ export class Edit extends Component {
 		}));
 	};
 
+	getEmployeeDetail = () => {
+		const { uid, to } = this.state;
+		DetailEmployee({
+			uid: uid,
+			to: to
+		}).then(response => {
+			if (response) {
+				const status = response.status;
+				if (status.code === 1020) {
+					const data = response.data;
+					delete data.uid;
+
+					const getSplitBirthday = SplitBirthday(data.birthday);
+					const edited_data = {
+						...data,
+						imagePreview: data.image,
+						salary: data.salary.toString().replace(".", ","),
+						day: getSplitBirthday.day,
+						month: getSplitBirthday.month,
+						year: getSplitBirthday.year,
+						emergency: data.emergency,
+						school_history: data.school_history || [
+							{
+								start: "",
+								end: "",
+								name: ""
+							},
+							{
+								start: "",
+								end: "",
+								name: ""
+							},
+							{
+								start: "",
+								end: "",
+								name: ""
+							}
+						],
+						certificates: data.certificates || [
+							{
+								type: "",
+								year: "",
+								corporation: ""
+							},
+							{
+								type: "",
+								year: "",
+								corporation: ""
+							},
+							{
+								type: "",
+								year: "",
+								corporation: ""
+							}
+						]
+					};
+
+					this.setState(prevState => ({
+						...prevState,
+						...edited_data,
+						body_height: data.attributes.body_height,
+						body_weight: data.attributes.body_weight,
+						response_data: { ...edited_data },
+						loading: ""
+					}));
+				}
+			}
+		});
+	};
+
 	render() {
 		const {
 			name,
 			surname,
-			securityNo,
+			security_id,
 			email,
 			position,
 			branch,
@@ -546,14 +512,16 @@ export class Edit extends Component {
 			body_height,
 			body_weight,
 			school_history,
-			certificate,
+			certificates,
 			start_date,
+			end_date,
 			formErrors,
 			select,
 			to,
 			imagePreview,
-			onLoadedData,
-			uploadedFile
+			loading,
+			loadingImage,
+			loadingButton
 		} = this.state;
 		return (
 			<div className="container">
@@ -574,16 +542,14 @@ export class Edit extends Component {
 								<h3 className="card-title">Genel Bilgiler</h3>
 							</div>
 							<div className="card-body">
-								<div className={`dimmer ${!onLoadedData ? "active" : ""}`}>
+								<div className={`dimmer ${loading}`}>
 									<div className="loader" />
 									<div className="dimmer-content">
 										<div className="row">
 											<div className="col-auto m-auto">
 												<label
 													htmlFor="image"
-													className={`avatar ${
-														uploadedFile ? "" : "btn-loading"
-													} avatar-xxxl cursor-pointer`}
+													className={`avatar ${loadingImage} avatar-xxxl cursor-pointer`}
 													style={{
 														border: "none",
 														outline: "none",
@@ -598,7 +564,6 @@ export class Edit extends Component {
 													name="image"
 													hidden
 													accept="image/*"
-													onClick={() => console.log("tıkladın")}
 													onChange={this.handleImage}
 												/>
 											</div>
@@ -639,11 +604,11 @@ export class Edit extends Component {
 											</label>
 											<input
 												type="text"
-												className={`form-control ${formErrors.securityNo}`}
+												className={`form-control ${formErrors.security_id}`}
 												onChange={this.handleChange}
 												placeholder="T.C. Kimlik No"
-												name="securityNo"
-												value={securityNo || ""}
+												name="security_id"
+												value={security_id || ""}
 											/>
 										</div>
 										<div className="form-group">
@@ -657,7 +622,11 @@ export class Edit extends Component {
 												options={select.positions}
 												name="position"
 												placeholder="Seç..."
-												styles={formErrors.position === true ? customStylesError : customStyles}
+												styles={
+													formErrors.position === true
+														? selectCustomStylesError
+														: selectCustomStyles
+												}
 												isClearable={true}
 												isSearchable={true}
 												isDisabled={select.positions ? false : true}
@@ -675,7 +644,11 @@ export class Edit extends Component {
 												options={select.branchs}
 												name="branch"
 												placeholder="Seç..."
-												styles={formErrors.branch === true ? customStylesError : customStyles}
+												styles={
+													formErrors.branch === true
+														? selectCustomStylesError
+														: selectCustomStyles
+												}
 												isSearchable={true}
 												isDisabled={select.branchs ? false : true}
 												noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
@@ -702,10 +675,10 @@ export class Edit extends Component {
 												<span className="form-required">*</span>
 											</label>
 											<DatePicker
-                                                autoComplete="off"
-												selected={start_date}
+												autoComplete="off"
+												selected={start_date ? moment(start_date).toDate() : null}
 												selectsEnd
-												startDate={start_date}
+												selected={start_date ? moment(start_date).toDate() : null}
 												name="start_date"
 												locale="tr"
 												dateFormat="dd/MM/yyyy"
@@ -713,6 +686,25 @@ export class Edit extends Component {
 												className={`form-control ${formErrors.start_date}`}
 											/>
 										</div>
+										{end_date ? (
+											<div className="form-group">
+												<label className="form-label">
+													İşten Ayrılma Tarihi
+													<span className="form-required">*</span>
+												</label>
+												<DatePicker
+													autoComplete="off"
+													selected={end_date ? moment(end_date).toDate() : null}
+													selectsEnd
+													selected={end_date ? moment(end_date).toDate() : null}
+													name="end_date"
+													locale="tr"
+													dateFormat="dd/MM/yyyy"
+													onChange={date => this.handleDate(date, "end_date")}
+													className={`form-control ${formErrors.end_date}`}
+												/>
+											</div>
+										) : null}
 									</div>
 								</div>
 							</div>
@@ -725,7 +717,7 @@ export class Edit extends Component {
 								<h3 className="card-title">Detay Bilgiler</h3>
 							</div>
 							<div className="card-body">
-								<div className={`dimmer ${!onLoadedData ? "active" : ""}`}>
+								<div className={`dimmer ${loading}`}>
 									<div className="loader" />
 									<div className="dimmer-content">
 										<div className="row">
@@ -769,7 +761,7 @@ export class Edit extends Component {
 																options={select.days}
 																name="day"
 																placeholder="Gün"
-																styles={customStyles}
+																styles={selectCustomStyles}
 																isSearchable={true}
 																isDisabled={select.days ? false : true}
 																noOptionsMessage={value =>
@@ -786,7 +778,7 @@ export class Edit extends Component {
 																options={select.months}
 																name="month"
 																placeholder="Ay"
-																styles={customStyles}
+																styles={selectCustomStyles}
 																isSearchable={true}
 																isDisabled={select.months ? false : true}
 																noOptionsMessage={value =>
@@ -803,7 +795,7 @@ export class Edit extends Component {
 																options={select.years}
 																name="year"
 																placeholder="Yıl"
-																styles={customStyles}
+																styles={selectCustomStyles}
 																isSearchable={true}
 																isDisabled={select.years ? false : true}
 																noOptionsMessage={value =>
@@ -891,7 +883,7 @@ export class Edit extends Component {
 														options={select.bloods}
 														name="blood"
 														placeholder="Seç..."
-														styles={customStyles}
+														styles={selectCustomStyles}
 														isClearable={true}
 														isSearchable={true}
 														isDisabled={select.bloods ? false : true}
@@ -933,7 +925,7 @@ export class Edit extends Component {
 																						options={select.kinships}
 																						name="emergency"
 																						placeholder="Seç..."
-																						styles={customStyles}
+																						styles={selectCustomStyles}
 																						isSearchable={true}
 																						isDisabled={
 																							select.kinships
@@ -1044,8 +1036,8 @@ export class Edit extends Component {
 															</tr>
 														</thead>
 														<tbody>
-															{certificate
-																? certificate.map((el, key) => {
+															{certificates
+																? certificates.map((el, key) => {
 																		return (
 																			<tr key={key.toString()}>
 																				<td className="pl-0 pr-0">
@@ -1054,7 +1046,7 @@ export class Edit extends Component {
 																						min="1950"
 																						max="2030"
 																						className="w-9 form-control"
-																						name={`certificate.year.${key}`}
+																						name={`certificates.year.${key}`}
 																						value={el.year || ""}
 																						onChange={this.handleChange}
 																					/>
@@ -1063,7 +1055,7 @@ export class Edit extends Component {
 																					<input
 																						type="text"
 																						className="form-control"
-																						name={`certificate.type.${key}`}
+																						name={`certificates.type.${key}`}
 																						value={el.type || ""}
 																						onChange={this.handleChange}
 																					/>
@@ -1072,7 +1064,7 @@ export class Edit extends Component {
 																					<input
 																						type="text"
 																						className="form-control"
-																						name={`certificate.corporation.${key}`}
+																						name={`certificates.corporation.${key}`}
 																						value={el.corporation || ""}
 																						onChange={this.handleChange}
 																					/>
@@ -1113,8 +1105,7 @@ export class Edit extends Component {
 									<button
 										style={{ width: 100 }}
 										type="submit"
-										disabled={!uploadedFile ? true : !onLoadedData ? true : false}
-										className={`btn btn-primary ml-3 ${this.state.loadingButton}`}>
+										className={`btn btn-primary ml-3 ${loadingButton} ${loadingImage}`}>
 										Kaydet
 									</button>
 								</div>

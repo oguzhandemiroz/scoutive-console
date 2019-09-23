@@ -2,6 +2,7 @@ import ep from "../assets/js/urls";
 import { fatalSwal, errorSwal, showSwal, Toast } from "../components/Alert";
 import { ActivationSchool } from "./School";
 import { RequestLogin, SetSchoolInfoToLocalStorage } from "./Login";
+import Inputmask from "inputmask";
 import moment from "moment";
 import "moment/locale/tr";
 
@@ -81,7 +82,7 @@ const systemClock = () => {
 
 const nullCheck = (data, instead) => {
 	try {
-		if (!instead) instead = "";
+		if (instead === undefined) instead = "—";
 		return data ? data : instead;
 	} catch (e) {
 		return data;
@@ -89,30 +90,52 @@ const nullCheck = (data, instead) => {
 };
 
 const formatDate = (date, format) => {
-	if (!format) format = "DD-MM-YYYY";
-	return date ? moment(date).format(format) : "—";
+	try {
+		if (!format) format = "DD/MM/YYYY";
+		return date ? moment(date).format(format) : "—";
+	} catch (e) {}
 };
 
 const formatMoney = (money, currency) => {
-	if (!currency) currency = "₺";
-	return money ? (!isNaN(money) ? money.format() + " " + currency : money) : "—";
+	try {
+		if (!currency) currency = "₺";
+		return money ? (!isNaN(money) ? money.format() + " " + currency : money) : "—";
+	} catch (e) {}
+};
+
+const formatPhone = (phone, instead, mask) => {
+	try {
+		if (!mask) mask = "(999) 999 9999";
+		if (instead === null) instead = "—";
+		return phone
+			? Inputmask.format(phone, {
+					mask: mask
+			  })
+			: instead;
+	} catch (e) {}
+};
+
+const clearMoney = money => {
+	try {
+		return parseFloat(money.toString().replace(",", "."));
+	} catch (e) {}
 };
 
 const fullnameGenerator = (name, surname) => {
 	try {
-		const fullname = nullCheck(name) + " " + nullCheck(surname);
+		const fullname = nullCheck(name, "") + " " + nullCheck(surname, "");
 		return fullname;
 	} catch (e) {
-		return nullCheck(name) + " " + nullCheck(surname);
+		return nullCheck(name, "") + " " + nullCheck(surname, "");
 	}
 };
 
 const avatarPlaceholder = (name, surname) => {
 	try {
-		const placeholder = nullCheck(name).slice(0, 1) + nullCheck(surname).slice(0, 1);
+		const placeholder = nullCheck(name, "").slice(0, 1) + nullCheck(surname, "").slice(0, 1);
 		return placeholder;
 	} catch (e) {
-		return nullCheck(name).slice(0, 1) + nullCheck(surname).slice(0, 1);
+		return nullCheck(name, "").slice(0, 1) + nullCheck(surname, "").slice(0, 1);
 	}
 };
 
@@ -236,7 +259,9 @@ export {
 	nullCheck,
 	formatDate,
 	formatMoney,
+	formatPhone,
 	fullnameGenerator,
+	clearMoney,
 	groupAgeSplit,
 	ActivateSchool,
 	avatarPlaceholder

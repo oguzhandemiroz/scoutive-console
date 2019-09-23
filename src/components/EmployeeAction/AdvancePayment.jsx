@@ -260,7 +260,7 @@ export class AdvancePayment extends Component {
 
     reload = () => {
         const current = this.props.history.location.pathname;
-        this.props.history.replace(`/`);
+        this.props.history.replace("/app/reload");
         setTimeout(() => {
             this.props.history.replace(current);
         });

@@ -453,7 +453,7 @@ export class Edit extends Component {
                                         placeholder="Grup Adı *"
                                         name="name"
                                         onChange={this.handleChange}
-                                        value={nullCheck(name, "—")}
+                                        value={nullCheck(name)}
                                     />
                                 </h3>
                                 <div className="card-options mr-0">

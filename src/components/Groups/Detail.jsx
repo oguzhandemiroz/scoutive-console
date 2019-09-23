@@ -142,7 +142,7 @@ export class Detail extends Component {
 						<div className="card">
 							<div className="card-header">
 								<div className="card-status bg-teal" />
-								<h3 className="card-title">{nullCheck(name, "—")}</h3>
+								<h3 className="card-title">{nullCheck(name)}</h3>
 								<div className="card-options">
 									<span
 										className="tag tag-gray-dark"

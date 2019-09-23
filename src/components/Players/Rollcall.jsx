@@ -172,7 +172,7 @@ export class Rollcall extends Component {
 											</span>
 											<div className="media-body">
 												<h4 className="m-0">{fullnameGenerator(name, surname)}</h4>
-												<p className="text-muted mb-0">{nullCheck(position, "—")}</p>
+												<p className="text-muted mb-0">{nullCheck(position)}</p>
 												<ul className="social-links list-inline mb-0 mt-2">
 													<li className="list-inline-item">
 														<a
@@ -180,10 +180,10 @@ export class Rollcall extends Component {
 															className="employee_email"
 															href={
 																email
-																	? `mailto:${nullCheck(email, "—")}`
+																	? `mailto:${nullCheck(email)}`
 																	: "javascript:void(0);"
 															}
-															data-original-title={nullCheck(email, "—")}
+															data-original-title={nullCheck(email)}
 															data-toggle="tooltip">
 															<i className="fa fa-envelope" />
 														</a>
@@ -192,11 +192,11 @@ export class Rollcall extends Component {
 														<a
 															className="employee_phone"
 															href={
-																email
-																	? `tel:${nullCheck(phone, "—")}`
+																phone
+																	? `tel:${nullCheck(phone)}`
 																	: "javascript:void(0);"
 															}
-															data-original-title={nullCheck(phone, "—")}
+															data-original-title={nullCheck(phone)}
 															data-toggle="tooltip">
 															<i className="fa fa-phone" />
 														</a>
@@ -221,7 +221,7 @@ export class Rollcall extends Component {
 													</Link>
 												) : (
 													<div className="form-control-plaintext">
-														{nullCheck(group, "—")}
+														{nullCheck(group)}
 													</div>
 												)}
 											</div>
@@ -234,7 +234,7 @@ export class Rollcall extends Component {
 										</div>
 										<div className="form-group">
 											<label className="form-label">Branş</label>
-											<div className="form-control-plaintext">{nullCheck(branch, "—")}</div>
+											<div className="form-control-plaintext">{nullCheck(branch)}</div>
 										</div>
 
 										<div className="form-group">
@@ -245,7 +245,7 @@ export class Rollcall extends Component {
 										{end_date ? (
 											<div className="form-group">
 												<label className="form-label">Okuldan Ayrılma Tarihi</label>
-												<div className="form-control-plaintext">{formatDate(start_date)}</div>
+												<div className="form-control-plaintext">{formatDate(end_date)}</div>
 											</div>
 										) : null}
 									</div>

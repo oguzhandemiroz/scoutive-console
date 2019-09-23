@@ -1,9 +1,8 @@
 import React, { Component } from "react";
-import { DetailEmployee, DeleteEmployee } from "../../services/Employee";
-import { fullnameGenerator, formatDate, formatMoney, nullCheck } from "../../services/Others";
-import { Link } from "react-router-dom";
+import { DetailEmployee } from "../../services/Employee";
+import { formatDate } from "../../services/Others";
 import Tabs from "../../components/Employees/Tabs";
-import { showSwal, Toast } from "../Alert.jsx";
+import PersonCard from "./PersonCard.jsx";
 const $ = require("jquery");
 
 const noRow = loading => (
@@ -20,7 +19,6 @@ const noRow = loading => (
 		</td>
 	</tr>
 );
-
 
 export class Rollcall extends Component {
 	constructor(props) {
@@ -53,55 +51,16 @@ export class Rollcall extends Component {
 				const data = response.data;
 				if (status.code === 1020) {
 					delete data.uid;
-					this.setState({ ...data });
+					this.setState({ ...data, loading: "" });
 				}
-				this.setState({ loading: "" });
 			}
 		});
-	};
-
-	deleteEmployee = () => {
-		try {
-			const { uid, to, name, surname } = this.state;
-			showSwal({
-				type: "warning",
-				title: "Emin misiniz?",
-				html: `<b>${fullnameGenerator(
-					name,
-					surname
-				)}</b> adlı personeli <b>işten çıkarmak</b> istediğinize emin misiniz?`,
-				confirmButtonText: "Evet",
-				cancelButtonText: "Hayır",
-				cancelButtonColor: "#868e96",
-				confirmButtonColor: "#cd201f",
-				showCancelButton: true,
-				reverseButtons: true
-			}).then(result => {
-				if (result.value) {
-					DeleteEmployee({
-						uid: uid,
-						to: to
-					}).then(response => {
-						if (response) {
-							const status = response.status;
-							if (status.code === 1020) {
-								Toast.fire({
-									type: "success",
-									title: "İşlem başarılı..."
-								});
-								setTimeout(() => this.props.history.push("/app/employees"), 1000);
-							}
-						}
-					});
-				}
-			});
-		} catch (e) {}
 	};
 
 	reload = () => {
 		setTimeout(() => {
 			const current = this.props.history.location.pathname;
-			this.props.history.replace(`/`);
+			this.props.history.replace("/app/reload");
 			setTimeout(() => {
 				this.props.history.replace(current);
 			});
@@ -157,22 +116,7 @@ export class Rollcall extends Component {
 	};
 
 	render() {
-		const {
-			to,
-			name,
-			surname,
-			security_id,
-			position,
-			branch,
-			start_date,
-			end_date,
-			email,
-			phone,
-			image,
-			salary,
-			rollcalls,
-			loading
-		} = this.state;
+		const { to, rollcalls } = this.state;
 		const { match } = this.props;
 		return (
 			<div className="container">
@@ -185,105 +129,7 @@ export class Rollcall extends Component {
 				</div>
 
 				<div className="row">
-					<div className="col-lg-4 col-sm-12 col-md-12">
-						<div className="card">
-							<div className="card-header">
-								<h3 className="card-title">Genel Bilgiler</h3>
-							</div>
-							<div className="card-body">
-								<div className={`dimmer ${loading}`}>
-									<div className="loader" />
-									<div className="dimmer-content">
-										<div className="media mb-5">
-											<span
-												className="avatar avatar-xxl mr-4"
-												style={{ backgroundImage: `url(${image})` }}
-											/>
-											<div className="media-body">
-												<h4 className="m-0">{fullnameGenerator(name, surname)}</h4>
-												<p className="text-muted mb-0">{nullCheck(position, "—")}</p>
-												<ul className="social-links list-inline mb-0 mt-2">
-													<li className="list-inline-item">
-														<a
-															className="employee_email"
-															href={`mailto:${nullCheck(email, "—")}`}
-															data-original-title={nullCheck(email, "—")}
-															data-toggle="tooltip">
-															<i className="fa fa-envelope" />
-														</a>
-													</li>
-													<li className="list-inline-item">
-														<a
-															className="employee_phone"
-															href={`tel:${nullCheck(phone, "—")}`}
-															data-original-title={nullCheck(phone, "—")}
-															data-toggle="tooltip">
-															<i className="fa fa-phone" />
-														</a>
-													</li>
-												</ul>
-											</div>
-										</div>
-										<div className="form-group">
-											<label className="form-label">T.C. Kimlik Numarası</label>
-											<div className="form-control-plaintext">{security_id}</div>
-										</div>
-										<div className="form-group">
-											<label className="form-label">Branşı</label>
-											<div className="form-control-plaintext">{nullCheck(branch, "—")}</div>
-										</div>
-										<div className="form-group">
-											<label className="form-label">
-												Maaşı
-												<span className="ml-1 align-self-center">
-													<span
-														className="form-help"
-														data-toggle="popover"
-														data-trigger="hover"
-														data-placement="top"
-														data-html="true"
-														data-content='<p>Maaş bölümünü sadece yöneticinin yetkilendirdiği kişiler görüntüleyebilir.</p><p>Yönetici ise maaşları şifreleri ile görüntüleyebilir.</p><b>"—"</b>: Belirtilmedi.'>
-														?
-													</span>
-												</span>
-											</label>
-											<div className="form-control-plaintext">
-												<span>{formatMoney(salary)}</span>
-											</div>
-										</div>
-										<div className="form-group">
-											<label className="form-label">İşe Başlama Tarihi</label>
-											<div className="form-control-plaintext">{formatDate(start_date)}</div>
-										</div>
-										{end_date ? (
-											<div className="form-group">
-												<label className="form-label">İşten Ayrılma Tarihi</label>
-												<div className="form-control-plaintext">{formatDate(end_date)}</div>
-											</div>
-										) : null}
-									</div>
-								</div>
-							</div>
-							<div className="card-footer" style={{ padding: ".5rem 1.5rem" }}>
-								<div className="d-flex justify-content-center">
-									<Link to={`/app/employees/edit/${to}`} className="btn btn-link btn-block">
-										Bilgileri Düzenle
-									</Link>
-								</div>
-							</div>
-							<div className="card-footer" style={{ padding: ".5rem 1.5rem" }}>
-								<div className="d-flex justify-content-center">
-									<button
-										onClick={this.deleteEmployee}
-										className="btn text-danger btn-link btn-block">
-										<i className="fe fe-alert-octagon mr-1"></i>
-										İşten Çıkar
-									</button>
-								</div>
-							</div>
-						</div>
-					</div>
-
+					<PersonCard data={this.state} history={this.props.history} />
 					<div className="col-lg-8 col-sm-12 col-md-12">
 						<div className="card">
 							<div className="card-header">
