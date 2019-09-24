@@ -4,7 +4,8 @@ import {
 	selectCustomStylesError,
 	selectCustomStyles,
 	emailRegEx,
-	securityNoRegEx
+	securityNoRegEx,
+	difference
 } from "../../assets/js/core";
 import { Bloods, Branchs, Days, Months, Years, EmployeePositions, Kinship } from "../../services/FillSelect";
 import { DetailEmployee, UpdateEmployee } from "../../services/Employee";
@@ -190,25 +191,6 @@ export class Edit extends Component {
 		requiredData.salary = salary;
 		requiredData.formErrors = formErrors;
 
-		if (AttributeDataChecker(response_data.position, position ? position.label : null)) {
-			attributesData.position = position ? position.value : "";
-		}
-		if (AttributeDataChecker(response_data.email, email)) {
-			attributesData.email = email;
-		}
-		if (AttributeDataChecker(response_data.phone, phone)) {
-			attributesData.phone = phone;
-		}
-		if (AttributeDataChecker(response_data.image, image)) {
-			attributesData.image = image;
-		}
-		if (AttributeDataChecker(response_data.attributes.body_height, body_height)) {
-			attributesData.body_height = body_height;
-		}
-		if (AttributeDataChecker(response_data.attributes.body_weight, body_weight)) {
-			attributesData.body_weight = body_weight;
-		}
-
 		const checkBirthday = year && month && day ? `${year}-${month}-${day}` : null;
 
 		if (formValid(requiredData)) {
@@ -234,40 +216,45 @@ export class Edit extends Component {
 				certificates: certificates,
 				start_date: moment(start_date).format("YYYY-MM-DD"),
 				end_date: end_date ? moment(end_date).format("YYYY-MM-DD") : null,
-				attributes: {
-					salary: clearMoney(salary),
-				}
-			}).then(code => {
-				this.setState({ loadingButton: "" });
-				setTimeout(() => {
-					if (code === 1020) {
-						this.props.history.push("/app/employees/detail/" + to);
+				attributes: difference(
+					{
+						salary: clearMoney(salary),
+						email: email,
+						phone: phone,
+						body_height: body_height,
+						body_weight: body_weight
+					},
+					{
+						salary: clearMoney(response_data.salary),
+						email: response_data.email,
+						phone: response_data.phone,
+						body_height: response_data.attributes.body_height,
+						body_weight: response_data.attributes.body_weight
 					}
-				}, 1000);
+				)
+			}).then(code => {
+				if (code === 1020) setTimeout(() => this.props.history.push("/app/employees/detail/" + to), 1000);
+				else this.setState({ loadingButton: "" });
 			});
 		} else {
-			console.error("FORM INVALID - DISPLAY ERROR");
-			const { value } = e.target;
-			let formErrors = { ...this.state.formErrors };
-
-			formErrors.name = name ? (name.length < 2 ? "is-invalid" : "") : "is-invalid";
-			formErrors.surname = surname ? (surname.length < 2 ? "is-invalid" : "") : "is-invalid";
-			formErrors.security_id = security_id
-				? security_id.length < 9
-					? "is-invalid"
-					: !securityNoRegEx.test(security_id)
-					? "is-invalid"
-					: ""
-				: "is-invalid";
-			formErrors.email = email ? (!emailRegEx.test(email) ? "is-invalid" : "") : "is-invalid";
-			formErrors.phone = phone ? (phone.length !== 10 ? "is-invalid" : "") : "is-invalid";
-			formErrors.salary = salary ? "" : "is-invalid";
-			formErrors.start_date = start_date ? "" : "is-invalid";
-			//select
-			formErrors.position = position ? "" : true;
-			formErrors.branch = branch ? "" : true;
-
-			this.setState({ formErrors });
+			this.setState(prevState => ({
+				formErrors: {
+					...prevState.formErrors,
+					name: name ? (name.length < 2 ? "is-invalid" : "") : "is-invalid",
+					surname: surname ? (surname.length < 2 ? "is-invalid" : "") : "is-invalid",
+					security_id: securityNoRegEx.test(security_id)
+						? security_id.length < 9
+							? "is-invalid"
+							: ""
+						: "is-invalid",
+					email: emailRegEx.test(email) ? "" : "is-invalid",
+					phone: phone ? (phone.length !== 10 ? "is-invalid" : "") : "is-invalid",
+					salary: salary ? "" : "is-invalid",
+					start_date: start_date ? "" : "is-invalid",
+					position: position ? false : true,
+					branch: branch ? false : true
+				}
+			}));
 		}
 	};
 

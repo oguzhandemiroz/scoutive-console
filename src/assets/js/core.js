@@ -1,3 +1,5 @@
+import _ from "lodash";
+
 /**
  * Number.prototype.format(d, w, s, c)
  *
@@ -6,7 +8,7 @@
  * @param mixed   s: sections delimiter
  * @param mixed   c: decimal delimiter
  */
-Number.prototype.format = function(d, w, s, c) {
+Number.prototype.format = function (d, w, s, c) {
     d = 2;
     w = 3;
     s = ".";
@@ -16,8 +18,8 @@ Number.prototype.format = function(d, w, s, c) {
 
     return (c ? num.replace(".", c) : num).replace(new RegExp(re, "g"), "$&" + (s || ","));
 };
-String.prototype.capitalize = function() {
-    return this.replace(/(^|\s)([a-z])/g, function(m, p1, p2) {
+String.prototype.capitalize = function () {
+    return this.replace(/(^|\s)([a-z])/g, function (m, p1, p2) {
         return p1 + p2.toLocaleUpperCase("tr-TR");
     });
 };
@@ -116,7 +118,10 @@ const selectCustomStylesError = {
 const emailRegEx = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
 const securityNoRegEx = /^\d+$/;
 
-const formValid = ({ formErrors, ...rest }) => {
+const formValid = ({
+    formErrors,
+    ...rest
+}) => {
     let valid = true;
 
     Object.values(formErrors).forEach(val => {
@@ -130,6 +135,18 @@ const formValid = ({ formErrors, ...rest }) => {
     return valid;
 };
 
+const difference = (object, base) => {
+    function changes(object, base) {
+        return _.transform(object, function (result, value, key) {
+            if (!_.isEqual(value, base[key])) {
+                result[key] = _.isObject(value) && _.isObject(base[key]) ? changes(value, base[key]) : value;
+            }
+        });
+    }
+    return changes(object, base);
+};
+
+
 export {
     getCookie,
     setCookie,
@@ -138,5 +155,6 @@ export {
     selectCustomStylesError,
     formValid,
     emailRegEx,
-    securityNoRegEx
+    securityNoRegEx,
+    difference
 };
