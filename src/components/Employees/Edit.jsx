@@ -115,7 +115,6 @@ export class Edit extends Component {
 				name: $("[name=name]"),
 				surname: $("[name=surname]"),
 				phone: $("[name=phone]"),
-				email: $("[name=email]"),
 				security_id: $("[name=security_id]"),
 				salary: $("[name=salary]"),
 				emergency_phone: $("[name*='emergency.phone.']"),
@@ -128,7 +127,6 @@ export class Edit extends Component {
 			Inputmask({ mask: "(999) 999 9999", ...InputmaskDefaultOptions }).mask(elemArray.phone);
 			Inputmask({ mask: "(999) 999 9999", ...InputmaskDefaultOptions }).mask(elemArray.emergency_phone);
 			Inputmask({ mask: "99999999999", ...InputmaskDefaultOptions }).mask(elemArray.security_id);
-			Inputmask({ alias: "email", ...InputmaskDefaultOptions }).mask(elemArray.email);
 			Inputmask({ alias: "try", ...InputmaskDefaultOptions, placeholder: "0,00" }).mask(elemArray.salary);
 			Inputmask({ regex: "[a-zA-ZğüşöçİĞÜŞÖÇı]*", ...InputmaskDefaultOptions }).mask(elemArray.surname);
 			Inputmask({ regex: onlyString, ...InputmaskDefaultOptions }).mask(elemArray.name);
@@ -164,6 +162,7 @@ export class Edit extends Component {
 			day,
 			month,
 			year,
+			note,
 			body_height,
 			body_weight,
 			emergency,
@@ -177,7 +176,6 @@ export class Edit extends Component {
 			response_data
 		} = this.state;
 		const requiredData = {};
-		const attributesData = {};
 
 		// require data
 		requiredData.name = name;
@@ -208,6 +206,7 @@ export class Edit extends Component {
 				salary: clearMoney(salary),
 				address: address,
 				emergency: emergency,
+				note: note,
 				blood_id: blood ? getSelectValue(select.bloods, blood, "label").value : null,
 				branch_id: getSelectValue(select.branchs, branch, "label").value,
 				gender: gender,
@@ -265,29 +264,58 @@ export class Edit extends Component {
 
 		switch (name) {
 			case "name":
-				formErrors.name = value.length < 2 ? "is-invalid" : "";
+				this.setState(prevState => ({
+					formErrors: {
+						...prevState.formErrors,
+						name: value.length < 2 ? "is-invalid" : ""
+					}
+				}));
 				break;
 			case "surname":
-				formErrors.surname = value.length < 2 ? "is-invalid" : "";
+				this.setState(prevState => ({
+					formErrors: {
+						...prevState.formErrors,
+						surname: value.length < 2 ? "is-invalid" : ""
+					}
+				}));
 				break;
 			case "security_id":
-				formErrors.security_id =
-					value.length < 9 ? "is-invalid" : !securityNoRegEx.test(value) ? "is-invalid" : "";
+				this.setState(prevState => ({
+					formErrors: {
+						...prevState.formErrors,
+						security_id: securityNoRegEx.test(value) ? (value.length < 9 ? "is-invalid" : "") : "is-invalid"
+					}
+				}));
 				break;
 			case "email":
-				formErrors.email = value.length < 2 ? "is-invalid" : !emailRegEx.test(value) ? "is-invalid" : "";
+				this.setState(prevState => ({
+					formErrors: {
+						...prevState.formErrors,
+						email: emailRegEx.test(value.toLowerCase()) ? "" : "is-invalid"
+					}
+				}));
 				break;
 			case "phone":
-				formErrors.phone = value.length !== 10 ? "is-invalid" : "";
+				this.setState(prevState => ({
+					formErrors: {
+						...prevState.formErrors,
+						phone: value.length !== 10 ? "is-invalid" : ""
+					}
+				}));
 				break;
 			case "salary":
-				formErrors.salary = value ? "" : "is-invalid";
+				this.setState(prevState => ({
+					formErrors: {
+						...prevState.formErrors,
+						salary: value.length < 2 ? "is-invalid" : ""
+					}
+				}));
 				break;
 			default:
 				break;
 		}
 		if (name === "salary") {
-			this.setState({ formErrors, [name]: value === "0,00" ? null : value });
+			this.setState({ [name]: value === "0,00" ? null : value });
 		} else if (name.indexOf(".") === -1) {
 			this.setState({ formErrors, [name]: value });
 		} else {
@@ -327,25 +355,18 @@ export class Edit extends Component {
 	};
 
 	handleSelect = (value, name, extraData, arr) => {
-		let formErrors = { ...this.state.formErrors };
-
 		if (arr) {
 			this.setState(prevState => {
 				return (prevState[name][extraData].kinship = value.label);
 			});
 		} else {
-			switch (name) {
-				case "position":
-					formErrors.position = value ? false : true;
-					break;
-				case "branch":
-					formErrors.branch = value ? false : true;
-					break;
-				default:
-					break;
-			}
-
-			this.setState({ formErrors, [name]: value[extraData] });
+			this.setState(prevState => ({
+				formErrors: {
+					...prevState.formErrors,
+					[name]: value ? false : true
+				},
+				[name]: value[extraData]
+			}));
 		}
 	};
 
@@ -355,9 +376,13 @@ export class Edit extends Component {
 	};
 
 	handleDate = (date, name) => {
-		let formErrors = { ...this.state.formErrors };
-		formErrors.start_date = date ? "" : "is-invalid";
-		this.setState({ formErrors, [name]: date });
+		this.setState(prevState => ({
+			formErrors: {
+				...prevState.formErrors,
+				[name]: date ? "" : "is-invalid"
+			},
+			[name]: date
+		}));
 	};
 
 	reload = () => {
@@ -488,7 +513,7 @@ export class Edit extends Component {
 			branch,
 			phone,
 			salary,
-			image,
+			note,
 			address,
 			day,
 			month,
@@ -1062,6 +1087,20 @@ export class Edit extends Component {
 																: null}
 														</tbody>
 													</table>
+												</div>
+											</div>
+
+											<div className="col-12 mt-3">
+												<div className="form-group">
+													<label className="form-label">Not</label>
+													<textarea
+														className="form-control resize-none"
+														name="note"
+														onChange={this.handleChange}
+														rows={3}
+														maxLength="1000"
+														value={note || ""}
+													/>
 												</div>
 											</div>
 										</div>

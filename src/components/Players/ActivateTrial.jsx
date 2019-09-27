@@ -123,7 +123,6 @@ export class ActivateTrial extends Component {
 				name: $("[name=name]"),
 				surname: $("[name=surname]"),
 				phone: $("[name=phone]"),
-				email: $("[name=email]"),
 				security_id: $("[name=security_id]"),
 				fee: $("[name=fee]"),
 				emergency_phone: $("[name*='emergency.phone.']"),
@@ -133,7 +132,6 @@ export class ActivateTrial extends Component {
 			Inputmask({ mask: "(999) 999 9999", ...InputmaskDefaultOptions }).mask(elemArray.phone);
 			Inputmask({ mask: "(999) 999 9999", ...InputmaskDefaultOptions }).mask(elemArray.emergency_phone);
 			Inputmask({ mask: "99999999999", ...InputmaskDefaultOptions }).mask(elemArray.security_id);
-			Inputmask({ alias: "email", ...InputmaskDefaultOptions }).mask(elemArray.email);
 			Inputmask({ alias: "try", ...InputmaskDefaultOptions, placeholder: "0,00" }).mask(elemArray.fee);
 			Inputmask({ regex: "[a-zA-ZğüşöçİĞÜŞÖÇı]*", ...InputmaskDefaultOptions }).mask(elemArray.surname);
 			Inputmask({ regex: onlyString, ...InputmaskDefaultOptions }).mask(elemArray.name);

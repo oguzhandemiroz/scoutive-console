@@ -148,7 +148,6 @@ export class Edit extends Component {
 				name: $("[name=name]"),
 				surname: $("[name=surname]"),
 				phone: $("[name=phone]"),
-				email: $("[name=email]"),
 				securityNo: $("[name=securityNo]"),
 				fee: $("[name=fee]"),
 				emergency_phone: $("[name*='emergency.phone.']"),
@@ -158,7 +157,6 @@ export class Edit extends Component {
 			Inputmask({ mask: "(999) 999 9999", ...InputmaskDefaultOptions }).mask(elemArray.phone);
 			Inputmask({ mask: "(999) 999 9999", ...InputmaskDefaultOptions }).mask(elemArray.emergency_phone);
 			Inputmask({ mask: "99999999999", ...InputmaskDefaultOptions }).mask(elemArray.securityNo);
-			Inputmask({ alias: "email", ...InputmaskDefaultOptions }).mask(elemArray.email);
 			Inputmask({ alias: "try", ...InputmaskDefaultOptions, placeholder: "0,00" }).mask(elemArray.fee);
 			Inputmask({ regex: "[a-zA-ZğüşöçİĞÜŞÖÇı]*", ...InputmaskDefaultOptions }).mask(elemArray.surname);
 			Inputmask({ regex: onlyString, ...InputmaskDefaultOptions }).mask(elemArray.name);
@@ -167,7 +165,7 @@ export class Edit extends Component {
 	};
 
 	componentDidMount() {
-		setTimeout(() => this.fieldMasked(), 500)
+		setTimeout(() => this.fieldMasked(), 500);
 
 		const { uid, to } = this.state;
 		let select = { ...this.state.select };
@@ -384,7 +382,7 @@ export class Edit extends Component {
 					uid: uid,
 					to: to,
 					name: name.capitalize(),
-					surname: surname.toLocaleUpperCase('tr-TR'),
+					surname: surname.toLocaleUpperCase("tr-TR"),
 					security_id: securityNo,
 					position_id: position ? position.value : null,
 					branch_id: branch ? branch.value : null,

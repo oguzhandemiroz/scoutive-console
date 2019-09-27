@@ -16,7 +16,7 @@ export class Detail extends Component {
 			uid: localStorage.getItem("UID"),
 			to: props.match.params.uid,
 			loading: "active",
-			body: { height: null, weight: null }
+			attributes: { body_height: null, body_weight: null }
 		};
 	}
 
@@ -32,8 +32,6 @@ export class Detail extends Component {
 		}).then(response => {
 			if (response !== null) {
 				const status = response.status;
-				const stateData = {};
-				stateData.body = {};
 				if (status.code === 1020) {
 					const data = response.data;
 					delete data.uid;
@@ -51,7 +49,7 @@ export class Detail extends Component {
 			blood,
 			gender,
 			birthday,
-			body,
+			attributes,
 			emergency,
 			school_history,
 			certificates,
@@ -108,12 +106,12 @@ export class Detail extends Component {
 														<div className="col-6">
 															<div className="form-control-plaintext" id="body_height">
 																<b>Boy: </b>
-																<span>{nullCheck(body.height)}cm</span>
+																<span>{nullCheck(attributes.body_height)}cm</span>
 															</div>
 														</div>
 														<div className="col-6">
 															<div className="form-control-plaintext" id="body_weight">
-																<b>Kilo: </b> <span>{nullCheck(body.weight)}kg</span>
+																<b>Kilo: </b> <span>{nullCheck(attributes.body_weight)}kg</span>
 															</div>
 														</div>
 													</div>
@@ -143,11 +141,7 @@ export class Detail extends Component {
 														<tbody>
 															{Array.isArray(emergency)
 																? emergency.map((el, idx) => {
-																		if (
-																			(el.kinship !== "") &
-																			(el.name !== "") &
-																			(el.phone !== "")
-																		)
+																		if (el.phone !== "")
 																			return (
 																				<tr key={idx.toString()}>
 																					<td className="pl-0 pr-0">
