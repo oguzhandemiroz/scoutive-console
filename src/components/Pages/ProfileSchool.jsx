@@ -346,7 +346,7 @@ export class Profile extends Component {
 										<div className="form-group">
 											<label className="form-label">Email</label>
 											<div className="form-plaintextform-control-plaintext">
-												{nullCheck(email)}
+												{nullCheck(email, "")}
 											</div>
 										</div>
 										<div className="form-group">
@@ -358,7 +358,7 @@ export class Profile extends Component {
 												className={`form-control ${formErrors.name}`}
 												placeholder="Okul Adı"
 												name="name"
-												value={nullCheck(name)}
+												value={nullCheck(name, "")}
 												onChange={this.handleChange}
 											/>
 										</div>
@@ -372,7 +372,7 @@ export class Profile extends Component {
 												className={`form-control ${formErrors.tax_no}`}
 												placeholder="Vergi Dairesi"
 												name="tax_no"
-												value={nullCheck(tax_no)}
+												value={nullCheck(tax_no, "")}
 												onChange={this.handleChange}
 											/>
 										</div>
@@ -386,7 +386,7 @@ export class Profile extends Component {
 												className={`form-control ${formErrors.tax_office}`}
 												placeholder="Vergi Dairesi"
 												name="tax_office"
-												value={nullCheck(tax_office)}
+												value={nullCheck(tax_office, "")}
 												onChange={this.handleChange}
 											/>
 										</div>
@@ -458,7 +458,7 @@ export class Profile extends Component {
 														className="form-control"
 														name="phone_tel"
 														placeholder="İş Numarası"
-														value={nullCheck(phone_tel)}
+														value={nullCheck(phone_tel, "")}
 														maxLength="10"
 														onChange={this.handleChange}
 													/>
@@ -471,7 +471,7 @@ export class Profile extends Component {
 														className="form-control"
 														name="phone_gsm"
 														placeholder="GSM Numarası"
-														value={nullCheck(phone_gsm)}
+														value={nullCheck(phone_gsm, "")}
 														maxLength="10"
 														onChange={this.handleChange}
 													/>
@@ -485,7 +485,7 @@ export class Profile extends Component {
 														rows="6"
 														maxLength="1000"
 														placeholder="Adres"
-														value={nullCheck(address)}
+														value={nullCheck(address, "")}
 														onChange={this.handleChange}
 													/>
 												</div>
@@ -498,7 +498,7 @@ export class Profile extends Component {
 														className="form-control"
 														name="phone_fax"
 														placeholder="Fax Numarası"
-														value={nullCheck(phone_fax)}
+														value={nullCheck(phone_fax, "")}
 														maxLength="10"
 														onChange={this.handleChange}
 													/>
@@ -511,7 +511,7 @@ export class Profile extends Component {
 														className="form-control"
 														name="owner_name"
 														placeholder="Kurucu/Sahibi"
-														value={nullCheck(owner_name)}
+														value={nullCheck(owner_name, "")}
 														onChange={this.handleChange}
 													/>
 												</div>
@@ -590,7 +590,7 @@ export class Profile extends Component {
 																					type="text"
 																					className="form-control"
 																					name={`social_media.${el}`}
-																					value={nullCheck(social_media[el])}
+																					value={nullCheck(social_media[el], "")}
 																					onChange={this.handleChange}
 																				/>
 																			</td>
