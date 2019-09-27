@@ -5,7 +5,6 @@ import freezePlayer from "../PlayerAction/FreezePlayer";
 import refreshPlayer from "../PlayerAction/RefreshPlayer";
 import activatePlayer from "../PlayerAction/ActivatePlayer";
 
-
 export class ActionButton extends Component {
 	constructor(props) {
 		super(props);
@@ -204,7 +203,7 @@ export class ActionButton extends Component {
 			{
 				tag: "button",
 				elementAttr: {
-					className: "dropdown-item",
+					className: "dropdown-item cursor-not-allowed disabled",
 					onClick: () =>
 						this.props.groupChangeButton({
 							name: fullname,
@@ -219,7 +218,7 @@ export class ActionButton extends Component {
 				child: {
 					className: "dropdown-icon fa fa-user-cog"
 				},
-				lock: false,
+				lock: lock,
 				condition: !is_trial && status !== 0
 			},
 			{
