@@ -117,7 +117,7 @@ const formatPhone = (phone, instead, mask) => {
 
 const clearMoney = money => {
 	try {
-		return parseFloat(money.toString().replace(",", "."));
+		return money ? parseFloat(money.toString().replace(",", ".")) : null;
 	} catch (e) {}
 };
 

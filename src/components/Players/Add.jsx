@@ -216,7 +216,8 @@ export class Add extends Component {
 					foot_no: foot_no,
 					point: point,
 					group: group,
-					branch: branch
+					branch: branch,
+					is_scholarship: is_scholarship ? 1 : 0,
 				})
 			}).then(response => {
 				const formData = new FormData();
@@ -590,7 +591,7 @@ export class Add extends Component {
 								</div>
 
 								<div className="form-group">
-									<label className="form-label">Aidat</label>
+									<label className="form-label">Aidat<span className="form-required">*</span></label>
 									<div className="row gutters-xs">
 										<div className="col">
 											<input
