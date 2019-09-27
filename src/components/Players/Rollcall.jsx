@@ -1,11 +1,8 @@
 import React, { Component } from "react";
 import { DetailPlayer } from "../../services/Player";
-import { fullnameGenerator, formatDate, formatMoney, nullCheck } from "../../services/Others";
-import { Link } from "react-router-dom";
-import Vacation from "../PlayerAction/Vacation";
-import GroupChange from "../PlayerAction/GroupChange";
+import { formatDate } from "../../services/Others";
 import Tabs from "../../components/Players/Tabs";
-import ActionButton from "../../components/Players/ActionButton";
+import PersonCard from "./PersonCard";
 const $ = require("jquery");
 
 const noRow = loading => (
@@ -23,13 +20,6 @@ const noRow = loading => (
 	</tr>
 );
 
-const statusType = {
-	0: "bg-danger",
-	1: "bg-green",
-	2: "bg-azure",
-	3: "bg-indigo"
-};
-
 export class Rollcall extends Component {
 	constructor(props) {
 		super(props);
@@ -42,28 +32,24 @@ export class Rollcall extends Component {
 		};
 	}
 
-	componentDidMount() {
-		this.getPlayerDetail();
-	}
-
 	componentDidUpdate() {
 		$('[data-toggle="tooltip"]').tooltip();
 	}
 
-	getPlayerDetail = () => {
+	componentDidMount() {
+		this.detailPlayer();
+	}
+
+	detailPlayer = () => {
 		const { uid, to } = this.state;
-		DetailPlayer({
-			uid: uid,
-			to: to
-		}).then(response => {
-			if (response) {
+		DetailPlayer({ uid: uid, to: to }).then(response => {
+			if (response !== null) {
 				const status = response.status;
-				const data = response.data;
 				if (status.code === 1020) {
+					const data = response.data;
 					delete data.uid;
-					this.setState({ ...data });
+					this.setState({ ...data, loading: "" });
 				}
-				this.setState({ loading: "" });
 			}
 		});
 	};
@@ -117,168 +103,18 @@ export class Rollcall extends Component {
 	};
 
 	render() {
-		const {
-			to,
-			name,
-			surname,
-			security_id,
-			position,
-			fee,
-			is_scholarship,
-			point,
-			branch,
-			start_date,
-			end_date,
-			email,
-			phone,
-			group,
-			image,
-			data,
-			is_trial,
-			status,
-			rollcalls,
-			loading
-		} = this.state;
+		const { to, rollcalls } = this.state;
 		const { match } = this.props;
 		return (
 			<div className="container">
 				<div className="page-header">
 					<h1 className="page-title">Öğrenci Detay &mdash; Yoklama Geçmişi</h1>
 					<div className="col" />
-					<div className="col-auto px-0">
-						<Tabs match={match} to={to} />
-					</div>
+					<div className="col-auto px-0">{<Tabs match={match} to={to} />}</div>
 				</div>
 
 				<div className="row">
-					<div className="col-lg-4 col-sm-12 col-md-12">
-						<div className="card">
-							<div className="card-header">
-								<h3 className="card-title">Genel Bilgiler</h3>
-							</div>
-							<div className="card-body">
-								<div className={`dimmer ${loading}`}>
-									<div className="loader" />
-									<div className="dimmer-content">
-										<div className="media mb-5">
-											<span
-												className="avatar avatar-xxl mr-4"
-												style={{ backgroundImage: `url(${image})` }}>
-												<span
-													className={`avatar-sm avatar-status ${
-														is_trial ? statusType[3] : statusType[status]
-													}`}
-												/>
-											</span>
-											<div className="media-body">
-												<h4 className="m-0">{fullnameGenerator(name, surname)}</h4>
-												<p className="text-muted mb-0">{nullCheck(position)}</p>
-												<ul className="social-links list-inline mb-0 mt-2">
-													<li className="list-inline-item">
-														<a
-															disabled
-															className="employee_email"
-															href={
-																email
-																	? `mailto:${nullCheck(email)}`
-																	: "javascript:void(0);"
-															}
-															data-original-title={nullCheck(email)}
-															data-toggle="tooltip">
-															<i className="fa fa-envelope" />
-														</a>
-													</li>
-													<li className="list-inline-item">
-														<a
-															className="employee_phone"
-															href={
-																phone
-																	? `tel:${nullCheck(phone)}`
-																	: "javascript:void(0);"
-															}
-															data-original-title={nullCheck(phone)}
-															data-toggle="tooltip">
-															<i className="fa fa-phone" />
-														</a>
-													</li>
-												</ul>
-											</div>
-										</div>
-										<div className="form-group">
-											<label className="form-label">T.C. Kimlik Numarası</label>
-											<div className="form-control-plaintext">{security_id}</div>
-										</div>
-										<div className="form-group">
-											<label className="form-label">Genel Puan</label>
-											<div className="form-control-plaintext">{point}</div>
-										</div>
-										<div className="form-group">
-											<label className="form-label">Grup</label>
-											<div className="form-control-plaintext">
-												{group ? (
-													<Link to={`/app/groups/detail/${group.group_id}`}>
-														{group.name}
-													</Link>
-												) : (
-													<div className="form-control-plaintext">
-														{nullCheck(group)}
-													</div>
-												)}
-											</div>
-										</div>
-										<div className="form-group">
-											<label className="form-label">Aidat</label>
-											<div className="form-control-plaintext">
-												{is_scholarship ? "BURSLU" : formatMoney(fee)}
-											</div>
-										</div>
-										<div className="form-group">
-											<label className="form-label">Branş</label>
-											<div className="form-control-plaintext">{nullCheck(branch)}</div>
-										</div>
-
-										<div className="form-group">
-											<label className="form-label">Okula Başlama Tarihi</label>
-											<div className="form-control-plaintext">{formatDate(start_date)}</div>
-										</div>
-
-										{end_date ? (
-											<div className="form-group">
-												<label className="form-label">Okuldan Ayrılma Tarihi</label>
-												<div className="form-control-plaintext">{formatDate(end_date)}</div>
-											</div>
-										) : null}
-									</div>
-								</div>
-							</div>
-							<div className="card-footer">
-								<ActionButton
-									vacationButton={data =>
-										this.setState({
-											data: data
-										})
-									}
-									groupChangeButton={data =>
-										this.setState({
-											data: data
-										})
-									}
-									history={this.props.history}
-									dropdown={false}
-									data={{
-										to: to,
-										name: fullnameGenerator(name, surname),
-										is_trial: is_trial,
-										status: status,
-										group: group
-									}}
-								/>
-
-								<Vacation data={data} history={this.props.history} />
-								<GroupChange data={data} history={this.props.history} />
-							</div>
-						</div>
-					</div>
+					<PersonCard data={this.state} history={this.props.history} />
 
 					<div className="col-lg-8 col-sm-12 col-md-12">
 						<div className="card">

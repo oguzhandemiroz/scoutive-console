@@ -331,7 +331,7 @@ export class Vacation extends Component {
 												<div className="form-group">
 													<label className="form-label">Öğrenci Bilgisi:</label>
 													<div className="form-control-plaintext">
-														<Link to={`/app/employees/detail/${data.uid}`}>
+														<Link to={`/app/players/detail/${data.uid}`}>
 															{data.name}
 														</Link>
 													</div>

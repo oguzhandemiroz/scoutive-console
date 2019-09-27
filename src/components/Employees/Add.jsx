@@ -169,8 +169,8 @@ export class Add extends Component {
 				surname: surname.toLocaleUpperCase("tr-TR"),
 				password: "151117",
 				security_id: security_id,
-				email: email,
 				permission_id: position.value,
+				email: email,
 				phone: phone,
 				address: address,
 				gender: gender,
@@ -185,7 +185,7 @@ export class Add extends Component {
 				start_date: moment(start_date).format("YYYY-MM-DD"),
 				attributes: _.pickBy({
 					salary: clearMoney(salary),
-					position: position.value,
+					position: position,
 					email: email,
 					phone: phone,
 					body_height: body_height,

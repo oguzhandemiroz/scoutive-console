@@ -1,21 +1,29 @@
 import React, { Component } from "react";
+import { Link } from "react-router-dom";
 import ActionButton from "./ActionButton";
+import Vacation from "../PlayerAction/Vacation";
+import GroupChange from "../PlayerAction/GroupChange";
 import { fullnameGenerator, nullCheck, formatDate, formatPhone, formatMoney } from "../../services/Others";
-import Vacation from "../EmployeeAction/Vacation";
-import Password from "../EmployeeAction/Password";
-import AdvancePayment from "../EmployeeAction/AdvancePayment";
+import moment from "moment";
+
+const statusType = {
+	0: "bg-danger",
+	1: "bg-green",
+	2: "bg-azure",
+	3: "bg-indigo"
+};
 
 export class PersonCard extends Component {
 	constructor(props) {
 		super(props);
 
 		this.state = {
-			employee: {}
+			player: {}
 		};
 	}
 
 	render() {
-		const { employee } = this.state;
+		const { player } = this.state;
 		const { data, history } = this.props;
 		return (
 			<div className="col-lg-4 col-sm-12 col-md-12">
@@ -30,8 +38,13 @@ export class PersonCard extends Component {
 								<div className="media mb-5">
 									<span
 										className="avatar avatar-xxl mr-4"
-										style={{ backgroundImage: `url(${data.image})` }}
-									/>
+										style={{ backgroundImage: `url(${data.image})` }}>
+										<span
+											className={`avatar-sm avatar-status ${
+												!data.is_trial ? statusType[data.status] : statusType[3]
+											}`}
+										/>
+									</span>
 									<div className="media-body">
 										<h4 className="m-0">{fullnameGenerator(data.name, data.surname)}</h4>
 										<p className="text-muted mb-0">{data.position ? data.position.label : "—"}</p>
@@ -66,37 +79,41 @@ export class PersonCard extends Component {
 									<div className="form-control-plaintext">{nullCheck(data.security_id)}</div>
 								</div>
 								<div className="form-group">
-									<label className="form-label">Branşı</label>
+									<label className="form-label">Aidat</label>
+									<div className="form-control-plaintext">
+										{data.is_scholarship ? "BURSLU" : formatMoney(data.fee)}
+									</div>
+								</div>
+								<div className="form-group">
+									<label className="form-label">Genel Puan</label>
+									<div className="form-control-plaintext">{nullCheck(data.point)}</div>
+								</div>
+								<div className="form-group">
+									<label className="form-label">Branş</label>
 									<div className="form-control-plaintext">
 										{data.branch ? data.branch.label : "—"}
 									</div>
 								</div>
 								<div className="form-group">
-									<label className="form-label">
-										Maaşı
-										<span className="ml-1 align-self-center">
-											<span
-												className="form-help"
-												data-toggle="popover"
-												data-trigger="hover"
-												data-placement="top"
-												data-html="true"
-												data-content='<p>Maaş bölümünü sadece yöneticinin yetkilendirdiği kişiler görüntüleyebilir.</p><p>Yönetici ise maaşları şifreleri ile görüntüleyebilir.</p><b>"—"</b>: Belirtilmedi.'>
-												?
-											</span>
-										</span>
-									</label>
+									<label className="form-label">Grup</label>
 									<div className="form-control-plaintext">
-										<span>{formatMoney(data.salary)}</span>
+										{data.group ? (
+											<Link to={`/app/groups/detail/${data.group.value}`}>
+												{nullCheck(data.group.label)}
+											</Link>
+										) : (
+											<div className="form-control-plaintext">{nullCheck(data.group)}</div>
+										)}
 									</div>
 								</div>
 								<div className="form-group">
-									<label className="form-label">İşe Başlama Tarihi</label>
+									<label className="form-label">Okula Başlama Tarihi</label>
 									<div className="form-control-plaintext">{formatDate(data.start_date, "LL")}</div>
 								</div>
+
 								{data.end_date ? (
 									<div className="form-group">
-										<label className="form-label">İşten Ayrılma Tarihi</label>
+										<label className="form-label">Okuldan Ayrılma Tarihi</label>
 										<div className="form-control-plaintext">{formatDate(data.end_date, "LL")}</div>
 									</div>
 								) : null}
@@ -105,32 +122,29 @@ export class PersonCard extends Component {
 					</div>
 					<div className="card-footer">
 						<ActionButton
-							advancePaymentButton={employee =>
+							vacationButton={player =>
 								this.setState({
-									employee: employee
+									player: player
 								})
 							}
-							vacationButton={employee =>
+							groupChangeButton={player =>
 								this.setState({
-									employee: employee
-								})
-							}
-							passwordButton={employee =>
-								this.setState({
-									employee: employee
+									player: player
 								})
 							}
 							history={history}
+							dropdown={false}
 							data={{
 								to: data.to,
 								name: fullnameGenerator(data.name, data.surname),
-								status: data.status
+								is_trial: data.is_trial,
+								status: data.status,
+								group: data.group
 							}}
 						/>
 
-						<Vacation data={employee} history={history} />
-						<Password data={employee} history={history} />
-						<AdvancePayment data={employee} history={history} />
+						<Vacation data={player} history={history} />
+						<GroupChange data={player} history={history} />
 					</div>
 				</div>
 			</div>

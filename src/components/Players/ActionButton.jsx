@@ -209,8 +209,8 @@ export class ActionButton extends Component {
 						this.props.groupChangeButton({
 							name: fullname,
 							uid: to,
-							group: typeof group === "string" ? group : group ? group.name : null,
-							group_id: group ? group.group_id : null
+							group: typeof group === "string" ? group : group ? group.label : null,
+							group_id: group ? group.value : null
 						}),
 					"data-toggle": "modal",
 					"data-target": "#groupChangeModal"

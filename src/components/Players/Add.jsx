@@ -1,14 +1,21 @@
 import React, { Component } from "react";
-import { Bloods, Branchs, Days, Months, Years, PlayerPositions, Kinship, Groups } from "../../services/FillSelect.jsx";
-import { UploadFile, getSelectValue } from "../../services/Others";
-import { CreatePlayer } from "../../services/Player.jsx";
-import { showSwal } from "../../components/Alert.jsx";
+import {
+	formValid,
+	selectCustomStylesError,
+	selectCustomStyles,
+	emailRegEx,
+	securityNoRegEx
+} from "../../assets/js/core";
+import { Bloods, Branchs, Days, Months, Years, PlayerPositions, Kinship, Groups } from "../../services/FillSelect";
+import { UploadFile, getSelectValue, clearMoney, formatDate } from "../../services/Others";
+import { CreatePlayer } from "../../services/Player";
+import { showSwal } from "../../components/Alert";
 import Select from "react-select";
 import Inputmask from "inputmask";
 import DatePicker, { registerLocale } from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import tr from "date-fns/locale/tr";
-import moment from "moment";
+import _ from "lodash";
 const $ = require("jquery");
 
 registerLocale("tr", tr);
@@ -40,36 +47,6 @@ const InputmaskDefaultOptions = {
 	placeholder: ""
 };
 
-// eslint-disable-next-line
-const emailRegEx = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
-const securityNoRegEx = /^\d+$/;
-
-const formValid = ({ formErrors, ...rest }) => {
-	let valid = true;
-
-	Object.values(formErrors).forEach(val => {
-		val.length > 0 && (valid = false);
-	});
-
-	Object.values(rest).forEach(val => {
-		val === null && (valid = false);
-	});
-
-	return valid;
-};
-
-const customStyles = {
-	control: styles => ({ ...styles, borderColor: "rgba(0, 40, 100, 0.12)", borderRadius: 3 })
-};
-const customStylesError = {
-	control: styles => ({
-		...styles,
-		borderColor: "#cd201f",
-		borderRadius: 3,
-		":hover": { ...styles[":hover"], borderColor: "#cd201f" }
-	})
-};
-
 const body_measure_list = [
 	"Göğüs Çevresi",
 	"Bel Çevresi",
@@ -79,44 +56,27 @@ const body_measure_list = [
 	"Bacak Uzunluğu"
 ];
 
-const initialState = {
-	name: null,
-	address: null,
-	surname: null,
-	securityNo: null,
-	email: null,
-	phone: null,
-	branch: null,
-	fee: "0,00",
-	blood: null,
-	gender: null,
-	body_height: null,
-	body_weight: null,
-	point: null,
-	day: null,
-	month: null,
-	year: null,
-	foot: null,
-	foot_no: null,
-	emergency: [],
-	body_measure: [],
-	position: null,
-	group: null,
-	is_active: 1,
-	is_trial: 0,
-	is_scholarship: 0,
-	note: null,
-	imagePreview: null,
-	start_date: new Date()
-};
-
 export class Add extends Component {
 	constructor(props) {
 		super(props);
 
 		this.state = {
 			uid: localStorage.getItem("UID"),
-			...initialState,
+			name: null,
+			surname: null,
+			security_id: null,
+			branch: null,
+			fee: null,
+			day: null,
+			month: null,
+			year: null,
+			is_active: 1,
+			is_trial: 0,
+			is_scholarship: 0,
+			start_date: new Date(),
+			end_date: null,
+			emergency: [],
+			body_measure: [],
 			select: {
 				bloods: null,
 				days: null,
@@ -130,7 +90,7 @@ export class Add extends Component {
 			formErrors: {
 				name: "",
 				surname: "",
-				securityNo: "",
+				security_id: "",
 				email: "",
 				branch: "",
 				phone: "",
@@ -138,8 +98,8 @@ export class Add extends Component {
 				point: ""
 			},
 			loadingButton: "",
-			addContinuously: true,
-			uploadedFile: true
+			loadingImage: "",
+			addContinuously: true
 		};
 	}
 
@@ -149,7 +109,7 @@ export class Add extends Component {
 				name: $("[name=name]"),
 				surname: $("[name=surname]"),
 				phone: $("[name=phone]"),
-				securityNo: $("[name=securityNo]"),
+				security_id: $("[name=security_id]"),
 				fee: $("[name=fee]"),
 				emergency_phone: $("[name*='emergency.phone.']"),
 				emergency_name: $("[name*='emergency.name.']")
@@ -157,7 +117,7 @@ export class Add extends Component {
 			const onlyString = "[a-zA-Z-ğüşöçİĞÜŞÖÇı ]*";
 			Inputmask({ mask: "(999) 999 9999", ...InputmaskDefaultOptions }).mask(elemArray.phone);
 			Inputmask({ mask: "(999) 999 9999", ...InputmaskDefaultOptions }).mask(elemArray.emergency_phone);
-			Inputmask({ mask: "99999999999", ...InputmaskDefaultOptions }).mask(elemArray.securityNo);
+			Inputmask({ mask: "99999999999", ...InputmaskDefaultOptions }).mask(elemArray.security_id);
 			Inputmask({ alias: "try", ...InputmaskDefaultOptions, placeholder: "0,00" }).mask(elemArray.fee);
 			Inputmask({ regex: "[a-zA-ZğüşöçİĞÜŞÖÇı]*", ...InputmaskDefaultOptions }).mask(elemArray.surname);
 			Inputmask({ regex: onlyString, ...InputmaskDefaultOptions }).mask(elemArray.name);
@@ -166,32 +126,12 @@ export class Add extends Component {
 	};
 
 	componentDidMount() {
-		setTimeout(() => this.fieldMasked(), 500)
 		this.getFillSelect();
-
-		initialState.emergency.push({
-			kinship: "Anne",
-			name: "",
-			phone: ""
-		});
-
-		initialState.emergency.push({
-			kinship: "Baba",
-			name: "",
-			phone: ""
-		});
-
-		for (var i = 0; i < body_measure_list.length; i++) {
-			initialState.body_measure.push({
-				type: body_measure_list[i],
-				value: ""
-			});
-		}
+		setTimeout(this.fieldMasked, 150);
 	}
 
 	componentWillUnmount() {
-		initialState.emergency = [];
-		initialState.body_measure = [];
+		this.setState({ emergency: [], body_measure: [] });
 	}
 
 	handleSubmit = e => {
@@ -200,7 +140,7 @@ export class Add extends Component {
 			uid,
 			name,
 			surname,
-			securityNo,
+			security_id,
 			email,
 			position,
 			branch,
@@ -223,7 +163,6 @@ export class Add extends Component {
 			is_active,
 			note,
 			body_measure,
-			formErrors,
 			addContinuously,
 			file,
 			start_date,
@@ -231,82 +170,23 @@ export class Add extends Component {
 			imagePreview
 		} = this.state;
 
-		const requiredData = {};
-		const attributesData = {};
+		let require = { ...this.state };
+		if (is_active === 1) delete require.end_date;
+		if (is_scholarship) delete require.fee;
+		delete require.loadingButton;
+		delete require.loadingImage;
 
-		// require data
-		requiredData.name = name;
-		requiredData.surname = surname;
-		requiredData.securityNo = securityNo;
-		requiredData.branch = branch ? branch.value : null;
-		requiredData.fee = fee;
-		requiredData.day = day ? day.value : null;
-		requiredData.month = month ? month.value : null;
-		requiredData.year = year ? year.value : null;
-		requiredData.start_date = start_date;
-		if (is_active === 0) {
-			requiredData.end_date = end_date;
-		}
-		requiredData.formErrors = formErrors;
-
-		//attributes data
-		if (fee) {
-			attributesData.fee = parseFloat(fee.toString().replace(",", "."));
-		}
-
-		if (position) {
-			attributesData.position = position.value.toString();
-		}
-
-		if (email) {
-			attributesData.email = email.toString();
-		}
-
-		if (phone) {
-			attributesData.phone = phone.toString();
-		}
-		if (position) {
-			attributesData.position = position.value.toString();
-		}
-
-		if (body_height) {
-			attributesData.body_height = body_height.toString();
-		}
-
-		if (body_weight) {
-			attributesData.body_weight = body_weight.toString();
-		}
-
-		if (foot_no) {
-			attributesData.foot_no = foot_no.toString();
-		}
-
-		if (point) {
-			attributesData.point = point.toString();
-		}
-
-		if (body_measure) {
-			attributesData.body_measure = JSON.stringify(body_measure);
-		}
-		if (group) {
-			attributesData.group_id = group.value.toString();
-		}
-
-		const checkBirthday = year && month && day ? `${year.value}-${month.value}-${day.value}` : null;
-
-		console.log(requiredData);
-
-		if (formValid(requiredData)) {
+		if (formValid(require)) {
 			this.setState({ loadingButton: "btn-loading" });
-
+			const checkBirthday = year && month && day ? `${year.value}-${month.value}-${day.value}` : null;
 			CreatePlayer({
 				uid: uid,
 				name: name.capitalize(),
-				surname: surname.toLocaleUpperCase('tr-TR'),
+				surname: surname.toLocaleUpperCase("tr-TR"),
 				password: "151117",
-				security_id: securityNo,
+				security_id: security_id,
 				position_id: position ? position.value : null,
-				branch_id: branch ? branch.value : null,
+				branch_id: branch.value,
 				blood_id: blood ? blood.value : null,
 				group_id: group ? group.value : 1,
 				email: email,
@@ -315,22 +195,35 @@ export class Add extends Component {
 				address: address,
 				emergency: emergency,
 				point: point,
-				fee: parseFloat(fee.toString().replace(",", ".")),
+				fee: clearMoney(fee),
 				foot: foot,
+				note: note,
 				birthday: checkBirthday,
-				start_date: moment(start_date).format("YYYY-MM-DD"),
-				end_date: end_date ? moment(end_date).format("YYYY-MM-DD") : null,
+				start_date: formatDate(start_date, "YYYY-MM-DD"),
+				end_date: end_date ? formatDate(end_date, "YYYY-MM-DD") : null,
 				is_scholarship: is_scholarship ? 1 : 0,
 				is_active: is_active,
 				is_trial: is_active === 3 ? 1 : 0,
-				note: note,
-				attributes: attributesData
+				attributes: _.pickBy({
+					start_date: formatDate(start_date, "YYYY-MM-DD"),
+					fee: clearMoney(fee),
+					position: position,
+					email: email,
+					phone: phone,
+					body_height: body_height,
+					body_weight: body_weight,
+					body_measure: body_measure,
+					foot_no: foot_no,
+					point: point,
+					group: group,
+					branch: branch
+				})
 			}).then(response => {
 				const formData = new FormData();
 				var imageUploading = false;
 				if (response) {
 					if (imagePreview) {
-						this.setState({ uploadedFile: false });
+						this.setState({ loadingImage: "btn-loading" });
 						imageUploading = true;
 						formData.append("image", file);
 						formData.append("uid", uid);
@@ -338,7 +231,7 @@ export class Add extends Component {
 						formData.append("type", "player");
 						formData.append("update", true);
 						UploadFile(formData).then(response => {
-							this.setState({ uploadedFile: true, loadingButton: "" });
+							this.setState({ loadingImage: "", loadingButton: "" });
 							if (response)
 								if (!addContinuously) this.props.history.push("/app/players/detail/" + response.uid);
 								else this.reload();
@@ -348,30 +241,26 @@ export class Add extends Component {
 				} else this.setState({ loadingButton: "" });
 			});
 		} else {
-			console.error("FORM INVALID - DISPLAY ERROR");
-			let formErrors = { ...this.state.formErrors };
-
-			formErrors.name = name ? (name.length < 2 ? "is-invalid" : "") : "is-invalid";
-			formErrors.surname = surname ? (surname.length < 2 ? "is-invalid" : "") : "is-invalid";
-			formErrors.securityNo = securityNo
-				? securityNo.length < 9
-					? "is-invalid"
-					: !securityNoRegEx.test(securityNo)
-					? "is-invalid"
-					: ""
-				: "is-invalid";
-			formErrors.email = email ? (!emailRegEx.test(email) ? "is-invalid" : "") : "";
-			formErrors.phone = phone ? (phone.length !== 10 ? "is-invalid" : "") : "";
-			formErrors.fee = fee ? "" : "is-invalid";
-			formErrors.start_date = start_date ? "" : "is-invalid";
-			formErrors.end_date = is_active === 0 ? (end_date ? "" : "is-invalid") : "";
-			formErrors.position = position ? "" : true;
-			formErrors.branch = branch ? "" : true;
-			formErrors.day = day ? "" : true;
-			formErrors.month = month ? "" : true;
-			formErrors.year = year ? "" : true;
-
-			this.setState({ formErrors });
+			this.setState(prevState => ({
+				formErrors: {
+					...prevState.formErrors,
+					name: name ? (name.length < 2 ? "is-invalid" : "") : "is-invalid",
+					surname: surname ? (surname.length < 2 ? "is-invalid" : "") : "is-invalid",
+					security_id: securityNoRegEx.test(security_id)
+						? security_id.length < 9
+							? "is-invalid"
+							: ""
+						: "is-invalid",
+					fee: !is_scholarship ? (fee ? "" : "is-invalid") : "",
+					start_date: start_date ? "" : "is-invalid",
+					end_date: is_active === 0 ? (end_date ? "" : "is-invalid") : "",
+					position: position ? "" : true,
+					branch: branch ? "" : true,
+					day: day ? "" : true,
+					month: month ? "" : true,
+					year: year ? "" : true
+				}
+			}));
 		}
 	};
 
@@ -387,18 +276,21 @@ export class Add extends Component {
 			case "surname":
 				formErrors.surname = value.length < 2 ? "is-invalid" : "";
 				break;
-			case "securityNo":
-				formErrors.securityNo =
-					value.length < 9 ? "is-invalid" : !securityNoRegEx.test(value) ? "is-invalid" : "";
+			case "security_id":
+				formErrors.security_id =
+					value.length !== 11 ? "is-invalid" : !securityNoRegEx.test(value) ? "is-invalid" : "";
 				break;
 			case "fee":
 				formErrors.fee = value ? "" : "is-invalid";
+				break;
+			case "email":
+				formErrors.email = value ? (emailRegEx.test(value) ? "" : "is-invalid") : "";
 				break;
 			default:
 				break;
 		}
 		if (name === "fee") {
-			this.setState({ formErrors, [name]: value });
+			this.setState({ formErrors, [name]: value === "0,00" ? null : value });
 		} else if (name.indexOf(".") === -1) {
 			this.setState({ formErrors, [name]: value });
 		} else {
@@ -428,65 +320,50 @@ export class Add extends Component {
 	};
 
 	handleSelect = (value, name, extraData, arr) => {
-		let formErrors = { ...this.state.formErrors };
-
 		if (arr) {
 			this.setState(prevState => {
 				return (prevState[name][extraData].kinship = value.label);
 			});
 		} else {
-			switch (name) {
-				case "position":
-					formErrors.position = value ? false : true;
-					break;
-				case "branch":
-					formErrors.branch = value ? false : true;
-					break;
-				case "day":
-					formErrors.day = value ? false : true;
-					break;
-				case "month":
-					formErrors.month = value ? false : true;
-					break;
-				case "year":
-					formErrors.year = value ? false : true;
-					break;
-				default:
-					break;
-			}
-
-			this.setState({ formErrors, [name]: value });
+			this.setState(prevState => ({
+				formErrors: {
+					...prevState.formErrors,
+					[name]: value ? false : true
+				},
+				[name]: value
+			}));
 		}
 	};
 
 	handleCheck = e => {
 		const { name, checked } = e.target;
 		if (name === "is_scholarship" && checked) {
-			this.setState({ fee: "0,00" });
+			this.setState(prevState => ({
+				formErrors: {
+					...prevState.formErrors,
+					fee: ""
+				},
+				fee: null
+			}));
 		}
 		this.setState({ [name]: checked });
 	};
 
 	handleRadio = e => {
 		const { name, value } = e.target;
-
-		let formErrors = { ...this.state.formErrors };
-
-		this.setState({ formErrors, [name]: parseInt(value) });
+		this.setState({ [name]: parseInt(value) });
 	};
 
 	handleDate = (date, name) => {
-		let formErrors = { ...this.state.formErrors };
-		formErrors[name] = date ? "" : "is-invalid";
-		switch (name) {
-			case "start_date":
-				this.setState({ end_date: null });
-				break;
+		if (name === "start_date") this.setState({ end_date: null });
 
-			default:
-				break;
-		}
-		this.setState({ formErrors, [name]: date });
+		this.setState(prevState => ({
+			formErrors: {
+				...prevState.formErrors,
+				[name]: date ? "" : "is-invalid"
+			},
+			[name]: date
+		}));
 	};
 
 	reload = () => {
@@ -513,7 +390,7 @@ export class Add extends Component {
 					...prevState.select,
 					branchs: response
 				},
-				branch: response.filter(x => x.value === localStorage.getItem("sBranch"))
+				branch: response.filter(x => x.value === localStorage.getItem("sBranch"))[0] || null
 			}));
 		});
 
@@ -542,40 +419,55 @@ export class Add extends Component {
 				months: Months(),
 				years: Years(true),
 				kinships: Kinship()
-			}
+			},
+			emergency: [
+				...prevState.emergency,
+				{
+					kinship: "Anne",
+					name: "",
+					phone: ""
+				},
+				{
+					kinship: "Baba",
+					name: "",
+					phone: ""
+				}
+			]
 		}));
+
+		body_measure_list.map(el =>
+			this.setState(prevState => ({
+				body_measure: [
+					...prevState.body_measure,
+					{
+						type: el,
+						value: ""
+					}
+				]
+			}))
+		);
 	};
 
 	render() {
 		const {
-			name,
-			surname,
-			securityNo,
-			email,
 			position,
 			branch,
-			phone,
 			fee,
-			address,
 			gender,
 			blood,
 			point,
 			group,
-			body_height,
-			body_weight,
 			day,
 			month,
 			year,
 			foot,
-			foot_no,
 			body_measure,
 			select,
 			emergency,
 			is_scholarship,
 			is_active,
-			note,
 			formErrors,
-			uploadedFile,
+			loadingImage,
 			imagePreview,
 			addContinuously,
 			start_date,
@@ -598,9 +490,7 @@ export class Add extends Component {
 									<div className="col-auto m-auto">
 										<label
 											htmlFor="image"
-											className={`avatar ${
-												uploadedFile ? "" : "btn-loading"
-											} avatar-xxxl cursor-pointer disabled`}
+											className={`avatar ${loadingImage} avatar-xxxl cursor-pointer disabled`}
 											style={{
 												border: "none",
 												outline: "none",
@@ -631,7 +521,6 @@ export class Add extends Component {
 										onChange={this.handleChange}
 										placeholder="Adı"
 										name="name"
-										value={name || ""}
 									/>
 								</div>
 
@@ -646,7 +535,6 @@ export class Add extends Component {
 										onChange={this.handleChange}
 										placeholder="Soyadı"
 										name="surname"
-										value={surname || ""}
 									/>
 								</div>
 
@@ -657,11 +545,10 @@ export class Add extends Component {
 									</label>
 									<input
 										type="text"
-										className={`form-control ${formErrors.securityNo}`}
+										className={`form-control ${formErrors.security_id}`}
 										onChange={this.handleChange}
 										placeholder="T.C. Kimlik No"
-										name="securityNo"
-										value={securityNo || ""}
+										name="security_id"
 									/>
 								</div>
 
@@ -676,7 +563,9 @@ export class Add extends Component {
 										options={select.branchs}
 										name="branch"
 										placeholder="Seç..."
-										styles={formErrors.branch === true ? customStylesError : customStyles}
+										styles={
+											formErrors.branch === true ? selectCustomStylesError : selectCustomStyles
+										}
 										isClearable={true}
 										isSearchable={true}
 										isDisabled={select.branchs ? false : true}
@@ -692,7 +581,7 @@ export class Add extends Component {
 										options={select.groups}
 										name="group"
 										placeholder="Seç..."
-										styles={customStyles}
+										styles={selectCustomStyles}
 										isClearable={true}
 										isSearchable={true}
 										isDisabled={select.groups ? false : true}
@@ -710,8 +599,8 @@ export class Add extends Component {
 												onChange={this.handleChange}
 												placeholder="Aidat"
 												name="fee"
-												value={fee || "0,00"}
 												disabled={is_scholarship}
+												value={fee || "0,00"}
 											/>
 										</div>
 										<div className="col-auto">
@@ -769,8 +658,8 @@ export class Add extends Component {
 												min="0"
 												max="5"
 												name="point"
-												value={point || "0"}
 												onChange={this.handleChange}
+												value={point || "0"}
 											/>
 										</div>
 										<div className="col-auto">
@@ -780,9 +669,9 @@ export class Add extends Component {
 												min="0"
 												max="5"
 												name="point"
-												value={point || "0"}
 												className={`form-control w-8 ${formErrors.point}`}
 												onChange={this.handleChange}
+												value={point || "0"}
 											/>
 										</div>
 									</div>
@@ -905,7 +794,6 @@ export class Add extends Component {
 												onChange={this.handleChange}
 												name="email"
 												placeholder="Email"
-												value={email || ""}
 											/>
 										</div>
 										<div className="form-group">
@@ -916,7 +804,6 @@ export class Add extends Component {
 												onChange={this.handleChange}
 												name="phone"
 												placeholder="(535) 123 4567"
-												value={phone || ""}
 											/>
 										</div>
 										<div className="form-group">
@@ -933,7 +820,9 @@ export class Add extends Component {
 														name="day"
 														placeholder="Gün"
 														styles={
-															formErrors.day === true ? customStylesError : customStyles
+															formErrors.day === true
+																? selectCustomStylesError
+																: selectCustomStyles
 														}
 														isSearchable={true}
 														isDisabled={select.days ? false : true}
@@ -948,7 +837,9 @@ export class Add extends Component {
 														name="month"
 														placeholder="Ay"
 														styles={
-															formErrors.month === true ? customStylesError : customStyles
+															formErrors.month === true
+																? selectCustomStylesError
+																: selectCustomStyles
 														}
 														isSearchable={true}
 														isDisabled={select.months ? false : true}
@@ -963,7 +854,9 @@ export class Add extends Component {
 														name="year"
 														placeholder="Yıl"
 														styles={
-															formErrors.year === true ? customStylesError : customStyles
+															formErrors.year === true
+																? selectCustomStylesError
+																: selectCustomStyles
 														}
 														isSearchable={true}
 														isDisabled={select.years ? false : true}
@@ -981,7 +874,6 @@ export class Add extends Component {
 												rows={6}
 												maxLength="1000"
 												placeholder="Adres"
-												value={address || ""}
 											/>
 										</div>
 									</div>
@@ -994,7 +886,7 @@ export class Add extends Component {
 												options={select.positions}
 												name="position"
 												placeholder="Seç..."
-												styles={customStyles}
+												styles={selectCustomStyles}
 												isClearable={true}
 												isSearchable={true}
 												isDisabled={select.positions ? false : true}
@@ -1014,7 +906,6 @@ export class Add extends Component {
 														placeholder="Boy (cm)"
 														min="0"
 														max="250"
-														value={body_height || ""}
 													/>
 												</div>
 												<div className="col-6">
@@ -1026,7 +917,6 @@ export class Add extends Component {
 														placeholder="Kilo (kg)"
 														min="0"
 														max="250"
-														value={body_weight || ""}
 													/>
 												</div>
 											</div>
@@ -1066,7 +956,7 @@ export class Add extends Component {
 												options={select.bloods}
 												name="blood"
 												placeholder="Seç..."
-												styles={customStyles}
+												styles={selectCustomStyles}
 												isClearable={true}
 												isSearchable={true}
 												isDisabled={select.bloods ? false : true}
@@ -1123,7 +1013,6 @@ export class Add extends Component {
 												name="foot_no"
 												min="10"
 												max="50"
-												value={foot_no || ""}
 											/>
 										</div>
 									</div>
@@ -1160,7 +1049,7 @@ export class Add extends Component {
 																		options={select.kinships}
 																		name="kinship"
 																		placeholder="Seç..."
-																		styles={customStyles}
+																		styles={selectCustomStyles}
 																		isSearchable={true}
 																		isDisabled={select.kinships ? false : true}
 																		noOptionsMessage={value =>
@@ -1237,7 +1126,6 @@ export class Add extends Component {
 												onChange={this.handleChange}
 												rows={3}
 												maxLength="1000"
-												value={note || ""}
 											/>
 										</div>
 									</div>

@@ -111,7 +111,8 @@ export class Detail extends Component {
 														</div>
 														<div className="col-6">
 															<div className="form-control-plaintext" id="body_weight">
-																<b>Kilo: </b> <span>{nullCheck(attributes.body_weight)}kg</span>
+																<b>Kilo: </b>{" "}
+																<span>{nullCheck(attributes.body_weight)}kg</span>
 															</div>
 														</div>
 													</div>
@@ -124,7 +125,9 @@ export class Detail extends Component {
 												</div>
 												<div className="form-group">
 													<label className="form-label">Kan Grubu</label>
-													<div className="form-control-plaintext">{nullCheck(blood)}</div>
+													<div className="form-control-plaintext">
+														{blood ? blood.label : "—"}
+													</div>
 												</div>
 											</div>
 											<div className="col-12 mt-3">

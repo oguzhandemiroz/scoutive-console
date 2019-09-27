@@ -138,9 +138,9 @@ export class Edit extends Component {
 	};
 
 	componentDidMount() {
-		setTimeout(this.fieldMasked, 150);
 		this.getFillSelect();
 		this.getEmployeeDetail();
+		setTimeout(this.fieldMasked, 250);
 	}
 
 	handleSubmit = e => {
@@ -200,15 +200,15 @@ export class Edit extends Component {
 				surname: surname.toLocaleUpperCase("tr-TR"),
 				security_id: security_id,
 				email: email,
-				permission_id: getSelectValue(select.positions, position, "label").value,
+				permission_id: position ? position.value : null,
 				phone: phone,
 				image: image,
 				salary: clearMoney(salary),
 				address: address,
 				emergency: emergency,
 				note: note,
-				blood_id: blood ? getSelectValue(select.bloods, blood, "label").value : null,
-				branch_id: getSelectValue(select.branchs, branch, "label").value,
+				blood_id: blood ? blood.value : null,
+				branch_id: branch ? branch.value : null,
 				gender: gender,
 				birthday: checkBirthday,
 				school_history: school_history,
@@ -221,14 +221,16 @@ export class Edit extends Component {
 						email: email,
 						phone: phone,
 						body_height: body_height,
-						body_weight: body_weight
+						body_weight: body_weight,
+						permission: position
 					},
 					{
 						salary: clearMoney(response_data.salary),
 						email: response_data.email,
 						phone: response_data.phone,
 						body_height: response_data.attributes.body_height,
-						body_weight: response_data.attributes.body_weight
+						body_weight: response_data.attributes.body_weight,
+						permission: response_data.position
 					}
 				)
 			}).then(code => {
@@ -365,7 +367,7 @@ export class Edit extends Component {
 					...prevState.formErrors,
 					[name]: value ? false : true
 				},
-				[name]: value[extraData]
+				[name]: extraData ? value[extraData] : value
 			}));
 		}
 	};
@@ -629,8 +631,8 @@ export class Edit extends Component {
 												<span className="form-required">*</span>
 											</label>
 											<Select
-												value={getSelectValue(select.positions, position, "label")}
-												onChange={val => this.handleSelect(val, "position", "label")}
+												value={position}
+												onChange={val => this.handleSelect(val, "position")}
 												options={select.positions}
 												name="position"
 												placeholder="Seç..."
@@ -651,8 +653,8 @@ export class Edit extends Component {
 												<span className="form-required">*</span>
 											</label>
 											<Select
-												value={getSelectValue(select.branchs, branch, "label")}
-												onChange={val => this.handleSelect(val, "branch", "label")}
+												value={branch}
+												onChange={val => this.handleSelect(val, "branch")}
 												options={select.branchs}
 												name="branch"
 												placeholder="Seç..."
@@ -890,8 +892,8 @@ export class Edit extends Component {
 												<div className="form-group">
 													<label className="form-label">Kan Grubu</label>
 													<Select
-														value={getSelectValue(select.bloods, blood, "label")}
-														onChange={val => this.handleSelect(val, "blood", "label")}
+														value={blood}
+														onChange={val => this.handleSelect(val, "blood")}
 														options={select.bloods}
 														name="blood"
 														placeholder="Seç..."
