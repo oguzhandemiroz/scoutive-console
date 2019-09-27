@@ -515,7 +515,7 @@ export class Add extends Component {
 					responsivePriority: 10004,
 					render: function(data) {
 						if (data && data !== "")
-							return `<a class="text-inherit" href="/app/groups/detail/${data.group_id}">${data.name}</a>`;
+							return `<a class="text-inherit" href="/app/groups/detail/${data.value}">${data.label}</a>`;
 						else return "&mdash;";
 					}
 				},

@@ -487,7 +487,7 @@ export class ActivateTrial extends Component {
 					initialState = Object.assign({}, initialState, data, {
 						uid: uid
 					});
-					initialState.group = data.group ? { value: data.group.group_id, label: data.group.name } : null;
+					initialState.group = data.group ? { value: data.group.value, label: data.group.label } : null;
 					initialState.imagePreview = data.image;
 					initialState.body_height = data.attributes.body_height;
 					initialState.body_weight = data.attributes.body_weight;

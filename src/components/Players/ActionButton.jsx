@@ -80,14 +80,14 @@ export class ActionButton extends Component {
 			{
 				tag: "button",
 				elementAttr: {
-					className: "dropdown-item",
+					className: "dropdown-item cursor-not-allowed disabled",
 					onClick: () => history.push(`/app/players/trial/activate/${to}`)
 				},
 				childText: "Kaydı Başlat",
 				child: {
 					className: "dropdown-icon fa fa-play-circle"
 				},
-				lock: false,
+				lock: lock,
 				condition: is_trial === 1 && status === 1
 			},
 			{
@@ -203,7 +203,7 @@ export class ActionButton extends Component {
 			{
 				tag: "button",
 				elementAttr: {
-					className: "dropdown-item cursor-not-allowed disabled",
+					className: "dropdown-item",
 					onClick: () =>
 						this.props.groupChangeButton({
 							name: fullname,
@@ -218,7 +218,7 @@ export class ActionButton extends Component {
 				child: {
 					className: "dropdown-icon fa fa-user-cog"
 				},
-				lock: lock,
+				lock: false,
 				condition: !is_trial && status !== 0
 			},
 			{
