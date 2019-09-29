@@ -122,7 +122,7 @@ export class Edit extends Component {
 
     componentDidMount() {
         this.getFillSelect();
-        setTimeout(this.detailPlayer, 150);
+        this.detailPlayer();
         setTimeout(this.fieldMasked, 150);
     }
 
@@ -201,6 +201,7 @@ export class Edit extends Component {
                     birthday: checkBirthday,
                     image: image,
                     start_date: moment(start_date).format("YYYY-MM-DD"),
+                    end_date: end_date ? moment(end_date).format("YYYY-MM-DD") : null,
                     is_scholarship: is_scholarship ? 1 : 0,
                     note: note,
                     attributes: difference(
@@ -456,7 +457,7 @@ export class Edit extends Component {
     };
 
     detailPlayer = () => {
-        const { uid, to, select } = this.state;
+        const { uid, to } = this.state;
         DetailPlayer({
             uid: uid,
             to: to
@@ -770,7 +771,7 @@ export class Edit extends Component {
                                         {end_date ? (
                                             <div className="form-group">
                                                 <label className="form-label">
-                                                    Okula Başlama Tarihi
+                                                    Okuldan Ayrılma Tarihi
                                                     <span className="form-required">*</span>
                                                 </label>
                                                 <DatePicker

@@ -1,4 +1,4 @@
-import {Toast, fatalSwal} from "../components/Alert.jsx";
+import { Toast, fatalSwal } from "../components/Alert.jsx";
 import ep from "../assets/js/urls";
 
 const h = new Headers();
@@ -8,7 +8,7 @@ h.append("Authorization", localStorage.getItem("UID"));
 
 const Bloods = () => {
     try {
-        return fetch(ep.BLOOD_TYPE, {headers: h})
+        return fetch(ep.BLOOD_TYPE, { headers: h })
             .then(res => res.json())
             .then(response => {
                 const data = response.data;
@@ -39,7 +39,7 @@ const Bloods = () => {
 
 const Clubs = () => {
     try {
-        return fetch(ep.CLUB, {headers: h})
+        return fetch(ep.CLUB, { headers: h })
             .then(res => res.json())
             .then(response => {
                 const data = response.data;
@@ -70,7 +70,7 @@ const Clubs = () => {
 
 const Branchs = () => {
     try {
-        return fetch(ep.BRANCH, {headers: h})
+        return fetch(ep.BRANCH, { headers: h })
             .then(res => res.json())
             .then(response => {
                 const data = response.data;
@@ -98,7 +98,6 @@ const Branchs = () => {
             .catch(e => fatalSwal(true));
     } catch (e) {}
 };
-
 
 const Areas = () => {
     try {
@@ -128,7 +127,7 @@ const Areas = () => {
                             value: value,
                             label: label
                         });
-                    })
+                    });
                     return selectData;
                 }
             })
@@ -175,7 +174,7 @@ const EmployeePositions = () => {
 
 const PlayerPositions = () => {
     try {
-        return fetch(ep.PLAYER_POSITION_TYPE, {headers: h})
+        return fetch(ep.PLAYER_POSITION_TYPE, { headers: h })
             .then(res => res.json())
             .then(response => {
                 const data = response.data;
@@ -243,7 +242,7 @@ const Groups = () => {
 
 const Banks = () => {
     try {
-        return fetch(ep.BANK, {headers: h})
+        return fetch(ep.BANK, { headers: h })
             .then(res => res.json())
             .then(response => {
                 const data = response.data;
@@ -265,7 +264,9 @@ const Banks = () => {
                             label: label
                         });
                     }
-                    return selectData;
+                    return selectData.sort((a, b) => {
+                        return a.label.localeCompare(b.label);
+                    });
                 }
             })
             .catch(e => fatalSwal(true));
@@ -518,7 +519,7 @@ const GetPlayers = () => {
                                 birthday: birthday
                             });
                         });
-                        
+
                         return selectData.sort((a, b) => {
                             return a.group ? 1 : -1;
                             // return a.label.localeCompare(b.label); isimleri A'dan Z'ye sıralamak için.

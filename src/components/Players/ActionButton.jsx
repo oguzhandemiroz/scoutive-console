@@ -80,14 +80,14 @@ export class ActionButton extends Component {
 			{
 				tag: "button",
 				elementAttr: {
-					className: "dropdown-item cursor-not-allowed disabled",
+					className: "dropdown-item",
 					onClick: () => history.push(`/app/players/trial/activate/${to}`)
 				},
 				childText: "Kaydı Başlat",
 				child: {
 					className: "dropdown-icon fa fa-play-circle"
 				},
-				lock: lock,
+				lock: false,
 				condition: is_trial === 1 && status === 1
 			},
 			{
