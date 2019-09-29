@@ -139,7 +139,7 @@ export class Fast extends Component {
 							timer: 5000
 						}).then(result => {
 							if (result.value) {
-								this.props.history.push("/app/accountings/expense/detail/" + response.accounting_id);
+								this.props.history.push("/app/accountings/detail/" + response.accounting_id);
 							} else if (result.dismiss) {
 								this.reload();
 							}

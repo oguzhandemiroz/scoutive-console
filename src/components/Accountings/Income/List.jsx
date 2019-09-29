@@ -141,10 +141,10 @@ export class List extends Component {
 								<Link
 									onClick={() =>
 										this.props.history.push(
-											"/app/accountings/income/detail/" + rowData.accounting_id
+											"/app/accountings/detail/" + rowData.accounting_id
 										)
 									}
-									to={`/app/accountings/income/detail/${rowData.accounting_id}`}
+									to={`/app/accountings/detail/${rowData.accounting_id}`}
 									className="icon">
 									<i className="fe fe-eye"></i>
 								</Link>

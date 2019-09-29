@@ -86,7 +86,7 @@ export class List extends Component {
                                               <td className="text-break">{el.budget.budget_name}</td>
                                               <td className="w-1">
                                                   <Link
-                                                      to={"/app/accountings/income/detail/" + el.accounting_id}
+                                                      to={"/app/accountings/detail/" + el.accounting_id}
                                                       className="icon">
                                                       <i className="fe fe-eye"></i>
                                                   </Link>

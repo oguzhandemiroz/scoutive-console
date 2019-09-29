@@ -125,7 +125,7 @@ export class Expense extends Component {
 													</td>
 													<td className="w-1">
 														<Link
-															to={"/app/accountings/income/detail/" + el.accounting_id}
+															to={"/app/accountings/detail/" + el.accounting_id}
 															className="icon">
 															<i className="fe fe-eye"></i>
 														</Link>
