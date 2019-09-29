@@ -360,7 +360,7 @@ var indexRoutes = [
         prop: { exact: true }
     },
     {
-        path: "/accountings/detail",
+        path: "/accountings/detail/:aid",
         name: "Accountings Detail",
         component: AccountingDetail,
         layout: "/app",
