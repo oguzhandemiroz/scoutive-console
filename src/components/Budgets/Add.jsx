@@ -392,7 +392,7 @@ export class Add extends Component {
                                 </div>
                             </div>
                             <div className="card-footer d-flex justify-content-between">
-                                <Link className="btn btn-link">İptal</Link>
+                                <Link to="/app/budgets" className="btn btn-link">İptal</Link>
                                 <button className={`btn btn-primary ${loadingButton}`}>Kaydet</button>
                             </div>
                         </form>

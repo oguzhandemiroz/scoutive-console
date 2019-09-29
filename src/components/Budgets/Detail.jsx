@@ -263,8 +263,8 @@ export class Detail extends Component {
 								</div>
 							</div>
 							<div className="card-footer">
-								<Link to="#" className={`btn btn-link btn-block ${loadingData ? "disabled" : ""}`}>
-									Hesabı Düzenle
+								<Link to="#" className={`btn btn-link btn-block ${loadingData ? "disabled" : "disabled"}`}>
+									Hesabı Düzenle &nbsp;(<i className="fe fe-lock"></i>)
 								</Link>
 							</div>
 						</div>
