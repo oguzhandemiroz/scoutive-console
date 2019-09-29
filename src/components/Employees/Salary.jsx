@@ -628,7 +628,7 @@ export class Salary extends Component {
 									//const totalDeduction = advance_payment.amount - parseFloat(value);
 									const parseSalary = parseFloat(salary.replace(",", "."));
 									const totalSalary = parseSalary - parseFloat(value);
-									const formatTotalSalary = totalSalary.format(2, 3, ".", ",").replace(".", "");
+									const formatTotalSalary = parseFloat(totalSalary.format().replace(".", ""));
 									this.setState({
 										payAdvancePayments: [
 											...payAdvancePayments,
