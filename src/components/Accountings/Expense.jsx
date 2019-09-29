@@ -38,7 +38,7 @@ export class Expense extends Component {
 		const { uid } = this.state;
 		ListAccountingRecords({
 			uid: uid,
-			filter: { type: 0 },
+			filter: { type: 0, accounting_type_id__gt: 2 },
 			count: 5
 		}).then(response => {
 			if (response) {
@@ -125,7 +125,7 @@ export class Expense extends Component {
 													</td>
 													<td className="w-1">
 														<Link
-															to={"/app/accountings/income/detail/" + el.accounting_id}
+															to={"/app/accountings/detail/" + el.accounting_id}
 															className="icon">
 															<i className="fe fe-eye"></i>
 														</Link>
