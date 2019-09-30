@@ -18,6 +18,7 @@ const activatePlayer = (uid, to, name, history) => {
 			allowEnterKey: false,
 			confirmButtonText: "Evet &rarr;",
 			showCancelButton: true,
+			showCloseButton: true,
 			cancelButtonText: "Hayır",
 			confirmButtonColor: "#cd201f",
 			cancelButtonColor: "#868e96",

@@ -112,7 +112,7 @@ export class Income extends Component {
                                                       {el.accounting_type}
                                                       <div className="small text-muted text-break">{el.note}</div>
                                                   </td>
-                                                  <td>{el.amount.format(2, 3, ".", ",") + " ₺"}</td>
+                                                  <td>{el.amount.format() + " ₺"}</td>
                                                   <td className="text-nowrap">
                                                       {moment(el.payment_date).format("LL")}
                                                   </td>

@@ -104,9 +104,7 @@ export class SalaryDetail extends Component {
 														}`}
 													/>
 													<div>
-														<strong>
-															{el.amount ? el.amount.format(2, 3, ".", ",") + " ₺" : null}
-														</strong>{" "}
+														<strong>{el.amount ? el.amount.format() + " ₺" : null}</strong>{" "}
 														maaş ödendi
 													</div>
 													<div className="timeline-time">

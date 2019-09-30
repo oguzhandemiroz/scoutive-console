@@ -5,10 +5,11 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { CreateAccountingRecord, ListAccountingTypes } from "../../../services/Accounting";
 import { selectCustomStyles, selectCustomStylesError, formValid } from "../../../assets/js/core";
-import { GetBudgets } from "../../../services/FillSelect";
+import { GetBudgets, GetPlayers, GetEmployees } from "../../../services/FillSelect";
 import Inputmask from "inputmask";
 import moment from "moment";
 import { showSwal } from "../../Alert";
+import { formatMoney, clearMoney } from "../../../services/Others";
 const $ = require("jquery");
 
 Inputmask.extendDefaults({
@@ -48,7 +49,7 @@ const BudgetIconOption = props => (
 			/>
 			{props.data.label}
 			<div className="small text-muted">
-				Bütçe: <b>{props.data.balance.format(2, 3, '.', ',') + " ₺"}</b>
+				Bütçe: <b>{formatMoney(props.data.balance)}</b>
 			</div>
 		</span>
 	</Option>
@@ -67,7 +68,9 @@ export class Fast extends Component {
 			payment_date: new Date(),
 			select: {
 				accounting_types: null,
-				budgets: null
+				budgets: null,
+				players: null,
+				employees: null
 			},
 			formErrors: {
 				accounting_type: false,
@@ -76,6 +79,7 @@ export class Fast extends Component {
 				amount: "",
 				budget: false
 			},
+			assigned: false,
 			loadingButton: ""
 		};
 	}
@@ -108,17 +112,23 @@ export class Fast extends Component {
 
 	handleSubmit = e => {
 		e.preventDefault();
-		const { uid, accounting_type, type, note, payment_date, amount, budget } = this.state;
+		const { uid, accounting_type, type, note, payment_date, amount, budget, employee, player } = this.state;
 
-		if (formValid(this.state)) {
+		let required = { ...this.state };
+		delete required.player;
+		delete required.employee;
+
+		if (formValid(required)) {
 			this.setState({ loadingButton: "btn-loading" });
 			CreateAccountingRecord({
 				uid: uid,
 				type: type,
 				accounting_type_id: accounting_type.value,
 				budget_id: budget.value,
-				amount: parseFloat(amount.replace(",", ".")),
+				amount: clearMoney(amount),
 				payment_date: moment(payment_date).format("YYYY-MM-DD"),
+				employee_id: employee ? employee.value : 0,
+				player_id: player ? player.id : 0,
 				note: note
 			}).then(response => {
 				if (response) {
@@ -149,7 +159,6 @@ export class Fast extends Component {
 				this.setState({ loadingButton: "" });
 			});
 		} else {
-			console.error("ERROR FORM");
 			this.setState(prevState => ({
 				formErrors: {
 					...prevState.formErrors,
@@ -222,8 +231,59 @@ export class Fast extends Component {
 		} catch (e) {}
 	};
 
+	assignPlayer = () => {
+		const { select } = this.state;
+		this.setState({ assigned: true, assignTitle: "Öğrenci", assignType: "player", employee: null });
+
+		if (!select.players) {
+			GetPlayers().then(response => {
+				if (response) {
+					this.setState(prevState => ({
+						select: {
+							...prevState.select,
+							players: response
+						}
+					}));
+				}
+			});
+		}
+	};
+
+	assignEmployee = () => {
+		const { select } = this.state;
+		this.setState({ assigned: true, assignTitle: "Personel", assignType: "employee", player: null });
+
+		if (!select.employees) {
+			GetEmployees().then(response => {
+				if (response) {
+					this.setState(prevState => ({
+						select: {
+							...prevState.select,
+							employees: response
+						}
+					}));
+				}
+			});
+		}
+	};
+
+	removeAssign = () => {
+		this.setState({ assigned: false });
+	};
+
 	render() {
-		const { budget, payment_date, select, formErrors, loadingButton } = this.state;
+		const {
+			budget,
+			payment_date,
+			select,
+			formErrors,
+			loadingButton,
+			assigned,
+			assignTitle,
+			assignType,
+			player,
+			employee
+		} = this.state;
 		return (
 			<div className="container">
 				<div className="page-header">
@@ -283,7 +343,7 @@ export class Fast extends Component {
 												İşlem Tarihi <span className="form-required">*</span>
 											</label>
 											<DatePicker
-                                                autoComplete="off"
+												autoComplete="off"
 												selected={payment_date}
 												selectsStart
 												startDate={payment_date}
@@ -332,6 +392,66 @@ export class Fast extends Component {
 											/>
 										</div>
 									</div>
+									{!assigned ? (
+										<div className="col-12">
+											<button
+												type="button"
+												onClick={this.assignPlayer}
+												className="btn btn-secondary mr-3">
+												<i className="fe fe-users mr-1" />
+												Öğrenci Ata
+											</button>
+											<button
+												type="button"
+												onClick={this.assignEmployee}
+												className="btn btn-secondary">
+												<i className="fe fe-briefcase mr-1" />
+												Personel Ata
+											</button>
+										</div>
+									) : null}
+
+									{assigned ? (
+										<div className="col-12">
+											<div className="form-group">
+												<label className="form-label">{assignTitle}</label>
+												<div className="row gutters-xs">
+													<div className="col">
+														<Select
+															value={
+																assignType === "player"
+																	? player
+																	: assignType === "employee"
+																	? employee
+																	: null
+															}
+															onChange={val => this.handleSelect(val, assignType)}
+															options={select[assignType + "s"]}
+															name={assignType}
+															placeholder={assignTitle + " Seç..."}
+															styles={selectCustomStyles}
+															isSearchable={true}
+															isDisabled={select[assignType + "s"] ? false : true}
+															isLoading={select[assignType + "s"] ? false : true}
+															noOptionsMessage={value =>
+																`"${value.inputValue}" bulunamadı`
+															}
+														/>
+													</div>
+													<div className="col-auto d-flex align-items-center">
+														<button
+															type="button"
+															onClick={this.removeAssign}
+															data-toggle="tooltip"
+															title="Atamayı Kaldır"
+															className="btn btn-icon btn-sm btn-dark">
+															<i className="fe fe-x" />
+														</button>
+													</div>
+												</div>
+											</div>
+										</div>
+									) : null}
 								</div>
 							</div>
 							<div className="card-footer d-flex justify-content-between align-items-center">

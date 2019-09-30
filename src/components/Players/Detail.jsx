@@ -35,7 +35,7 @@ export class Detail extends Component {
 	detailPlayer = () => {
 		const { uid, to } = this.state;
 		DetailPlayer({ uid: uid, to: to }).then(response => {
-			if (response !== null) {
+			if (response) {
 				const status = response.status;
 				if (status.code === 1020) {
 					const data = response.data;

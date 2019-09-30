@@ -29,7 +29,7 @@ export class FABs extends Component {
 
     render() {
         return (
-            <div className="FABs-wrapper" data-toggle="tooltip" title="Hızlı Erişim Menüsü">
+            <div className="FABs-wrapper d-print-none" data-toggle="tooltip" title="Hızlı Erişim Menüsü">
                 <div className="dropup">
                     <span className="FABs-pin">
                         <i className="fa fa-thumbtack text-white"></i>

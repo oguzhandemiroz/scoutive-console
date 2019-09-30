@@ -108,7 +108,7 @@ export class GeneralChart extends Component {
 					x: "payment_date",
 					value: ["incomeAmount", "expenseAmount"]
 				},
-				type: "bar", // default type of chart
+				type: "line", // default type of chart
 				groups: [["incomeAmount", "expenseAmount"]],
 				colors: {
 					incomeAmount: sc.colors["green"],

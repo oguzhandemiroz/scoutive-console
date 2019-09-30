@@ -511,12 +511,14 @@ const GetPlayers = () => {
                             const image = el.image;
                             const group = el.group ? el.group.name : null;
                             const birthday = el.birthday;
+                            const id = el.player_id
                             selectData.push({
                                 value: value,
                                 label: label,
                                 image: image,
                                 group: group,
-                                birthday: birthday
+                                birthday: birthday,
+                                id: id
                             });
                         });
 

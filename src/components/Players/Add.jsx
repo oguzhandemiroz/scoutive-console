@@ -217,28 +217,29 @@ export class Add extends Component {
 					point: point,
 					group: group,
 					branch: branch,
-					is_scholarship: is_scholarship ? 1 : 0,
+					is_scholarship: is_scholarship ? 1 : 0
 				})
 			}).then(response => {
 				const formData = new FormData();
 				var imageUploading = false;
+				const redirect_uid = response.uid;
 				if (response) {
 					if (imagePreview) {
 						this.setState({ loadingImage: "btn-loading" });
 						imageUploading = true;
 						formData.append("image", file);
 						formData.append("uid", uid);
-						formData.append("to", response.uid);
+						formData.append("to", redirect_uid);
 						formData.append("type", "player");
 						formData.append("update", true);
 						UploadFile(formData).then(response => {
 							this.setState({ loadingImage: "", loadingButton: "" });
 							if (response)
-								if (!addContinuously) this.props.history.push("/app/players/detail/" + response.uid);
+								if (!addContinuously) this.props.history.push("/app/players/detail/" + redirect_uid);
 								else this.reload();
 						});
 					} else if (addContinuously) this.reload();
-					else this.props.history.push("/app/players/detail/" + response.uid);
+					else this.props.history.push("/app/players/detail/" + redirect_uid);
 				} else this.setState({ loadingButton: "" });
 			});
 		} else {
@@ -591,7 +592,9 @@ export class Add extends Component {
 								</div>
 
 								<div className="form-group">
-									<label className="form-label">Aidat<span className="form-required">*</span></label>
+									<label className="form-label">
+										Aidat<span className="form-required">*</span>
+									</label>
 									<div className="row gutters-xs">
 										<div className="col">
 											<input

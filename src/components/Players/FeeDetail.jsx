@@ -203,15 +203,15 @@ export class FeeDetail extends Component {
 														<li className="timeline-item" key={key.toString()}>
 															<div className="timeline-badge bg-warning" />
 															<div>
-																<strong>{el.fee.format(2, 3, ".", ",") + " ₺ "}</strong>
+																<strong>{el.fee.format() + " ₺ "}</strong>
 																ödemenin, <br />
 																<strong className="text-blue">
-																	{el.amount.format(2, 3, ".", ",") + " ₺ "}
+																	{el.amount.format() + " ₺ "}
 																</strong>
 																ödemesi yapıldı.
 																<br />
 																<strong className="text-red">
-																	{(el.fee - el.amount).format(2, 3, ".", ",") +
+																	{(el.fee - el.amount).format() +
 																		" ₺ "}
 																</strong>
 																borcu kaldı.
@@ -237,7 +237,7 @@ export class FeeDetail extends Component {
 															<div className="timeline-badge bg-success" />
 															<div>
 																<strong>
-																	{el.amount.format(2, 3, ".", ",") + " ₺ "}
+																	{el.amount.format() + " ₺ "}
 																</strong>
 																ödendi
 																<div className="small text-muted">
