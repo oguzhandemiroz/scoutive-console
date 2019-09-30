@@ -91,7 +91,8 @@ const activatePlayer = (uid, to, name, history) => {
 							fee: parseFloat(results[2].split(",").join(".")),
 							attributes: {
 								fee: parseFloat(results[2].split(",").join("."))
-							}
+							},
+							is_scholarship: 0
 						})
 					]).then(([responseActivated, responseUpdated]) => {
 						if (responseActivated && responseUpdated) {
