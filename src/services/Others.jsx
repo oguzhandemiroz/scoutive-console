@@ -106,7 +106,7 @@ const formatMoney = (money, currency) => {
 const formatPhone = (phone, instead, mask) => {
 	try {
 		if (!mask) mask = "(999) 999 9999";
-		if (instead === null) instead = "—";
+		if (instead === undefined) instead = "—";
 		return phone
 			? Inputmask.format(phone, {
 					mask: mask

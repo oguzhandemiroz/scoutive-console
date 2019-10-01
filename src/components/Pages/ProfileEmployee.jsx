@@ -121,7 +121,7 @@ export class Detail extends Component {
 													<li className="list-inline-item">
 														<a
 															className="employee_phone"
-															href={`tel:${phone}`}
+															href={`tel:+90${phone}`}
 															data-original-title={phone}
 															data-toggle="tooltip">
 															<i className="fa fa-phone" />
@@ -243,7 +243,7 @@ export class Detail extends Component {
 																					</td>
 																					<td className="pl-0">
 																						<div className="form-control-plaintext">
-																							<a href={"tel:" + el.phone}>
+																							<a href={"tel:+90" + el.phone}>
 																								{el.phone}
 																							</a>
 																						</div>

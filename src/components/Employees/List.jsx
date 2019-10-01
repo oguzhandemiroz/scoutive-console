@@ -181,7 +181,7 @@ class Table extends Component {
 						data: "phone",
 						render: function(data, type, row) {
 							const formatPhone = data ? Inputmask.format(data, { mask: "(999) 999 9999" }) : null;
-							if (formatPhone) return `<a href="tel:${data}" class="text-inherit">${formatPhone}</a>`;
+							if (formatPhone) return `<a href="tel:+90${data}" class="text-inherit">${formatPhone}</a>`;
 							else return "&mdash;";
 						}
 					},

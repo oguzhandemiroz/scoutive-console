@@ -84,11 +84,29 @@ export class Detail extends Component {
 											<div className="col-lg-6 col-md-12">
 												<div className="form-group">
 													<label className="form-label">Email</label>
-													<div className="form-control-plaintext">{nullCheck(email)}</div>
+													<div className="form-control-plaintext">
+														<a
+															href={
+																email
+																	? `mailto:${nullCheck(email)}`
+																	: "javascript:void(0)"
+															}>
+															{nullCheck(email)}
+														</a>
+													</div>
 												</div>
 												<div className="form-group">
 													<label className="form-label">Telefonu</label>
-													<div className="form-control-plaintext">{formatPhone(phone)}</div>
+													<div className="form-control-plaintext">
+														<a
+															href={
+																phone
+																	? `tel:+90${nullCheck(phone)}`
+																	: "javascript:void(0)"
+															}>
+															{formatPhone(phone)}
+														</a>
+													</div>
 												</div>
 												<div className="form-group">
 													<label className="form-label">Doğum Tarihi</label>
@@ -159,7 +177,10 @@ export class Detail extends Component {
 																					</td>
 																					<td className="pl-0">
 																						<div className="form-control-plaintext">
-																							<a href={"tel:" + el.phone}>
+																							<a
+																								href={
+																									"tel:+90" + el.phone
+																								}>
 																								{formatPhone(el.phone)}
 																							</a>
 																						</div>

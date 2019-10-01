@@ -311,7 +311,7 @@ class Table extends Component {
 											? Inputmask.format(el.phone, { mask: "(999) 999 9999" })
 											: null;
 										j++;
-										elem += `<a href="tel:${el.phone}" data-toggle="tooltip" data-placement="left" data-original-title="${el.kinship}: ${el.name}" class="text-inherit d-block">${formatPhone}</a> `;
+										elem += `<a href="tel:+90${el.phone}" data-toggle="tooltip" data-placement="left" data-original-title="${el.kinship}: ${el.name}" class="text-inherit d-block">${formatPhone}</a> `;
 									}
 								});
 							} else {

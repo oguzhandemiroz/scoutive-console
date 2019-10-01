@@ -32,7 +32,7 @@ export class List extends Component {
 				decimal: ",",
 				thousands: "."
 			},
-			order: [0, "desc"],
+			order: [0, "asc"],
 			ajax: {
 				url: ep.ACCOUNTING_LIST,
 				type: "POST",
@@ -75,7 +75,7 @@ export class List extends Component {
 						if (type === "sort" || type === "type") {
 							return meta.row;
 						}
-						return `<div class="text-muted">#${meta.row + 1}</div>`;
+						return `<div class="text-muted">#${data}</div>`;
 					}
 				},
 				{

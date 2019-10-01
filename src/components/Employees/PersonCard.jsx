@@ -39,7 +39,11 @@ export class PersonCard extends Component {
 											<li className="list-inline-item">
 												<a
 													className="employee_email"
-													href={`mailto:${nullCheck(data.email)}`}
+													href={
+														data.email
+															? `mailto:${nullCheck(data.email)}`
+															: "javascript:void(0)"
+												}
 													data-original-title={nullCheck(data.email)}
 													data-toggle="tooltip">
 													<i className="fa fa-envelope" />
@@ -50,7 +54,7 @@ export class PersonCard extends Component {
 													className="employee_phone"
 													href={
 														data.phone
-															? `tel:${nullCheck(data.phone)}`
+															? `tel:+90${nullCheck(data.phone)}`
 															: "javascript:void(0)"
 													}
 													data-original-title={formatPhone(data.phone)}
