@@ -3,7 +3,7 @@ import { datatable_turkish } from "../../assets/js/core";
 import ep from "../../assets/js/urls";
 import { fatalSwal, errorSwal } from "../Alert.jsx";
 import ReactDOM from "react-dom";
-import { BrowserRouter } from "react-router-dom";
+import { BrowserRouter, Link } from "react-router-dom";
 import { fullnameGenerator } from "../../services/Others";
 import ListFilter from "./ListFilter";
 import GroupChange from "../PlayerAction/GroupChange";
@@ -205,7 +205,33 @@ class Table extends Component {
 						orderable: false
 					},
 					{
+						targets: "name",
+						responsivePriority: 1,
+						render: function(data, type, row) {
+							const fullname = fullnameGenerator(data, row.surname);
+							if (type === "sort" || type === "type") {
+								return fullname;
+							}
+						},
+						createdCell: (td, cellData, rowData) => {
+							const { uid, name, surname } = rowData;
+							const fullname = fullnameGenerator(name, surname);
+							ReactDOM.render(
+								<BrowserRouter>
+									<Link
+										className="text-inherit"
+										to={"/app/players/detail/" + uid}
+										onClick={() => this.props.history.push(`/app/players/detail/${uid}`)}>
+										{fullname}
+									</Link>
+								</BrowserRouter>,
+								td
+							);
+						}
+					},
+					{
 						targets: "action",
+						class: "text-right",
 						responsivePriority: 2,
 						createdCell: (td, cellData, rowData) => {
 							const fullname = fullnameGenerator(rowData.name, rowData.surname);
@@ -213,6 +239,7 @@ class Table extends Component {
 							ReactDOM.render(
 								<BrowserRouter>
 									<ActionButton
+										hide={["edit"]}
 										vacationButton={data =>
 											this.setState({
 												data: data
@@ -233,15 +260,35 @@ class Table extends Component {
 											group: group
 										}}
 										renderButton={() => (
-											<button
-												type="button"
-												id="player-action"
-												className="btn btn-sm btn-secondary btn-block dropdown-toggle"
-												data-toggle="dropdown"
-												aria-haspopup="true"
-												aria-expanded="false">
-												İşlem
-											</button>
+											<>
+												<Link
+													to={"/app/players/detail/" + uid}
+													className="btn btn-icon btn-sm btn-secondary"
+													data-toggle="tooltip"
+													onClick={() =>
+														this.props.history.push(`/app/players/detail/${uid}`)
+													}
+													title="Görüntüle">
+													<i className="fe fe-eye" />
+												</Link>
+												<Link
+													to={"/app/players/edit/" + uid}
+													className="btn btn-icon btn-sm btn-secondary mx-1"
+													data-toggle="tooltip"
+													onClick={() => this.props.history.push(`/app/players/edit/${uid}`)}
+													title="Düzenle">
+													<i className="fe fe-edit" />
+												</Link>
+												<a
+													title="İşlem Menüsü"
+													href="javascript:void(0)"
+													className="btn btn-icon btn-sm btn-secondary"
+													data-toggle="dropdown"
+													aria-haspopup="true"
+													aria-expanded="false">
+													<i className="fe fe-menu" />
+												</a>
+											</>
 										)}
 									/>
 								</BrowserRouter>,
@@ -456,7 +503,9 @@ class Table extends Component {
 							<th className="position">MEVKİİ</th>
 							<th className="birthday">YAŞ</th>
 							<th className="group">GRUP</th>
-							<th className="daily" title="Yoklama Durumu">YOKL. DURUM</th>
+							<th className="daily" title="Yoklama Durumu">
+								YOKL. DURUM
+							</th>
 							<th className="no-sort action" />
 						</tr>
 					</thead>

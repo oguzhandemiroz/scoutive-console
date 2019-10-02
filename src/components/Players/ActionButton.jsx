@@ -17,7 +17,7 @@ export class ActionButton extends Component {
 
 	renderActionButton = () => {
 		const { uid } = this.state;
-		const { data, renderButton, history, dropdown } = this.props;
+		const { data, renderButton, history, dropdown, hide } = this.props;
 		const { to, name, is_trial, status, group } = data;
 		const fullname = name;
 
@@ -30,6 +30,7 @@ export class ActionButton extends Component {
 
 		const actionMenu = [
 			{
+				name: "payment",
 				tag: "Link",
 				elementAttr: {
 					className: "dropdown-item",
@@ -48,6 +49,7 @@ export class ActionButton extends Component {
 				condition: !is_trial && status === 0
 			},
 			{
+				name: "payment-warning",
 				tag: "button",
 				elementAttr: {
 					className: "dropdown-item cursor-not-allowed disabled",
@@ -65,6 +67,7 @@ export class ActionButton extends Component {
 				condition: !is_trial && status !== 0
 			},
 			{
+				name: "freeze",
 				tag: "button",
 				elementAttr: {
 					className: "dropdown-item",
@@ -78,6 +81,7 @@ export class ActionButton extends Component {
 				condition: !is_trial && status === 1
 			},
 			{
+				name: "start",
 				tag: "button",
 				elementAttr: {
 					className: "dropdown-item",
@@ -91,6 +95,7 @@ export class ActionButton extends Component {
 				condition: is_trial === 1 && status === 1
 			},
 			{
+				name: "active",
 				tag: "button",
 				elementAttr: {
 					className: "dropdown-item",
@@ -104,6 +109,7 @@ export class ActionButton extends Component {
 				condition: !is_trial && status === 0
 			},
 			{
+				name: "refresh",
 				tag: "button",
 				elementAttr: {
 					className: "dropdown-item",
@@ -117,12 +123,13 @@ export class ActionButton extends Component {
 				condition: !is_trial && status === 2
 			},
 			{
+				name: "passive",
 				tag: "button",
 				elementAttr: {
 					className: "dropdown-item",
 					onClick: () => deletePlayer(uid, to, fullname, history)
 				},
-				childText: "Kaydı Sil",
+				childText: "Kaydı Pasifleştir",
 				child: {
 					className: "dropdown-icon fa fa-user-times"
 				},
@@ -134,6 +141,7 @@ export class ActionButton extends Component {
 				condition: status !== 0
 			},
 			{
+				name: "vacation",
 				tag: "button",
 				elementAttr: {
 					className: "dropdown-item",
@@ -153,6 +161,7 @@ export class ActionButton extends Component {
 				condition: !is_trial && status === 1
 			},
 			{
+				name: "point",
 				tag: "button",
 				elementAttr: {
 					className: "dropdown-item cursor-not-allowed disabled",
@@ -170,6 +179,7 @@ export class ActionButton extends Component {
 				condition: !is_trial && status === 1
 			},
 			{
+				name: "parent-message",
 				tag: "button",
 				elementAttr: {
 					className: "dropdown-item cursor-not-allowed disabled",
@@ -187,6 +197,7 @@ export class ActionButton extends Component {
 				condition: true
 			},
 			{
+				name: "edit",
 				tag: "Link",
 				elementAttr: {
 					className: "dropdown-item",
@@ -201,6 +212,7 @@ export class ActionButton extends Component {
 				condition: is_trial === 0
 			},
 			{
+				name: "group",
 				tag: "button",
 				elementAttr: {
 					className: "dropdown-item",
@@ -226,6 +238,7 @@ export class ActionButton extends Component {
 				condition: !is_trial && status !== 0
 			},
 			{
+				name: "certificate",
 				tag: "button",
 				elementAttr: {
 					className: "dropdown-item cursor-not-allowed disabled",
@@ -239,13 +252,14 @@ export class ActionButton extends Component {
 				condition: true
 			},
 			{
+				name: "fee",
 				tag: "Link",
 				elementAttr: {
 					className: "dropdown-item",
 					to: `/app/players/fee-detail/${to}`,
 					onClick: () => history.push(`/app/players/fee-detail/${to}`)
 				},
-				childText: "Tüm Aidat Bilgisi",
+				childText: "Aidat Geçmişi",
 				child: {
 					className: "dropdown-icon fa fa-receipt"
 				},
@@ -253,6 +267,22 @@ export class ActionButton extends Component {
 				condition: true
 			},
 			{
+				name: "rollcall",
+				tag: "Link",
+				elementAttr: {
+					className: "dropdown-item",
+					to: `/app/players/rollcall/${to}`,
+					onClick: () => history.push(`/app/players/rollcall/${to}`)
+				},
+				childText: "Yoklama Geçmişi",
+				child: {
+					className: "dropdown-icon fa fa-calendar-check"
+				},
+				lock: false,
+				condition: true
+			},
+			{
+				name: "detail",
 				tag: "Link",
 				elementAttr: {
 					className: "dropdown-item",
@@ -293,6 +323,7 @@ export class ActionButton extends Component {
 					</a>
 					<div role="separator" className="dropdown-divider" />
 					{actionMenu.map((el, key) => {
+						if (hide && hide.indexOf(el.name) > -1) return null;
 						if (el.condition) {
 							if (el.tag === "Link") {
 								return (

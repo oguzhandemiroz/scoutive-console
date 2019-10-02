@@ -10,7 +10,7 @@ const tabList = [
 	{
 		text: "Maaş Geçmişi",
 		path: "salary-detail",
-		icon: "fa fa-money-bill-wave"
+		icon: "fa fa-receipt"
 	},
 	{
 		text: "İzin Geçmişi",
@@ -20,7 +20,7 @@ const tabList = [
 	{
 		text: "Yoklama Geçmişi",
 		path: "rollcall",
-		icon: "fa fa-check-square"
+		icon: "fa fa-calendar-check"
 	}
 ];
 

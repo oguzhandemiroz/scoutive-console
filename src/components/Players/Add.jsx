@@ -701,7 +701,7 @@ export class Add extends Component {
 										<label
 											class="selectgroup-item"
 											data-toggle="tooltip"
-											title="Kaydı Silinmiş Öğrenci">
+											title="Kaydı Pasif Öğrenci">
 											<input
 												type="radio"
 												name="is_active"

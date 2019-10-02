@@ -126,6 +126,7 @@ export class PersonCard extends Component {
 					</div>
 					<div className="card-footer">
 						<ActionButton
+							hide={["edit", "detail", "rollcall", "fee"]}
 							vacationButton={player =>
 								this.setState({
 									player: player
@@ -145,6 +146,24 @@ export class PersonCard extends Component {
 								status: data.status,
 								group: data.group
 							}}
+							renderButton={() => (
+								<>
+									<Link
+										to={"/app/players/edit/" + data.to}
+										className="btn btn-icon btn-dark btn-block">
+										<i className="fe fe-edit mr-2" />
+										Düzenle
+									</Link>
+									<a
+										href="javascript:void(0)"
+										className="btn btn-icon btn-dark btn-block"
+										data-toggle="dropdown"
+										aria-haspopup="true"
+										aria-expanded="false">
+										İşlem Menüsü
+									</a>
+								</>
+							)}
 						/>
 
 						<Vacation data={player} history={history} />

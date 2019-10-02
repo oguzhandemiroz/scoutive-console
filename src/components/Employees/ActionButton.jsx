@@ -178,9 +178,23 @@ export class ActionButton extends Component {
 					to: `/app/employees/salary-detail/${to}`,
 					onClick: () => history.push(`/app/employees/salary-detail/${to}`)
 				},
-				childText: "Tüm Maaş Bilgisi",
+				childText: "Maaş Geçmişi",
 				child: {
 					className: "dropdown-icon fa fa-receipt"
+				},
+				lock: false,
+				condition: true
+			},
+			{
+				tag: "Link",
+				elementAttr: {
+					className: "dropdown-item",
+					to: `/app/employees/rollcall/${to}`,
+					onClick: () => history.push(`/app/employees/rollcall/${to}`)
+				},
+				childText: "Yoklama Geçmişi",
+				child: {
+					className: "dropdown-icon fa fa-calendar-check"
 				},
 				lock: false,
 				condition: true

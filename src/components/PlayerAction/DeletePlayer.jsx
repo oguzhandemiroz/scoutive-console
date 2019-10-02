@@ -27,12 +27,12 @@ const deletePlayer = (uid, to, name, history) => {
 				{
 					type: "warning",
 					title: "Emin misiniz?",
-					html: `<b>${name}</b> adlı öğrencinin kaydını silmek istediğinize emin misiniz?`
+					html: `<b>${name}</b> adlı öğrencinin kaydını pasifleştirmek istediğinize emin misiniz?`
 				},
 				{
 					type: "info",
 					title: "Not",
-					text: "Kaydı silme nedenini belirtiniz lütfen:",
+					text: "Kaydı pasifleştirme nedenini belirtiniz lütfen:",
 					input: "text",
 					inputPlaceholder: "...",
 					inputAttributes: {

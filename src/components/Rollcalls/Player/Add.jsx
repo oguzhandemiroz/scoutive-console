@@ -214,6 +214,31 @@ export class Add extends Component {
 					orderable: false
 				},
 				{
+					targets: "name",
+					responsivePriority: 1,
+					render: function(data, type, row) {
+						const fullname = fullnameGenerator(data, row.surname);
+						if (type === "sort" || type === "type") {
+							return fullname;
+						}
+					},
+					createdCell: (td, cellData, rowData) => {
+						const { uid, name, surname } = rowData;
+						const fullname = fullnameGenerator(name, surname);
+						ReactDOM.render(
+							<BrowserRouter>
+								<Link
+									className="text-inherit"
+									to={"/app/players/detail/" + uid}
+									onClick={() => this.props.history.push(`/app/players/detail/${uid}`)}>
+									{fullname}
+								</Link>
+							</BrowserRouter>,
+							td
+						);
+					}
+				},
+				{
 					targets: "rollcalls",
 					responsivePriority: 10002,
 					createdCell: (td, cellData, rowData) => {
