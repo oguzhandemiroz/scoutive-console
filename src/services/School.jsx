@@ -128,4 +128,57 @@ const UpdatePermissions = data => {
 	} catch (e) {}
 };
 
-export { GetSchool, UpdateSchool, ListPermissions, UpdatePermissions, ActivationSchool };
+const ListAreas = () => {
+	try {
+		return fetch(ep.AREA, {
+			method: "POST",
+			body: JSON.stringify({
+				uid: localStorage.getItem("UID")
+			}),
+			headers: h
+		})
+			.then(res => res.json())
+			.then(response => {
+				if (response) {
+					const status = response.status;
+					if (status.code !== 1020) {
+						Toast.fire({
+							type: "error",
+							title: '"Sahalar" yüklenemedi...'
+						});
+					}
+					return response;
+				}
+			})
+			.catch(e => fatalSwal(true));
+	} catch (e) {
+		fatalSwal(true);
+	}
+};
+
+const UpdateAreas = data => {
+	try {
+		return fetch(ep.AREAS_UPDATE, {
+			method: "PATCH",
+			body: JSON.stringify(data),
+			headers: h
+		})
+			.then(res => res.json())
+			.then(response => {
+				if (response) {
+					const status = response.status;
+					if (status.code !== 1020) errorSwal(status);
+					else {
+						Toast.fire({
+							type: "success",
+							title: "Başarıyla güncellendi..."
+						});
+					}
+					return response;
+				}
+			})
+			.catch(e => fatalSwal(true));
+	} catch (e) {}
+};
+
+export { GetSchool, UpdateSchool, ListPermissions, UpdatePermissions, ListAreas, UpdateAreas, ActivationSchool };

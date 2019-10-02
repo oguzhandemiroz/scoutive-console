@@ -55,6 +55,7 @@ export class List extends Component {
 	};
 
 	render() {
+		const { bid } = this.props.match.params;
 		const { list } = this.state;
 		return (
 			<div className="card">
@@ -99,7 +100,7 @@ export class List extends Component {
 						<tfoot>
 							<tr>
 								<td colSpan="5" className="text-right font-italic">
-									<Link to="/app/accountings/income/list">
+									<Link to={"/app/budgets/detail/list/" + bid}>
 										Tümünü görüntüle <i className="fe fe-arrow-right"></i>
 									</Link>
 								</td>

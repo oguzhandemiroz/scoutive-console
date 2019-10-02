@@ -90,7 +90,7 @@ export class List extends Component {
 						if (type === "sort" || type === "type") {
 							return data;
 						}
-						if (data !== null && data !== "") return data.format(2, 3, '.', ',') + " ₺";
+						if (data !== null && data !== "") return data.format(2, 3, ".", ",") + " ₺";
 					}
 				},
 				{
@@ -140,9 +140,7 @@ export class List extends Component {
 							<BrowserRouter>
 								<Link
 									onClick={() =>
-										this.props.history.push(
-											"/app/accountings/detail/" + rowData.accounting_id
-										)
+										this.props.history.push("/app/accountings/detail/" + rowData.accounting_id)
 									}
 									to={`/app/accountings/detail/${rowData.accounting_id}`}
 									className="icon">
@@ -159,61 +157,25 @@ export class List extends Component {
 
 	render() {
 		return (
-			<div className="container">
-				<div className="page-header">
-					<h1 className="page-title">
-						<i className="fe fe-trending-down mr-2 text-red"></i>Gider
-					</h1>
-					<div className="input-group w-auto ml-auto">
-						<div className="input-group-append">
-							<Link to="/app/accountings/expense/fast" className="btn btn-sm btn-danger">
-								<i className="fa fa-minus-square mr-1"></i> Gider Oluştur
-							</Link>
-							<button
-								type="button"
-								className="btn btn-danger btn-sm dropdown-toggle dropdown-toggle-split"
-								data-toggle="dropdown"
-								aria-haspopup="true"
-								aria-expanded="false">
-								<span className="sr-only">Toggle Dropdown</span>
-							</button>
-							<div className="dropdown-menu">
-								<Link
-									to="/app/accountings/expense/invoice"
-									className="dropdown-item cursor-not-allowed disabled">
-									<i className="dropdown-icon fa fa-receipt"></i> Fatura
-									<span className="ml-2">
-										(<i className="fe fe-lock mr-0" />)
-									</span>
-								</Link>
-								<Link to="/app/players/payment" className="dropdown-item">
-									<i className="dropdown-icon fa fa-money-bill-wave"></i> Maaş Ödemesi
-								</Link>
-							</div>
-						</div>
-					</div>
+			<div className="card">
+				<div className="card-header">
+					<h3 className="card-title">Tüm Gider İşlemleri</h3>
 				</div>
-
-				<div className="card">
-					<div className="card-header">
-						<h3 className="card-title">Tüm Gider İşlemleri</h3>
-					</div>
-					<div className="table-responsive">
-						<table
-							ref="expensetable"
-							className="table card-table w-100 table-vcenter table-striped text-nowrap datatable">
-							<thead>
-								<tr>
-									<th className="accounting_id">#</th>
-									<th className="accounting_type">İşlem</th>
-									<th className="amount">Tutar</th>
-									<th className="payment_date">Tarih</th>
-									<th className="budget no-sort">Kasa/Banka</th>
-									<th className="detail no-sort w-1"></th>
-								</tr>
-							</thead>
-						</table>
-					</div>
+				<div className="table-responsive">
+					<table
+						ref="expensetable"
+						className="table card-table w-100 table-vcenter table-striped text-nowrap datatable">
+						<thead>
+							<tr>
+								<th className="accounting_id">#</th>
+								<th className="accounting_type">İşlem</th>
+								<th className="amount">Tutar</th>
+								<th className="payment_date">Tarih</th>
+								<th className="budget no-sort">Kasa/Banka</th>
+								<th className="detail no-sort w-1"></th>
+							</tr>
+						</thead>
+					</table>
 				</div>
 			</div>
 		);

@@ -21,6 +21,7 @@ var ep = {
     CLUB: host + api_version + "get/clubs",
     BANK: host + api_version + "get/banks",
     AREA: host + api_version + "list/areas",
+    AREAS_UPDATE: host + api_version + "update/areas",
     ACCOUNT_LOGIN: host + api_version + "login",
     SCHOOL_CREATE: host + api_version + "create/school",
     SCHOOL_GET: host + api_version + "get/school",

@@ -22,6 +22,8 @@ export class List extends Component {
 
 	componentDidMount() {
 		const { uid } = this.state;
+		const { bid } = this.props.match.params;
+
 		$(this.refs.incometable).DataTable({
 			dom: '<"top"<"filterTools">f>rt<"bottom"ilp><"clear">',
 			responsive: false,
@@ -45,7 +47,7 @@ export class List extends Component {
 				data: function(d) {
 					return JSON.stringify({
 						uid: uid,
-						filter: { type: 1 }
+						filter: { type: 1, budget_id: bid }
 					});
 				},
 				contentType: "application/json",
@@ -164,7 +166,7 @@ export class List extends Component {
 		return (
 			<div className="card">
 				<div className="card-header">
-					<h3 className="card-title">Tüm Gelir İşlemleri</h3>
+					<h3 className="card-title">Tüm İşlemler</h3>
 				</div>
 				<div className="table-responsive">
 					<table

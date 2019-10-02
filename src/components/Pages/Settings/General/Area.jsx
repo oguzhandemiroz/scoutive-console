@@ -1,11 +1,12 @@
 import React, { Component } from "react";
-import { Areas } from "../../../../services/FillSelect";
+import { ListAreas, UpdateAreas } from "../../../../services/School";
 
 export class Area extends Component {
 	constructor(props) {
 		super(props);
 
 		this.state = {
+			uid: localStorage.getItem("UID"),
 			areas: null,
 			show: false,
 			loading: "active",
@@ -13,12 +14,24 @@ export class Area extends Component {
 		};
 	}
 
+	handleSubmit = e => {
+		e.preventDefault();
+		const { uid, areas } = this.state;
+		this.setState({ loadingButton: "btn-loading" });
+		areas.map((el, key) => {
+			if (el.name === "") return (areas[key].name = "Saha - " + (key + 1));
+		});
+		UpdateAreas({
+			uid: uid,
+			areas: areas
+		}).then(response => this.setState({ loadingButton: "", show: false }));
+	};
+
 	handleChange = e => {
 		const { value, name } = e.target;
 		const { areas } = this.state;
-		let changed = areas.find(x => x.value === parseInt(name));
-		changed.label = value;
-		console.log(value, name, changed);
+		let changed = areas.find(x => x.area_id === parseInt(name));
+		changed.name = value;
 
 		this.setState(prevState => ({
 			areas: [...prevState.areas]
@@ -31,9 +44,9 @@ export class Area extends Component {
 	};
 
 	getAreas = () => {
-		Areas().then(response => {
+		ListAreas().then(response => {
 			if (response) {
-				this.setState({ areas: response, loading: "" });
+				this.setState({ areas: response.data, loading: "" });
 			}
 		});
 	};
@@ -41,7 +54,7 @@ export class Area extends Component {
 	render() {
 		const { areas, show, loading, loadingButton } = this.state;
 		return (
-			<form className="row">
+			<form className="row" onSubmit={this.handleSubmit}>
 				<div className="col-2">
 					<strong>Saha Ayarları</strong>
 				</div>
@@ -61,16 +74,16 @@ export class Area extends Component {
 															<input
 																type="text"
 																className="form-control"
-																placeholder={el.label}
-																value={el.label}
-																name={el.value}
+																placeholder={"Saha - " + (key + 1)}
+																value={el.name}
+																name={el.area_id}
 																onChange={this.handleChange}
 															/>
 														</div>
 													);
 											  })
 											: null}
-									</div>
+									</div> 
 								</div>
 								<button type="submit" className={`btn btn-sm btn-primary ${loadingButton}`}>
 									Değişiklikleri Kaydet
