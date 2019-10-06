@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { UnpaidPlayers } from "../../services/Report";
 import { fullnameGenerator, avatarPlaceholder } from "../../services/Others";
 import moment from "moment";
+import ActionButton from "../../components/Players/ActionButton";
 
 const $ = require("jquery");
 
@@ -132,46 +133,34 @@ export class UnpaidPlayer extends Component {
                                               </div>
                                           </div>
                                           <div className="col-auto">
-                                              <a
-                                                  href="javascript:void(0)"
-                                                  className="icon"
-                                                  data-toggle="dropdown"
-                                                  aria-haspopup="true"
-                                                  aria-expanded="false">
-                                                  <i className="fe fe-more-vertical"></i>
-                                              </a>
-                                              <div className="item-action dropdown">
-                                                  <div className="dropdown-menu dropdown-menu-right">
-                                                      <Link
-                                                          to={"/app/players/payment/" + el.uid}
-                                                          className="dropdown-item">
-                                                          <i className="dropdown-icon fa fa-hand-holding-usd" /> Ödeme
-                                                          Al
-                                                      </Link>
-                                                      <Link
-                                                          to={"/app/players/detail/" + el.uid}
-                                                          className="dropdown-item cursor-not-allowed disabled">
-                                                          <i className="dropdown-icon fa fa-exclamation-triangle"></i>{" "}
-                                                          Ödeme İkazı
-                                                          <span className="ml-1">
-                                                              (<i className="fe fe-lock mr-0" />)
-                                                          </span>
-                                                      </Link>
-                                                      <div role="separator" className="dropdown-divider" />
-                                                      <Link
-                                                          to={"/app/players/fee-detail/" + el.uid}
-                                                          className="dropdown-item">
-                                                          <i className="dropdown-icon fa fa-receipt" /> Tüm Aidat
-                                                          Bilgisi
-                                                      </Link>
-                                                      <Link
-                                                          to={"/app/players/detail/" + el.uid}
-                                                          className="dropdown-item">
-                                                          <i className="dropdown-icon fa fa-info-circle" /> Tüm
-                                                          Bilgileri
-                                                      </Link>
-                                                  </div>
-                                              </div>
+                                              <ActionButton
+                                                  hide={[
+                                                      "start",
+                                                      "refresh",
+                                                      "active",
+                                                      "vacation",
+                                                      "point",
+                                                      "group",
+                                                      "rollcall",
+                                                      "certificate"
+                                                  ]}
+                                                  data={{
+                                                      to: el.uid,
+                                                      name: fullnameGenerator(el.name, el.surname),
+                                                      is_trial: 0
+                                                  }}
+                                                  dropdown={true}
+                                                  renderButton={() => (
+                                                      <a
+                                                          href="javascript:void(0)"
+                                                          className="icon"
+                                                          data-toggle="dropdown"
+                                                          aria-haspopup="true"
+                                                          aria-expanded="false">
+                                                          <i className="fe fe-more-vertical"></i>
+                                                      </a>
+                                                  )}
+                                              />
                                           </div>
                                       </div>
                                   );

@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import ReactDOM from "react-dom";
-import { BrowserRouter, withRouter } from "react-router-dom";
+import { BrowserRouter, withRouter, Link } from "react-router-dom";
 import Inputmask from "inputmask";
 import moment from "moment";
 import "moment/locale/tr";
@@ -133,6 +133,31 @@ export class Add extends Component {
 					targets: "no-sort",
 					orderable: false
 				},
+				{
+					targets: "name",
+					responsivePriority: 1,
+					render: function(data, type, row) {
+						const fullname = fullnameGenerator(data, row.surname);
+						if (type === "sort" || type === "type") {
+							return fullname;
+						}
+					},
+					createdCell: (td, cellData, rowData) => {
+						const { uid, name, surname } = rowData;
+						const fullname = fullnameGenerator(name, surname);
+						ReactDOM.render(
+							<BrowserRouter>
+								<Link
+									className="text-inherit"
+									to={"/app/employees/detail/" + uid}
+									onClick={() => this.props.history.push(`/app/employees/detail/${uid}`)}>
+									{fullname}
+								</Link>
+							</BrowserRouter>,
+							td
+						);
+					}
+				},			
 				{
 					targets: "rollcalls",
 					responsivePriority: 10002,

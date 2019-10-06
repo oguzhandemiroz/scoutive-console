@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { UnpaidPlayers } from "../../services/Report";
 import { fullnameGenerator, avatarPlaceholder } from "../../services/Others";
+import ActionButton from "../Players/ActionButton";
 import moment from "moment";
 
 const $ = require("jquery");
@@ -137,54 +138,35 @@ export class UnpaidPlayerList extends Component {
                                                           </div>
                                                       </div>
                                                       <div className="col-auto">
-                                                          <div className="dropdown">
-                                                              <button
-                                                                  type="button"
-                                                                  id="player-action"
-                                                                  className="btn btn-sm btn-gray-dark btn-block dropdown-toggle"
-                                                                  data-toggle="dropdown"
-                                                                  aria-haspopup="true"
-                                                                  aria-expanded="false">
-                                                                  İşlem
-                                                              </button>
-                                                              <div className="dropdown-menu dropdown-menu-right">
-                                                                  <a
-                                                                      className="dropdown-item disabled text-azure"
-                                                                      href="javascript:void(0)">
-                                                                      <i className="dropdown-icon fa fa-user text-azure" />
-                                                                      {fullname}
-                                                                  </a>
-                                                                  <div role="separator" className="dropdown-divider" />
-                                                                  <Link
-                                                                      to={"/app/players/payment/" + el.uid}
-                                                                      className="dropdown-item">
-                                                                      <i className="dropdown-icon fa fa-hand-holding-usd" />{" "}
-                                                                      Ödeme Al
-                                                                  </Link>
-                                                                  <Link
-                                                                      to={"/app/players/detail/" + el.uid}
-                                                                      className="dropdown-item cursor-not-allowed disabled">
-                                                                      <i className="dropdown-icon fa fa-exclamation-triangle"></i>{" "}
-                                                                      Ödeme İkazı
-                                                                      <span className="ml-1">
-                                                                          (<i className="fe fe-lock mr-0" />)
-                                                                      </span>
-                                                                  </Link>
-                                                                  <div role="separator" className="dropdown-divider" />
-                                                                  <Link
-                                                                      to={"/app/players/fee-detail/" + el.uid}
-                                                                      className="dropdown-item">
-                                                                      <i className="dropdown-icon fa fa-receipt" /> Tüm
-                                                                      Aidat Bilgisi
-                                                                  </Link>
-                                                                  <Link
-                                                                      to={"/app/players/detail/" + el.uid}
-                                                                      className="dropdown-item">
-                                                                      <i className="dropdown-icon fa fa-info-circle" />{" "}
-                                                                      Tüm Bilgileri
-                                                                  </Link>
-                                                              </div>
-                                                          </div>
+                                                          <ActionButton
+                                                              hide={[
+                                                                  "start",
+                                                                  "refresh",
+                                                                  "active",
+                                                                  "vacation",
+                                                                  "point",
+                                                                  "group",
+                                                                  "rollcall",
+                                                                  "certificate"
+                                                              ]}
+                                                              data={{
+                                                                  to: el.uid,
+                                                                  name: fullnameGenerator(el.name, el.surname),
+                                                                  is_trial: 0
+                                                              }}
+                                                              dropdown={true}
+                                                              renderButton={() => (
+                                                                  <button
+                                                                      type="button"
+                                                                      id="player-action"
+                                                                      className="btn btn-sm btn-gray-dark btn-block dropdown-toggle"
+                                                                      data-toggle="dropdown"
+                                                                      aria-haspopup="true"
+                                                                      aria-expanded="false">
+                                                                      İşlem
+                                                                  </button>
+                                                              )}
+                                                          />
                                                       </div>
                                                   </div>
                                               );

@@ -237,6 +237,26 @@ export class Add extends Component {
 							td
 						);
 					}
+				},				
+				{
+					targets: "group",
+					responsivePriority: 10004,
+					createdCell: (td, cellData, rowData) => {
+						const { group } = rowData;
+						ReactDOM.render((group && group !== "") ? 
+						(<BrowserRouter>
+							<Link
+								className="text-inherit"
+								to={"/app/groups/detail/" + group.value}
+								onClick={() => this.props.history.push(`/app/groups/detail/${group.value}`)}>
+								{group.label}
+							</Link>
+						</BrowserRouter>) : 
+						(<div>&mdash;</div>)
+							,
+							td
+						);
+					}
 				},
 				{
 					targets: "rollcalls",
@@ -535,15 +555,7 @@ export class Add extends Component {
 						else return "&mdash;";
 					}
 				},
-				{
-					data: "group",
-					responsivePriority: 10004,
-					render: function(data) {
-						if (data && data !== "")
-							return `<a class="text-inherit" href="/app/groups/detail/${data.value}">${data.label}</a>`;
-						else return "&mdash;";
-					}
-				},
+				{ data: null },
 				{ data: null },
 				{ data: null },
 				{ data: null },
