@@ -6,31 +6,33 @@ import DailyCreatedPlayer from "../../components/Dashboard/DailyCreatedPlayer";
 import Birthdays from "../../components/Dashboard/Birthdays";
 import TrainingGroups from "../../components/Dashboard/TrainingGroups";
 import UnpaidPlayers from "../../components/Dashboard/UnpaidPlayers";
+import FastMenu from "../../components/Dashboard/FastMenu";
 
 class Dashboard extends Component {
-	render() {
-		return (
-			<div className="container">
-				<div className="page-header">
-					<h1 className="page-title">Genel Durum</h1>
-				</div>
-				<div className="row row-cards">
-					<div className="col-sm-12 col-lg-4">
-						<PlayerRollcall />
-						<EmployeeRollcall />
-					</div>
-					<div className="col-sm-12 col-lg-4">
-						<UnpaidPlayers />
-					</div>
-					<div className="col-sm-12 col-lg-4">
-						<TrainingGroups />
-						<DailyCreatedPlayer />
-						<Birthdays />
-					</div>
-				</div>
-			</div>
-		);
-	}
+    render() {
+        return (
+            <div className="container">
+                <div className="page-header">
+                    <h1 className="page-title">Genel Durum</h1>
+                </div>
+                <div className="row row-cards">
+                    <div className="col-sm-12 col-lg-4">
+                        <PlayerRollcall />
+                        <EmployeeRollcall />
+                        <FastMenu />
+                    </div>
+                    <div className="col-sm-12 col-lg-4">
+                        <UnpaidPlayers />
+                    </div>
+                    <div className="col-sm-12 col-lg-4">
+                        <TrainingGroups />
+                        <DailyCreatedPlayer />
+                        <Birthdays />
+                    </div>
+                </div>
+            </div>
+        );
+    }
 }
 
 export default Dashboard;
