@@ -204,11 +204,11 @@ export class FastMenu extends Component {
 
 		return (
 			<div id="FABs_v2">
-				<div class="dropdown-menu show position-static">
-					<h6 class="dropdown-header">
+				<div className="dropdown-menu show position-static m-0 mb-5">
+					<h6 className="dropdown-header">
 						<i className="fa fa-bolt mr-2 text-rss" /> Hızlı Erişim Menüsü
 					</h6>
-					<div class="dropdown-divider"></div>
+					<div className="dropdown-divider"></div>
 					{fabsMenu.map((el, key) => {
 						if (el.condition) {
 							if (el.tag === "Link") {

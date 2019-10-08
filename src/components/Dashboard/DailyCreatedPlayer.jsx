@@ -156,7 +156,7 @@ export class DailyCreatedPlayer extends Component {
                                 <i className={`fe fe-users ${todayCount > 0 ? "text-blue" : ""}`} />
                             </div>
                             <h3 className="mb-1">{todayCount}</h3>
-                            <div className="text-muted">Bugün Eklenen Öğrenci</div>
+                            <div className="text-muted">Bugün Kayıt Olan Öğrenci</div>
                         </div>
                         <div className="card-chart-bg">
                             <div id="daily-players" style={{ height: "100%" }} ref="daily-players" />

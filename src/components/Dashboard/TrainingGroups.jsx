@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { TrainingGroups } from "../../services/Report";
-import { fullnameGenerator } from "../../services/Others";
+import { fullnameGenerator, avatarPlaceholder } from "../../services/Others";
 import moment from "moment";
 const $ = require("jquery");
 
@@ -56,58 +56,64 @@ export class TrainingGroupList extends Component {
 		const { trainings } = this.state;
 		return (
 			<div className="card">
-				{trainings ? (
-					trainings.length > 0 ? (
-						trainings.map((el, key) => {
-							return (
-								<div className="card-body" key={key.toString()}>
-									<div className="card-value float-right text-muted">
-										<i className="fa fa-running text-green-light" />
-									</div>
-									<h4 className="mb-1">{el.name}</h4>
-									<div className="text-muted">
-										Grubu şu an&nbsp;
-										<strong className="text-body">{el.area ? el.area.name + "'de " : ""}</strong>
-										antrenmanda
-									</div>
-									<div className="row clear-both pt-4">
-										<div className="col-auto d-lg-flex align-items-center">
-											<div
-												className="avatar"
-												style={{ backgroundImage: `url(${el.employee.image})` }}
-											/>
+				{trainings
+					? trainings.length > 0
+						? trainings.map((el, key) => {
+								return (
+									<div className="card-body" key={key.toString()}>
+										<div className="card-value float-right text-muted">
+											<i className="fa fa-running text-green-light" />
 										</div>
-										<div className="col">
-											<Link
-												to={"/app/employees/detail/" + el.employee.uid}
-												className="text-body font-weight-600 d-block">
-												{fullnameGenerator(el.employee.name, el.employee.surname)}
-											</Link>
-											<span
-												className="small text-muted"
-												data-toggle="tooltip"
-												title={el.employee.permission}>
-												Sorumlu Antrenör
-											</span>
+										<h4 className="mb-1">{el.name}</h4>
+										<div className="text-muted">
+											Grubu&nbsp;
+											<strong className="text-body">
+												{el.area ? el.area.name + "'de " : ""}
+											</strong>
+											antrenmanda
 										</div>
-										<div className="col-auto d-flex align-items-center">
-											<span
-												className="tag tag-gray-dark"
-												data-original-title="Antrenman Saati"
-												data-offset="-35"
-												data-toggle="tooltip">
-												{moment(el.start_time, "HH:mm").format("HH:mm")}&nbsp;&mdash;&nbsp;
-												{moment(el.end_time, "HH:mm").format("HH:mm")}
-											</span>
+										<div className="row clear-both pt-4">
+											<div className="col-auto d-lg-flex align-items-center">
+												<div
+													className="avatar"
+													style={{ backgroundImage: `url(${el.employee.image})` }}>
+													{el.employee.image ? "" : avatarPlaceholder(el.employee.name, el.employee.surname)}
+												</div>
+											</div>
+											<div className="col pl-1">
+												<Link
+													to={"/app/employees/detail/" + el.employee.uid}
+													className="text-body font-weight-600 d-block">
+													{fullnameGenerator(el.employee.name, el.employee.surname)}
+												</Link>
+												<span
+													className="small text-muted"
+													data-toggle="tooltip"
+													title={el.employee.permission}>
+													Sorumlu Antrenör
+												</span>
+											</div>
+											<div className="col-auto d-flex align-items-center">
+												<span
+													className="tag tag-gray-dark"
+													data-original-title="Antrenman Saati"
+													data-offset="-35"
+													data-toggle="tooltip">
+													{moment(el.start_time, "HH:mm").format("HH:mm")}&nbsp;&mdash;&nbsp;
+													{moment(el.end_time, "HH:mm").format("HH:mm")}
+												</span>
+											</div>
+										</div>
+										<div className="row mt-4">
+											<button className="btn btn-block btn-secondary">
+												Antrenmanda Olan Öğrenciler
+											</button>
 										</div>
 									</div>
-								</div>
-							);
-						})
-					) : noRow()
-				) : (
-					noRow(true)
-				)}
+								);
+						  })
+						: noRow()
+					: noRow(true)}
 			</div>
 		);
 	}

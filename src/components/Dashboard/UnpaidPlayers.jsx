@@ -92,12 +92,11 @@ export class UnpaidPlayer extends Component {
                                   return (
                                       <div className="row mb-4" key={key.toString()}>
                                           <div className="col-auto px-2">
-                                              <Link
-                                                  to={"/app/players/detail/" + el.uid}
+                                              <span
                                                   className="avatar avatar-xs"
                                                   style={{ backgroundImage: `url(${el.image})` }}>
                                                   {el.image ? "" : avatarPlaceholder(el.name, el.surname)}
-                                              </Link>
+                                              </span>
                                           </div>
                                           <div className="col px-1">
                                               <Link

@@ -7,30 +7,40 @@ import Birthdays from "../../components/Dashboard/Birthdays";
 import TrainingGroups from "../../components/Dashboard/TrainingGroups";
 import UnpaidPlayers from "../../components/Dashboard/UnpaidPlayers";
 import FastMenu from "../../components/Dashboard/FastMenu";
+import DailyPlayer from "../../components/Dashboard/DailyPlayer";
+import Accounting from "../../components/Dashboard/Accounting";
+import GeneralChart from "../../components/Accountings/GeneralChart";
 
 class Dashboard extends Component {
-    render() {
-        return (
-            <div className="container">
-                <div className="page-header">
-                    <h1 className="page-title">Genel Durum</h1>
-                </div>
-                <div className="row row-cards">
-                    <div className="col-sm-12 col-lg-4 order-1">
-                        <FastMenu />
-                    </div>
-                    <div className="col-sm-12 col-lg-4 order-1">
-                        <UnpaidPlayers />
-                    </div>
-                    <div className="col-sm-12 col-lg-4 order-1">
-                        <TrainingGroups />
-                        <DailyCreatedPlayer />
-                        <Birthdays />
-                    </div>
-                </div>
-            </div>
-        );
-    }
+	render() {
+		return (
+			<div className="container">
+				<div className="page-header">
+					<h1 className="page-title">Genel Durum</h1>
+				</div>
+				<PlayerRollcall />
+				<div className="row row-cards">
+					<DailyPlayer />
+					<Accounting />
+				</div>
+				<div className="row row-cards">
+					<GeneralChart />
+				</div>
+				<div className="row row-cards">
+					<div className="col-sm-12 col-lg-4 order-1">
+						<UnpaidPlayers />
+					</div>
+					<div className="col-sm-12 col-lg-4 order-1">
+						<Birthdays />
+					</div>
+					<div className="col-sm-12 col-lg-4 order-1">
+						<TrainingGroups />
+						<FastMenu />
+					</div>
+				</div>
+			</div>
+		);
+	}
 }
 
 export default Dashboard;

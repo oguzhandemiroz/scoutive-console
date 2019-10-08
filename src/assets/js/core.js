@@ -19,6 +19,46 @@ Number.prototype.format = function (d, w, s, c) {
     return (c ? num.replace(".", c) : num).replace(new RegExp(re, "g"), "$&" + (s || ","));
 };
 
+Number.prototype.nFormatter = function (digits) {
+    var si = [{
+            value: 1,
+            symbol: ""
+        },
+        {
+            value: 1E3,
+            symbol: "B"
+        },
+        {
+            value: 1E6,
+            symbol: "M"
+        },
+        {
+            value: 1E9,
+            symbol: "G"
+        },
+        {
+            value: 1E12,
+            symbol: "T"
+        },
+        {
+            value: 1E15,
+            symbol: "P"
+        },
+        {
+            value: 1E18,
+            symbol: "E"
+        }
+    ];
+    var rx = /\.0+$|(\.[0-9]*[1-9])0+$/;
+    var i;
+    for (i = si.length - 1; i > 0; i--) {
+        if (this >= si[i].value) {
+            break;
+        }
+    }
+    return (this / si[i].value).toFixed(digits).replace(rx, "$1") + si[i].symbol;
+}
+
 String.prototype.capitalize = function () {
     return this.replace(/(^|\s)([a-z])/g, function (m, p1, p2) {
         return p1 + p2.toLocaleUpperCase("tr-TR");

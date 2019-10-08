@@ -1,8 +1,5 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
-import { ActiveRollcall } from "../../services/Rollcalls";
-import moment from "moment";
-import "moment/locale/tr";
+import { ListRollcallType, ActiveRollcall } from "../../services/Rollcalls";
 
 export class PlayerRollcall extends Component {
 	constructor(props) {
@@ -10,17 +7,16 @@ export class PlayerRollcall extends Component {
 
 		this.state = {
 			uid: localStorage.getItem("UID"),
-			data: null
+			rollcall: null
 		};
 	}
 
 	componentDidMount() {
-		this.listActiveRollcall();
+		this.getPlayerRollcallDetail();
 	}
 
-	listActiveRollcall = () => {
+	getPlayerRollcallDetail = () => {
 		const { uid } = this.state;
-
 		ActiveRollcall(
 			{
 				uid: uid
@@ -30,51 +26,101 @@ export class PlayerRollcall extends Component {
 			if (response) {
 				const status = response.status;
 				if (status.code === 1020) {
-					this.setState({ data: response.data });
+					console.log(response.data);
+					if (response.data.length > 0) {
+						ListRollcallType({ uid: uid, rollcall_id: response.data[0].rollcall_id }, "players").then(
+							responseList => {
+								if (responseList) {
+									const status = responseList.status;
+									if (status.code === 1020) this.setState({ rollcall: responseList.data });
+								}
+							}
+						);
+					}
 				}
 			}
 		});
 	};
 
-	render() {
-		const { data } = this.state;
+	generateRollcallTotalCount = (rollcall, status, text) => {
+		let total = 0;
+		if (rollcall) {
+			rollcall.map(el => {
+				if (Array.isArray(status)) {
+					if (status.indexOf(el.daily) > -1) total++;
+				} else {
+					if (el.daily === status) total++;
+				}
+			});
+		}
+
 		return (
-			<div className="card">
-				<div className="card-header">
-					<div className="card-title">Öğrenci Yoklaması</div>
-				</div>
-				{data ? (
-					data.length > 0 ? (
-						<table className="table card-table">
-							<tbody>
-								<tr>
-									<td>{moment(data[data.length - 1].created_date).format("LL")}</td>
-									<td className="text-right">
-										<Link
-											to={`/app/rollcalls/player/add/${data[data.length - 1].rollcall_id}`}
-											className="btn btn-sm btn-info">
-											Yoklamaya Devam Et
-										</Link>
-									</td>
-								</tr>
-							</tbody>
-						</table>
-					) : (
-						<div className="card-body text-center">
-							<Link to="/app/rollcalls/player" className="btn btn-success">
-								Yeni Yoklama Oluştur
-							</Link>
-						</div>
-					)
-				) : (
-					<div className="card-body">
-						<div className={`dimmer active p-3`}>
-							<div className="loader" />
-							<div className="dimmer-content"></div>
+			<h4 className="m-0">
+				{total} <small>{text}</small>
+			</h4>
+		);
+	};
+
+	render() {
+		const { rollcall } = this.state;
+		return (
+			<>
+				<h4 className="text-muted font-weight-normal">Öğrenci Yoklama Durumu</h4>
+				<div className="row row-cards">
+					<div className="col-sm-12 col-md-6 col-lg-3">
+						<div className="card p-3">
+							<div className="d-flex align-items-center">
+								<span className="stamp stamp-md bg-green-light d-flex justify-content-center align-items-center mr-3">
+									<i className="fe fe-check" style={{ fontSize: "1.25rem" }}></i>
+								</span>
+								<div className="d-flex flex-column">
+									<div className="small text-muted">Toplam</div>
+									<div>{this.generateRollcallTotalCount(rollcall, 1, "Geldi")}</div>
+								</div>
+							</div>
 						</div>
 					</div>
-				)}
-			</div>
+					<div className="col-sm-12 col-md-6 col-lg-3">
+						<div className="card p-3">
+							<div className="d-flex align-items-center">
+								<span className="stamp stamp-md bg-red-light d-flex justify-content-center align-items-center mr-3">
+									<i className="fe fe-x" style={{ fontSize: "1.25rem" }}></i>
+								</span>
+								<div className="d-flex flex-column">
+									<div className="small text-muted">Toplam</div>
+									<div>{this.generateRollcallTotalCount(rollcall, 0, "Gelmedi")}</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div className="col-sm-12 col-md-6 col-lg-3">
+						<div className="card p-3">
+							<div className="d-flex align-items-center">
+								<span className="stamp stamp-md bg-yellow-light d-flex justify-content-center align-items-center mr-3">
+									<i className="fe fe-alert-circle" style={{ fontSize: "1.25rem" }}></i>
+								</span>
+								<div className="d-flex flex-column">
+									<div className="small text-muted">Toplam</div>
+									<div>{this.generateRollcallTotalCount(rollcall, [2, 3], "İzinli")}</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div className="col-sm-12 col-md-6 col-lg-3">
+						<div className="card p-3">
+							<div className="d-flex align-items-center">
+								<span className="stamp stamp-md bg-gray d-flex justify-content-center align-items-center mr-3">
+									<i className="fe fe-help-circle" style={{ fontSize: "1.25rem" }}></i>
+								</span>
+								<div className="d-flex flex-column">
+									<div className="small text-muted">Toplam</div>
+									<div>{this.generateRollcallTotalCount(rollcall, -1, "Tanımsız")}</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</>
 		);
 	}
 }
