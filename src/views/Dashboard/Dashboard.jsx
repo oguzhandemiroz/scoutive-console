@@ -9,7 +9,7 @@ import UnpaidPlayers from "../../components/Dashboard/UnpaidPlayers";
 import FastMenu from "../../components/Dashboard/FastMenu";
 import DailyPlayer from "../../components/Dashboard/DailyPlayer";
 import Accounting from "../../components/Dashboard/Accounting";
-import GeneralChart from "../../components/Accountings/GeneralChart";
+import AccountingChart from "../../components/Dashboard/AccountingChart";
 
 class Dashboard extends Component {
 	render() {
@@ -24,7 +24,7 @@ class Dashboard extends Component {
 					<Accounting />
 				</div>
 				<div className="row row-cards">
-					<GeneralChart />
+					<AccountingChart />
 				</div>
 				<div className="row row-cards">
 					<div className="col-sm-12 col-lg-4 order-1">
