@@ -138,11 +138,12 @@ export class Birthdays extends Component {
 																	className="text-body font-weight-600 d-block">
 																	{fullnameGenerator(el.name, el.surname)}
 																</Link>
-																<span
-																	className="small text-muted"
-																	data-toggle="tooltip"
-																	title={moment(el.birthday).format("LL")}>
-																	{age} Yaşına Girdi
+																<span className="small text-muted d-block">
+																	{moment(el.birthday).format("DD MMMM, dddd")}
+																</span>
+																<span className="small text-muted">
+																	<i className="fa fa-gift text-instagram mr-2" />
+																	{age}. Yaşını Kutlarız!
 																</span>
 															</div>
 														</div>
