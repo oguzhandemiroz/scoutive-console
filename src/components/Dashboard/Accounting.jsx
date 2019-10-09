@@ -25,9 +25,9 @@ export class Accounting extends Component {
 		ListAccountingRecords({
 			uid: uid,
 			filter: {
-				created_date__gt: moment()
+				payment_date: moment()
 					.startOf("day")
-					.format("YYYY-MM-DD HH:mm:ss")
+					.format("YYYY-MM-DD")
 			}
 		}).then(response => {
 			if (response) {

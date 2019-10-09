@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
+import TrainingPlayers from "./TrainingPlayers";
 import { TrainingGroups } from "../../services/Report";
 import { fullnameGenerator, avatarPlaceholder } from "../../services/Others";
 import moment from "moment";
@@ -36,7 +37,11 @@ export class TrainingGroupList extends Component {
 
 		this.state = {
 			uid: localStorage.getItem("UID"),
-			trainings: null
+			trainings: null,
+			data: {
+				players: []
+			},
+			timer: "00:00:00"
 		};
 	}
 
@@ -52,8 +57,29 @@ export class TrainingGroupList extends Component {
 		TrainingGroups().then(response => this.setState({ trainings: response.data }));
 	};
 
+	timer = end_time => {
+		if (end_time) {
+			var eventTime = moment(moment().format("YYYY-MM-DD") + " " + end_time).unix();
+			var currentTime = moment().unix();
+			var diffTime = eventTime - currentTime;
+			var duration = moment.duration(diffTime * 1000, "milliseconds");
+			var interval = 1000;
+			var hours, minutes, seconds;
+
+			setInterval(() => {
+				duration = moment.duration(duration - interval, "milliseconds");
+
+				hours = duration.hours() < 10 ? "0" + duration.hours() : duration.hours();
+				minutes = duration.minutes() < 10 ? "0" + duration.minutes() : duration.minutes();
+				seconds = duration.seconds() < 10 ? "0" + duration.seconds() : duration.seconds();
+
+				//this.setState({ timer: hours + ":" + minutes + ":" + seconds });
+			}, interval);
+		}
+	};
+
 	render() {
-		const { trainings } = this.state;
+		const { trainings, data, timer } = this.state;
 		return (
 			<div className="card">
 				{trainings
@@ -64,7 +90,9 @@ export class TrainingGroupList extends Component {
 										<div className="card-value float-right text-muted">
 											<i className="fa fa-running text-green-light" />
 										</div>
-										<h4 className="mb-1">{el.name}</h4>
+										<Link to={"/app/groups/detail/" + el.group_id} className="h4 mb-1">
+											{el.name}
+										</Link>
 										<div className="text-muted">
 											Grubu&nbsp;
 											<strong className="text-body">
@@ -77,7 +105,9 @@ export class TrainingGroupList extends Component {
 												<div
 													className="avatar"
 													style={{ backgroundImage: `url(${el.employee.image})` }}>
-													{el.employee.image ? "" : avatarPlaceholder(el.employee.name, el.employee.surname)}
+													{el.employee.image
+														? ""
+														: avatarPlaceholder(el.employee.name, el.employee.surname)}
 												</div>
 											</div>
 											<div className="col pl-1">
@@ -93,7 +123,7 @@ export class TrainingGroupList extends Component {
 													Sorumlu Antrenör
 												</span>
 											</div>
-											<div className="col-auto d-flex align-items-center">
+											<div className="col-auto d-flex flex-column align-items-center">
 												<span
 													className="tag tag-gray-dark"
 													data-original-title="Antrenman Saati"
@@ -104,16 +134,38 @@ export class TrainingGroupList extends Component {
 												</span>
 											</div>
 										</div>
-										<div className="row mt-4">
-											<button className="btn btn-block btn-secondary">
-												Antrenmanda Olan Öğrenciler
-											</button>
+										<div className="row mt-5">
+											<div className="col-12">
+												{el.players.length === 0 ? (
+													<div className="text-muted text-center">
+														Gruba ait öğrenci bulunamadı...
+													</div>
+												) : (
+													<button
+														onClick={() =>
+															this.setState({
+																data: {
+																	name: el.name,
+																	players: el.players,
+																	start_time: el.start_time,
+																	end_time: el.end_time
+																}
+															})
+														}
+														className="btn btn-block btn-secondary"
+														data-toggle="modal"
+														data-target="#trainingPlayers">
+														Antrenmanda Olan Öğrenciler
+													</button>
+												)}
+											</div>
 										</div>
 									</div>
 								);
 						  })
 						: noRow()
 					: noRow(true)}
+				<TrainingPlayers data={data} />
 			</div>
 		);
 	}
