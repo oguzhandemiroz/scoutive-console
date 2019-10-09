@@ -137,7 +137,7 @@ export class TrainingGroupList extends Component {
 										<div className="row mt-5">
 											<div className="col-12">
 												{el.players.length === 0 ? (
-													<div className="text-muted text-center">
+													<div className="text-muted text-center font-italic">
 														Gruba ait öğrenci bulunamadı...
 													</div>
 												) : (

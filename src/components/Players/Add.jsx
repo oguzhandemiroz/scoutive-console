@@ -220,10 +220,11 @@ export class Add extends Component {
 					is_scholarship: is_scholarship ? 1 : 0
 				})
 			}).then(response => {
+				const status = response.status;
 				const formData = new FormData();
 				var imageUploading = false;
-				const redirect_uid = response.uid;
-				if (response) {
+				if (status.code === 1020) {
+					const redirect_uid = response.uid;
 					if (imagePreview) {
 						this.setState({ loadingImage: "btn-loading" });
 						imageUploading = true;
@@ -240,7 +241,8 @@ export class Add extends Component {
 						});
 					} else if (addContinuously) this.reload();
 					else this.props.history.push("/app/players/detail/" + redirect_uid);
-				} else this.setState({ loadingButton: "" });
+				}
+				this.setState({ loadingButton: "" });
 			});
 		} else {
 			this.setState(prevState => ({

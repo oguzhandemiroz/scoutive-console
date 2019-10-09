@@ -26,9 +26,9 @@ const CreatePlayer = data => {
 						title: "Başarıyla oluşturuldu...",
 						timer: 3500
 					});
-
-					return response;
 				}
+
+				return response;
 			})
 			.catch(e => fatalSwal(true));
 	} catch (e) {

@@ -31,7 +31,7 @@ export class DailyPlayer extends Component {
 			const status = response.status;
 			if (status.code === 1020) {
 				this.setState({
-					count: data.length
+					count: data[0].count || 0
 				});
 			}
 		});
