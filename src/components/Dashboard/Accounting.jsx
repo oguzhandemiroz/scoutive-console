@@ -27,7 +27,8 @@ export class Accounting extends Component {
 			filter: {
 				payment_date: moment()
 					.startOf("day")
-					.format("YYYY-MM-DD")
+					.format("YYYY-MM-DD"),
+				accounting_type_id__gt: 2
 			}
 		}).then(response => {
 			if (response) {
