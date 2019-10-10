@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { ListBirthdays } from "../../services/Report";
 import "../../assets/css/c3.min.css";
 import moment from "moment";
+import "moment/locale/tr";
 import { fullnameGenerator, avatarPlaceholder } from "../../services/Others";
 const $ = require("jquery");
 
@@ -75,7 +76,7 @@ export class Birthdays extends Component {
 											{list.players
 												.sort((a, b) => b.birthday.localeCompare(a.birthday))
 												.map((el, key) => {
-													const age = parseInt(
+													const age = Math.round(
 														moment().diff(moment(el.birthday, "YYYY-MM-DD"), "year", true)
 													);
 													return (
@@ -98,7 +99,9 @@ export class Birthdays extends Component {
 																	{fullnameGenerator(el.name, el.surname)}
 																</Link>
 																<span className="small text-muted d-block">
-																	{moment(el.birthday).format("DD MMMM, dddd")}
+																	{moment(el.birthday)
+																		.year(moment().year())
+																		.format("DD MMMM, dddd")}
 																</span>
 																<span className="small text-muted">
 																	<i className="fa fa-gift text-instagram mr-2" />
