@@ -143,8 +143,7 @@ export class Salary extends Component {
 					Verilen "Avans" ve "İzinlerin" kesintisini yapman gerekebilir.
 					Kesintileri yaptıysan devam edebilirsin
 					<hr>
-					<b>${employee.label}</b> adlı personele <b>${parseFloat(salary.replace(",", ".")).format() +
-					" ₺"}</b> maaş ödenecek`,
+					<b>${employee.label}</b> adlı personele <b>${parseFloat(salary.replace(",", ".")).format() + " ₺"}</b> maaş ödenecek`,
 				confirmButtonText: "Devam et",
 				cancelButtonText: "Kontrol et",
 				confirmButtonColor: "#cd201f",
@@ -398,7 +397,7 @@ export class Salary extends Component {
 				<li className="timeline-item" key={key.toString()}>
 					<div className={`timeline-badge ${el.is_future === 0 ? "bg-success" : ""}`} />
 					<div>
-						<strong>{el.amount ? el.amount.format() + " ₺" : null}</strong> maaş ödendi
+						<strong>{el.amount.format() + " ₺"}</strong> maaş ödendi
 					</div>
 					<div className="timeline-time">{moment(el.payment_date).format("DD-MM-YYYY")}</div>
 
@@ -445,8 +444,8 @@ export class Salary extends Component {
 					{el.note ? <small className="d-block text-muted">Not: {el.note}</small> : null}
 					{el.amount !== el.paid_amount ? (
 						<div>
-							<span className="text-red font-weight-600">{total.format() + " ₺"}</span>{" "}
-							tutarında kesinti uygulandı, <br /> kalan tutar:{" "}
+							<span className="text-red font-weight-600">{total.format() + " ₺"}</span> tutarında kesinti
+							uygulandı, <br /> kalan tutar:{" "}
 							<strong>{(el.amount - el.paid_amount - total).format() + " ₺"}</strong>
 						</div>
 					) : null}
@@ -493,8 +492,7 @@ export class Salary extends Component {
 				<div>
 					<strong>{el.day} günlük ücretsiz</strong> izin verildi
 					<small className="d-block text-muted">
-						Günlük Kesinti:{" "}
-						<strong>{el.daily_amount ? el.daily_amount.format() + " ₺" : "—"}</strong>
+						Günlük Kesinti: <strong>{el.daily_amount ? el.daily_amount.format() + " ₺" : "—"}</strong>
 					</small>
 				</div>
 				<div className="ml-auto">
@@ -541,12 +539,7 @@ export class Salary extends Component {
 				title: "Bilgi",
 				html: `<b>${employee.label}</b> adlı personelin, <b>${
 					vacation.day
-				} günlük</b> ücretsiz izni için maaşına toplamda <b>${totalDeduction.format(
-					2,
-					3,
-					".",
-					","
-				)} ₺</b> kesinti uygulanacaktır.<br>
+				} günlük</b> ücretsiz izni için maaşına toplamda <b>${totalDeduction.format()} ₺</b> kesinti uygulanacaktır.<br>
 				Onaylıyor musunuz?`,
 				confirmButtonText: "Onaylıyorum",
 				cancelButtonText: "İptal",
@@ -585,12 +578,7 @@ export class Salary extends Component {
 			showSwal({
 				type: "question",
 				title: "Ödeme Tutarı",
-				html: `<b>${advance_payment.amount.format(
-					2,
-					3,
-					".",
-					","
-				)} ₺</b> tutarındaki avansın ne kadarını kesinti olarak uygulamak istiyorsunuz? <hr> Toplam kesinti tutarı: <b>${(
+				html: `<b>${advance_payment.amount.format()} ₺</b> tutarındaki avansın ne kadarını kesinti olarak uygulamak istiyorsunuz? <hr> Toplam kesinti tutarı: <b>${(
 					advance_payment.paid_amount + total
 				).format()} ₺</b>`,
 				input: "number",
@@ -605,18 +593,11 @@ export class Salary extends Component {
 							showSwal({
 								type: "info",
 								title: "Bilgi",
-								html: `<b>${employee.label}</b> adlı personelin, <b>${advance_payment.amount.format(
-									2,
-									3,
-									".",
-									","
-								)} ₺</b> tutarındaki avansı için maaşına toplamda <b>${parseFloat(value).format(
-									2,
-									3,
-									".",
-									","
-								)} ₺</b> kesinti uygulanacaktır.<br>
-				Onaylıyor musunuz?`,
+								html: `<b>${
+									employee.label
+								}</b> adlı personelin, <b>${advance_payment.amount.format()} ₺</b> tutarındaki avansı için maaşına toplamda <b>${parseFloat(
+									value
+								).format()} ₺</b> kesinti uygulanacaktır.<br> Onaylıyor musunuz?`,
 								confirmButtonText: "Onaylıyorum",
 								cancelButtonText: "İptal",
 								confirmButtonColor: "#467fcf",
@@ -628,7 +609,7 @@ export class Salary extends Component {
 									//const totalDeduction = advance_payment.amount - parseFloat(value);
 									const parseSalary = parseFloat(salary.replace(",", "."));
 									const totalSalary = parseSalary - parseFloat(value);
-									const formatTotalSalary = parseFloat(totalSalary.format().replace(".", ""));
+									const formatTotalSalary = totalSalary.format().replace(".", "");
 									this.setState({
 										payAdvancePayments: [
 											...payAdvancePayments,
@@ -638,7 +619,9 @@ export class Salary extends Component {
 											}
 										]
 									});
-									this.setState({ salary: formatTotalSalary > 0 ? formatTotalSalary : 0 });
+									this.setState({
+										salary: parseFloat(formatTotalSalary) > 0 ? formatTotalSalary : "0,00"
+									});
 								}
 							});
 						} else {

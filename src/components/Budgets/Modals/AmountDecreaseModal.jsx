@@ -80,7 +80,7 @@ export class AmountIncreaseModal extends Component {
 			UpdateBudget({
 				uid: uid,
 				budget_id: bid,
-				amount: clearMoney(amount) - 1,
+				amount: clearMoney(amount) * -1,
 				note: note
 			}).then(response => {
 				if (response) {
