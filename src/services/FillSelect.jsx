@@ -172,9 +172,9 @@ const EmployeePositions = () => {
     } catch (e) {}
 };
 
-const PlayerPositions = () => {
+const PlayerPositions = type => {
     try {
-        return fetch(ep.PLAYER_POSITION_TYPE, { headers: h })
+        return fetch(ep.PLAYER_POSITION_TYPE + type, { headers: h })
             .then(res => res.json())
             .then(response => {
                 const data = response.data;
@@ -511,7 +511,7 @@ const GetPlayers = () => {
                             const image = el.image;
                             const group = el.group ? el.group.name : null;
                             const birthday = el.birthday;
-                            const id = el.player_id
+                            const id = el.player_id;
                             selectData.push({
                                 value: value,
                                 label: label,

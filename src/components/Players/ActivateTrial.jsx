@@ -192,8 +192,8 @@ export class ActivateTrial extends Component {
                     birthday: checkBirthday,
                     image: image,
                     start_date: moment(start_date).format("YYYY-MM-DD"),
-					is_scholarship: is_scholarship ? 1 : 0,
-					is_trial: 0,
+                    is_scholarship: is_scholarship ? 1 : 0,
+                    is_trial: 0,
                     note: note,
                     attributes: difference(
                         {
@@ -332,6 +332,23 @@ export class ActivateTrial extends Component {
                 return (prevState[name][extraData].kinship = value.label);
             });
         } else {
+            if (name === "branch") {
+                this.setState(prevState => ({
+                    select: {
+                        ...prevState.select,
+                        positions: null
+                    },
+                    position: null
+                }));
+                PlayerPositions(value.value).then(response => {
+                    this.setState(prevState => ({
+                        select: {
+                            ...prevState.select,
+                            positions: response
+                        }
+                    }));
+                });
+            }
             this.setState(prevState => ({
                 formErrors: {
                     ...prevState.formErrors,
@@ -374,6 +391,7 @@ export class ActivateTrial extends Component {
     };
 
     getFillSelect = () => {
+        var sBranch = localStorage.getItem("sBranch");
         Groups().then(response => {
             this.setState(prevState => ({
                 select: {
@@ -389,7 +407,7 @@ export class ActivateTrial extends Component {
                     ...prevState.select,
                     branchs: response
                 },
-                branch: response.filter(x => x.value === localStorage.getItem("sBranch"))
+                branch: response.filter(x => x.value === sBranch)
             }));
         });
 
@@ -402,7 +420,7 @@ export class ActivateTrial extends Component {
             }));
         });
 
-        PlayerPositions().then(response => {
+        PlayerPositions(sBranch ? sBranch : 1).then(response => {
             this.setState(prevState => ({
                 select: {
                     ...prevState.select,
@@ -472,7 +490,7 @@ export class ActivateTrial extends Component {
                         month: getSplitBirthday.month,
                         year: getSplitBirthday.year,
                         emergency: data.emergency,
-                        start_date: data.start_date ? moment(data.start_date, "YYYY-MM-DD").toDate() : new Date(),
+                        start_date: data.start_date ? moment(data.start_date, "YYYY-MM-DD").toDate() : new Date()
                     };
 
                     if (data.branch === null) delete edited_data.branch;
@@ -630,7 +648,6 @@ export class ActivateTrial extends Component {
                                                         ? selectCustomStylesError
                                                         : selectCustomStyles
                                                 }
-                                                isClearable={true}
                                                 isSearchable={true}
                                                 isDisabled={select.branchs ? false : true}
                                                 noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}

@@ -329,6 +329,23 @@ export class Add extends Component {
 				return (prevState[name][extraData].kinship = value.label);
 			});
 		} else {
+			if(name === "branch") {
+				this.setState(prevState => ({
+					select: {
+						...prevState.select,
+						positions: null
+					},
+					position: null
+				}));
+				PlayerPositions(value.value).then(response => {
+					this.setState(prevState => ({
+						select: {
+							...prevState.select,
+							positions: response
+						}
+					}));
+				});
+			}
 			this.setState(prevState => ({
 				formErrors: {
 					...prevState.formErrors,
@@ -379,7 +396,8 @@ export class Add extends Component {
 	};
 
 	getFillSelect = () => {
-		PlayerPositions().then(response => {
+        var sBranch = localStorage.getItem("sBranch");
+		PlayerPositions(sBranch ? sBranch : 1).then(response => {
 			this.setState(prevState => ({
 				select: {
 					...prevState.select,
@@ -570,11 +588,28 @@ export class Add extends Component {
 										styles={
 											formErrors.branch === true ? selectCustomStylesError : selectCustomStyles
 										}
-										isClearable={true}
 										isSearchable={true}
 										isDisabled={select.branchs ? false : true}
+										isLoading={select.branchs ? false : true}
 										noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
 									/>
+								</div>
+
+								<div className="form-group">
+											<label className="form-label">Mevkii</label>
+											<Select
+												value={position}
+												onChange={val => this.handleSelect(val, "position")}
+												options={select.positions}
+												name="position"
+												placeholder="Seç..."
+												styles={selectCustomStyles}
+												isClearable={true}
+												isSearchable={true}
+												isDisabled={select.positions ? false : true}
+												isLoading={select.positions ? false : true}
+												noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
+											/>
 								</div>
 
 								<div className="form-group">
@@ -589,6 +624,7 @@ export class Add extends Component {
 										isClearable={true}
 										isSearchable={true}
 										isDisabled={select.groups ? false : true}
+										isLoading={select.groups ? false : true}
 										noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
 									/>
 								</div>
@@ -683,70 +719,70 @@ export class Add extends Component {
 									</div>
 								</div>
 
-								<div class="form-group">
-									<label class="form-label">Kayıt Durumu</label>
-									<div class="selectgroup w-100">
+								<div className="form-group">
+									<label className="form-label">Kayıt Durumu</label>
+									<div className="selectgroup w-100">
 										<label
-											class="selectgroup-item"
+											className="selectgroup-item"
 											data-toggle="tooltip"
 											title="Kaydı Aktif Öğrenci">
 											<input
 												type="radio"
 												name="is_active"
 												value="1"
-												class="selectgroup-input"
+												className="selectgroup-input"
 												checked={is_active === 1}
 												onChange={this.handleRadio}
 											/>
-											<span class="selectgroup-button success">Aktif</span>
+											<span className="selectgroup-button success">Aktif</span>
 										</label>
 										<label
-											class="selectgroup-item"
+											className="selectgroup-item"
 											data-toggle="tooltip"
 											title="Kaydı Pasif Öğrenci">
 											<input
 												type="radio"
 												name="is_active"
 												value="0"
-												class="selectgroup-input"
+												className="selectgroup-input"
 												checked={is_active === 0}
 												onChange={this.handleRadio}
 											/>
-											<span class="selectgroup-button danger">Pasif</span>
+											<span className="selectgroup-button danger">Pasif</span>
 										</label>
 										<label
-											class="selectgroup-item"
+											className="selectgroup-item"
 											data-toggle="tooltip"
 											title="Kaydı Dondurulmuş Öğrenci">
 											<input
 												type="radio"
 												name="is_active"
 												value="2"
-												class="selectgroup-input"
+												className="selectgroup-input"
 												checked={is_active === 2}
 												onChange={this.handleRadio}
 											/>
-											<span class="selectgroup-button azure">Donuk</span>
+											<span className="selectgroup-button azure">Donuk</span>
 										</label>
 										<label
-											class="selectgroup-item"
+											className="selectgroup-item"
 											data-toggle="tooltip"
 											title="Kaydı Deneme Öğrenci">
 											<input
 												type="radio"
 												name="is_active"
 												value="3"
-												class="selectgroup-input"
+												className="selectgroup-input"
 												checked={is_active === 3}
 												onChange={this.handleRadio}
 											/>
-											<span class="selectgroup-button indigo">Deneme</span>
+											<span className="selectgroup-button indigo">Deneme</span>
 										</label>
 									</div>
 								</div>
 
 								{is_active === 0 || is_active === 2 ? (
-									<fieldset class="form-fieldset">
+									<fieldset className="form-fieldset">
 										{is_active === 0 ? (
 											<div className="form-group">
 												<label className="form-label">
@@ -767,8 +803,8 @@ export class Add extends Component {
 												/>
 											</div>
 										) : null}
-										<div class="form-group mb-0">
-											<label class="form-label">
+										<div className="form-group mb-0">
+											<label className="form-label">
 												{is_active === 0 ? "Okuldan Ayrılma Nedeni" : "Dondurma Nedeni"}
 											</label>
 											<button
@@ -832,6 +868,7 @@ export class Add extends Component {
 														}
 														isSearchable={true}
 														isDisabled={select.days ? false : true}
+														isLoading={select.days ? false : true}
 														noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
 													/>
 												</div>
@@ -849,6 +886,7 @@ export class Add extends Component {
 														}
 														isSearchable={true}
 														isDisabled={select.months ? false : true}
+														isLoading={select.months ? false : true}
 														noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
 													/>
 												</div>
@@ -866,6 +904,7 @@ export class Add extends Component {
 														}
 														isSearchable={true}
 														isDisabled={select.years ? false : true}
+														isLoading={select.years ? false : true}
 														noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
 													/>
 												</div>
@@ -884,22 +923,6 @@ export class Add extends Component {
 										</div>
 									</div>
 									<div className="col-lg-6 col-md-12">
-										<div className="form-group">
-											<label className="form-label">Mevkii</label>
-											<Select
-												value={position}
-												onChange={val => this.handleSelect(val, "position")}
-												options={select.positions}
-												name="position"
-												placeholder="Seç..."
-												styles={selectCustomStyles}
-												isClearable={true}
-												isSearchable={true}
-												isDisabled={select.positions ? false : true}
-												noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
-											/>
-										</div>
-
 										<div className="form-group">
 											<label className="form-label">Vücut Metrikleri (Boy & Kilo)</label>
 											<div className="row gutters-xs">
@@ -966,6 +989,7 @@ export class Add extends Component {
 												isClearable={true}
 												isSearchable={true}
 												isDisabled={select.bloods ? false : true}
+												isLoading={select.bloods ? false : true}
 												noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
 											/>
 										</div>
@@ -1058,6 +1082,7 @@ export class Add extends Component {
 																		styles={selectCustomStyles}
 																		isSearchable={true}
 																		isDisabled={select.kinships ? false : true}
+																		isLoading={select.kinships ? false : true}
 																		noOptionsMessage={value =>
 																			`"${value.inputValue}" bulunamadı`
 																		}

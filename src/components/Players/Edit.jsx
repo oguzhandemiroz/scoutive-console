@@ -341,6 +341,23 @@ export class Edit extends Component {
                 return (prevState[name][extraData].kinship = value.label);
             });
         } else {
+            if (name === "branch") {
+                this.setState(prevState => ({
+                    select: {
+                        ...prevState.select,
+                        positions: null
+                    },
+                    position: null
+                }));
+                PlayerPositions(value.value).then(response => {
+                    this.setState(prevState => ({
+                        select: {
+                            ...prevState.select,
+                            positions: response
+                        }
+                    }));
+                });
+            }
             this.setState(prevState => ({
                 formErrors: {
                     ...prevState.formErrors,
@@ -383,6 +400,7 @@ export class Edit extends Component {
     };
 
     getFillSelect = () => {
+        var sBranch = localStorage.getItem("sBranch");
         Groups().then(response => {
             this.setState(prevState => ({
                 select: {
@@ -411,7 +429,7 @@ export class Edit extends Component {
             }));
         });
 
-        PlayerPositions().then(response => {
+        PlayerPositions(sBranch ? sBranch : 1).then(response => {
             this.setState(prevState => ({
                 select: {
                     ...prevState.select,
@@ -642,24 +660,9 @@ export class Edit extends Component {
                                                         ? selectCustomStylesError
                                                         : selectCustomStyles
                                                 }
-                                                isClearable={true}
                                                 isSearchable={true}
                                                 isDisabled={select.branchs ? false : true}
-                                                noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
-                                            />
-                                        </div>
-                                        <div className="form-group">
-                                            <label className="form-label">Grup</label>
-                                            <Select
-                                                value={group}
-                                                onChange={val => this.handleSelect(val, "group")}
-                                                options={select.groups}
-                                                name="group"
-                                                placeholder="Seç..."
-                                                styles={selectCustomStyles}
-                                                isClearable={true}
-                                                isSearchable={true}
-                                                isDisabled={select.groups ? false : true}
+                                                isLoading={select.branchs ? false : true}
                                                 noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
                                             />
                                         </div>
@@ -675,6 +678,23 @@ export class Edit extends Component {
                                                 isClearable={true}
                                                 isSearchable={true}
                                                 isDisabled={select.positions ? false : true}
+                                                isLoading={select.positions ? false : true}
+                                                noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
+                                            />
+                                        </div>
+                                        <div className="form-group">
+                                            <label className="form-label">Grup</label>
+                                            <Select
+                                                value={group}
+                                                onChange={val => this.handleSelect(val, "group")}
+                                                options={select.groups}
+                                                name="group"
+                                                placeholder="Seç..."
+                                                styles={selectCustomStyles}
+                                                isClearable={true}
+                                                isSearchable={true}
+                                                isDisabled={select.groups ? false : true}
+                                                isLoading={select.groups ? false : true}
                                                 noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
                                             />
                                         </div>
@@ -846,6 +866,7 @@ export class Edit extends Component {
                                                                 }
                                                                 isSearchable={true}
                                                                 isDisabled={select.days ? false : true}
+                                                                isLoading={select.days ? false : true}
                                                                 noOptionsMessage={value =>
                                                                     `"${value.inputValue}" bulunamadı`
                                                                 }
@@ -867,6 +888,7 @@ export class Edit extends Component {
                                                                 }
                                                                 isSearchable={true}
                                                                 isDisabled={select.months ? false : true}
+                                                                isLoading={select.months ? false : true}
                                                                 noOptionsMessage={value =>
                                                                     `"${value.inputValue}" bulunamadı`
                                                                 }
@@ -888,6 +910,7 @@ export class Edit extends Component {
                                                                 }
                                                                 isSearchable={true}
                                                                 isDisabled={select.years ? false : true}
+                                                                isLoading={select.years ? false : true}
                                                                 noOptionsMessage={value =>
                                                                     `"${value.inputValue}" bulunamadı`
                                                                 }
@@ -977,6 +1000,7 @@ export class Edit extends Component {
                                                         isClearable={true}
                                                         isSearchable={true}
                                                         isDisabled={select.bloods ? false : true}
+                                                        isLoading={select.bloods ? false : true}
                                                         noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
                                                     />
                                                 </div>
@@ -1071,6 +1095,9 @@ export class Edit extends Component {
                                                                                       styles={selectCustomStyles}
                                                                                       isSearchable={true}
                                                                                       isDisabled={
+                                                                                          select.kinships ? false : true
+                                                                                      }
+                                                                                      isLoading={
                                                                                           select.kinships ? false : true
                                                                                       }
                                                                                       noOptionsMessage={value =>

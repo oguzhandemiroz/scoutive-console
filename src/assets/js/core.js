@@ -8,7 +8,7 @@ import _ from "lodash";
  * @param mixed   s: sections delimiter
  * @param mixed   c: decimal delimiter
  */
-Number.prototype.format = function (d, w, s, c) {
+Number.prototype.format = function(d, w, s, c) {
     d = 2;
     w = 3;
     s = ".";
@@ -19,33 +19,34 @@ Number.prototype.format = function (d, w, s, c) {
     return (c ? num.replace(".", c) : num).replace(new RegExp(re, "g"), "$&" + (s || ","));
 };
 
-Number.prototype.nFormatter = function (digits) {
-    var si = [{
+Number.prototype.nFormatter = function(digits) {
+    var si = [
+        {
             value: 1,
             symbol: ""
         },
         {
-            value: 1E3,
+            value: 1e3,
             symbol: "B"
         },
         {
-            value: 1E6,
+            value: 1e6,
             symbol: "M"
         },
         {
-            value: 1E9,
+            value: 1e9,
             symbol: "G"
         },
         {
-            value: 1E12,
+            value: 1e12,
             symbol: "T"
         },
         {
-            value: 1E15,
+            value: 1e15,
             symbol: "P"
         },
         {
-            value: 1E18,
+            value: 1e18,
             symbol: "E"
         }
     ];
@@ -57,10 +58,10 @@ Number.prototype.nFormatter = function (digits) {
         }
     }
     return (this / si[i].value).toFixed(digits).replace(rx, "$1") + si[i].symbol;
-}
+};
 
-String.prototype.capitalize = function () {
-    return this.replace(/(^|\s)([a-z])/g, function (m, p1, p2) {
+String.prototype.capitalize = function() {
+    return this.replace(/(^|\s)([a-z])/g, function(m, p1, p2) {
         return p1 + p2.toLocaleUpperCase("tr-TR");
     });
 };
@@ -140,6 +141,10 @@ const selectCustomStyles = {
         ...styles,
         borderColor: "rgba(0, 40, 100, 0.12)",
         borderRadius: 3
+    }),
+    menu: styles => ({
+        ...styles,
+        zIndex: "99999"
     })
 };
 
@@ -152,6 +157,10 @@ const selectCustomStylesError = {
             ...styles[":hover"],
             borderColor: "#cd201f"
         }
+    }),
+    menu: styles => ({
+        ...styles,
+        zIndex: "99999"
     })
 };
 
@@ -159,10 +168,7 @@ const selectCustomStylesError = {
 const emailRegEx = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
 const securityNoRegEx = /^\d+$/;
 
-const formValid = ({
-    formErrors,
-    ...rest
-}) => {
+const formValid = ({ formErrors, ...rest }) => {
     let valid = true;
 
     Object.values(formErrors).forEach(val => {
@@ -178,7 +184,7 @@ const formValid = ({
 
 const difference = (object, base) => {
     function changes(object, base) {
-        return _.transform(object, function (result, value, key) {
+        return _.transform(object, function(result, value, key) {
             if (!_.isEqual(value, base[key])) {
                 result[key] = _.isObject(value) && _.isObject(base[key]) ? changes(value, base[key]) : value;
             }
@@ -186,7 +192,6 @@ const difference = (object, base) => {
     }
     return changes(object, base);
 };
-
 
 export {
     getCookie,
