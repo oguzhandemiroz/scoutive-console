@@ -593,6 +593,33 @@ const GetBudgets = extra => {
     } catch (e) {}
 };
 
+const GetServices = () => {
+    try {
+        return fetch(ep.SERVICES, { headers: h })
+            .then(res => res.json())
+            .then(response => {
+                if (response) {
+                    const status = response.status;
+
+                    if (status.code !== 1020) {
+                        Toast.fire({
+                            type: "error",
+                            title: '"Servisler" yüklenemedi'
+                        });
+                    } else {
+                        return response.data;
+                    }
+                }
+            })
+            .catch(e =>
+                Toast.fire({
+                    type: "error",
+                    title: '"Servisler" yüklenemedi'
+                })
+            );
+    } catch (e) {}
+};
+
 export {
     Clubs,
     Bloods,
@@ -611,5 +638,6 @@ export {
     GetEmployees,
     GetPlayers,
     GetBudgets,
-    Areas
+    Areas,
+    GetServices
 };

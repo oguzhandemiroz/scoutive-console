@@ -1,5 +1,6 @@
 import React, {Component} from "react";
 import {Link} from "react-router-dom";
+import FastMenu from "../Dashboard/FastMenu"
 const $ = require("jquery");
 
 export class FABs extends Component {
