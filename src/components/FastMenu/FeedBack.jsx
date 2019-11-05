@@ -51,7 +51,6 @@ export class FeedBack extends Component {
     }
 
     handleUpload = e => {
-        console.log("log");
         e.preventDefault();
         let file = e.target.files;
         this.setState({

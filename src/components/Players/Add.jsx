@@ -10,9 +10,10 @@ import { Bloods, Branchs, Days, Months, Years, PlayerPositions, Kinship, Groups 
 import { UploadFile, getSelectValue, clearMoney, formatDate } from "../../services/Others";
 import { CreatePlayer } from "../../services/Player";
 import { showSwal } from "../../components/Alert";
-import Select from "react-select";
+import Select, {components} from "react-select";
 import Inputmask from "inputmask";
 import DatePicker, { registerLocale } from "react-datepicker";
+import ParentModal from "./ParentModal";
 import "react-datepicker/dist/react-datepicker.css";
 import tr from "date-fns/locale/tr";
 import _ from "lodash";
@@ -55,6 +56,17 @@ const body_measure_list = [
 	"Kol Uzunluğu",
 	"Bacak Uzunluğu"
 ];
+
+
+const { Option } = components;
+const OptionParent = props => (
+	<Option {...props}>
+		{props.data.label} ({props.data.kinship})
+		<div className="small text-muted mt-1">
+			Telefon: <b className="text-blue">{props.data.phone}</b>
+		</div>
+	</Option>
+);
 
 export class Add extends Component {
 	constructor(props) {
@@ -1057,68 +1069,8 @@ export class Add extends Component {
 											<span className="form-required">*</span>
 										</label>
 										{show.parents ? (
-											<table className="table mb-0">
-												<thead>
-													<tr>
-														<th className="pl-0 w-9">Yakınlık</th>
-														<th>Adı ve Soyadı</th>
-														<th className="pl-0">Telefon</th>
-													</tr>
-												</thead>
-												<tbody>
-													{emergency.map((el, key) => {
-														return (
-															<tr key={key.toString()}>
-																<td className="pl-0 pr-0">
-																	<Select
-																		value={getSelectValue(
-																			select.kinships,
-																			el.kinship,
-																			"label"
-																		)}
-																		onChange={val =>
-																			this.handleSelect(
-																				val,
-																				"emergency",
-																				key,
-																				true
-																			)
-																		}
-																		options={select.kinships}
-																		name="kinship"
-																		placeholder="Seç..."
-																		styles={selectCustomStyles}
-																		isSearchable={true}
-																		isDisabled={select.kinships ? false : true}
-																		isLoading={select.kinships ? false : true}
-																		noOptionsMessage={value =>
-																			`"${value.inputValue}" bulunamadı`
-																		}
-																		menuPlacement="top"
-																	/>
-																</td>
-																<td>
-																	<input
-																		type="text"
-																		name={`emergency.name.${key}`}
-																		onChange={this.handleChange}
-																		className="form-control"
-																	/>
-																</td>
-																<td className="pl-0">
-																	<input
-																		type="text"
-																		name={`emergency.phone.${key}`}
-																		onChange={this.handleChange}
-																		placeholder="(535) 123 4567"
-																		className="form-control"
-																	/>
-																</td>
-															</tr>
-														);
-													})}
-												</tbody>
-											</table>
+											<div>
+											</div>
 										) : (
 											<button
 												type="button"
@@ -1126,15 +1078,18 @@ export class Add extends Component {
 													this.setState(prevState => ({
 														show: {
 															...prevState.show,
-															parents: true
+															//parents: true
 														}
 													}))
 												}
+												data-toggle="modal"
+												data-target="#parentModal"
 												className="btn btn-gray btn-icon btn-sm">
 												<i className="fe fe-plus mr-1" />
 												Veli Tanımla
 											</button>
 										)}
+										<ParentModal/>
 									</div>
 									<div className="col-12 mt-3">
 										<label className="form-label">Vücut Ölçüleri</label>
