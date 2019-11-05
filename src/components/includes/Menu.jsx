@@ -5,7 +5,7 @@ const menu = [
 	{
 		li: "nav-item",
 		navlink: { to: "/app/dashboard", exact: true, activeClassName: "active", className: "nav-link" },
-		icon: "fe fe-home",
+		icon: "fa fa-home",
 		text: "Anasayfa",
 		item: null,
 		condition: true
@@ -13,7 +13,7 @@ const menu = [
 	{
 		li: "nav-item",
 		navlink: { to: "/app/employees", exact: false, activeClassName: "active", className: "nav-link" },
-		icon: "fe fe-briefcase",
+		icon: "fa fa-user-tie",
 		text: "Personeller",
 		item: null,
 		condition: true
@@ -21,15 +21,23 @@ const menu = [
 	{
 		li: "nav-item",
 		navlink: { to: "/app/players", exact: false, activeClassName: "active", className: "nav-link" },
-		icon: "fe fe-users",
+		icon: "fa fa-user-graduate",
 		text: "Öğrenciler",
 		item: null,
 		condition: true
 	},
 	{
 		li: "nav-item",
+		navlink: { to: "/app/parents", exact: false, activeClassName: "active", className: "nav-link" },
+		icon: "fa fa-user",
+		text: "Veliler",
+		item: null,
+		condition: true
+	},
+	{
+		li: "nav-item",
 		navlink: { to: "/app/groups", exact: false, activeClassName: "active", className: "nav-link" },
-		icon: "fe fe-grid",
+		icon: "fa fa-th",
 		text: "Gruplar",
 		item: null,
 		condition: true
@@ -37,7 +45,7 @@ const menu = [
 	{
 		li: "nav-item",
 		navlink: { to: "/app/rollcalls", exact: false, activeClassName: "active", className: "nav-link" },
-		icon: "fe fe-check-square",
+		icon: "fa fa-clock",
 		text: "Yoklamalar",
 		item: null,
 		condition: true
@@ -53,7 +61,7 @@ const menu = [
 	{
 		li: "nav-item",
 		navlink: { to: "/app/accountings", exact: false, activeClassName: "active", className: "nav-link" },
-		icon: "fe fe-bar-chart-2",
+		icon: "fa fa-calculator",
 		text: "Gelir/Gider",
 		item: null,
 		condition: true
@@ -66,7 +74,7 @@ const menu = [
 			activeClassName: "active",
 			className: "nav-link cursor-not-allowed disabled"
 		},
-		icon: "fe fe-pie-chart",
+		icon: "fa fa-chart-pie",
 		text: "Raporlar",
 		item: null,
 		child: () => (

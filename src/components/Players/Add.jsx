@@ -97,6 +97,10 @@ export class Add extends Component {
 				fee: "",
 				point: ""
 			},
+			show: {
+				body_metrics: false,
+				parents: false
+			},
 			loadingButton: "",
 			loadingImage: "",
 			addContinuously: true
@@ -329,7 +333,7 @@ export class Add extends Component {
 				return (prevState[name][extraData].kinship = value.label);
 			});
 		} else {
-			if(name === "branch") {
+			if (name === "branch") {
 				this.setState(prevState => ({
 					select: {
 						...prevState.select,
@@ -396,7 +400,7 @@ export class Add extends Component {
 	};
 
 	getFillSelect = () => {
-        var sBranch = localStorage.getItem("sBranch");
+		var sBranch = localStorage.getItem("sBranch");
 		PlayerPositions(sBranch ? sBranch : 1).then(response => {
 			this.setState(prevState => ({
 				select: {
@@ -494,7 +498,8 @@ export class Add extends Component {
 			addContinuously,
 			start_date,
 			end_date,
-			loadingButton
+			loadingButton,
+			show
 		} = this.state;
 		return (
 			<div className="container">
@@ -596,20 +601,20 @@ export class Add extends Component {
 								</div>
 
 								<div className="form-group">
-											<label className="form-label">Mevkii</label>
-											<Select
-												value={position}
-												onChange={val => this.handleSelect(val, "position")}
-												options={select.positions}
-												name="position"
-												placeholder="Seç..."
-												styles={selectCustomStyles}
-												isClearable={true}
-												isSearchable={true}
-												isDisabled={select.positions ? false : true}
-												isLoading={select.positions ? false : true}
-												noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
-											/>
+									<label className="form-label">Mevkii</label>
+									<Select
+										value={position}
+										onChange={val => this.handleSelect(val, "position")}
+										options={select.positions}
+										name="position"
+										placeholder="Seç..."
+										styles={selectCustomStyles}
+										isClearable={true}
+										isSearchable={true}
+										isDisabled={select.positions ? false : true}
+										isLoading={select.positions ? false : true}
+										noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
+									/>
 								</div>
 
 								<div className="form-group">
@@ -1047,8 +1052,11 @@ export class Add extends Component {
 										</div>
 									</div>
 									<div className="col-12 mt-3">
-										<label className="form-label">Acil Durumda İletişim</label>
-										<div id="parent">
+										<label className="form-label">
+											Veli Bilgileri
+											<span className="form-required">*</span>
+										</label>
+										{show.parents ? (
 											<table className="table mb-0">
 												<thead>
 													<tr>
@@ -1111,11 +1119,26 @@ export class Add extends Component {
 													})}
 												</tbody>
 											</table>
-										</div>
+										) : (
+											<button
+												type="button"
+												onClick={() =>
+													this.setState(prevState => ({
+														show: {
+															...prevState.show,
+															parents: true
+														}
+													}))
+												}
+												className="btn btn-gray btn-icon btn-sm">
+												<i className="fe fe-plus mr-1" />
+												Veli Tanımla
+											</button>
+										)}
 									</div>
 									<div className="col-12 mt-3">
 										<label className="form-label">Vücut Ölçüleri</label>
-										<div id="school">
+										{show.body_metrics ? (
 											<table className="table mb-0">
 												<thead>
 													<tr>
@@ -1146,7 +1169,22 @@ export class Add extends Component {
 													})}
 												</tbody>
 											</table>
-										</div>
+										) : (
+											<button
+												type="button"
+												onClick={() =>
+													this.setState(prevState => ({
+														show: {
+															...prevState.show,
+															body_metrics: true
+														}
+													}))
+												}
+												className="btn btn-gray btn-icon btn-sm">
+												<i className="fe fe-plus mr-1" />
+												Vücut Ölçülerini Gir
+											</button>
+										)}
 									</div>
 									<div className="col-12 mt-3">
 										<div className="form-group">
