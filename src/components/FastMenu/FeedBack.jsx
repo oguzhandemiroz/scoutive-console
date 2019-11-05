@@ -53,17 +53,10 @@ export class FeedBack extends Component {
     handleUpload = e => {
         console.log("log");
         e.preventDefault();
-        let reader = new FileReader();
         let file = e.target.files;
-        reader.onloadend = () => {
-            if (reader.result !== null) {
-                this.setState(prevState => ({
-                    files: [...prevState.files, ...file]
-                }));
-            }
-        };
-
-        reader.readAsDataURL(file);
+        this.setState({
+            files: [...file]
+        });
     };
 
     handleSelect = (value, name) => {
