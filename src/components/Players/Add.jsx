@@ -10,7 +10,7 @@ import { Bloods, Branchs, Days, Months, Years, PlayerPositions, Kinship, Groups 
 import { UploadFile, getSelectValue, clearMoney, formatDate } from "../../services/Others";
 import { CreatePlayer } from "../../services/Player";
 import { showSwal } from "../../components/Alert";
-import Select, {components} from "react-select";
+import Select, { components } from "react-select";
 import Inputmask from "inputmask";
 import DatePicker, { registerLocale } from "react-datepicker";
 import ParentModal from "./ParentModal";
@@ -56,7 +56,6 @@ const body_measure_list = [
 	"Kol Uzunluğu",
 	"Bacak Uzunluğu"
 ];
-
 
 const { Option } = components;
 const OptionParent = props => (
@@ -1069,27 +1068,26 @@ export class Add extends Component {
 											<span className="form-required">*</span>
 										</label>
 										{show.parents ? (
-											<div>
-											</div>
+											<div></div>
 										) : (
 											<button
 												type="button"
 												onClick={() =>
 													this.setState(prevState => ({
 														show: {
-															...prevState.show,
+															...prevState.show
 															//parents: true
 														}
 													}))
 												}
 												data-toggle="modal"
 												data-target="#parentModal"
-												className="btn btn-gray btn-icon btn-sm">
-												<i className="fe fe-plus mr-1" />
-												Veli Tanımla
+												className="btn btn-gray btn-icon">
+												<i className="fa fa-user mr-1" />
+												Veli Atama
 											</button>
 										)}
-										<ParentModal/>
+										<ParentModal />
 									</div>
 									<div className="col-12 mt-3">
 										<label className="form-label">Vücut Ölçüleri</label>
