@@ -1,7 +1,5 @@
 //var host = "https://7c9a2694.ngrok.io/";
-import {
-    getCookie
-} from "./core";
+import { getCookie } from "./core";
 
 var host = "https://scoutive.online/";
 
@@ -95,6 +93,8 @@ var ep = {
     REPORT_BIRTHDAYS: host + api_version + "report/birthdays",
     REPORT_UNPAID_PLAYERS: host + api_version + "report/unpaid/players",
     REPORT_TRAINING_GROUPS: host + api_version + "report/training/groups",
+    PARENT_CREATE: host + api_version + "create/parent",
+    PARENT_LIST: host + api_version + "list/parents"
 };
 
 export default ep;

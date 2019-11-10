@@ -1,5 +1,6 @@
 import { Toast, fatalSwal } from "../components/Alert.jsx";
 import ep from "../assets/js/urls";
+import { fullnameGenerator } from "./Others.jsx";
 
 const h = new Headers();
 h.append("Content-Type", "application/json");
@@ -620,6 +621,54 @@ const GetServices = () => {
     } catch (e) {}
 };
 
+const GetParents = () => {
+    try {
+        return fetch(ep.PARENT_LIST, {
+            method: "POST",
+            body: JSON.stringify({
+                uid: localStorage.getItem("UID")
+            }),
+            headers: h
+        })
+            .then(res => res.json())
+            .then(response => {
+                if (response) {
+                    let selectData = [];
+                    const status = response.status;
+                    if (status.code !== 1020) {
+                        Toast.fire({
+                            type: "error",
+                            title: '"Veliler" yüklenemedi'
+                        });
+                    } else {
+                        const data = response.data;
+                        data.map(el => {
+                            const value = el.parent_id;
+                            const label = fullnameGenerator(el.name, el.surname);
+                            const uid = el.uid;
+                            const phone = el.phone;
+                            selectData.push({
+                                value: value,
+                                label: label,
+                                uid: uid,
+                                phone: phone
+                            });
+                        });
+                        return selectData.sort((a, b) => {
+                            return a.label.localeCompare(b.label);
+                        });
+                    }
+                }
+            })
+            .catch(e =>
+                Toast.fire({
+                    type: "error",
+                    title: '"Veliler" yüklenemedi'
+                })
+            );
+    } catch (e) {}
+};
+
 export {
     Clubs,
     Bloods,
@@ -639,5 +688,6 @@ export {
     GetPlayers,
     GetBudgets,
     Areas,
-    GetServices
+    GetServices,
+    GetParents
 };

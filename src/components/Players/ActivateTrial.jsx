@@ -10,11 +10,21 @@ import {
 } from "../../assets/js/core";
 import { Branchs, PlayerPositions, Groups, Bloods, Days, Months, Years, Kinship } from "../../services/FillSelect";
 import { DetailPlayer, UpdatePlayer } from "../../services/Player";
-import { SplitBirthday, getSelectValue, UploadFile, nullCheck, formatDate, clearMoney } from "../../services/Others";
+import {
+    SplitBirthday,
+    getSelectValue,
+    UploadFile,
+    nullCheck,
+    formatDate,
+    clearMoney,
+    fullnameGenerator,
+    formatPhone
+} from "../../services/Others";
 import { showSwal } from "../../components/Alert";
 import Select from "react-select";
 import Inputmask from "inputmask";
 import DatePicker, { registerLocale } from "react-datepicker";
+import ParentModal from "./ParentModal";
 import "react-datepicker/dist/react-datepicker.css";
 import tr from "date-fns/locale/tr";
 import moment from "moment";
@@ -83,6 +93,9 @@ export class ActivateTrial extends Component {
                 surname: "",
                 security_id: ""
             },
+            show: {
+                body_metrics: false
+            },
             loadingButton: "",
             addContinuously: false,
             loading: "active",
@@ -145,15 +158,14 @@ export class ActivateTrial extends Component {
                 body_height,
                 fee,
                 point,
-                status,
-                end_date,
                 emergency,
                 body_measure,
                 formErrors,
                 is_scholarship,
                 note,
                 response_data,
-                start_date
+                start_date,
+                parents
             } = this.state;
 
             const require = {};
@@ -227,7 +239,8 @@ export class ActivateTrial extends Component {
                             branch: response_data.branch,
                             is_scholarship: is_scholarship ? 1 : 0
                         }
-                    )
+                    ),
+                    parents: parents
                 }).then(code => {
                     this.setState({ loadingButton: "" });
                     setTimeout(() => {
@@ -534,7 +547,7 @@ export class ActivateTrial extends Component {
             body_weight,
             fee,
             point,
-            emergency,
+            parents,
             select,
             formErrors,
             is_scholarship,
@@ -542,7 +555,8 @@ export class ActivateTrial extends Component {
             loadingButton,
             loading,
             loadingImage,
-            start_date
+            start_date,
+            show
         } = this.state;
         return (
             <div className="container">
@@ -1021,112 +1035,118 @@ export class ActivateTrial extends Component {
                                                 </div>
                                             </div>
                                             <div className="col-12 mt-3">
-                                                <label className="form-label">Acil Durumda İletişim</label>
-                                                <div id="parent">
-                                                    <table className="table mb-0">
-                                                        <thead>
-                                                            <tr>
-                                                                <th className="pl-0 w-9">Yakınlık</th>
-                                                                <th>Adı ve Soyadı</th>
-                                                                <th className="pl-0">Telefon</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            {Array.isArray(emergency)
-                                                                ? emergency.map((el, key) => {
-                                                                      return (
-                                                                          <tr key={key.toString()}>
-                                                                              <td className="pl-0 pr-0">
-                                                                                  <Select
-                                                                                      value={getSelectValue(
-                                                                                          select.kinships,
-                                                                                          el.kinship,
-                                                                                          "label"
-                                                                                      )}
-                                                                                      onChange={val =>
-                                                                                          this.handleSelect(
-                                                                                              val,
-                                                                                              "emergency",
-                                                                                              key,
-                                                                                              true
-                                                                                          )
-                                                                                      }
-                                                                                      options={select.kinships}
-                                                                                      name="emergency"
-                                                                                      placeholder="Seç..."
-                                                                                      styles={selectCustomStyles}
-                                                                                      isSearchable={true}
-                                                                                      isDisabled={
-                                                                                          select.kinships ? false : true
-                                                                                      }
-                                                                                      noOptionsMessage={value =>
-                                                                                          `"${value.inputValue}" bulunamadı`
-                                                                                      }
-                                                                                      menuPlacement="top"
-                                                                                  />
-                                                                              </td>
-                                                                              <td>
-                                                                                  <input
-                                                                                      type="text"
-                                                                                      name={`emergency.name.${key}`}
-                                                                                      onChange={this.handleChange}
-                                                                                      className="form-control"
-                                                                                      value={el.name || ""}
-                                                                                  />
-                                                                              </td>
-                                                                              <td className="pl-0">
-                                                                                  <input
-                                                                                      type="text"
-                                                                                      name={`emergency.phone.${key}`}
-                                                                                      onChange={this.handleChange}
-                                                                                      className="form-control"
-                                                                                      value={el.phone || ""}
-                                                                                      placeholder="(535) 123 4567"
-                                                                                  />
-                                                                              </td>
-                                                                          </tr>
-                                                                      );
-                                                                  })
-                                                                : null}
-                                                        </tbody>
-                                                    </table>
-                                                </div>
+                                                <label className="form-label">
+                                                    Veli Bilgileri
+                                                    <span className="form-required">*</span>
+                                                </label>
+                                                <button
+                                                    type="button"
+                                                    data-toggle="modal"
+                                                    data-target="#parentModal"
+                                                    className="btn btn-cyan btn-icon">
+                                                    <i className="fa fa-user mr-2" />
+                                                    Veli Atama
+                                                </button>
+                                                {parents ? (
+                                                    parents.length > 0 ? (
+                                                        <>
+                                                            <hr className="my-4" />
+                                                            <div className="row gutters-xs">
+                                                                {parents.map(el => (
+                                                                    <div
+                                                                        className="col-6"
+                                                                        key={el.parent_id.toString()}>
+                                                                        <div className="card">
+                                                                            <div className="card-body">
+                                                                                <div className="text-dark font-weight-600">
+                                                                                    {el.kinship}
+                                                                                </div>
+                                                                                <Link
+                                                                                    to={`/app/parents/detail/${el.uid}`}
+                                                                                    target="_blank">
+                                                                                    {fullnameGenerator(
+                                                                                        el.name,
+                                                                                        el.surname
+                                                                                    )}
+                                                                                </Link>
+                                                                                <div className="text-muted">
+                                                                                    Telefon: {formatPhone(el.phone)}
+                                                                                </div>
+                                                                                <div className="text-muted">
+                                                                                    Email: {el.email}
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                ))}
+                                                            </div>
+                                                        </>
+                                                    ) : (
+                                                        <div className="font-italic text-center w-100 p-4">
+                                                            Kayıtlı veli bilgisi bulunamadı...
+                                                        </div>
+                                                    )
+                                                ) : null}
+                                                <ParentModal
+                                                    assignParents={parents =>
+                                                        this.setState({
+                                                            parents: parents
+                                                        })
+                                                    }
+                                                />
                                             </div>
                                             <div className="col-12 mt-3">
                                                 <label className="form-label">Vücut Ölçüleri</label>
-                                                <div id="school">
-                                                    <table className="table mb-0">
-                                                        <thead>
-                                                            <tr>
-                                                                <th className="w-11 pl-0">Tür</th>
-                                                                <th className="pl-0">Değer</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            {body_measure.map((el, key) => {
-                                                                return (
-                                                                    <tr key={key.toString()}>
-                                                                        <td className="w-11 pl-0 pr-0">
-                                                                            <div className="form-control-plaintext">
-                                                                                {el.type}:
-                                                                            </div>
-                                                                        </td>
-                                                                        <td className="pl-0">
-                                                                            <input
-                                                                                type="number"
-                                                                                name={`body_measure.value.${key}`}
-                                                                                onChange={this.handleChange}
-                                                                                className="form-control"
-                                                                                placeholder="(cm)"
-                                                                                value={nullCheck(el.value, "")}
-                                                                            />
-                                                                        </td>
-                                                                    </tr>
-                                                                );
-                                                            })}
-                                                        </tbody>
-                                                    </table>
-                                                </div>
+                                                {show.body_metrics ? (
+                                                    <div id="school">
+                                                        <table className="table mb-0">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th className="w-11 pl-0">Tür</th>
+                                                                    <th className="pl-0">Değer</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                {body_measure.map((el, key) => {
+                                                                    return (
+                                                                        <tr key={key.toString()}>
+                                                                            <td className="w-11 pl-0 pr-0">
+                                                                                <div className="form-control-plaintext">
+                                                                                    {el.type}:
+                                                                                </div>
+                                                                            </td>
+                                                                            <td className="pl-0">
+                                                                                <input
+                                                                                    type="number"
+                                                                                    name={`body_measure.value.${key}`}
+                                                                                    onChange={this.handleChange}
+                                                                                    className="form-control"
+                                                                                    placeholder="(cm)"
+                                                                                    value={nullCheck(el.value, "")}
+                                                                                />
+                                                                            </td>
+                                                                        </tr>
+                                                                    );
+                                                                })}
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                ) : (
+                                                    <button
+                                                        type="button"
+                                                        className="btn btn-gray btn-icon"
+                                                        onClick={() =>
+                                                            this.setState(prevState => ({
+                                                                show: {
+                                                                    ...prevState.show,
+                                                                    body_metrics: true
+                                                                }
+                                                            }))
+                                                        }>
+                                                        <i className="fa fa-stream mr-2" />
+                                                        Vücut Ölçülerini Görüntüle
+                                                    </button>
+                                                )}
                                             </div>
                                             <div className="col-12 mt-3">
                                                 <div className="form-group">
