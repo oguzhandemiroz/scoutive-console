@@ -191,12 +191,11 @@ export class Add extends Component {
         delete require.loadingButton;
         delete require.loadingImage;
 
-        this.setState({parentError: false});
-        if(parents.length === 0 ) {
-            this.setState({parentError: true});
+        this.setState({ parentError: false });
+        if (parents.length === 0) {
+            this.setState({ parentError: true });
             return null;
         }
-        
 
         if (formValid(require)) {
             this.setState({ loadingButton: "btn-loading" });
@@ -519,7 +518,8 @@ export class Add extends Component {
             end_date,
             loadingButton,
             show,
-            parents,parentError
+            parents,
+            parentError
         } = this.state;
         return (
             <div className="container">
@@ -1084,37 +1084,42 @@ export class Add extends Component {
                                             <i className="fa fa-user mr-2" />
                                             Veli Atama
                                         </button>
-                                        {parentError ? <span className="ml-2 text-red font-italic"><i className="fe fe-alert-circle mr-1"/>Veli ataması yapılmadı!</span> : null}
+                                        {parentError ? (
+                                            <span className="ml-2 text-red font-italic">
+                                                <i className="fe fe-alert-circle mr-1" />
+                                                Veli ataması yapılmadı!
+                                            </span>
+                                        ) : null}
                                         {parents.length > 0 ? (
-                                                <div className="row gutters-xs mt-3">
-                                                    {parents.map(el => (
-                                                        <div className="col-6" key={el.parent_id.toString()}>
-                                                            <div className="card">
-                                                                <div className="card-body">
-                                                                    <div className="text-dark font-weight-600">
-                                                                        {el.kinship}
-                                                                    </div>
-                                                                    <Link
-                                                                        to={`/app/parents/detail/${el.uid}`}
-                                                                        target="_blank">
-                                                                        {fullnameGenerator(el.name, el.surname)}
-                                                                    </Link>
-                                                                    <div className="text-muted">
-                                                                        Telefon: {formatPhone(el.phone)}
-                                                                    </div>
-                                                                    <div className="text-muted">Email: {el.email}</div>
+                                            <div className="row gutters-xs mt-3">
+                                                {parents.map(el => (
+                                                    <div className="col-6" key={el.parent_id.toString()}>
+                                                        <div className="card">
+                                                            <div className="card-body">
+                                                                <div className="text-dark font-weight-600">
+                                                                    {el.kinship}
                                                                 </div>
+                                                                <Link
+                                                                    to={`/app/parents/detail/${el.uid}`}
+                                                                    target="_blank">
+                                                                    {fullnameGenerator(el.name, el.surname)}
+                                                                </Link>
+                                                                <div className="text-muted">
+                                                                    Telefon: {formatPhone(el.phone)}
+                                                                </div>
+                                                                <div className="text-muted">Email: {el.email}</div>
                                                             </div>
                                                         </div>
-                                                    ))}
-                                                </div>
+                                                    </div>
+                                                ))}
+                                            </div>
                                         ) : null}
                                         <ParentModal
                                             parents={parents}
                                             assignParents={parents =>
                                                 this.setState({
                                                     parents: parents,
-													parentError: parents.length > 0 ? false : true
+                                                    parentError: parents.length > 0 ? false : true
                                                 })
                                             }
                                         />

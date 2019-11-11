@@ -100,7 +100,8 @@ export class ActivateTrial extends Component {
             addContinuously: false,
             loading: "active",
             loadingImage: "",
-            parents: [],parentError: false
+            parents: [],
+            parentError: false
         };
     }
 
@@ -181,10 +182,9 @@ export class ActivateTrial extends Component {
             require.branch = branch ? branch.value : null;
             require.formErrors = formErrors;
 
-
-            this.setState({parentError: false});
-            if(parents.length === 0 ) {
-                this.setState({parentError: true});
+            this.setState({ parentError: false });
+            if (parents.length === 0) {
+                this.setState({ parentError: true });
                 return null;
             }
 
@@ -1056,49 +1056,42 @@ export class ActivateTrial extends Component {
                                                     <i className="fa fa-user mr-2" />
                                                     Veli Atama
                                                 </button>
-										{parentError ? (
-											<span className="ml-2 text-red font-italic">
-												<i className="fe fe-alert-circle mr-1" />
-												Veli ataması yapılmadı!
-											</span>
-										) : null}
-                                                {
-                                                    parents.length > 0 ? (
-                                                            <div className="row gutters-xs mt-3">
-                                                                {parents.map(el => (
-                                                                    <div
-                                                                        className="col-6"
-                                                                        key={el.parent_id.toString()}>
-                                                                        <div className="card">
-                                                                            <div className="card-body">
-                                                                                <div className="text-dark font-weight-600">
-                                                                                    {el.kinship}
-                                                                                </div>
-                                                                                <Link
-                                                                                    to={`/app/parents/detail/${el.uid}`}
-                                                                                    target="_blank">
-                                                                                    {fullnameGenerator(
-                                                                                        el.name,
-                                                                                        el.surname
-                                                                                    )}
-                                                                                </Link>
-                                                                                <div className="text-muted">
-                                                                                    Telefon: {formatPhone(el.phone)}
-                                                                                </div>
-                                                                                <div className="text-muted">
-                                                                                    Email: {el.email}
-                                                                                </div>
-                                                                            </div>
+                                                {parentError ? (
+                                                    <span className="ml-2 text-red font-italic">
+                                                        <i className="fe fe-alert-circle mr-1" />
+                                                        Veli ataması yapılmadı!
+                                                    </span>
+                                                ) : null}
+                                                {parents.length > 0 ? (
+                                                    <div className="row gutters-xs mt-3">
+                                                        {parents.map(el => (
+                                                            <div className="col-6" key={el.parent_id.toString()}>
+                                                                <div className="card">
+                                                                    <div className="card-body">
+                                                                        <div className="text-dark font-weight-600">
+                                                                            {el.kinship}
+                                                                        </div>
+                                                                        <Link
+                                                                            to={`/app/parents/detail/${el.uid}`}
+                                                                            target="_blank">
+                                                                            {fullnameGenerator(el.name, el.surname)}
+                                                                        </Link>
+                                                                        <div className="text-muted">
+                                                                            Telefon: {formatPhone(el.phone)}
+                                                                        </div>
+                                                                        <div className="text-muted">
+                                                                            Email: {el.email}
                                                                         </div>
                                                                     </div>
-                                                                ))}
+                                                                </div>
                                                             </div>
-                                                    ) : (
-                                                        <div className="font-italic text-center w-100 p-4">
-                                                            Kayıtlı veli bilgisi bulunamadı...
-                                                        </div>
-                                                    )
-                                                }
+                                                        ))}
+                                                    </div>
+                                                ) : (
+                                                    <div className="font-italic text-center w-100 p-4">
+                                                        Kayıtlı veli bilgisi bulunamadı...
+                                                    </div>
+                                                )}
                                                 <ParentModal
                                                     assignParents={parents =>
                                                         this.setState({

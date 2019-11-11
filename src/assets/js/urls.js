@@ -94,7 +94,9 @@ var ep = {
     REPORT_UNPAID_PLAYERS: host + api_version + "report/unpaid/players",
     REPORT_TRAINING_GROUPS: host + api_version + "report/training/groups",
     PARENT_CREATE: host + api_version + "create/parent",
-    PARENT_LIST: host + api_version + "list/parents"
+    PARENT_LIST: host + api_version + "list/parents",
+    PARENT_GET: host + api_version + "get/parent",
+    PARENT_PLAYERS: host + api_version + "get/parent/players"
 };
 
 export default ep;

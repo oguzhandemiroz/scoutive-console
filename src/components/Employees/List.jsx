@@ -75,7 +75,7 @@ class Table extends Component {
                             ReactDOM.render(
                                 <BrowserRouter>
                                     <Link
-                                        className="text-inherit"
+                                        className="text-inherit font-weight-600"
                                         to={"/app/employees/detail/" + uid}
                                         onClick={() => this.props.history.push(`/app/employees/detail/${uid}`)}>
                                         {fullname}
@@ -90,7 +90,6 @@ class Table extends Component {
                         createdCell: (td, cellData, rowData) => {
                             const fullname = fullnameGenerator(rowData.name, rowData.surname);
                             const { uid, status } = rowData;
-
                             ReactDOM.render(
                                 <BrowserRouter>
                                     <ActionButton
@@ -199,7 +198,7 @@ class Table extends Component {
                                 return fullname;
                             }
                             if (data)
-                                return `<a class="text-inherit" href="/app/employees/detail/${row.uid}">${fullname}</a>`;
+                                return `<a class="text-inherit font-weight-600" href="/app/employees/detail/${row.uid}">${fullname}</a>`;
                         }
                     },
                     {

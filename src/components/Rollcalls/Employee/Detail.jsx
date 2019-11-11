@@ -146,7 +146,7 @@ export class Detail extends Component {
                         ReactDOM.render(
                             <BrowserRouter>
                                 <Link
-                                    className="text-inherit"
+                                    className="text-inherit font-weight-600"
                                     to={"/app/employees/detail/" + uid}
                                     onClick={() => this.props.history.push(`/app/employees/detail/${uid}`)}>
                                     {fullname}
@@ -221,7 +221,7 @@ export class Detail extends Component {
                             return fullname;
                         }
                         if (data)
-                            return `<a class="text-inherit" href="/app/employees/detail/${row.uid}">${fullname}</a>`;
+                            return `<a class="text-inherit font-weight-600" href="/app/employees/detail/${row.uid}">${fullname}</a>`;
                     }
                 },
                 {

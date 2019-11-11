@@ -4,7 +4,6 @@ import ActionButton from "./ActionButton";
 import Vacation from "../PlayerAction/Vacation";
 import GroupChange from "../PlayerAction/GroupChange";
 import { fullnameGenerator, nullCheck, formatDate, formatPhone, formatMoney } from "../../services/Others";
-import moment from "moment";
 
 const statusType = {
 	0: "bg-danger",

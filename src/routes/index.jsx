@@ -6,6 +6,7 @@ import ResetPassword from "../views/Pages/ResetPassword";
 import Dashboard from "../views/Dashboard/Dashboard";
 import Employees from "../views/Employees/Employees";
 import Players from "../views/Players/Players";
+import Parents from "../views/Parents/Parents";
 import _404 from "../views/Pages/404";
 import Empty from "../components/Pages/Empty";
 
@@ -28,6 +29,8 @@ import PaymentPlayer from "../components/Players/Payment";
 import FeeDetailPlayer from "../components/Players/FeeDetail";
 import VacationPlayer from "../components/Players/Vacation";
 import RollcallPlayer from "../components/Players/Rollcall";
+
+import DetailParent from "../components/Parents/Detail";
 
 import Attributes from "../components/Others/Attributes";
 
@@ -242,6 +245,20 @@ var indexRoutes = [
 		name: "Receive Payment",
 		component: PaymentPlayer,
 		layout: "/app"
+	},
+	{
+		path: "/parents",
+		name: "Parents",
+		component: Parents,
+		layout: "/app",
+		prop: { exact: true }
+	},
+	{
+		path: "/parents/detail/:uid",
+		name: "Detail Parent",
+		component: DetailParent,
+		layout: "/app",
+		prop: { exact: true }
 	},
 	{
 		path: "/groups",

@@ -33,4 +33,46 @@ const CreateParent = data => {
     }
 };
 
-export { CreateParent };
+const DetailParent = data => {
+    try {
+        return fetch(ep.PARENT_GET, {
+            method: "POST",
+            body: JSON.stringify(data),
+            headers: h
+        })
+            .then(res => res.json())
+            .then(response => {
+                if (response) {
+                    const status = response.status;
+                    if (status.code !== 1020) errorSwal(status);
+                    return response;
+                }
+            })
+            .catch(e => fatalSwal(true));
+    } catch (e) {
+        fatalSwal(true);
+    }
+};
+
+const GetParentPlayers = data => {
+    try {
+        return fetch(ep.PARENT_PLAYERS, {
+            method: "POST",
+            body: JSON.stringify(data),
+            headers: h
+        })
+            .then(res => res.json())
+            .then(response => {
+                if (response) {
+                    const status = response.status;
+                    if (status.code !== 1020) errorSwal(status);
+                    return response;
+                }
+            })
+            .catch(e => fatalSwal(true));
+    } catch (e) {
+        fatalSwal(true);
+    }
+};
+
+export { CreateParent, DetailParent, GetParentPlayers };
