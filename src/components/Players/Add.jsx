@@ -65,16 +65,6 @@ const body_measure_list = [
     "Bacak Uzunluğu"
 ];
 
-const { Option } = components;
-const OptionParent = props => (
-    <Option {...props}>
-        {props.data.label} ({props.data.kinship})
-        <div className="small text-muted mt-1">
-            Telefon: <b className="text-blue">{props.data.phone}</b>
-        </div>
-    </Option>
-);
-
 export class Add extends Component {
     constructor(props) {
         super(props);
@@ -122,7 +112,8 @@ export class Add extends Component {
             },
             loadingButton: "",
             loadingImage: "",
-            addContinuously: true
+            addContinuously: true,
+            parentError: false
         };
     }
 
@@ -199,6 +190,13 @@ export class Add extends Component {
         if (is_scholarship) delete require.fee;
         delete require.loadingButton;
         delete require.loadingImage;
+
+        this.setState({parentError: false});
+        if(parents.length === 0 ) {
+            this.setState({parentError: true});
+            return null;
+        }
+        
 
         if (formValid(require)) {
             this.setState({ loadingButton: "btn-loading" });
@@ -521,7 +519,7 @@ export class Add extends Component {
             end_date,
             loadingButton,
             show,
-            parents
+            parents,parentError
         } = this.state;
         return (
             <div className="container">
@@ -1086,10 +1084,9 @@ export class Add extends Component {
                                             <i className="fa fa-user mr-2" />
                                             Veli Atama
                                         </button>
+                                        {parentError ? <span className="ml-2 text-red font-italic"><i className="fe fe-alert-circle mr-1"/>Veli ataması yapılmadı!</span> : null}
                                         {parents.length > 0 ? (
-                                            <>
-                                                <hr className="my-4" />
-                                                <div className="row gutters-xs">
+                                                <div className="row gutters-xs mt-3">
                                                     {parents.map(el => (
                                                         <div className="col-6" key={el.parent_id.toString()}>
                                                             <div className="card">
@@ -1111,13 +1108,13 @@ export class Add extends Component {
                                                         </div>
                                                     ))}
                                                 </div>
-                                            </>
                                         ) : null}
                                         <ParentModal
                                             parents={parents}
                                             assignParents={parents =>
                                                 this.setState({
-                                                    parents: parents
+                                                    parents: parents,
+													parentError: parents.length > 0 ? false : true
                                                 })
                                             }
                                         />

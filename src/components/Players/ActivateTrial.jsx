@@ -99,7 +99,8 @@ export class ActivateTrial extends Component {
             loadingButton: "",
             addContinuously: false,
             loading: "active",
-            loadingImage: ""
+            loadingImage: "",
+            parents: [],parentError: false
         };
     }
 
@@ -179,6 +180,13 @@ export class ActivateTrial extends Component {
             require.start_date = start_date;
             require.branch = branch ? branch.value : null;
             require.formErrors = formErrors;
+
+
+            this.setState({parentError: false});
+            if(parents.length === 0 ) {
+                this.setState({parentError: true});
+                return null;
+            }
 
             const checkBirthday = year && month && day ? `${year}-${month}-${day}` : null;
             if (formValid(require)) {
@@ -556,7 +564,8 @@ export class ActivateTrial extends Component {
             loading,
             loadingImage,
             start_date,
-            show
+            show,
+            parentError
         } = this.state;
         return (
             <div className="container">
@@ -1047,11 +1056,15 @@ export class ActivateTrial extends Component {
                                                     <i className="fa fa-user mr-2" />
                                                     Veli Atama
                                                 </button>
-                                                {parents ? (
+										{parentError ? (
+											<span className="ml-2 text-red font-italic">
+												<i className="fe fe-alert-circle mr-1" />
+												Veli ataması yapılmadı!
+											</span>
+										) : null}
+                                                {
                                                     parents.length > 0 ? (
-                                                        <>
-                                                            <hr className="my-4" />
-                                                            <div className="row gutters-xs">
+                                                            <div className="row gutters-xs mt-3">
                                                                 {parents.map(el => (
                                                                     <div
                                                                         className="col-6"
@@ -1080,17 +1093,17 @@ export class ActivateTrial extends Component {
                                                                     </div>
                                                                 ))}
                                                             </div>
-                                                        </>
                                                     ) : (
                                                         <div className="font-italic text-center w-100 p-4">
                                                             Kayıtlı veli bilgisi bulunamadı...
                                                         </div>
                                                     )
-                                                ) : null}
+                                                }
                                                 <ParentModal
                                                     assignParents={parents =>
                                                         this.setState({
-                                                            parents: parents
+                                                            parents: parents,
+                                                            parentError: parents.length > 0 ? false : true
                                                         })
                                                     }
                                                 />

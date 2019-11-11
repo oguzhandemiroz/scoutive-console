@@ -101,7 +101,8 @@ export class Edit extends Component {
             addContinuously: false,
             loading: "active",
             loadingImage: "",
-            parents: []
+            parents: [],
+            parentError: false
         };
     }
 
@@ -184,6 +185,13 @@ export class Edit extends Component {
             require.branch = branch ? branch.value : null;
             if (status === 0) require.end_date = end_date;
             require.formErrors = formErrors;
+
+            this.setState({parentError: false});
+            if(parents.length === 0 ) {
+                this.setState({parentError: true});
+                return null;
+            }
+
 
             const checkBirthday = year && month && day ? `${year}-${month}-${day}` : null;
             if (formValid(require)) {
@@ -564,7 +572,7 @@ export class Edit extends Component {
             loadingImage,
             start_date,
             show,
-            parents
+            parents,parentError
         } = this.state;
         return (
             <div className="container">
@@ -1081,11 +1089,10 @@ export class Edit extends Component {
                                                     className="btn btn-cyan btn-icon">
                                                     <i className="fa fa-user mr-2" />
                                                     Veli Atama
-                                                </button>
+                                                </button>                                                
+                                        {parentError ? <span className="ml-2 text-red font-italic"><i className="fe fe-alert-circle mr-1"/>Veli ataması yapılmadı!</span> : null}
                                                 {parents.length > 0 ? (
-                                                    <>
-                                                        <hr className="my-4" />
-                                                        <div className="row gutters-xs">
+                                                        <div className="row gutters-xs mt-3">
                                                             {parents.map(el => (
                                                                 <div className="col-6" key={el.parent_id.toString()}>
                                                                     <div className="card">
@@ -1109,7 +1116,6 @@ export class Edit extends Component {
                                                                 </div>
                                                             ))}
                                                         </div>
-                                                    </>
                                                 ) : (
                                                     <div className="font-italic text-center w-100 p-4">
                                                         Kayıtlı veli bilgisi bulunamadı...
@@ -1119,7 +1125,8 @@ export class Edit extends Component {
                                                     parents={parents}
                                                     assignParents={parents =>
                                                         this.setState({
-                                                            parents: parents
+                                                            parents: parents,
+                                                            parentError: parents.length > 0 ? false : true
                                                         })
                                                     }
                                                 />
