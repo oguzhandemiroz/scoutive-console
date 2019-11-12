@@ -88,10 +88,10 @@ export class Trial extends Component {
 		requiredData.formErrors = formErrors;
 
 		this.setState({ parentError: false });
-        if(parents.length === 0 ) {
-            this.setState({parentError: true});
-            return null;
-        }
+		if (parents.length === 0) {
+			this.setState({ parentError: true });
+			return null;
+		}
 
 		if (formValid(requiredData)) {
 			this.setState({ loadingButton: "btn-loading" });
@@ -264,28 +264,28 @@ export class Trial extends Component {
 											</span>
 										) : null}
 										{parents.length > 0 ? (
-												<div className="row gutters-xs mt-3">
-													{parents.map(el => (
-														<div className="col-6" key={el.parent_id.toString()}>
-															<div className="card">
-																<div className="card-body">
-																	<div className="text-dark font-weight-600">
-																		{el.kinship}
-																	</div>
-																	<Link
-																		to={`/app/parents/detail/${el.uid}`}
-																		target="_blank">
-																		{fullnameGenerator(el.name, el.surname)}
-																	</Link>
-																	<div className="text-muted">
-																		Telefon: {formatPhone(el.phone)}
-																	</div>
-																	<div className="text-muted">Email: {el.email}</div>
+											<div className="row gutters-xs mt-3">
+												{parents.map(el => (
+													<div className="col-6" key={el.parent_id.toString()}>
+														<div className="card">
+															<div className="card-body">
+																<div className="text-dark font-weight-600">
+																	{el.kinship}
 																</div>
+																<Link
+																	to={`/app/parents/detail/${el.uid}`}
+																	target="_blank">
+																	{fullnameGenerator(el.name, el.surname)}
+																</Link>
+																<div className="text-muted">
+																	Telefon: {formatPhone(el.phone)}
+																</div>
+																<div className="text-muted">Email: {el.email}</div>
 															</div>
 														</div>
-													))}
-												</div>
+													</div>
+												))}
+											</div>
 										) : null}
 										<ParentModal
 											assignParents={parents =>

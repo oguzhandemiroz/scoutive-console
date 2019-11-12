@@ -46,6 +46,7 @@ var ep = {
     PLAYER_REFRESH: host + api_version + "refresh/player",
     PLAYER_ACTIVATE: host + api_version + "active/player",
     PLAYER_LIST: host + api_version + "list/players",
+    PLAYER_PARENTS: host + api_version + "get/player/parents",
     GET_PLAYER_NAME: host + api_version + "list/players/name",
     GET_PLAYER: host + api_version + "get/player",
     UPDATE_PLAYER: host + api_version + "update/player",

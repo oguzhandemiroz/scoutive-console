@@ -61,7 +61,7 @@ export class Detail extends Component {
 
     renderFeeType = data => {
         if (!data.is_trial && !data.is_scholarship & (data.fee !== null)) {
-            return formatMoney(data.fee) + " ₺";
+            return formatMoney(data.fee);
         } else if (data.is_trial) {
             return "DENEME";
         } else if (data.is_scholarship) {

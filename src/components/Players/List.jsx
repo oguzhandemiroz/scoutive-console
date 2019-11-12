@@ -4,7 +4,8 @@ import ep from "../../assets/js/urls";
 import { fatalSwal, errorSwal } from "../Alert.jsx";
 import ReactDOM from "react-dom";
 import { BrowserRouter, Link } from "react-router-dom";
-import { fullnameGenerator } from "../../services/Others";
+import { fullnameGenerator, nullCheck, formatPhone } from "../../services/Others";
+import { GetPlayerParents } from "../../services/Player";
 import ListFilter from "./ListFilter";
 import GroupChange from "../PlayerAction/GroupChange";
 import Vacation from "../PlayerAction/Vacation";
@@ -58,6 +59,26 @@ const filteredList = () => {
 
 	$("#playerListFilterMenu").modal("hide");
 };
+
+var _childNodeStore = {};
+function _childNodes(dt, row, col) {
+	var name = row + "-" + col;
+
+	if (_childNodeStore[name]) {
+		return _childNodeStore[name];
+	}
+
+	// https://jsperf.com/childnodes-array-slice-vs-loop
+	var nodes = [];
+	var children = dt.cell(row, col).node().childNodes;
+	for (var i = 0, ien = children.length; i < ien; i++) {
+		nodes.push(children[i]);
+	}
+
+	_childNodeStore[name] = nodes;
+
+	return nodes;
+}
 
 class Table extends Component {
 	constructor(props) {
@@ -133,16 +154,20 @@ class Table extends Component {
 						type: "column",
 						target: 2,
 						renderer: function(api, rowIdx, columns) {
+							var tbl = $('<table class="w-100"/>');
+							var found = false;
 							var data = $.map(columns, function(col, i) {
-								return col.hidden
-									? `<tr data-dt-row="${col.rowIndex}" data-dt-column="${col.columnIndex}">
-									<th class="w-1">${col.title}</th> 
-									<td>${col.data}</td>
-								</tr>`
-									: ``;
-							}).join("");
+								if (col.hidden) {
+									$(`<tr data-dt-row="${col.rowIndex}" data-dt-column="${col.columnIndex}">
+                                    <th class="w-1">${col.title}</th> 
+                                    </tr>`)
+										.append($("<td/>").append(_childNodes(api, col.rowIndex, col.columnIndex)))
+										.appendTo(tbl);
+									found = true;
+								}
+							});
 
-							return data ? $('<table class="w-100"/>').append(data) : false;
+							return found ? tbl : false;
 						}
 					}
 				},
@@ -225,6 +250,21 @@ class Table extends Component {
 										{fullname}
 									</Link>
 								</BrowserRouter>,
+								td
+							);
+						}
+					},
+					{
+						targets: "parents",
+						responsivePriority: 3,
+						createdCell: (td, cellData, rowData) => {
+							const { player_id } = rowData;
+							ReactDOM.render(
+								<button
+									onClick={el => this.getPlayerParents(el, player_id)}
+									className="btn btn-secondary btn-sm btn-icon">
+									<i className="fa fa-user mr-1" /> Velisi
+								</button>,
 								td
 							);
 						}
@@ -338,35 +378,7 @@ class Table extends Component {
 						}
 					},
 					{
-						data: "emergency",
-						render: function(data, type, row) {
-							const fullname = fullnameGenerator(row.name, row.surname);
-							var elem = "";
-							var j = 0;
-
-							if (data) {
-								var myselfAddedData = data;
-								myselfAddedData.push({
-									kinship: "Kendisi",
-									name: fullname,
-									phone: row.phone || ""
-								});
-
-								myselfAddedData.map(el => {
-									if (el.phone !== "" && el.name !== "" && el.kinship !== "") {
-										const formatPhone = el.phone
-											? Inputmask.format(el.phone, { mask: "(999) 999 9999" })
-											: null;
-										j++;
-										elem += `<a href="tel:+90${el.phone}" data-toggle="tooltip" data-placement="left" data-original-title="${el.kinship}: ${el.name}" class="text-inherit d-block">${formatPhone}</a> `;
-									}
-								});
-							} else {
-								elem = "&mdash;";
-							}
-							if (j === 0) elem = "&mdash;";
-							return elem;
-						}
+						data: null
 					},
 					{
 						data: "fee",
@@ -482,6 +494,73 @@ class Table extends Component {
 			.destroy(true);
 	}
 
+	getPlayerParents = (el, player_id) => {
+		const { uid } = this.state;
+		const element = el.currentTarget;
+		const that = this;
+		this.addButtonLoading(element);
+		GetPlayerParents({ uid: uid, player_id: player_id }).then(response => {
+			if (response) {
+				const status = response.status;
+				if (status.code === 1020) {
+					const data = response.data;
+					that.showParents(element, data);
+				}
+			}
+		});
+	};
+
+	addButtonLoading = element => {
+		$(element).addClass("btn-loading");
+	};
+
+	removeButtonLoading = element => {
+		$(element).removeClass("btn-loading");
+	};
+
+	showParents = (element, data) => {
+		const $parent = $(element).parent();
+		if (data.length === 0) {
+			$parent.html(`<div class="text-muted font-italic">Veli bulunamadı...</div>`);
+		} else {
+			$parent.empty();
+			data.map(el => {
+				const fullname = fullnameGenerator(el.name, el.surname);
+				$parent.append(`
+                    <a href="/app/parents/detail/${el.uid}"
+                    class="text-inherit" 
+                    data-toggle="popover" 
+                    data-placement="top" 
+                    data-content='
+                        <p class="text-azure font-weight-600 h6">${fullname}
+                            <span class="text-muted ml-1">
+                                (${el.kinship})
+                            </span>
+                        </p>
+                        <p>
+                            <strong class="d-block">Telefon</strong>
+                            <span class="text-muted">
+                                ${formatPhone(el.phone)}
+                            </span>
+                        </p>
+						<strong class="d-block">Email</strong>
+						<span class="text-muted">
+							${nullCheck(el.email)}
+						</span>
+                    '>
+						${fullname}
+                    </a>
+                    <br/>
+                `);
+			});
+
+			$('[data-toggle="popover"]').popover({
+				html: true,
+				trigger: "hover"
+			});
+		}
+	};
+
 	render() {
 		const { data } = this.state;
 		return (
@@ -496,7 +575,7 @@ class Table extends Component {
 							<th className="w-1 no-sort control" />
 							<th className="w-1 text-center no-sort">#</th>
 							<th className="w-1 name">AD SOYAD</th>
-							<th className="emergency">İLETİŞİM</th>
+							<th className="parents">VELİSİ</th>
 							<th className="fee">AİDAT</th>
 							<th className="point">GENEL PUAN</th>
 							<th className="foot">KULLANDIĞI AYAK</th>

@@ -3,7 +3,8 @@ import ReactDOM from "react-dom";
 import { BrowserRouter, Link } from "react-router-dom";
 import { MakeRollcall, SetNoteRollcall, DeleteRollcall } from "../../../services/Rollcalls";
 import { CreateVacation, UpdateVacation } from "../../../services/PlayerAction";
-import { fullnameGenerator } from "../../../services/Others";
+import { GetPlayerParents } from "../../../services/Player";
+import { fullnameGenerator, nullCheck, formatPhone } from "../../../services/Others";
 import { WarningModal as Modal } from "../WarningModal";
 import { datatable_turkish } from "../../../assets/js/core";
 import { fatalSwal, errorSwal, Toast, showSwal } from "../../Alert.jsx";
@@ -234,6 +235,21 @@ export class Add extends Component {
 									{fullname}
 								</Link>
 							</BrowserRouter>,
+							td
+						);
+					}
+				},
+				{
+					targets: "parents",
+					responsivePriority: 3,
+					createdCell: (td, cellData, rowData) => {
+						const { player_id } = rowData;
+						ReactDOM.render(
+							<button
+								onClick={el => this.getPlayerParents(el, player_id)}
+								className="btn btn-secondary btn-sm btn-icon">
+								<i className="fa fa-user mr-1" /> Velisi
+							</button>,
 							td
 						);
 					}
@@ -518,37 +534,7 @@ export class Add extends Component {
 					}
 				},
 				{
-					data: "emergency",
-					responsivePriority: 10006,
-					className: "none",
-					render: function(data, type, row) {
-						const fullname = fullnameGenerator(row.name, row.surname);
-						var elem = "";
-						var j = 0;
-
-						if (data) {
-							var myselfAddedData = data;
-							myselfAddedData.push({
-								kinship: "Kendisi",
-								name: fullname,
-								phone: row.phone || ""
-							});
-
-							myselfAddedData.map(el => {
-								if (el.phone !== "" && el.name !== "" && el.kinship !== "") {
-									const formatPhone = el.phone
-										? Inputmask.format(el.phone, { mask: "(999) 999 9999" })
-										: null;
-									j++;
-									elem += `<a href="tel:+90${el.phone}" data-toggle="tooltip" data-placement="left" data-original-title="${el.kinship}: ${el.name}" class="text-inherit d-block">${formatPhone}</a> `;
-								}
-							});
-						} else {
-							elem = "&mdash;";
-						}
-						if (j === 0) elem = "&mdash;";
-						return elem;
-					}
+					data: null
 				},
 				{
 					data: "birthday",
@@ -880,6 +866,73 @@ export class Add extends Component {
 		});
 	};
 
+	getPlayerParents = (el, player_id) => {
+		const { uid } = this.state;
+		const element = el.currentTarget;
+		const that = this;
+		this.addButtonLoading(element);
+		GetPlayerParents({ uid: uid, player_id: player_id }).then(response => {
+			if (response) {
+				const status = response.status;
+				if (status.code === 1020) {
+					const data = response.data;
+					that.showParents(element, data);
+				}
+			}
+		});
+	};
+
+	addButtonLoading = element => {
+		$(element).addClass("btn-loading");
+	};
+
+	removeButtonLoading = element => {
+		$(element).removeClass("btn-loading");
+	};
+
+	showParents = (element, data) => {
+		const $parent = $(element).parent();
+		if (data.length === 0) {
+			$parent.html(`<div class="text-muted font-italic">Veli bulunamadı...</div>`);
+		} else {
+			$parent.empty();
+			data.map(el => {
+				const fullname = fullnameGenerator(el.name, el.surname);
+				$parent.append(`
+                    <a href="/app/parents/detail/${el.uid}"
+                    class="text-inherit" 
+                    data-toggle="popover" 
+                    data-placement="top" 
+                    data-content='
+                        <p class="text-azure font-weight-600 h6">${fullname}
+                            <span class="text-muted ml-1">
+                                (${el.kinship})
+                            </span>
+                        </p>
+                        <p>
+                            <strong class="d-block">Telefon</strong>
+                            <span class="text-muted">
+                                ${formatPhone(el.phone)}
+                            </span>
+                        </p>
+						<strong class="d-block">Email</strong>
+						<span class="text-muted">
+							${nullCheck(el.email)}
+						</span>
+                    '>
+						${fullname}
+                    </a>
+                    <br/>
+                `);
+			});
+
+			$('[data-toggle="popover"]').popover({
+				html: true,
+				trigger: "hover"
+			});
+		}
+	};
+
 	render() {
 		const { data } = this.state;
 		return (
@@ -919,7 +972,7 @@ export class Add extends Component {
 												<th className="w-1 no-sort control" />
 												<th className="w-1 text-center no-sort"></th>
 												<th className="name">AD SOYAD</th>
-												<th className="emergency">İLETİŞİM</th>
+												<th className="parents">VELİSİ</th>
 												<th className="birthday">DOĞUM YILI</th>
 												<th className="group">GRUP</th>
 												<th className="no-sort rollcalls">SON 3 YOKLAMA</th>
