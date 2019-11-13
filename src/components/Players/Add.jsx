@@ -6,15 +6,8 @@ import {
     emailRegEx,
     securityNoRegEx
 } from "../../assets/js/core";
-import { Bloods, Branchs, Days, Months, Years, PlayerPositions, Kinship, Groups } from "../../services/FillSelect";
-import {
-    UploadFile,
-    getSelectValue,
-    clearMoney,
-    formatDate,
-    fullnameGenerator,
-    formatPhone
-} from "../../services/Others";
+import { Bloods, Branchs, PlayerPositions, Groups } from "../../services/FillSelect";
+import { UploadFile, clearMoney, formatDate, fullnameGenerator, formatPhone } from "../../services/Others";
 import { CreatePlayer } from "../../services/Player";
 import { showSwal } from "../../components/Alert";
 import Select, { components } from "react-select";
@@ -76,24 +69,17 @@ export class Add extends Component {
             security_id: null,
             branch: null,
             fee: null,
-            day: null,
-            month: null,
-            year: null,
             is_active: 1,
             is_trial: 0,
             is_scholarship: 0,
             start_date: new Date(),
+            birthday: null,
             end_date: null,
-            emergency: [],
             body_measure: [],
             parents: [],
             select: {
                 bloods: null,
-                days: null,
-                months: null,
-                years: null,
                 branchs: null,
-                kinships: null,
                 groups: null,
                 positions: null
             },
@@ -107,9 +93,7 @@ export class Add extends Component {
                 fee: "",
                 point: ""
             },
-            show: {
-                body_metrics: false
-            },
+            show: {},
             loadingButton: "",
             loadingImage: "",
             addContinuously: true,
@@ -124,18 +108,14 @@ export class Add extends Component {
                 surname: $("[name=surname]"),
                 phone: $("[name=phone]"),
                 security_id: $("[name=security_id]"),
-                fee: $("[name=fee]"),
-                emergency_phone: $("[name*='emergency.phone.']"),
-                emergency_name: $("[name*='emergency.name.']")
+                fee: $("[name=fee]")
             };
             const onlyString = "[a-zA-Z-ğüşöçİĞÜŞÖÇı ]*";
             Inputmask({ mask: "(999) 999 9999", ...InputmaskDefaultOptions }).mask(elemArray.phone);
-            Inputmask({ mask: "(999) 999 9999", ...InputmaskDefaultOptions }).mask(elemArray.emergency_phone);
             Inputmask({ mask: "99999999999", ...InputmaskDefaultOptions }).mask(elemArray.security_id);
             Inputmask({ alias: "try", ...InputmaskDefaultOptions, placeholder: "0,00" }).mask(elemArray.fee);
             Inputmask({ regex: "[a-zA-ZğüşöçİĞÜŞÖÇı]*", ...InputmaskDefaultOptions }).mask(elemArray.surname);
             Inputmask({ regex: onlyString, ...InputmaskDefaultOptions }).mask(elemArray.name);
-            Inputmask({ regex: onlyString, ...InputmaskDefaultOptions }).mask(elemArray.emergency_name);
         } catch (e) {}
     };
 
@@ -145,7 +125,7 @@ export class Add extends Component {
     }
 
     componentWillUnmount() {
-        this.setState({ emergency: [], body_measure: [] });
+        this.setState({ body_measure: [] });
     }
 
     handleSubmit = e => {
@@ -167,12 +147,9 @@ export class Add extends Component {
             group,
             body_height,
             body_weight,
-            day,
-            month,
-            year,
             foot,
             foot_no,
-            emergency,
+            birthday,
             is_scholarship,
             is_active,
             note,
@@ -194,7 +171,6 @@ export class Add extends Component {
         this.setState({ parentError: false });
         if (parents.length > 0 && formValid(require)) {
             this.setState({ loadingButton: "btn-loading" });
-            const checkBirthday = year && month && day ? `${year.value}-${month.value}-${day.value}` : null;
             CreatePlayer({
                 uid: uid,
                 name: name.capitalize(),
@@ -209,12 +185,11 @@ export class Add extends Component {
                 phone: phone,
                 gender: gender,
                 address: address,
-                emergency: emergency,
                 point: point,
                 fee: clearMoney(fee),
                 foot: foot,
                 note: note,
-                birthday: checkBirthday,
+                birthday: formatDate(birthday, "YYYY-MM-DD"),
                 start_date: formatDate(start_date, "YYYY-MM-DD"),
                 end_date: end_date ? formatDate(end_date, "YYYY-MM-DD") : null,
                 is_scholarship: is_scholarship ? 1 : 0,
@@ -273,13 +248,11 @@ export class Add extends Component {
                             : ""
                         : "is-invalid",
                     fee: !is_scholarship ? (fee ? "" : "is-invalid") : "",
+                    birthday: birthday ? "" : "is-invalid",
                     start_date: start_date ? "" : "is-invalid",
                     end_date: is_active === 0 ? (end_date ? "" : "is-invalid") : "",
                     position: position ? "" : true,
-                    branch: branch ? "" : true,
-                    day: day ? "" : true,
-                    month: month ? "" : true,
-                    year: year ? "" : true
+                    branch: branch ? "" : true
                 },
                 parentError: parents.length === 0 ? true : false
             }));
@@ -341,37 +314,31 @@ export class Add extends Component {
         } catch (e) {}
     };
 
-    handleSelect = (value, name, extraData, arr) => {
-        if (arr) {
-            this.setState(prevState => {
-                return (prevState[name][extraData].kinship = value.label);
-            });
-        } else {
-            if (name === "branch") {
+    handleSelect = (value, name) => {
+        if (name === "branch") {
+            this.setState(prevState => ({
+                select: {
+                    ...prevState.select,
+                    positions: null
+                },
+                position: null
+            }));
+            PlayerPositions(value.value).then(response => {
                 this.setState(prevState => ({
                     select: {
                         ...prevState.select,
-                        positions: null
-                    },
-                    position: null
+                        positions: response
+                    }
                 }));
-                PlayerPositions(value.value).then(response => {
-                    this.setState(prevState => ({
-                        select: {
-                            ...prevState.select,
-                            positions: response
-                        }
-                    }));
-                });
-            }
-            this.setState(prevState => ({
-                formErrors: {
-                    ...prevState.formErrors,
-                    [name]: value ? false : true
-                },
-                [name]: value
-            }));
+            });
         }
+        this.setState(prevState => ({
+            formErrors: {
+                ...prevState.formErrors,
+                [name]: value ? false : true
+            },
+            [name]: value
+        }));
     };
 
     handleCheck = e => {
@@ -402,6 +369,18 @@ export class Add extends Component {
                 [name]: date ? "" : "is-invalid"
             },
             [name]: date
+        }));
+    };
+
+    handleOtherInfo = e => {
+        const { name } = e.target;
+        const toggle = this.state.show[name];
+        e.target.classList.toggle("active");
+        this.setState(prevState => ({
+            show: {
+                ...prevState.show,
+                [name]: !toggle
+            }
         }));
     };
 
@@ -452,29 +431,6 @@ export class Add extends Component {
             }));
         });
 
-        this.setState(prevState => ({
-            select: {
-                ...prevState.select,
-                days: Days(),
-                months: Months(),
-                years: Years(true),
-                kinships: Kinship()
-            },
-            emergency: [
-                ...prevState.emergency,
-                {
-                    kinship: "Anne",
-                    name: "",
-                    phone: ""
-                },
-                {
-                    kinship: "Baba",
-                    name: "",
-                    phone: ""
-                }
-            ]
-        }));
-
         body_measure_list.map(el =>
             this.setState(prevState => ({
                 body_measure: [
@@ -497,13 +453,10 @@ export class Add extends Component {
             blood,
             point,
             group,
-            day,
-            month,
-            year,
             foot,
             body_measure,
             select,
-            emergency,
+            birthday,
             is_scholarship,
             is_active,
             formErrors,
@@ -528,12 +481,12 @@ export class Add extends Component {
                             <div className="card-header">
                                 <h3 className="card-title">Genel Bilgiler</h3>
                             </div>
-                            <div className="card-body">
+                            <div className="card-body pt-3">
                                 <div className="row">
                                     <div className="col-auto m-auto">
                                         <label
                                             htmlFor="image"
-                                            className={`avatar ${loadingImage} avatar-xxxl cursor-pointer disabled`}
+                                            className={`avatar ${loadingImage} avatar-xxxl cursor-pointer disabled mb-2`}
                                             style={{
                                                 border: "none",
                                                 outline: "none",
@@ -553,32 +506,37 @@ export class Add extends Component {
                                     </div>
                                 </div>
 
-                                <div className="form-group">
-                                    <label className="form-label">
-                                        Adı
-                                        <span className="form-required">*</span>
-                                    </label>
-                                    <input
-                                        type="text"
-                                        className={`form-control ${formErrors.name}`}
-                                        onChange={this.handleChange}
-                                        placeholder="Adı"
-                                        name="name"
-                                    />
-                                </div>
-
-                                <div className="form-group">
-                                    <label className="form-label">
-                                        Soyadı
-                                        <span className="form-required">*</span>
-                                    </label>
-                                    <input
-                                        type="text"
-                                        className={`form-control ${formErrors.surname}`}
-                                        onChange={this.handleChange}
-                                        placeholder="Soyadı"
-                                        name="surname"
-                                    />
+                                <div className="row gutters-xs">
+                                    <div className="col">
+                                        <div className="form-group">
+                                            <label className="form-label">
+                                                Adı
+                                                <span className="form-required">*</span>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                className={`form-control ${formErrors.name}`}
+                                                onChange={this.handleChange}
+                                                placeholder="Adı"
+                                                name="name"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="col">
+                                        <div className="form-group">
+                                            <label className="form-label">
+                                                Soyadı
+                                                <span className="form-required">*</span>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                className={`form-control ${formErrors.surname}`}
+                                                onChange={this.handleChange}
+                                                placeholder="Soyadı"
+                                                name="surname"
+                                            />
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <div className="form-group">
@@ -597,56 +555,22 @@ export class Add extends Component {
 
                                 <div className="form-group">
                                     <label className="form-label">
-                                        Branşı
+                                        Doğum Tarihi
                                         <span className="form-required">*</span>
                                     </label>
-                                    <Select
-                                        value={branch}
-                                        onChange={val => this.handleSelect(val, "branch")}
-                                        options={select.branchs}
-                                        name="branch"
-                                        placeholder="Seç..."
-                                        styles={
-                                            formErrors.branch === true ? selectCustomStylesError : selectCustomStyles
-                                        }
-                                        isSearchable={true}
-                                        isDisabled={select.branchs ? false : true}
-                                        isLoading={select.branchs ? false : true}
-                                        noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
-                                    />
-                                </div>
-
-                                <div className="form-group">
-                                    <label className="form-label">Mevkii</label>
-                                    <Select
-                                        value={position}
-                                        onChange={val => this.handleSelect(val, "position")}
-                                        options={select.positions}
-                                        name="position"
-                                        placeholder="Seç..."
-                                        styles={selectCustomStyles}
-                                        isClearable={true}
-                                        isSearchable={true}
-                                        isDisabled={select.positions ? false : true}
-                                        isLoading={select.positions ? false : true}
-                                        noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
-                                    />
-                                </div>
-
-                                <div className="form-group">
-                                    <label className="form-label">Grup</label>
-                                    <Select
-                                        value={group}
-                                        onChange={val => this.handleSelect(val, "group")}
-                                        options={select.groups}
-                                        name="group"
-                                        placeholder="Seç..."
-                                        styles={selectCustomStyles}
-                                        isClearable={true}
-                                        isSearchable={true}
-                                        isDisabled={select.groups ? false : true}
-                                        isLoading={select.groups ? false : true}
-                                        noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
+                                    <DatePicker
+                                        autoComplete="off"
+                                        selected={birthday}
+                                        selectsEnd
+                                        startDate={birthday}
+                                        name="birthday"
+                                        locale="tr"
+                                        dateFormat="dd/MM/yyyy"
+                                        onChange={date => this.handleDate(date, "birthday")}
+                                        className={`form-control ${formErrors.birthday}`}
+                                        showMonthDropdown
+                                        showYearDropdown
+                                        dropdownMode="select"
                                     />
                                 </div>
 
@@ -682,6 +606,7 @@ export class Add extends Component {
                                         </div>
                                     </div>
                                 </div>
+
                                 {is_scholarship ? (
                                     <div className="alert alert-icon alert-primary" role="alert">
                                         <i className="fe fe-alert-triangle mr-2" aria-hidden="true"></i>
@@ -711,33 +636,24 @@ export class Add extends Component {
                                 </div>
 
                                 <div className="form-group">
-                                    <label className="form-label">Genel Puanı</label>
-                                    <div className="row align-items-center">
-                                        <div className="col">
-                                            <input
-                                                type="range"
-                                                className="form-control custom-range"
-                                                step="0.1"
-                                                min="0"
-                                                max="5"
-                                                name="point"
-                                                onChange={this.handleChange}
-                                                value={point || "0"}
-                                            />
-                                        </div>
-                                        <div className="col-auto">
-                                            <input
-                                                type="number"
-                                                step="0.1"
-                                                min="0"
-                                                max="5"
-                                                name="point"
-                                                className={`form-control w-8 ${formErrors.point}`}
-                                                onChange={this.handleChange}
-                                                value={point || "0"}
-                                            />
-                                        </div>
-                                    </div>
+                                    <label className="form-label">
+                                        Branşı
+                                        <span className="form-required">*</span>
+                                    </label>
+                                    <Select
+                                        value={branch}
+                                        onChange={val => this.handleSelect(val, "branch")}
+                                        options={select.branchs}
+                                        name="branch"
+                                        placeholder="Seç..."
+                                        styles={
+                                            formErrors.branch === true ? selectCustomStylesError : selectCustomStyles
+                                        }
+                                        isSearchable={true}
+                                        isDisabled={select.branchs ? false : true}
+                                        isLoading={select.branchs ? false : true}
+                                        noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
+                                    />
                                 </div>
 
                                 <div className="form-group">
@@ -788,7 +704,7 @@ export class Add extends Component {
                                         <label
                                             className="selectgroup-item"
                                             data-toggle="tooltip"
-                                            title="Kaydı Ön Kayıt Öğrenci">
+                                            title="Ön Kayıt Öğrenci">
                                             <input
                                                 type="radio"
                                                 name="is_active"
@@ -830,7 +746,16 @@ export class Add extends Component {
                                             </label>
                                             <button
                                                 type="button"
-                                                onClick={() => $('[name="note"]').focus()}
+                                                onClick={() => {
+                                                    this.setState(prevState => ({
+                                                        show: {
+                                                            ...prevState.show,
+                                                            note: true
+                                                        }
+                                                    }));
+                                                    $('textarea[name="note"]').focus();
+                                                    $('button[name="note"]').addClass("active");
+                                                }}
                                                 className="btn btn-icon btn-secondary btn-block">
                                                 <i className="fe fe-edit"></i> Not Gir
                                             </button>
@@ -841,136 +766,14 @@ export class Add extends Component {
                         </div>
                     </div>
 
-                    <div className="col-lg-8 col-sm-12 col-md-12">
+                    <div className="col-lg-5 col-sm-12 col-md-12">
                         <div className="card">
                             <div className="card-header">
                                 <h3 className="card-title">Detay Bilgiler</h3>
                             </div>
                             <div className="card-body">
                                 <div className="row">
-                                    <div className="col-lg-6 col-md-12">
-                                        <div className="form-group">
-                                            <label className="form-label">Email</label>
-                                            <input
-                                                type="text"
-                                                className={`form-control ${formErrors.email}`}
-                                                onChange={this.handleChange}
-                                                name="email"
-                                                placeholder="Email"
-                                            />
-                                        </div>
-                                        <div className="form-group">
-                                            <label className="form-label">Telefonu</label>
-                                            <input
-                                                type="text"
-                                                className={`form-control ${formErrors.phone}`}
-                                                onChange={this.handleChange}
-                                                name="phone"
-                                                placeholder="(535) 123 4567"
-                                            />
-                                        </div>
-                                        <div className="form-group">
-                                            <label className="form-label">
-                                                Doğum Tarihi
-                                                <span className="form-required">*</span>
-                                            </label>
-                                            <div className="row gutters-xs">
-                                                <div className="col-4">
-                                                    <Select
-                                                        value={day}
-                                                        onChange={val => this.handleSelect(val, "day")}
-                                                        options={select.days}
-                                                        name="day"
-                                                        placeholder="Gün"
-                                                        styles={
-                                                            formErrors.day === true
-                                                                ? selectCustomStylesError
-                                                                : selectCustomStyles
-                                                        }
-                                                        isSearchable={true}
-                                                        isDisabled={select.days ? false : true}
-                                                        isLoading={select.days ? false : true}
-                                                        noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
-                                                    />
-                                                </div>
-                                                <div className="col-4">
-                                                    <Select
-                                                        value={month}
-                                                        onChange={val => this.handleSelect(val, "month")}
-                                                        options={select.months}
-                                                        name="month"
-                                                        placeholder="Ay"
-                                                        styles={
-                                                            formErrors.month === true
-                                                                ? selectCustomStylesError
-                                                                : selectCustomStyles
-                                                        }
-                                                        isSearchable={true}
-                                                        isDisabled={select.months ? false : true}
-                                                        isLoading={select.months ? false : true}
-                                                        noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
-                                                    />
-                                                </div>
-                                                <div className="col-4">
-                                                    <Select
-                                                        value={year}
-                                                        onChange={val => this.handleSelect(val, "year")}
-                                                        options={select.years}
-                                                        name="year"
-                                                        placeholder="Yıl"
-                                                        styles={
-                                                            formErrors.year === true
-                                                                ? selectCustomStylesError
-                                                                : selectCustomStyles
-                                                        }
-                                                        isSearchable={true}
-                                                        isDisabled={select.years ? false : true}
-                                                        isLoading={select.years ? false : true}
-                                                        noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
-                                                    />
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="form-group">
-                                            <label className="form-label">Adresi</label>
-                                            <textarea
-                                                className="form-control"
-                                                name="address"
-                                                onChange={this.handleChange}
-                                                rows={6}
-                                                maxLength="1000"
-                                                placeholder="Adres"
-                                            />
-                                        </div>
-                                    </div>
-                                    <div className="col-lg-6 col-md-12">
-                                        <div className="form-group">
-                                            <label className="form-label">Vücut Metrikleri (Boy & Kilo)</label>
-                                            <div className="row gutters-xs">
-                                                <div className="col-6">
-                                                    <input
-                                                        type="number"
-                                                        className="form-control"
-                                                        onChange={this.handleChange}
-                                                        name="body_height"
-                                                        placeholder="Boy (cm)"
-                                                        min="0"
-                                                        max="250"
-                                                    />
-                                                </div>
-                                                <div className="col-6">
-                                                    <input
-                                                        type="number"
-                                                        className="form-control"
-                                                        onChange={this.handleChange}
-                                                        name="body_weight"
-                                                        placeholder="Kilo (kg)"
-                                                        min="0"
-                                                        max="250"
-                                                    />
-                                                </div>
-                                            </div>
-                                        </div>
+                                    <div className="col-12">
                                         <div className="form-group">
                                             <label className="form-label">Cinsiyeti</label>
                                             <div className="selectgroup w-100">
@@ -998,76 +801,53 @@ export class Add extends Component {
                                                 </label>
                                             </div>
                                         </div>
+
                                         <div className="form-group">
-                                            <label className="form-label">Kan Grubu</label>
+                                            <label className="form-label">Grup</label>
                                             <Select
-                                                value={blood}
-                                                onChange={val => this.handleSelect(val, "blood")}
-                                                options={select.bloods}
-                                                name="blood"
+                                                value={group}
+                                                onChange={val => this.handleSelect(val, "group")}
+                                                options={select.groups}
+                                                name="group"
                                                 placeholder="Seç..."
                                                 styles={selectCustomStyles}
                                                 isClearable={true}
                                                 isSearchable={true}
-                                                isDisabled={select.bloods ? false : true}
-                                                isLoading={select.bloods ? false : true}
+                                                isDisabled={select.groups ? false : true}
+                                                isLoading={select.groups ? false : true}
                                                 noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
                                             />
                                         </div>
 
                                         <div className="form-group">
-                                            <label className="form-label">Kullandığı Ayak</label>
-                                            <div className="custom-controls-stacked">
-                                                <label className="custom-control custom-radio custom-control-inline">
-                                                    <input
-                                                        type="radio"
-                                                        className="custom-control-input"
-                                                        name="foot"
-                                                        value="1"
-                                                        checked={foot === 1 ? true : false}
-                                                        onChange={this.handleRadio}
-                                                    />
-                                                    <span className="custom-control-label">Sağ</span>
-                                                </label>
-                                                <label className="custom-control custom-radio custom-control-inline">
-                                                    <input
-                                                        type="radio"
-                                                        className="custom-control-input"
-                                                        name="foot"
-                                                        value="2"
-                                                        checked={foot === 2 ? true : false}
-                                                        onChange={this.handleRadio}
-                                                    />
-                                                    <span className="custom-control-label">Sol</span>
-                                                </label>
-                                                <label className="custom-control custom-radio custom-control-inline">
-                                                    <input
-                                                        type="radio"
-                                                        className="custom-control-input"
-                                                        name="foot"
-                                                        value="0"
-                                                        checked={foot === 0 ? true : false}
-                                                        onChange={this.handleRadio}
-                                                    />
-                                                    <span className="custom-control-label">Sağ & Sol</span>
-                                                </label>
-                                            </div>
+                                            <label className="form-label">Mevkii</label>
+                                            <Select
+                                                value={position}
+                                                onChange={val => this.handleSelect(val, "position")}
+                                                options={select.positions}
+                                                name="position"
+                                                placeholder="Seç..."
+                                                styles={selectCustomStyles}
+                                                isClearable={true}
+                                                isSearchable={true}
+                                                isDisabled={select.positions ? false : true}
+                                                isLoading={select.positions ? false : true}
+                                                noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
+                                            />
                                         </div>
 
                                         <div className="form-group">
-                                            <label className="form-label">Ayak Numarası</label>
-                                            <input
-                                                type="number"
+                                            <label className="form-label">Adresi</label>
+                                            <textarea
                                                 className="form-control"
+                                                name="address"
                                                 onChange={this.handleChange}
-                                                placeholder="Ayak Numarası"
-                                                name="foot_no"
-                                                min="10"
-                                                max="50"
+                                                rows={3}
+                                                maxLength="1000"
+                                                placeholder="Adres"
                                             />
                                         </div>
-                                    </div>
-                                    <div className="col-12 mt-3">
+
                                         <label className="form-label">
                                             Veli Bilgileri
                                             <span className="form-required">*</span>
@@ -1119,118 +899,324 @@ export class Add extends Component {
                                                 })
                                             }
                                         />
+                                        <hr className="mt-4 mb-2" />
                                     </div>
-                                    <div className="col-12 mt-3">
-                                        <label className="form-label">Vücut Ölçüleri</label>
-                                        {show.body_metrics ? (
-                                            <table className="table mb-0">
-                                                <thead>
-                                                    <tr>
-                                                        <th className="w-11 pl-0">Tür</th>
-                                                        <th className="pl-0">Değer</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {body_measure.map((el, key) => {
-                                                        return (
-                                                            <tr key={key.toString()}>
-                                                                <td className="w-11 pl-0 pr-0">
-                                                                    <div className="form-control-plaintext">
-                                                                        {el.type}:
-                                                                    </div>
-                                                                </td>
-                                                                <td className="pl-0">
-                                                                    <input
-                                                                        type="number"
-                                                                        name={`body_measure.value.${key}`}
-                                                                        onChange={this.handleChange}
-                                                                        className="form-control"
-                                                                        placeholder="(cm)"
-                                                                    />
-                                                                </td>
-                                                            </tr>
-                                                        );
-                                                    })}
-                                                </tbody>
-                                            </table>
-                                        ) : (
-                                            <button
-                                                type="button"
-                                                onClick={() =>
-                                                    this.setState(prevState => ({
-                                                        show: {
-                                                            ...prevState.show,
-                                                            body_metrics: true
-                                                        }
-                                                    }))
-                                                }
-                                                className="btn btn-gray btn-icon">
-                                                <i className="fa fa-stream mr-1" />
-                                                Vücut Ölçülerini Gir
-                                            </button>
-                                        )}
-                                    </div>
-                                    <div className="col-12 mt-3">
-                                        <div className="form-group">
-                                            <label className="form-label">Not</label>
-                                            <textarea
-                                                className="form-control"
-                                                name="note"
-                                                onChange={this.handleChange}
-                                                rows={3}
-                                                maxLength="1000"
-                                            />
-                                        </div>
+
+                                    <div className="col-12">
+                                        {show.email ? (
+                                            <div className="form-group">
+                                                <label className="form-label">Email</label>
+                                                <input
+                                                    type="text"
+                                                    className={`form-control ${formErrors.email}`}
+                                                    onChange={this.handleChange}
+                                                    name="email"
+                                                    placeholder="Email"
+                                                />
+                                            </div>
+                                        ) : null}
+
+                                        {show.phone ? (
+                                            <div className="form-group">
+                                                <label className="form-label">Telefonu</label>
+                                                <input
+                                                    type="text"
+                                                    className={`form-control ${formErrors.phone}`}
+                                                    onChange={this.handleChange}
+                                                    name="phone"
+                                                    placeholder="(535) 123 4567"
+                                                />
+                                            </div>
+                                        ) : null}
+
+                                        {show.point ? (
+                                            <div className="form-group">
+                                                <label className="form-label">Genel Puanı</label>
+                                                <div className="row align-items-center">
+                                                    <div className="col">
+                                                        <input
+                                                            type="range"
+                                                            className="form-control custom-range"
+                                                            step="0.1"
+                                                            min="0"
+                                                            max="5"
+                                                            name="point"
+                                                            onChange={this.handleChange}
+                                                            value={point || "0"}
+                                                        />
+                                                    </div>
+                                                    <div className="col-auto">
+                                                        <input
+                                                            type="number"
+                                                            step="0.1"
+                                                            min="0"
+                                                            max="5"
+                                                            name="point"
+                                                            className={`form-control w-8 ${formErrors.point}`}
+                                                            onChange={this.handleChange}
+                                                            value={point || "0"}
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ) : null}
+
+                                        {show.measure ? (
+                                            <div className="form-group">
+                                                <label className="form-label">Vücut Metrikleri (Boy & Kilo)</label>
+                                                <div className="row gutters-xs">
+                                                    <div className="col-6">
+                                                        <input
+                                                            type="number"
+                                                            className="form-control"
+                                                            onChange={this.handleChange}
+                                                            name="body_height"
+                                                            placeholder="Boy (cm)"
+                                                            min="0"
+                                                            max="250"
+                                                        />
+                                                    </div>
+                                                    <div className="col-6">
+                                                        <input
+                                                            type="number"
+                                                            className="form-control"
+                                                            onChange={this.handleChange}
+                                                            name="body_weight"
+                                                            placeholder="Kilo (kg)"
+                                                            min="0"
+                                                            max="250"
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ) : null}
+
+                                        {show.blood ? (
+                                            <div className="form-group">
+                                                <label className="form-label">Kan Grubu</label>
+                                                <Select
+                                                    value={blood}
+                                                    onChange={val => this.handleSelect(val, "blood")}
+                                                    options={select.bloods}
+                                                    name="blood"
+                                                    placeholder="Seç..."
+                                                    styles={selectCustomStyles}
+                                                    isClearable={true}
+                                                    isSearchable={true}
+                                                    isDisabled={select.bloods ? false : true}
+                                                    isLoading={select.bloods ? false : true}
+                                                    noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
+                                                />
+                                            </div>
+                                        ) : null}
+
+                                        {show.foot ? (
+                                            <div className="form-group">
+                                                <label className="form-label">Kullandığı Ayak</label>
+                                                <div className="custom-controls-stacked">
+                                                    <label className="custom-control custom-radio custom-control-inline">
+                                                        <input
+                                                            type="radio"
+                                                            className="custom-control-input"
+                                                            name="foot"
+                                                            value="1"
+                                                            checked={foot === 1 ? true : false}
+                                                            onChange={this.handleRadio}
+                                                        />
+                                                        <span className="custom-control-label">Sağ</span>
+                                                    </label>
+                                                    <label className="custom-control custom-radio custom-control-inline">
+                                                        <input
+                                                            type="radio"
+                                                            className="custom-control-input"
+                                                            name="foot"
+                                                            value="2"
+                                                            checked={foot === 2 ? true : false}
+                                                            onChange={this.handleRadio}
+                                                        />
+                                                        <span className="custom-control-label">Sol</span>
+                                                    </label>
+                                                    <label className="custom-control custom-radio custom-control-inline">
+                                                        <input
+                                                            type="radio"
+                                                            className="custom-control-input"
+                                                            name="foot"
+                                                            value="0"
+                                                            checked={foot === 0 ? true : false}
+                                                            onChange={this.handleRadio}
+                                                        />
+                                                        <span className="custom-control-label">Sağ & Sol</span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        ) : null}
+
+                                        {show.foot_no ? (
+                                            <div className="form-group">
+                                                <label className="form-label">Ayak Numarası</label>
+                                                <input
+                                                    type="number"
+                                                    className="form-control"
+                                                    onChange={this.handleChange}
+                                                    placeholder="Ayak Numarası"
+                                                    name="foot_no"
+                                                    min="10"
+                                                    max="50"
+                                                />
+                                            </div>
+                                        ) : null}
+
+                                        {show.metrics ? (
+                                            <div className="form-group">
+                                                <label className="form-label">Vücut Ölçüleri</label>
+                                                <table className="table mb-0">
+                                                    <thead>
+                                                        <tr>
+                                                            <th className="w-11 pl-0">Tür</th>
+                                                            <th className="pl-0">Değer</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {body_measure.map((el, key) => {
+                                                            return (
+                                                                <tr key={key.toString()}>
+                                                                    <td className="w-11 pl-0 pr-0">
+                                                                        <div className="form-control-plaintext">
+                                                                            {el.type}:
+                                                                        </div>
+                                                                    </td>
+                                                                    <td className="pl-0">
+                                                                        <input
+                                                                            type="number"
+                                                                            name={`body_measure.value.${key}`}
+                                                                            onChange={this.handleChange}
+                                                                            className="form-control"
+                                                                            placeholder="(cm)"
+                                                                        />
+                                                                    </td>
+                                                                </tr>
+                                                            );
+                                                        })}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        ) : null}
+
+                                        {show.note ? (
+                                            <div className="form-group">
+                                                <label className="form-label">Not</label>
+                                                <textarea
+                                                    className="form-control"
+                                                    name="note"
+                                                    onChange={this.handleChange}
+                                                    rows={2}
+                                                    maxLength="1000"
+                                                />
+                                            </div>
+                                        ) : null}
                                     </div>
                                 </div>
                             </div>
-                            <div className="card-footer text-right">
-                                <div className="d-flex" style={{ justifyContent: "space-between" }}>
-                                    <a
-                                        href="javascript:void(0)"
-                                        onClick={() => {
-                                            showSwal({
-                                                type: "info",
-                                                title: "Emin misiniz?",
-                                                text: "İşlemi iptal etmek istediğinize emin misiniz?",
-                                                confirmButtonText: "Evet",
-                                                cancelButtonText: "Hayır",
-                                                cancelButtonColor: "#cd201f",
-                                                showCancelButton: true,
-                                                reverseButtons: true
-                                            }).then(result => {
-                                                if (result.value) this.props.history.push("/app/players");
-                                            });
-                                        }}
-                                        className="btn btn-link">
-                                        İptal
-                                    </a>
-                                    <div className="d-flex" style={{ alignItems: "center" }}>
-                                        <label className="custom-switch">
-                                            <input
-                                                type="checkbox"
-                                                name="addContinuously"
-                                                className="custom-switch-input"
-                                                checked={addContinuously}
-                                                onChange={this.handleCheck}
-                                            />
-                                            <span className="custom-switch-indicator" />
-                                            <span className="custom-switch-description">Sürekli ekle</span>
-                                        </label>
-                                        <span className="mx-2">
-                                            <span
-                                                className="form-help"
-                                                data-toggle="popover"
-                                                data-placement="top"
-                                                data-content='<p><b>"Sürekli Ekle"</b> aktif olduğunda; işlem tamamlandıktan sonra ekleme yapmaya devam edebilirsiniz.</p><p>Pasif olduğunda; işlem tamamlandıktan sonra <b>"Öğrenci Detay"</b> sayfasına yönlendirilirsiniz.</p>'>
-                                                ?
-                                            </span>
+                            <div className="card-footer d-flex justify-content-between align-items-center">
+                                <span className="d-inline-flex align-items-center">
+                                    <label className="custom-switch pl-0">
+                                        <input
+                                            type="checkbox"
+                                            name="addContinuously"
+                                            className="custom-switch-input"
+                                            checked={addContinuously}
+                                            onChange={this.handleCheck}
+                                        />
+                                        <span className="custom-switch-indicator" />
+                                        <span className="custom-switch-description">Sürekli ekle</span>
+                                    </label>
+                                    <span className="mx-2">
+                                        <span
+                                            className="form-help"
+                                            data-toggle="popover"
+                                            data-placement="top"
+                                            data-content='<p><b>"Sürekli Ekle"</b> aktif olduğunda; işlem tamamlandıktan sonra ekleme yapmaya devam edebilirsiniz.</p><p>Pasif olduğunda; işlem tamamlandıktan sonra <b>"Öğrenci Detay"</b> sayfasına yönlendirilirsiniz.</p>'>
+                                            ?
                                         </span>
+                                    </span>
+                                </span>
+                                <button type="submit" className={`btn btn-primary ml-auto ${loadingButton}`}>
+                                    {addContinuously ? "Ekle" : "Ekle ve Bitir"}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="col-lg-3 col-sm-12 col-md-12">
+                        <div className="card">
+                            <div className="card-header">
+                                <h3 className="card-title">Ek Bilgiler</h3>
+                            </div>
+                            <div className="card-body">
+                                <div className="row">
+                                    <div className="col-12">
                                         <button
-                                            style={{ width: 100 }}
-                                            type="submit"
-                                            className={`btn btn-primary ml-3 ${loadingButton}`}>
-                                            {addContinuously ? "Ekle" : "Ekle ve Bitir"}
+                                            name="email"
+                                            type="button"
+                                            onClick={this.handleOtherInfo}
+                                            className="btn btn-secondary btn-block">
+                                            Email
+                                        </button>
+                                        <button
+                                            name="phone"
+                                            type="button"
+                                            onClick={this.handleOtherInfo}
+                                            className="btn btn-secondary btn-block">
+                                            Telefon
+                                        </button>
+                                        <button
+                                            name="point"
+                                            type="button"
+                                            onClick={this.handleOtherInfo}
+                                            className="btn btn-secondary btn-block">
+                                            Genel Puan
+                                        </button>
+                                        <button
+                                            name="measure"
+                                            type="button"
+                                            onClick={this.handleOtherInfo}
+                                            className="btn btn-secondary btn-block">
+                                            Boy ve Kilo
+                                        </button>
+                                        <button
+                                            name="blood"
+                                            type="button"
+                                            onClick={this.handleOtherInfo}
+                                            className="btn btn-secondary btn-block">
+                                            Kan Grubu
+                                        </button>
+                                        <button
+                                            name="foot"
+                                            type="button"
+                                            onClick={this.handleOtherInfo}
+                                            className="btn btn-secondary btn-block">
+                                            Kullandığı Ayak
+                                        </button>
+                                        <button
+                                            name="foot_no"
+                                            type="button"
+                                            onClick={this.handleOtherInfo}
+                                            className="btn btn-secondary btn-block">
+                                            Ayak Numarası
+                                        </button>
+                                        <button
+                                            name="metrics"
+                                            type="button"
+                                            onClick={this.handleOtherInfo}
+                                            className="btn btn-secondary btn-block">
+                                            Vücut Ölçüleri
+                                        </button>
+                                        <button
+                                            name="note"
+                                            type="button"
+                                            onClick={this.handleOtherInfo}
+                                            className="btn btn-secondary btn-block">
+                                            Not
                                         </button>
                                     </div>
                                 </div>
