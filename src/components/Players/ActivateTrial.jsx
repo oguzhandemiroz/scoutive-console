@@ -183,13 +183,8 @@ export class ActivateTrial extends Component {
             require.formErrors = formErrors;
 
             this.setState({ parentError: false });
-            if (parents.length === 0) {
-                this.setState({ parentError: true });
-                return null;
-            }
-
             const checkBirthday = year && month && day ? `${year}-${month}-${day}` : null;
-            if (formValid(require)) {
+            if (parents.length > 0 && formValid(require)) {
                 this.setState({ loadingButton: "btn-loading" });
                 UpdatePlayer({
                     uid: uid,
@@ -275,7 +270,8 @@ export class ActivateTrial extends Component {
                         day: day ? "" : true,
                         month: month ? "" : true,
                         year: year ? "" : true
-                    }
+                    },
+                    parentError: parents.length === 0 ? true : false
                 }));
             }
         } catch (e) {}
@@ -570,7 +566,7 @@ export class ActivateTrial extends Component {
         return (
             <div className="container">
                 <div className="page-header">
-                    <h1 className="page-title">Deneme Öğrenci &mdash; Aktifleştir</h1>
+                    <h1 className="page-title">Ön Kayıt Öğrenci &mdash; Aktifleştir</h1>
                     <div className="col" />
                     <div className="col-4 text-right">
                         <Link to={`/app/players`}>

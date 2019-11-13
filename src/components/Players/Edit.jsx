@@ -187,13 +187,8 @@ export class Edit extends Component {
             require.formErrors = formErrors;
 
             this.setState({ parentError: false });
-            if (parents.length === 0) {
-                this.setState({ parentError: true });
-                return null;
-            }
-
             const checkBirthday = year && month && day ? `${year}-${month}-${day}` : null;
-            if (formValid(require)) {
+            if (parents.length >0 && formValid(require)) {
                 this.setState({ loadingButton: "btn-loading" });
                 UpdatePlayer({
                     uid: uid,
@@ -279,7 +274,8 @@ export class Edit extends Component {
                         day: day ? "" : true,
                         month: month ? "" : true,
                         year: year ? "" : true
-                    }
+                    },
+                    parentError: parents.length === 0 ? true : false
                 }));
             }
         } catch (e) {}

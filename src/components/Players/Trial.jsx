@@ -87,13 +87,7 @@ export class Trial extends Component {
 		requiredData.security_id = security_id;
 		requiredData.formErrors = formErrors;
 
-		this.setState({ parentError: false });
-		if (parents.length === 0) {
-			this.setState({ parentError: true });
-			return null;
-		}
-
-		if (formValid(requiredData)) {
+		if (parents.length > 0 && formValid(requiredData)) {
 			this.setState({ loadingButton: "btn-loading" });
 			CreateTrialPlayer({
 				uid: uid,
@@ -112,20 +106,19 @@ export class Trial extends Component {
 				}
 			});
 		} else {
-			console.error("FORM INVALID - DISPLAY ERROR");
-			let formErrors = { ...this.state.formErrors };
-
-			formErrors.name = name ? (name.length < 2 ? "is-invalid" : "") : "is-invalid";
-			formErrors.surname = surname ? (surname.length < 2 ? "is-invalid" : "") : "is-invalid";
-			formErrors.security_id = security_id
-				? security_id.length < 9
-					? "is-invalid"
-					: !securityNoRegEx.test(security_id)
-					? "is-invalid"
-					: ""
-				: "is-invalid";
-
-			this.setState({ formErrors });
+			this.setState(prevState => ({
+				formErrors: {
+					...prevState.formErrors,
+					name: name ? (name.length < 2 ? "is-invalid" : "") : "is-invalid",
+					surname: surname ? (surname.length < 2 ? "is-invalid" : "") : "is-invalid",
+					security_id: securityNoRegEx.test(security_id)
+						? security_id.length < 9
+							? "is-invalid"
+							: ""
+						: "is-invalid",
+				},
+				parentError: parents.length === 0 ? true : false
+			}));
 		}
 	};
 
@@ -163,7 +156,7 @@ export class Trial extends Component {
 		return (
 			<div className="container">
 				<div className="page-header">
-					<h1 className="page-title">Öğrenci Ekle &mdash; Deneme Öğrenci</h1>
+					<h1 className="page-title">Öğrenci Ekle &mdash; Ön Kayıt Öğrenci</h1>
 				</div>
 				<form className="row" onSubmit={this.handleSubmit}>
 					<div className="col-lg-4 col-sm-12 col-md-12">

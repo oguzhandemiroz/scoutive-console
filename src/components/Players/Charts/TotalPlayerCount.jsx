@@ -105,7 +105,7 @@ export class TotalPlayerCount extends Component {
 					active: "Aktif",
 					passive: "Pasif",
 					freeze: "Donuk",
-					trial: "Deneme"
+					trial: "Ön Kayıt"
 				}
 			},
 			...chartOptions

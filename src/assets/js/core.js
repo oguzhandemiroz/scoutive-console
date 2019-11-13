@@ -8,7 +8,7 @@ import _ from "lodash";
  * @param mixed   s: sections delimiter
  * @param mixed   c: decimal delimiter
  */
-Number.prototype.format = function(d, w, s, c) {
+Number.prototype.format = function (d, w, s, c) {
     d = 2;
     w = 3;
     s = ".";
@@ -19,9 +19,8 @@ Number.prototype.format = function(d, w, s, c) {
     return (c ? num.replace(".", c) : num).replace(new RegExp(re, "g"), "$&" + (s || ","));
 };
 
-Number.prototype.nFormatter = function(digits) {
-    var si = [
-        {
+Number.prototype.nFormatter = function (digits) {
+    var si = [{
             value: 1,
             symbol: ""
         },
@@ -60,8 +59,8 @@ Number.prototype.nFormatter = function(digits) {
     return (this / si[i].value).toFixed(digits).replace(rx, "$1") + si[i].symbol;
 };
 
-String.prototype.capitalize = function() {
-    return this.replace(/(^|\s)([a-z])/g, function(m, p1, p2) {
+String.prototype.capitalize = function () {
+    return this.replace(/(^|\s)([a-z])/g, function (m, p1, p2) {
         return p1 + p2.toLocaleUpperCase("tr-TR");
     });
 };
@@ -168,14 +167,17 @@ const selectCustomStylesError = {
 const emailRegEx = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
 const securityNoRegEx = /^\d+$/;
 
-const formValid = ({ formErrors, ...rest }) => {
+const formValid = ({
+    formErrors,
+    ...rest
+}) => {
     let valid = true;
 
-    Object.values(formErrors).forEach(val => {
+    _.values(formErrors).forEach(val => {
         val.length > 0 && (valid = false);
     });
 
-    Object.values(rest).forEach(val => {
+    _.values(rest).forEach(val => {
         val === null && (valid = false);
     });
 
@@ -184,7 +186,7 @@ const formValid = ({ formErrors, ...rest }) => {
 
 const difference = (object, base) => {
     function changes(object, base) {
-        return _.transform(object, function(result, value, key) {
+        return _.transform(object, function (result, value, key) {
             if (!_.isEqual(value, base[key])) {
                 result[key] = _.isObject(value) && _.isObject(base[key]) ? changes(value, base[key]) : value;
             }

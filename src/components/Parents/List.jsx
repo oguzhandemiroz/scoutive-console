@@ -23,7 +23,7 @@ var statusType = {
 	0: { bg: "bg-danger", title: "Pasif" },
 	1: { bg: "bg-success", title: "Aktif" },
 	2: { bg: "bg-azure", title: "Donuk" },
-	3: { bg: "bg-indigo", title: "Deneme" }
+	3: { bg: "bg-indigo", title: "Ön Kayıt" }
 };
 
 var _childNodeStore = {};
@@ -405,7 +405,7 @@ export class List extends Component {
 		if (!data.is_trial && !data.is_scholarship & (data.fee !== null)) {
 			return formatMoney(data.fee);
 		} else if (data.is_trial) {
-			return "DENEME";
+			return "ÖN KAYIT";
 		} else if (data.is_scholarship) {
 			return "BURSLU";
 		} else if (data.fee === null) {

@@ -129,7 +129,7 @@ export class FeedBack extends Component {
                                         multiple
                                         onChange={this.handleUpload}
                                     />
-                                    <label class="custom-file-label">Ek(ler) Seç...</label>
+                                    <label className="custom-file-label">Ek(ler) Seç...</label>
                                 </div>
                             </div>
                         </div>

@@ -149,7 +149,7 @@ export class ListFilter extends Component {
 													value="1"
 													onChange={this.handleCheck}
 												/>
-												<span className="custom-control-label text-purple">Deneme</span>
+												<span className="custom-control-label text-purple">Ön Kayıt</span>
 											</label>
 										</div>
 									</div>

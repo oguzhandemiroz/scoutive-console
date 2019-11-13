@@ -192,12 +192,7 @@ export class Add extends Component {
         delete require.loadingImage;
 
         this.setState({ parentError: false });
-        if (parents.length === 0) {
-            this.setState({ parentError: true });
-            return null;
-        }
-
-        if (formValid(require)) {
+        if (parents.length > 0 && formValid(require)) {
             this.setState({ loadingButton: "btn-loading" });
             const checkBirthday = year && month && day ? `${year.value}-${month.value}-${day.value}` : null;
             CreatePlayer({
@@ -285,7 +280,8 @@ export class Add extends Component {
                     day: day ? "" : true,
                     month: month ? "" : true,
                     year: year ? "" : true
-                }
+                },
+                parentError: parents.length === 0 ? true : false
             }));
         }
     };
@@ -792,7 +788,7 @@ export class Add extends Component {
                                         <label
                                             className="selectgroup-item"
                                             data-toggle="tooltip"
-                                            title="Kaydı Deneme Öğrenci">
+                                            title="Kaydı Ön Kayıt Öğrenci">
                                             <input
                                                 type="radio"
                                                 name="is_active"
@@ -801,7 +797,7 @@ export class Add extends Component {
                                                 checked={is_active === 3}
                                                 onChange={this.handleRadio}
                                             />
-                                            <span className="selectgroup-button indigo">Deneme</span>
+                                            <span className="selectgroup-button indigo">Ön Kayıt</span>
                                         </label>
                                     </div>
                                 </div>

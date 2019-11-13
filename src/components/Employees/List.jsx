@@ -26,7 +26,7 @@ var statusType = {
     0: { bg: "bg-danger", title: "Pasif" },
     1: { bg: "bg-success", title: "Aktif" },
     2: { bg: "bg-azure", title: "Donuk" },
-    3: { bg: "bg-indigo", title: "Deneme" }
+    3: { bg: "bg-indigo", title: "Ön Kayıt" }
 };
 
 class Table extends Component {

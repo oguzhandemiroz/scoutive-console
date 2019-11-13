@@ -23,7 +23,7 @@ var statusType = {
     0: { bg: "bg-danger", title: "Pasif" },
     1: { bg: "bg-success", title: "Aktif" },
     2: { bg: "bg-azure", title: "Donuk" },
-    3: { bg: "bg-indigo", title: "Deneme" }
+    3: { bg: "bg-indigo", title: "Ön Kayıt" }
 };
 
 const initialState = {
@@ -205,7 +205,7 @@ export class Detail extends Component {
                         var status = row.status;
                         var renderBg = row.is_trial ? statusType[3].bg : statusType[status].bg;
                         var renderTitle = row.is_trial
-                            ? statusType[status].title + " & Deneme Personel"
+                            ? statusType[status].title + " & Ön Kayıt Personel"
                             : statusType[status].title + " Personel";
                         return `<div class="avatar text-uppercase" style="background-image: url(${data || ""})">
 									${data ? "" : name.slice(0, 1) + surname.slice(0, 1)}

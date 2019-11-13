@@ -29,7 +29,7 @@ const statusType = {
 	0: { bg: "bg-danger", title: "Pasif" },
 	1: { bg: "bg-success", title: "Aktif" },
 	2: { bg: "bg-azure", title: "Donuk" },
-	3: { bg: "bg-indigo", title: "Deneme" }
+	3: { bg: "bg-indigo", title: "Ön Kayıt" }
 };
 
 const footType = {
@@ -357,7 +357,7 @@ class Table extends Component {
 							var status = row.status;
 							var renderBg = row.is_trial ? statusType[3].bg : statusType[status].bg;
 							var renderTitle = row.is_trial
-								? statusType[status].title + " & Deneme Öğrenci"
+								? statusType[status].title + " & Ön Kayıt Öğrenci"
 								: statusType[status].title + " Öğrenci";
 							return `<div class="avatar text-uppercase" style="background-image: url(${data || ""})">
 										${data ? "" : name.slice(0, 1) + surname.slice(0, 1)}
@@ -392,7 +392,7 @@ class Table extends Component {
 							if (!is_trial && !is_scholarship & (data !== null)) {
 								return data.format() + " ₺";
 							} else if (is_trial) {
-								return "<b>DENEME</b>";
+								return "<b>ÖN KAYIT</b>";
 							} else if (is_scholarship) {
 								return "<b>BURSLU</b>";
 							} else if (data === null) {

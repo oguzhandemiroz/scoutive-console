@@ -49,7 +49,7 @@ class Players extends Component {
 							Normal Öğrenci Ekle
 						</Link>
 						<Link to="/app/players/add/trial" className="dropdown-item">
-							Deneme Öğrenci Ekle
+							Ön Kayıt Öğrenci Ekle
 						</Link>
 					</div>
 				</div>
@@ -74,7 +74,7 @@ class Players extends Component {
 							<div className="card-header">
 								<h3 className="card-title">Tüm Öğrenciler</h3>
 							</div>
-							<div className="table-responsive player-list">
+							<div className="player-list">
 								<Table history={this.props.history} />
 							</div>
 						</div>
