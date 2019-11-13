@@ -647,11 +647,17 @@ const GetParents = () => {
                             const label = fullnameGenerator(el.name, el.surname);
                             const uid = el.uid;
                             const phone = el.phone;
+                            const email = el.email;
+                            const name = el.name;
+                            const surname = el.surname;
                             selectData.push({
                                 value: value,
                                 label: label,
                                 uid: uid,
-                                phone: phone
+                                phone: phone,
+                                email: email,
+                                name: name,
+                                surname: surname
                             });
                         });
                         return selectData.sort((a, b) => {

@@ -7,7 +7,7 @@ import {
     securityNoRegEx
 } from "../../assets/js/core";
 import { Bloods, Branchs, PlayerPositions, Groups } from "../../services/FillSelect";
-import { UploadFile, clearMoney, formatDate, fullnameGenerator, formatPhone } from "../../services/Others";
+import { UploadFile, clearMoney, formatDate, fullnameGenerator, formatPhone, formatMoney } from "../../services/Others";
 import { CreatePlayer } from "../../services/Player";
 import { showSwal } from "../../components/Alert";
 import Select, { components } from "react-select";
@@ -18,6 +18,7 @@ import ParentModal from "./ParentModal";
 import "react-datepicker/dist/react-datepicker.css";
 import tr from "date-fns/locale/tr";
 import _ from "lodash";
+import moment from "moment";
 const $ = require("jquery");
 
 registerLocale("tr", tr);
@@ -69,9 +70,17 @@ export class Add extends Component {
             security_id: null,
             branch: null,
             fee: null,
+            is_cash: true,
+            downpayment: null,
+            downpayment_date: null,
+            installment: 1,
+            installment_date: new Date(
+                moment()
+                    .add(1, "months")
+                    .startOf("month")
+            ),
             is_active: 1,
             is_trial: 0,
-            is_scholarship: 0,
             start_date: new Date(),
             birthday: null,
             end_date: null,
@@ -94,6 +103,7 @@ export class Add extends Component {
                 point: ""
             },
             show: {},
+            fee_type: false,
             loadingButton: "",
             loadingImage: "",
             addContinuously: true,
@@ -108,12 +118,14 @@ export class Add extends Component {
                 surname: $("[name=surname]"),
                 phone: $("[name=phone]"),
                 security_id: $("[name=security_id]"),
-                fee: $("[name=fee]")
+                fee: $("[name=fee]"),
+                downpayment: $("[name=downpayment]")
             };
             const onlyString = "[a-zA-Z-ğüşöçİĞÜŞÖÇı ]*";
             Inputmask({ mask: "(999) 999 9999", ...InputmaskDefaultOptions }).mask(elemArray.phone);
             Inputmask({ mask: "99999999999", ...InputmaskDefaultOptions }).mask(elemArray.security_id);
             Inputmask({ alias: "try", ...InputmaskDefaultOptions, placeholder: "0,00" }).mask(elemArray.fee);
+            Inputmask({ alias: "try", ...InputmaskDefaultOptions, placeholder: "0,00" }).mask(elemArray.downpayment);
             Inputmask({ regex: "[a-zA-ZğüşöçİĞÜŞÖÇı]*", ...InputmaskDefaultOptions }).mask(elemArray.surname);
             Inputmask({ regex: onlyString, ...InputmaskDefaultOptions }).mask(elemArray.name);
         } catch (e) {}
@@ -150,7 +162,6 @@ export class Add extends Component {
             foot,
             foot_no,
             birthday,
-            is_scholarship,
             is_active,
             note,
             body_measure,
@@ -159,15 +170,29 @@ export class Add extends Component {
             start_date,
             end_date,
             imagePreview,
-            parents
+            parents,
+            fee_type,
+            is_cash,
+            downpayment,
+            downpayment_date,
+            installment,
+            installment_date
         } = this.state;
 
         let require = { ...this.state };
         if (is_active === 1) delete require.end_date;
-        if (is_scholarship) delete require.fee;
+        if (fee_type === "scholarship") delete require.fee;
+        if (fee_type !== "onetime" || is_cash) {
+            delete require.installment;
+            delete require.installment_date;
+        }
+        delete require.show;
+        delete require.downpayment;
+        delete require.downpayment_date;
         delete require.loadingButton;
         delete require.loadingImage;
 
+        console.log(require);
         this.setState({ parentError: false });
         if (parents.length > 0 && formValid(require)) {
             this.setState({ loadingButton: "btn-loading" });
@@ -192,7 +217,7 @@ export class Add extends Component {
                 birthday: formatDate(birthday, "YYYY-MM-DD"),
                 start_date: formatDate(start_date, "YYYY-MM-DD"),
                 end_date: end_date ? formatDate(end_date, "YYYY-MM-DD") : null,
-                is_scholarship: is_scholarship ? 1 : 0,
+                is_scholarship: fee_type === "scholarship" ? 1 : 0,
                 is_active: is_active,
                 is_trial: is_active === 3 ? 1 : 0,
                 attributes: _.pickBy({
@@ -208,7 +233,7 @@ export class Add extends Component {
                     point: point,
                     group: group,
                     branch: branch,
-                    is_scholarship: is_scholarship ? 1 : 0
+                    is_scholarship: fee_type === "scholarship" ? 1 : 0
                 }),
                 parents: parents
             }).then(response => {
@@ -237,6 +262,7 @@ export class Add extends Component {
                 this.setState({ loadingButton: "" });
             });
         } else {
+            console.error("HATA");
             this.setState(prevState => ({
                 formErrors: {
                     ...prevState.formErrors,
@@ -247,11 +273,12 @@ export class Add extends Component {
                             ? "is-invalid"
                             : ""
                         : "is-invalid",
-                    fee: !is_scholarship ? (fee ? "" : "is-invalid") : "",
+                    fee: fee_type !== "scholarship" ? (fee ? "" : "is-invalid") : "",
+                    installment: !is_cash ? (installment ? "" : "is-invalid") : "",
+                    installment_date: !is_cash ? (installment_date ? "" : "is-invalid") : "",
                     birthday: birthday ? "" : "is-invalid",
                     start_date: start_date ? "" : "is-invalid",
                     end_date: is_active === 0 ? (end_date ? "" : "is-invalid") : "",
-                    position: position ? "" : true,
                     branch: branch ? "" : true
                 },
                 parentError: parents.length === 0 ? true : false
@@ -262,6 +289,7 @@ export class Add extends Component {
     handleChange = e => {
         e.preventDefault();
         const { value, name } = e.target;
+        const { fee } = this.state;
         let formErrors = { ...this.state.formErrors };
 
         switch (name) {
@@ -277,6 +305,15 @@ export class Add extends Component {
                 break;
             case "fee":
                 formErrors.fee = value ? "" : "is-invalid";
+                break;
+            case "downpayment":
+                formErrors.downpayment = value && clearMoney(value) <= clearMoney(fee) ? "" : "is-invalid";
+                break;
+            case "installment":
+                formErrors.installment = value ? "" : "is-invalid";
+                break;
+            case "installment_date":
+                formErrors.installment_date = value ? "" : "is-invalid";
                 break;
             case "email":
                 formErrors.email = value ? (emailRegEx.test(value) ? "" : "is-invalid") : "";
@@ -343,15 +380,6 @@ export class Add extends Component {
 
     handleCheck = e => {
         const { name, checked } = e.target;
-        if (name === "is_scholarship" && checked) {
-            this.setState(prevState => ({
-                formErrors: {
-                    ...prevState.formErrors,
-                    fee: ""
-                },
-                fee: null
-            }));
-        }
         this.setState({ [name]: checked });
     };
 
@@ -382,6 +410,59 @@ export class Add extends Component {
                 [name]: !toggle
             }
         }));
+    };
+
+    handleFeeType = e => {
+        const { name, value } = e.target;
+        this.setState(prevState => ({
+            formErrors: {
+                ...prevState.formErrors,
+                fee: ""
+            },
+            fee: null,
+            [name]: value
+        }));
+    };
+
+    renderFeeWarning = type => {
+        switch (type) {
+            case "onetime":
+                return (
+                    <div className="alert alert-icon alert-primary" role="alert">
+                        <i className="fa fa-money-bill-alt mr-2" aria-hidden="true"></i>
+                        <p>
+                            <b>Ödeme tipi tek ödeme olarak tanımlandı!</b>
+                        </p>
+                        <p>
+                            Tek ödeme tipi kurslar için tercih edilir. Tek ödeme tipinde peşinat girebilirsiniz ve
+                            ödemeyi taksitlendirebilirsiniz.
+                        </p>
+                        Ödemesini tamamlayan öğrenciler ödemeden muaf tutulur.
+                    </div>
+                );
+            case "monthly":
+                return (
+                    <div className="alert alert-icon alert-primary" role="alert">
+                        <i className="fa fa-calendar-alt mr-2" aria-hidden="true"></i>
+                        <p>
+                            <b>Ödeme tipi aylık olarak tanımlandı!</b>
+                        </p>
+                        Aylık ödemeler, öğrencinin okula başladığı tarih veya sabit bir tarihte alınır.
+                    </div>
+                );
+            case "scholarship":
+                return (
+                    <div className="alert alert-icon alert-primary mt-2" role="alert">
+                        <i className="fa fa-graduation-cap mr-2" aria-hidden="true"></i>
+                        <p>
+                            <b>Ödeme tipi burslu olarak tanımlandı!</b>
+                        </p>
+                        Burslu öğrenciler aidat ödemesinden muaf tutulur.
+                    </div>
+                );
+            default:
+                break;
+        }
     };
 
     reload = () => {
@@ -457,7 +538,6 @@ export class Add extends Component {
             body_measure,
             select,
             birthday,
-            is_scholarship,
             is_active,
             formErrors,
             loadingImage,
@@ -468,7 +548,13 @@ export class Add extends Component {
             loadingButton,
             show,
             parents,
-            parentError
+            parentError,
+            fee_type,
+            is_cash,
+            downpayment,
+            downpayment_date,
+            installment,
+            installment_date
         } = this.state;
         return (
             <div className="container">
@@ -576,46 +662,202 @@ export class Add extends Component {
 
                                 <div className="form-group">
                                     <label className="form-label">
-                                        Aidat<span className="form-required">*</span>
+                                        Ödeme Tipi<span className="form-required">*</span>
                                     </label>
-                                    <div className="row gutters-xs">
-                                        <div className="col">
+                                    <div className="selectgroup w-100">
+                                        <label className="selectgroup-item">
                                             <input
-                                                type="text"
-                                                className={`form-control ${formErrors.fee}`}
-                                                onChange={this.handleChange}
-                                                placeholder="Aidat"
-                                                name="fee"
-                                                disabled={is_scholarship}
-                                                value={fee || "0,00"}
+                                                type="radio"
+                                                name="fee_type"
+                                                value="onetime"
+                                                className="selectgroup-input"
+                                                checked={fee_type === "onetime" ? true : false}
+                                                onChange={this.handleFeeType}
                                             />
-                                        </div>
-                                        <div className="col-auto">
-                                            <label className="selectgroup-item" data-toggle="tooltip" title="Burslu">
-                                                <input
-                                                    type="checkbox"
-                                                    name="is_scholarship"
-                                                    checked={is_scholarship}
-                                                    className="selectgroup-input"
-                                                    onChange={this.handleCheck}
-                                                />
-                                                <span className="selectgroup-button selectgroup-button-icon">
-                                                    <i className="fa fa-user-graduate"></i>
-                                                </span>
-                                            </label>
-                                        </div>
+                                            <span className="selectgroup-button selectgroup-button-icon">
+                                                <i className="fa fa-money-bill-alt"></i>
+                                                <div className="small">Tek Ödeme</div>
+                                            </span>
+                                        </label>
+                                        <label className="selectgroup-item">
+                                            <input
+                                                type="radio"
+                                                name="fee_type"
+                                                value="monthly"
+                                                className="selectgroup-input"
+                                                checked={fee_type === "monthly" ? true : false}
+                                                onChange={this.handleFeeType}
+                                            />
+                                            <span className="selectgroup-button selectgroup-button-icon">
+                                                <i className="fa fa-calendar-alt"></i>
+                                                <div className="small">Aylık</div>
+                                            </span>
+                                        </label>
+                                        <label className="selectgroup-item">
+                                            <input
+                                                type="radio"
+                                                name="fee_type"
+                                                value="scholarship"
+                                                className="selectgroup-input"
+                                                checked={fee_type === "scholarship" ? true : false}
+                                                onChange={this.handleFeeType}
+                                            />
+                                            <span className="selectgroup-button selectgroup-button-icon">
+                                                <i className="fa fa-graduation-cap"></i>
+                                                <div className="small">Burslu</div>
+                                            </span>
+                                        </label>
                                     </div>
                                 </div>
 
-                                {is_scholarship ? (
-                                    <div className="alert alert-icon alert-primary" role="alert">
-                                        <i className="fe fe-alert-triangle mr-2" aria-hidden="true"></i>
-                                        <p>
-                                            <b>Öğrenci, burslu olarak tanımlandı!</b>
-                                        </p>
-                                        Burslu öğrenciler aidat ödemesinden muaf tutulur.
+                                <fieldset className={`form-fieldset ${fee_type === "monthly" ? "d-block" : "d-none"}`}>
+                                    <label className="form-label">
+                                        Aidat<span className="form-required">*</span>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        className={`form-control ${formErrors.fee}`}
+                                        onChange={this.handleChange}
+                                        placeholder="Aidat"
+                                        name="fee"
+                                        value={fee || "0,00"}
+                                    />
+                                </fieldset>
+
+                                <fieldset className={`form-fieldset ${fee_type === "onetime" ? "d-block" : "d-none"}`}>
+                                    <div className="form-group mb-2">
+                                        <label className="form-label">
+                                            Ödeme Tutarı<span className="form-required">*</span>
+                                        </label>
+                                        <input
+                                            type="text"
+                                            className={`form-control ${formErrors.fee}`}
+                                            onChange={this.handleChange}
+                                            placeholder="Ödeme Tutarı"
+                                            name="fee"
+                                            value={fee || "0,00"}
+                                        />
                                     </div>
-                                ) : null}
+                                    <label className="custom-control custom-checkbox custom-control-inline">
+                                        <input
+                                            type="checkbox"
+                                            className="custom-control-input"
+                                            name="is_cash"
+                                            checked={is_cash}
+                                            onChange={this.handleCheck}
+                                        />
+                                        <span className="custom-control-label">Peşin Ödendi</span>
+                                    </label>
+                                    <div className={is_cash ? "d-none" : "d-block"}>
+                                        <div className="row gutters-xs">
+                                            <div className="col-lg-6 col-md-12">
+                                                <div className="form-group">
+                                                    <label className="form-label">Peşinat</label>
+                                                    <input
+                                                        type="text"
+                                                        className={`form-control ${formErrors.downpayment}`}
+                                                        onChange={this.handleChange}
+                                                        placeholder="Aidat"
+                                                        name="downpayment"
+                                                        value={downpayment || "0,00"}
+                                                        disabled={!fee}
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="col-lg-6 col-md-12">
+                                                <div className="form-group">
+                                                    <label className="form-label">Peşinat Tarihi</label>
+                                                    <DatePicker
+                                                        autoComplete="off"
+                                                        selected={downpayment_date}
+                                                        selectsEnd
+                                                        startDate={downpayment_date}
+                                                        name="downpayment_date"
+                                                        locale="tr"
+                                                        dateFormat="dd/MM/yyyy"
+                                                        onChange={date => this.handleDate(date, "downpayment_date")}
+                                                        className={`form-control ${formErrors.downpayment_date}`}
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="row gutters-xs">
+                                            <div className="col-lg-6 col-md-12">
+                                                <div className="form-group">
+                                                    <label className="form-label">
+                                                        Taksit Sayısı<span className="form-required">*</span>
+                                                    </label>
+                                                    <input
+                                                        type="number"
+                                                        className={`form-control ${formErrors.installment}`}
+                                                        onChange={this.handleChange}
+                                                        placeholder="Taksit"
+                                                        name="installment"
+                                                        min="1"
+                                                        max="48"
+                                                        value={installment}
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="col-lg-6 col-md-12">
+                                                <div className="form-group">
+                                                    <label className="form-label">
+                                                        Taksit Başlangıç<span className="form-required">*</span>
+                                                    </label>
+                                                    <DatePicker
+                                                        autoComplete="off"
+                                                        selected={installment_date}
+                                                        selectsEnd
+                                                        startDate={installment_date}
+                                                        name="installment_date"
+                                                        locale="tr"
+                                                        dateFormat="dd/MM/yyyy"
+                                                        onChange={date => this.handleDate(date, "installment_date")}
+                                                        className={`form-control ${formErrors.installment_date}`}
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {fee ? (
+                                        <div className="alert alert-icon alert-success" role="alert">
+                                            <i className="fa fa-align-left mr-2" aria-hidden="true"></i>
+                                            <p>
+                                                <b>Ödeme Özeti</b>
+                                            </p>
+                                            <p>
+                                                <b>{formatMoney(parseFloat(fee))}</b> ödemenin,
+                                                <br />
+                                                <b>
+                                                    {is_cash
+                                                        ? formatMoney(parseFloat(fee))
+                                                        : formatMoney(parseFloat(downpayment || 0))}
+                                                </b>
+                                                'sı peşin olarak ödendi.
+                                            </p>
+                                            {is_cash ? null : (
+                                                <>
+                                                    Geriye kalan&nbsp;
+                                                    <b>{formatMoney(parseFloat(fee) - parseFloat(downpayment || 0))}</b>
+                                                    ,<br />
+                                                    <b>{formatDate(installment_date)}</b> tarihinden itibaren&nbsp;
+                                                    <b>{installment}</b>
+                                                    &nbsp;taksit olarak ayda
+                                                    <br />
+                                                    <b>
+                                                        {formatMoney(
+                                                            (parseFloat(fee) - parseFloat(downpayment || 0)) /
+                                                                parseInt(installment)
+                                                        )}
+                                                    </b>
+                                                    &nbsp; ödenecektir.
+                                                </>
+                                            )}
+                                        </div>
+                                    ) : null}
+                                </fieldset>
+
+                                {this.renderFeeWarning(fee_type)}
 
                                 <div className="form-group">
                                     <label className="form-label">
