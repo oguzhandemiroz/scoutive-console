@@ -76,7 +76,6 @@ export class ActivateTrial extends Component {
             uid: localStorage.getItem("UID"),
             to: props.match.params.uid,
             responseData: {},
-            emergency: [],
             body_measure: [],
             select: {
                 bloods: null,
@@ -112,18 +111,14 @@ export class ActivateTrial extends Component {
                 surname: $("[name=surname]"),
                 phone: $("[name=phone]"),
                 security_id: $("[name=security_id]"),
-                fee: $("[name=fee]"),
-                emergency_phone: $("[name*='emergency.phone.']"),
-                emergency_name: $("[name*='emergency.name.']")
+                fee: $("[name=fee]")
             };
             const onlyString = "[a-zA-Z-ğüşöçİĞÜŞÖÇı ]*";
             Inputmask({ mask: "(999) 999 9999", ...InputmaskDefaultOptions }).mask(elemArray.phone);
-            Inputmask({ mask: "(999) 999 9999", ...InputmaskDefaultOptions }).mask(elemArray.emergency_phone);
             Inputmask({ mask: "99999999999", ...InputmaskDefaultOptions }).mask(elemArray.security_id);
             Inputmask({ alias: "try", ...InputmaskDefaultOptions, placeholder: "0,00" }).mask(elemArray.fee);
             Inputmask({ regex: "[a-zA-ZğüşöçİĞÜŞÖÇı]*", ...InputmaskDefaultOptions }).mask(elemArray.surname);
             Inputmask({ regex: onlyString, ...InputmaskDefaultOptions }).mask(elemArray.name);
-            Inputmask({ regex: onlyString, ...InputmaskDefaultOptions }).mask(elemArray.emergency_name);
         } catch (e) {}
     };
 
@@ -160,7 +155,6 @@ export class ActivateTrial extends Component {
                 body_height,
                 fee,
                 point,
-                emergency,
                 body_measure,
                 formErrors,
                 is_scholarship,
@@ -200,7 +194,6 @@ export class ActivateTrial extends Component {
                     phone: phone,
                     gender: gender,
                     address: address,
-                    emergency: emergency,
                     point: point,
                     fee: clearMoney(fee),
                     foot: foot,
@@ -453,20 +446,7 @@ export class ActivateTrial extends Component {
                 months: Months(),
                 years: Years(true),
                 kinships: Kinship()
-            },
-            emergency: [
-                ...prevState.emergency,
-                {
-                    kinship: "Anne",
-                    name: "",
-                    phone: ""
-                },
-                {
-                    kinship: "Baba",
-                    name: "",
-                    phone: ""
-                }
-            ]
+            }
         }));
 
         body_measure_list.map(el =>
@@ -506,7 +486,6 @@ export class ActivateTrial extends Component {
                         day: getSplitBirthday.day,
                         month: getSplitBirthday.month,
                         year: getSplitBirthday.year,
-                        emergency: data.emergency,
                         start_date: data.start_date ? moment(data.start_date, "YYYY-MM-DD").toDate() : new Date()
                     };
 

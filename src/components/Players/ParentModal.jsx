@@ -110,6 +110,7 @@ export class ParentModal extends Component {
         let require = { ...this.state };
         delete require.email;
         delete require.parents;
+        delete require.parent;
         delete require.search;
         delete require.loadingButton;
 
@@ -278,79 +279,79 @@ export class ParentModal extends Component {
                                     styles={selectCustomStyles}
                                 />
                             </div>
-                            {search ? (
+                            <div className={`form-group ${search ? "d-block" : "d-none"}`}>
+                                <label className="form-label">
+                                    Veli Ara<span className="form-required">*</span>
+                                </label>
+                                <Select
+                                    value={parent}
+                                    onChange={val => this.handleSelect(val, "parent")}
+                                    options={select.parents}
+                                    name="parent"
+                                    placeholder="Ara..."
+                                    styles={selectCustomStyles}
+                                    isSearchable={true}
+                                    isDisabled={select.parents ? false : true}
+                                    isLoading={select.parents ? false : true}
+                                />
+                            </div>
+                            <div className={search ? "d-none" : "d-block"}>
                                 <div className="form-group">
-                                    <label className="form-label">
-                                        Veli Ara<span className="form-required">*</span>
-                                    </label>
-                                    <Select
-                                        value={parent}
-                                        onChange={val => this.handleSelect(val, "parent")}
-                                        options={select.parents}
-                                        name="parent"
-                                        placeholder="Ara..."
-                                        styles={selectCustomStyles}
-                                    />
+                                    <div className="row gutters-xs">
+                                        <div className="col-6">
+                                            <label className="form-label">
+                                                Adı<span className="form-required">*</span>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                name="name"
+                                                onChange={this.handleChange}
+                                                className={`form-control ${formErrors.name}`}
+                                                value={name || ""}
+                                            />
+                                        </div>
+                                        <div className="col-6">
+                                            <label className="form-label">
+                                                Soyadı<span className="form-required">*</span>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                name="surname"
+                                                onChange={this.handleChange}
+                                                className={`form-control ${formErrors.surname}`}
+                                                value={surname || ""}
+                                            />
+                                        </div>
+                                    </div>
                                 </div>
-                            ) : (
-                                <>
-                                    <div className="form-group">
-                                        <div className="row gutters-xs">
-                                            <div className="col-6">
-                                                <label className="form-label">
-                                                    Adı<span className="form-required">*</span>
-                                                </label>
-                                                <input
-                                                    type="text"
-                                                    name="name"
-                                                    onChange={this.handleChange}
-                                                    className={`form-control ${formErrors.name}`}
-                                                    value={name || ""}
-                                                />
-                                            </div>
-                                            <div className="col-6">
-                                                <label className="form-label">
-                                                    Soyadı<span className="form-required">*</span>
-                                                </label>
-                                                <input
-                                                    type="text"
-                                                    name="surname"
-                                                    onChange={this.handleChange}
-                                                    className={`form-control ${formErrors.surname}`}
-                                                    value={surname || ""}
-                                                />
-                                            </div>
-                                        </div>
-                                    </div>
 
-                                    <div className="form-group">
-                                        <div className="row gutters-xs">
-                                            <div className="col-6">
-                                                <label className="form-label">
-                                                    Telefon<span className="form-required">*</span>
-                                                </label>
-                                                <input
-                                                    type="text"
-                                                    name="phone"
-                                                    onChange={this.handleChange}
-                                                    className={`form-control ${formErrors.phone}`}
-                                                    value={phone || ""}
-                                                />
-                                            </div>
-                                            <div className="col-6">
-                                                <label className="form-label">Email</label>
-                                                <input
-                                                    type="text"
-                                                    name="email"
-                                                    onChange={this.handleChange}
-                                                    className={`form-control ${formErrors.email}`}
-                                                    value={email || ""}
-                                                />
-                                            </div>
+                                <div className="form-group">
+                                    <div className="row gutters-xs">
+                                        <div className="col-6">
+                                            <label className="form-label">
+                                                Telefon<span className="form-required">*</span>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                name="phone"
+                                                onChange={this.handleChange}
+                                                className={`form-control ${formErrors.phone}`}
+                                                value={phone || ""}
+                                            />
+                                        </div>
+                                        <div className="col-6">
+                                            <label className="form-label">Email</label>
+                                            <input
+                                                type="text"
+                                                name="email"
+                                                onChange={this.handleChange}
+                                                className={`form-control ${formErrors.email}`}
+                                                value={email || ""}
+                                            />
                                         </div>
                                     </div>
-                                </>
-                            )}
+                                </div>
+                            </div>
 
                             {parents.length > 0 ? (
                                 <>

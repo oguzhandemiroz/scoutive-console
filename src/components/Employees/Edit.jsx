@@ -406,6 +406,7 @@ export class Edit extends Component {
 		});
 
 		Branchs().then(response => {
+            if (response) {
 			this.setState(prevState => ({
 				select: {
 					...prevState.select,
@@ -413,6 +414,7 @@ export class Edit extends Component {
 				},
 				branch: response.filter(x => x.value === localStorage.getItem("sBranch"))
 			}));
+		}
 		});
 
 		Bloods().then(response => {

@@ -9,8 +9,7 @@ import {
 import { Bloods, Branchs, PlayerPositions, Groups } from "../../services/FillSelect";
 import { UploadFile, clearMoney, formatDate, fullnameGenerator, formatPhone, formatMoney } from "../../services/Others";
 import { CreatePlayer } from "../../services/Player";
-import { showSwal } from "../../components/Alert";
-import Select, { components } from "react-select";
+import Select from "react-select";
 import Inputmask from "inputmask";
 import { Link } from "react-router-dom";
 import DatePicker, { registerLocale } from "react-datepicker";
@@ -69,10 +68,11 @@ export class Add extends Component {
             surname: null,
             security_id: null,
             branch: null,
+            groups: [],
             fee: null,
             is_cash: true,
             downpayment: null,
-            downpayment_date: null,
+            downpayment_date: new Date(),
             installment: 1,
             installment_date: new Date(
                 moment()
@@ -103,7 +103,7 @@ export class Add extends Component {
                 point: ""
             },
             show: {},
-            fee_type: false,
+            payment_type: false,
             loadingButton: "",
             loadingImage: "",
             addContinuously: true,
@@ -156,7 +156,7 @@ export class Add extends Component {
             gender,
             blood,
             point,
-            group,
+            groups,
             body_height,
             body_weight,
             foot,
@@ -171,7 +171,7 @@ export class Add extends Component {
             end_date,
             imagePreview,
             parents,
-            fee_type,
+            payment_type,
             is_cash,
             downpayment,
             downpayment_date,
@@ -181,18 +181,20 @@ export class Add extends Component {
 
         let require = { ...this.state };
         if (is_active === 1) delete require.end_date;
-        if (fee_type === "scholarship") delete require.fee;
-        if (fee_type !== "onetime" || is_cash) {
+        if (payment_type === 1) delete require.fee;
+        if (payment_type !== 2 || is_cash) {
             delete require.installment;
             delete require.installment_date;
         }
+
         delete require.show;
         delete require.downpayment;
         delete require.downpayment_date;
         delete require.loadingButton;
         delete require.loadingImage;
 
-        console.log(require);
+        const feeJSON = {};
+
         this.setState({ parentError: false });
         if (parents.length > 0 && formValid(require)) {
             this.setState({ loadingButton: "btn-loading" });
@@ -205,7 +207,7 @@ export class Add extends Component {
                 position_id: position ? position.value : null,
                 branch_id: branch.value,
                 blood_id: blood ? blood.value : null,
-                group_id: group ? group.value : 1,
+                groups: _.map(groups, "value"),
                 email: email,
                 phone: phone,
                 gender: gender,
@@ -217,7 +219,7 @@ export class Add extends Component {
                 birthday: formatDate(birthday, "YYYY-MM-DD"),
                 start_date: formatDate(start_date, "YYYY-MM-DD"),
                 end_date: end_date ? formatDate(end_date, "YYYY-MM-DD") : null,
-                is_scholarship: fee_type === "scholarship" ? 1 : 0,
+                payment_type: payment_type,
                 is_active: is_active,
                 is_trial: is_active === 3 ? 1 : 0,
                 attributes: _.pickBy({
@@ -231,9 +233,7 @@ export class Add extends Component {
                     body_measure: body_measure,
                     foot_no: foot_no,
                     point: point,
-                    group: group,
-                    branch: branch,
-                    is_scholarship: fee_type === "scholarship" ? 1 : 0
+                    branch: branch
                 }),
                 parents: parents
             }).then(response => {
@@ -273,7 +273,7 @@ export class Add extends Component {
                             ? "is-invalid"
                             : ""
                         : "is-invalid",
-                    fee: fee_type !== "scholarship" ? (fee ? "" : "is-invalid") : "",
+                    fee: payment_type !== 1 ? (fee ? "" : "is-invalid") : "",
                     installment: !is_cash ? (installment ? "" : "is-invalid") : "",
                     installment_date: !is_cash ? (installment_date ? "" : "is-invalid") : "",
                     birthday: birthday ? "" : "is-invalid",
@@ -352,6 +352,7 @@ export class Add extends Component {
     };
 
     handleSelect = (value, name) => {
+        console.log(value, name);
         if (name === "branch") {
             this.setState(prevState => ({
                 select: {
@@ -420,7 +421,7 @@ export class Add extends Component {
                 fee: ""
             },
             fee: null,
-            [name]: value
+            [name]: parseInt(value)
         }));
     };
 
@@ -485,13 +486,15 @@ export class Add extends Component {
         });
 
         Branchs().then(response => {
-            this.setState(prevState => ({
-                select: {
-                    ...prevState.select,
-                    branchs: response
-                },
-                branch: response.filter(x => x.value === localStorage.getItem("sBranch"))[0] || null
-            }));
+            if (response) {
+                this.setState(prevState => ({
+                    select: {
+                        ...prevState.select,
+                        branchs: response
+                    },
+                    branch: response.filter(x => x.value === localStorage.getItem("sBranch"))[0] || null
+                }));
+            }
         });
 
         Bloods().then(response => {
@@ -533,7 +536,7 @@ export class Add extends Component {
             gender,
             blood,
             point,
-            group,
+            groups,
             foot,
             body_measure,
             select,
@@ -549,7 +552,7 @@ export class Add extends Component {
             show,
             parents,
             parentError,
-            fee_type,
+            payment_type,
             is_cash,
             downpayment,
             downpayment_date,
@@ -561,12 +564,14 @@ export class Add extends Component {
                 <div className="page-header">
                     <h1 className="page-title">Öğrenci Ekle</h1>
                 </div>
+
                 <form className="row" onSubmit={this.handleSubmit}>
                     <div className="col-lg-4 col-sm-12 col-md-12">
                         <div className="card">
                             <div className="card-header">
                                 <h3 className="card-title">Genel Bilgiler</h3>
                             </div>
+
                             <div className="card-body pt-3">
                                 <div className="row">
                                     <div className="col-auto m-auto">
@@ -668,10 +673,10 @@ export class Add extends Component {
                                         <label className="selectgroup-item">
                                             <input
                                                 type="radio"
-                                                name="fee_type"
-                                                value="onetime"
+                                                name="payment_type"
+                                                value="2"
                                                 className="selectgroup-input"
-                                                checked={fee_type === "onetime" ? true : false}
+                                                checked={payment_type === 2 ? true : false}
                                                 onChange={this.handleFeeType}
                                             />
                                             <span className="selectgroup-button selectgroup-button-icon">
@@ -682,10 +687,10 @@ export class Add extends Component {
                                         <label className="selectgroup-item">
                                             <input
                                                 type="radio"
-                                                name="fee_type"
-                                                value="monthly"
+                                                name="payment_type"
+                                                value="0"
                                                 className="selectgroup-input"
-                                                checked={fee_type === "monthly" ? true : false}
+                                                checked={payment_type === 0 ? true : false}
                                                 onChange={this.handleFeeType}
                                             />
                                             <span className="selectgroup-button selectgroup-button-icon">
@@ -696,10 +701,10 @@ export class Add extends Component {
                                         <label className="selectgroup-item">
                                             <input
                                                 type="radio"
-                                                name="fee_type"
-                                                value="scholarship"
+                                                name="payment_type"
+                                                value="1"
                                                 className="selectgroup-input"
-                                                checked={fee_type === "scholarship" ? true : false}
+                                                checked={payment_type === 1 ? true : false}
                                                 onChange={this.handleFeeType}
                                             />
                                             <span className="selectgroup-button selectgroup-button-icon">
@@ -710,7 +715,7 @@ export class Add extends Component {
                                     </div>
                                 </div>
 
-                                <fieldset className={`form-fieldset ${fee_type === "monthly" ? "d-block" : "d-none"}`}>
+                                <fieldset className={`form-fieldset ${payment_type === 0 ? "d-block" : "d-none"}`}>
                                     <label className="form-label">
                                         Aidat<span className="form-required">*</span>
                                     </label>
@@ -724,8 +729,8 @@ export class Add extends Component {
                                     />
                                 </fieldset>
 
-                                <fieldset className={`form-fieldset ${fee_type === "onetime" ? "d-block" : "d-none"}`}>
-                                    <div className="form-group mb-2">
+                                <fieldset className={`form-fieldset ${payment_type === 2 ? "d-block" : "d-none"}`}>
+                                    <div className="form-group">
                                         <label className="form-label">
                                             Ödeme Tutarı<span className="form-required">*</span>
                                         </label>
@@ -736,6 +741,20 @@ export class Add extends Component {
                                             placeholder="Ödeme Tutarı"
                                             name="fee"
                                             value={fee || "0,00"}
+                                        />
+                                    </div>
+                                    <div className={`form-group ${is_cash ? "d-block" : "d-none"} mb-2`}>
+                                        Ödeme Tarihi<span className="form-required">*</span>
+                                        <DatePicker
+                                            autoComplete="off"
+                                            selected={downpayment_date}
+                                            selectsEnd
+                                            startDate={downpayment_date}
+                                            name="downpayment_date"
+                                            locale="tr"
+                                            dateFormat="dd/MM/yyyy"
+                                            onChange={date => this.handleDate(date, "downpayment_date")}
+                                            className={`form-control ${formErrors.downpayment_date}`}
                                         />
                                     </div>
                                     <label className="custom-control custom-checkbox custom-control-inline">
@@ -857,7 +876,7 @@ export class Add extends Component {
                                     ) : null}
                                 </fieldset>
 
-                                {this.renderFeeWarning(fee_type)}
+                                {this.renderFeeWarning(payment_type)}
 
                                 <div className="form-group">
                                     <label className="form-label">
@@ -1047,10 +1066,11 @@ export class Add extends Component {
                                         <div className="form-group">
                                             <label className="form-label">Grup</label>
                                             <Select
-                                                value={group}
-                                                onChange={val => this.handleSelect(val, "group")}
+                                                value={groups}
+                                                isMulti
+                                                onChange={val => this.handleSelect(val, "groups")}
                                                 options={select.groups}
-                                                name="group"
+                                                name="groups"
                                                 placeholder="Seç..."
                                                 styles={selectCustomStyles}
                                                 isClearable={true}
@@ -1145,217 +1165,191 @@ export class Add extends Component {
                                     </div>
 
                                     <div className="col-12">
-                                        {show.email ? (
-                                            <div className="form-group">
-                                                <label className="form-label">Email</label>
-                                                <input
-                                                    type="text"
-                                                    className={`form-control ${formErrors.email}`}
-                                                    onChange={this.handleChange}
-                                                    name="email"
-                                                    placeholder="Email"
-                                                />
-                                            </div>
-                                        ) : null}
-
-                                        {show.phone ? (
-                                            <div className="form-group">
-                                                <label className="form-label">Telefonu</label>
-                                                <input
-                                                    type="text"
-                                                    className={`form-control ${formErrors.phone}`}
-                                                    onChange={this.handleChange}
-                                                    name="phone"
-                                                    placeholder="(535) 123 4567"
-                                                />
-                                            </div>
-                                        ) : null}
-
-                                        {show.point ? (
-                                            <div className="form-group">
-                                                <label className="form-label">Genel Puanı</label>
-                                                <div className="row align-items-center">
-                                                    <div className="col">
-                                                        <input
-                                                            type="range"
-                                                            className="form-control custom-range"
-                                                            step="0.1"
-                                                            min="0"
-                                                            max="5"
-                                                            name="point"
-                                                            onChange={this.handleChange}
-                                                            value={point || "0"}
-                                                        />
-                                                    </div>
-                                                    <div className="col-auto">
-                                                        <input
-                                                            type="number"
-                                                            step="0.1"
-                                                            min="0"
-                                                            max="5"
-                                                            name="point"
-                                                            className={`form-control w-8 ${formErrors.point}`}
-                                                            onChange={this.handleChange}
-                                                            value={point || "0"}
-                                                        />
-                                                    </div>
+                                        <div className={`form-group ${show.email ? "d-block" : "d-none"}`}>
+                                            <label className="form-label">Email</label>
+                                            <input
+                                                type="text"
+                                                className={`form-control ${formErrors.email}`}
+                                                onChange={this.handleChange}
+                                                name="email"
+                                                placeholder="Email"
+                                            />
+                                        </div>
+                                        <div className={`form-group ${show.phone ? "d-block" : "d-none"}`}>
+                                            <label className="form-label">Telefonu</label>
+                                            <input
+                                                type="text"
+                                                className={`form-control ${formErrors.phone}`}
+                                                onChange={this.handleChange}
+                                                name="phone"
+                                                placeholder="(535) 123 4567"
+                                            />
+                                        </div>
+                                        <div className={`form-group ${show.point ? "d-block" : "d-none"}`}>
+                                            <label className="form-label">Genel Puanı</label>
+                                            <div className="row align-items-center">
+                                                <div className="col">
+                                                    <input
+                                                        type="range"
+                                                        className="form-control custom-range"
+                                                        step="0.1"
+                                                        min="0"
+                                                        max="5"
+                                                        name="point"
+                                                        onChange={this.handleChange}
+                                                        value={point || "0"}
+                                                    />
+                                                </div>
+                                                <div className="col-auto">
+                                                    <input
+                                                        type="number"
+                                                        step="0.1"
+                                                        min="0"
+                                                        max="5"
+                                                        name="point"
+                                                        className={`form-control w-8 ${formErrors.point}`}
+                                                        onChange={this.handleChange}
+                                                        value={point || "0"}
+                                                    />
                                                 </div>
                                             </div>
-                                        ) : null}
-
-                                        {show.measure ? (
-                                            <div className="form-group">
-                                                <label className="form-label">Vücut Metrikleri (Boy & Kilo)</label>
-                                                <div className="row gutters-xs">
-                                                    <div className="col-6">
-                                                        <input
-                                                            type="number"
-                                                            className="form-control"
-                                                            onChange={this.handleChange}
-                                                            name="body_height"
-                                                            placeholder="Boy (cm)"
-                                                            min="0"
-                                                            max="250"
-                                                        />
-                                                    </div>
-                                                    <div className="col-6">
-                                                        <input
-                                                            type="number"
-                                                            className="form-control"
-                                                            onChange={this.handleChange}
-                                                            name="body_weight"
-                                                            placeholder="Kilo (kg)"
-                                                            min="0"
-                                                            max="250"
-                                                        />
-                                                    </div>
+                                        </div>
+                                        <div className={`form-group ${show.measure ? "d-block" : "d-none"}`}>
+                                            <label className="form-label">Vücut Metrikleri (Boy & Kilo)</label>
+                                            <div className="row gutters-xs">
+                                                <div className="col-6">
+                                                    <input
+                                                        type="number"
+                                                        className="form-control"
+                                                        onChange={this.handleChange}
+                                                        name="body_height"
+                                                        placeholder="Boy (cm)"
+                                                        min="0"
+                                                        max="250"
+                                                    />
+                                                </div>
+                                                <div className="col-6">
+                                                    <input
+                                                        type="number"
+                                                        className="form-control"
+                                                        onChange={this.handleChange}
+                                                        name="body_weight"
+                                                        placeholder="Kilo (kg)"
+                                                        min="0"
+                                                        max="250"
+                                                    />
                                                 </div>
                                             </div>
-                                        ) : null}
-
-                                        {show.blood ? (
-                                            <div className="form-group">
-                                                <label className="form-label">Kan Grubu</label>
-                                                <Select
-                                                    value={blood}
-                                                    onChange={val => this.handleSelect(val, "blood")}
-                                                    options={select.bloods}
-                                                    name="blood"
-                                                    placeholder="Seç..."
-                                                    styles={selectCustomStyles}
-                                                    isClearable={true}
-                                                    isSearchable={true}
-                                                    isDisabled={select.bloods ? false : true}
-                                                    isLoading={select.bloods ? false : true}
-                                                    noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
-                                                />
+                                        </div>
+                                        <div className={`form-group ${show.blood ? "d-block" : "d-none"}`}>
+                                            <label className="form-label">Kan Grubu</label>
+                                            <Select
+                                                value={blood}
+                                                onChange={val => this.handleSelect(val, "blood")}
+                                                options={select.bloods}
+                                                name="blood"
+                                                placeholder="Seç..."
+                                                styles={selectCustomStyles}
+                                                isClearable={true}
+                                                isSearchable={true}
+                                                isDisabled={select.bloods ? false : true}
+                                                isLoading={select.bloods ? false : true}
+                                                noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
+                                            />
+                                        </div>
+                                        <div className={`form-group ${show.foot ? "d-block" : "d-none"}`}>
+                                            <label className="form-label">Kullandığı Ayak</label>
+                                            <div className="custom-controls-stacked">
+                                                <label className="custom-control custom-radio custom-control-inline">
+                                                    <input
+                                                        type="radio"
+                                                        className="custom-control-input"
+                                                        name="foot"
+                                                        value="1"
+                                                        checked={foot === 1 ? true : false}
+                                                        onChange={this.handleRadio}
+                                                    />
+                                                    <span className="custom-control-label">Sağ</span>
+                                                </label>
+                                                <label className="custom-control custom-radio custom-control-inline">
+                                                    <input
+                                                        type="radio"
+                                                        className="custom-control-input"
+                                                        name="foot"
+                                                        value="2"
+                                                        checked={foot === 2 ? true : false}
+                                                        onChange={this.handleRadio}
+                                                    />
+                                                    <span className="custom-control-label">Sol</span>
+                                                </label>
+                                                <label className="custom-control custom-radio custom-control-inline">
+                                                    <input
+                                                        type="radio"
+                                                        className="custom-control-input"
+                                                        name="foot"
+                                                        value="0"
+                                                        checked={foot === 0 ? true : false}
+                                                        onChange={this.handleRadio}
+                                                    />
+                                                    <span className="custom-control-label">Sağ & Sol</span>
+                                                </label>
                                             </div>
-                                        ) : null}
-
-                                        {show.foot ? (
-                                            <div className="form-group">
-                                                <label className="form-label">Kullandığı Ayak</label>
-                                                <div className="custom-controls-stacked">
-                                                    <label className="custom-control custom-radio custom-control-inline">
-                                                        <input
-                                                            type="radio"
-                                                            className="custom-control-input"
-                                                            name="foot"
-                                                            value="1"
-                                                            checked={foot === 1 ? true : false}
-                                                            onChange={this.handleRadio}
-                                                        />
-                                                        <span className="custom-control-label">Sağ</span>
-                                                    </label>
-                                                    <label className="custom-control custom-radio custom-control-inline">
-                                                        <input
-                                                            type="radio"
-                                                            className="custom-control-input"
-                                                            name="foot"
-                                                            value="2"
-                                                            checked={foot === 2 ? true : false}
-                                                            onChange={this.handleRadio}
-                                                        />
-                                                        <span className="custom-control-label">Sol</span>
-                                                    </label>
-                                                    <label className="custom-control custom-radio custom-control-inline">
-                                                        <input
-                                                            type="radio"
-                                                            className="custom-control-input"
-                                                            name="foot"
-                                                            value="0"
-                                                            checked={foot === 0 ? true : false}
-                                                            onChange={this.handleRadio}
-                                                        />
-                                                        <span className="custom-control-label">Sağ & Sol</span>
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        ) : null}
-
-                                        {show.foot_no ? (
-                                            <div className="form-group">
-                                                <label className="form-label">Ayak Numarası</label>
-                                                <input
-                                                    type="number"
-                                                    className="form-control"
-                                                    onChange={this.handleChange}
-                                                    placeholder="Ayak Numarası"
-                                                    name="foot_no"
-                                                    min="10"
-                                                    max="50"
-                                                />
-                                            </div>
-                                        ) : null}
-
-                                        {show.metrics ? (
-                                            <div className="form-group">
-                                                <label className="form-label">Vücut Ölçüleri</label>
-                                                <table className="table mb-0">
-                                                    <thead>
-                                                        <tr>
-                                                            <th className="w-11 pl-0">Tür</th>
-                                                            <th className="pl-0">Değer</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        {body_measure.map((el, key) => {
-                                                            return (
-                                                                <tr key={key.toString()}>
-                                                                    <td className="w-11 pl-0 pr-0">
-                                                                        <div className="form-control-plaintext">
-                                                                            {el.type}:
-                                                                        </div>
-                                                                    </td>
-                                                                    <td className="pl-0">
-                                                                        <input
-                                                                            type="number"
-                                                                            name={`body_measure.value.${key}`}
-                                                                            onChange={this.handleChange}
-                                                                            className="form-control"
-                                                                            placeholder="(cm)"
-                                                                        />
-                                                                    </td>
-                                                                </tr>
-                                                            );
-                                                        })}
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        ) : null}
-
-                                        {show.note ? (
-                                            <div className="form-group">
-                                                <label className="form-label">Not</label>
-                                                <textarea
-                                                    className="form-control"
-                                                    name="note"
-                                                    onChange={this.handleChange}
-                                                    rows={2}
-                                                    maxLength="1000"
-                                                />
-                                            </div>
-                                        ) : null}
+                                        </div>
+                                        <div className={`form-group ${show.foot_no ? "d-block" : "d-none"}`}>
+                                            <label className="form-label">Ayak Numarası</label>
+                                            <input
+                                                type="number"
+                                                className="form-control"
+                                                onChange={this.handleChange}
+                                                placeholder="Ayak Numarası"
+                                                name="foot_no"
+                                                min="10"
+                                                max="50"
+                                            />
+                                        </div>
+                                        <div className={`form-group ${show.metrics ? "d-block" : "d-none"}`}>
+                                            <label className="form-label">Vücut Ölçüleri</label>
+                                            <table className="table mb-0">
+                                                <thead>
+                                                    <tr>
+                                                        <th className="w-11 pl-0">Tür</th>
+                                                        <th className="pl-0">Değer</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {body_measure.map((el, key) => {
+                                                        return (
+                                                            <tr key={key.toString()}>
+                                                                <td className="w-11 pl-0 pr-0">
+                                                                    <div className="form-control-plaintext">
+                                                                        {el.type}:
+                                                                    </div>
+                                                                </td>
+                                                                <td className="pl-0">
+                                                                    <input
+                                                                        type="number"
+                                                                        name={`body_measure.value.${key}`}
+                                                                        onChange={this.handleChange}
+                                                                        className="form-control"
+                                                                        placeholder="(cm)"
+                                                                    />
+                                                                </td>
+                                                            </tr>
+                                                        );
+                                                    })}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div className={`form-group ${show.note ? "d-block" : "d-none"}`}>
+                                            <label className="form-label">Not</label>
+                                            <textarea
+                                                className="form-control"
+                                                name="note"
+                                                onChange={this.handleChange}
+                                                rows={2}
+                                                maxLength="1000"
+                                            />
+                                        </div>
                                     </div>
                                 </div>
                             </div>
