@@ -382,8 +382,6 @@ export class Payment extends Component {
             });
         });
 
-        console.log("monthsForSelect", monthsForSelect);
-
         this.setState(prevState => ({
             month: { label: moment().format("MMMM"), value: moment().format("M") },
             select: {
