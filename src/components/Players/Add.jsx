@@ -193,7 +193,26 @@ export class Add extends Component {
         delete require.loadingButton;
         delete require.loadingImage;
 
-        const feeJSON = {};
+        let feeJSON = {
+            fee: clearMoney(fee),
+            payment_date: formatDate(downpayment_date, "YYYY-MM-DD"), //tek ödeme seçildiğinde sil
+            downpayment: clearMoney(downpayment), //aylık seçildiğinde sil
+            downpayment_date: formatDate(downpayment_date, "YYYY-MM-DD"), //aylık seçildiğinde sil
+            installment: parseInt(installment), //aylık seçildiğinde sil
+            installment_date: formatDate(installment_date, "YYYY-MM-DD"), //aylık seçildiğinde sil
+            is_cash: is_cash //aylık seçildiğinde sil
+        };
+
+        if (payment_type === 0) {
+            delete feeJSON.downpayment;
+            delete feeJSON.installment;
+            delete feeJSON.installment_date;
+            delete feeJSON.is_cash;
+        } else if (payment_type === 1) {
+            feeJSON = null;
+        } else if (payment_type === 2) {
+            delete feeJSON.payment_date;
+        }
 
         this.setState({ parentError: false });
         if (parents.length > 0 && formValid(require)) {
@@ -213,7 +232,7 @@ export class Add extends Component {
                 gender: gender,
                 address: address,
                 point: point,
-                fee: clearMoney(fee),
+                fee: feeJSON,
                 foot: foot,
                 note: note,
                 birthday: formatDate(birthday, "YYYY-MM-DD"),
@@ -224,7 +243,7 @@ export class Add extends Component {
                 is_trial: is_active === 3 ? 1 : 0,
                 attributes: _.pickBy({
                     start_date: formatDate(start_date, "YYYY-MM-DD"),
-                    fee: clearMoney(fee),
+                    fee: fee,
                     position: position,
                     email: email,
                     phone: phone,
@@ -716,17 +735,33 @@ export class Add extends Component {
                                 </div>
 
                                 <fieldset className={`form-fieldset ${payment_type === 0 ? "d-block" : "d-none"}`}>
-                                    <label className="form-label">
-                                        Aidat<span className="form-required">*</span>
-                                    </label>
-                                    <input
-                                        type="text"
-                                        className={`form-control ${formErrors.fee}`}
-                                        onChange={this.handleChange}
-                                        placeholder="Aidat"
-                                        name="fee"
-                                        value={fee || "0,00"}
-                                    />
+                                    <div className="form-group">
+                                        <label className="form-label">
+                                            Aidat<span className="form-required">*</span>
+                                        </label>
+                                        <input
+                                            type="text"
+                                            className={`form-control ${formErrors.fee}`}
+                                            onChange={this.handleChange}
+                                            placeholder="Aidat"
+                                            name="fee"
+                                            value={fee || "0,00"}
+                                        />
+                                    </div>
+                                    <div className="form-group">
+                                        Ödeme Tarihi<span className="form-required">*</span>
+                                        <DatePicker
+                                            autoComplete="off"
+                                            selected={downpayment_date}
+                                            selectsEnd
+                                            startDate={downpayment_date}
+                                            name="downpayment_date"
+                                            locale="tr"
+                                            dateFormat="dd/MM/yyyy"
+                                            onChange={date => this.handleDate(date, "downpayment_date")}
+                                            className={`form-control ${formErrors.downpayment_date}`}
+                                        />
+                                    </div>
                                 </fieldset>
 
                                 <fieldset className={`form-fieldset ${payment_type === 2 ? "d-block" : "d-none"}`}>
