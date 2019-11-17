@@ -532,3 +532,9 @@ SOCIAL COLORS
 #FABs_v2 .dropdown-header {
     font-size: 1rem !important;
 }
+
+.installment-detail .tag {
+    border-radius: 0;
+    width: 100%;
+    height: 25px;
+}

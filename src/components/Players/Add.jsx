@@ -4,7 +4,7 @@ import {
     selectCustomStylesError,
     selectCustomStyles,
     emailRegEx,
-    securityNoRegEx
+    securityNoRegEx,
 } from "../../assets/js/core";
 import { Bloods, Branchs, PlayerPositions, Groups } from "../../services/FillSelect";
 import { UploadFile, clearMoney, formatDate, fullnameGenerator, formatPhone, formatMoney } from "../../services/Others";
@@ -23,7 +23,7 @@ const $ = require("jquery");
 registerLocale("tr", tr);
 
 Inputmask.extendDefaults({
-    autoUnmask: true
+    autoUnmask: true,
 });
 
 Inputmask.extendAliases({
@@ -39,14 +39,14 @@ Inputmask.extendAliases({
         clearMaskOnLostFocus: false,
         allowMinus: false,
         allowPlus: false,
-        rightAlign: false
-    }
+        rightAlign: false,
+    },
 });
 
 const InputmaskDefaultOptions = {
     showMaskOnHover: false,
     showMaskOnFocus: false,
-    placeholder: ""
+    placeholder: "",
 };
 
 const body_measure_list = [
@@ -55,7 +55,7 @@ const body_measure_list = [
     "Kalça Ölçüsü",
     "Kol Ölçüsü",
     "Kol Uzunluğu",
-    "Bacak Uzunluğu"
+    "Bacak Uzunluğu",
 ];
 
 export class Add extends Component {
@@ -90,7 +90,7 @@ export class Add extends Component {
                 bloods: null,
                 branchs: null,
                 groups: null,
-                positions: null
+                positions: null,
             },
             formErrors: {
                 name: "",
@@ -100,14 +100,14 @@ export class Add extends Component {
                 branch: "",
                 phone: "",
                 fee: "",
-                point: ""
+                point: "",
             },
             show: {},
             payment_type: false,
             loadingButton: "",
             loadingImage: "",
             addContinuously: true,
-            parentError: false
+            parentError: false,
         };
     }
 
@@ -119,7 +119,7 @@ export class Add extends Component {
                 phone: $("[name=phone]"),
                 security_id: $("[name=security_id]"),
                 fee: $("[name=fee]"),
-                downpayment: $("[name=downpayment]")
+                downpayment: $("[name=downpayment]"),
             };
             const onlyString = "[a-zA-Z-ğüşöçİĞÜŞÖÇı ]*";
             Inputmask({ mask: "(999) 999 9999", ...InputmaskDefaultOptions }).mask(elemArray.phone);
@@ -176,7 +176,7 @@ export class Add extends Component {
             downpayment,
             downpayment_date,
             installment,
-            installment_date
+            installment_date,
         } = this.state;
 
         let require = { ...this.state };
@@ -189,7 +189,6 @@ export class Add extends Component {
 
         delete require.show;
         delete require.downpayment;
-        delete require.downpayment_date;
         delete require.loadingButton;
         delete require.loadingImage;
 
@@ -200,16 +199,17 @@ export class Add extends Component {
             downpayment_date: formatDate(downpayment_date, "YYYY-MM-DD"), //aylık seçildiğinde sil
             installment: parseInt(installment), //aylık seçildiğinde sil
             installment_date: formatDate(installment_date, "YYYY-MM-DD"), //aylık seçildiğinde sil
-            is_cash: is_cash //aylık seçildiğinde sil
+            is_cash: is_cash, //aylık seçildiğinde sil
         };
 
         if (payment_type === 0) {
             delete feeJSON.downpayment;
             delete feeJSON.installment;
+            delete feeJSON.downpayment_date;
             delete feeJSON.installment_date;
             delete feeJSON.is_cash;
         } else if (payment_type === 1) {
-            feeJSON = null;
+            feeJSON = {};
         } else if (payment_type === 2) {
             delete feeJSON.payment_date;
         }
@@ -240,7 +240,7 @@ export class Add extends Component {
                 end_date: end_date ? formatDate(end_date, "YYYY-MM-DD") : null,
                 payment_type: payment_type,
                 is_active: is_active,
-                is_trial: is_active === 3 ? 1 : 0,
+                is_trial: 0,
                 attributes: _.pickBy({
                     start_date: formatDate(start_date, "YYYY-MM-DD"),
                     fee: fee,
@@ -252,9 +252,9 @@ export class Add extends Component {
                     body_measure: body_measure,
                     foot_no: foot_no,
                     point: point,
-                    branch: branch
+                    branch: branch,
                 }),
-                parents: parents
+                parents: parents,
             }).then(response => {
                 const status = response.status;
                 const formData = new FormData();
@@ -298,9 +298,9 @@ export class Add extends Component {
                     birthday: birthday ? "" : "is-invalid",
                     start_date: start_date ? "" : "is-invalid",
                     end_date: is_active === 0 ? (end_date ? "" : "is-invalid") : "",
-                    branch: branch ? "" : true
+                    branch: branch ? "" : true,
                 },
-                parentError: parents.length === 0 ? true : false
+                parentError: parents.length === 0 ? true : false,
             }));
         }
     };
@@ -361,7 +361,7 @@ export class Add extends Component {
                 if (reader.result !== null) {
                     this.setState({
                         imagePreview: reader.result,
-                        file: file
+                        file: file,
                     });
                 }
             };
@@ -376,25 +376,25 @@ export class Add extends Component {
             this.setState(prevState => ({
                 select: {
                     ...prevState.select,
-                    positions: null
+                    positions: null,
                 },
-                position: null
+                position: null,
             }));
             PlayerPositions(value.value).then(response => {
                 this.setState(prevState => ({
                     select: {
                         ...prevState.select,
-                        positions: response
-                    }
+                        positions: response,
+                    },
                 }));
             });
         }
         this.setState(prevState => ({
             formErrors: {
                 ...prevState.formErrors,
-                [name]: value ? false : true
+                [name]: value ? false : true,
             },
-            [name]: value
+            [name]: value,
         }));
     };
 
@@ -414,9 +414,9 @@ export class Add extends Component {
         this.setState(prevState => ({
             formErrors: {
                 ...prevState.formErrors,
-                [name]: date ? "" : "is-invalid"
+                [name]: date ? "" : "is-invalid",
             },
-            [name]: date
+            [name]: date,
         }));
     };
 
@@ -427,8 +427,8 @@ export class Add extends Component {
         this.setState(prevState => ({
             show: {
                 ...prevState.show,
-                [name]: !toggle
-            }
+                [name]: !toggle,
+            },
         }));
     };
 
@@ -437,16 +437,16 @@ export class Add extends Component {
         this.setState(prevState => ({
             formErrors: {
                 ...prevState.formErrors,
-                fee: ""
+                fee: "",
             },
             fee: null,
-            [name]: parseInt(value)
+            [name]: parseInt(value),
         }));
     };
 
     renderFeeWarning = type => {
         switch (type) {
-            case "onetime":
+            case 2:
                 return (
                     <div className="alert alert-icon alert-primary" role="alert">
                         <i className="fa fa-money-bill-alt mr-2" aria-hidden="true"></i>
@@ -460,7 +460,7 @@ export class Add extends Component {
                         Ödemesini tamamlayan öğrenciler ödemeden muaf tutulur.
                     </div>
                 );
-            case "monthly":
+            case 0:
                 return (
                     <div className="alert alert-icon alert-primary" role="alert">
                         <i className="fa fa-calendar-alt mr-2" aria-hidden="true"></i>
@@ -470,7 +470,7 @@ export class Add extends Component {
                         Aylık ödemeler, öğrencinin okula başladığı tarih veya sabit bir tarihte alınır.
                     </div>
                 );
-            case "scholarship":
+            case 1:
                 return (
                     <div className="alert alert-icon alert-primary mt-2" role="alert">
                         <i className="fa fa-graduation-cap mr-2" aria-hidden="true"></i>
@@ -499,8 +499,8 @@ export class Add extends Component {
             this.setState(prevState => ({
                 select: {
                     ...prevState.select,
-                    positions: response
-                }
+                    positions: response,
+                },
             }));
         });
 
@@ -509,9 +509,9 @@ export class Add extends Component {
                 this.setState(prevState => ({
                     select: {
                         ...prevState.select,
-                        branchs: response
+                        branchs: response,
                     },
-                    branch: response.filter(x => x.value === localStorage.getItem("sBranch"))[0] || null
+                    branch: response.filter(x => x.value === localStorage.getItem("sBranch"))[0] || null,
                 }));
             }
         });
@@ -520,8 +520,8 @@ export class Add extends Component {
             this.setState(prevState => ({
                 select: {
                     ...prevState.select,
-                    bloods: response
-                }
+                    bloods: response,
+                },
             }));
         });
 
@@ -529,8 +529,8 @@ export class Add extends Component {
             this.setState(prevState => ({
                 select: {
                     ...prevState.select,
-                    groups: response
-                }
+                    groups: response,
+                },
             }));
         });
 
@@ -540,9 +540,9 @@ export class Add extends Component {
                     ...prevState.body_measure,
                     {
                         type: el,
-                        value: ""
-                    }
-                ]
+                        value: "",
+                    },
+                ],
             }))
         );
     };
@@ -576,7 +576,7 @@ export class Add extends Component {
             downpayment,
             downpayment_date,
             installment,
-            installment_date
+            installment_date,
         } = this.state;
         return (
             <div className="container">
@@ -601,7 +601,7 @@ export class Add extends Component {
                                                 border: "none",
                                                 outline: "none",
                                                 fontSize: ".875rem",
-                                                backgroundImage: `url(${imagePreview})`
+                                                backgroundImage: `url(${imagePreview})`,
                                             }}>
                                             {!imagePreview ? "Fotoğraf ekle" : ""}
                                         </label>
@@ -820,7 +820,9 @@ export class Add extends Component {
                                             </div>
                                             <div className="col-lg-6 col-md-12">
                                                 <div className="form-group">
-                                                    <label className="form-label">Peşinat Tarihi</label>
+                                                    <label className="form-label">
+                                                        Ödeme Tarihi<span className="form-required">*</span>
+                                                    </label>
                                                     <DatePicker
                                                         autoComplete="off"
                                                         selected={downpayment_date}
@@ -997,20 +999,6 @@ export class Add extends Component {
                                             />
                                             <span className="selectgroup-button azure">Donuk</span>
                                         </label>
-                                        <label
-                                            className="selectgroup-item"
-                                            data-toggle="tooltip"
-                                            title="Ön Kayıt Öğrenci">
-                                            <input
-                                                type="radio"
-                                                name="is_active"
-                                                value="3"
-                                                className="selectgroup-input"
-                                                checked={is_active === 3}
-                                                onChange={this.handleRadio}
-                                            />
-                                            <span className="selectgroup-button indigo">Ön Kayıt</span>
-                                        </label>
                                     </div>
                                 </div>
 
@@ -1046,8 +1034,8 @@ export class Add extends Component {
                                                     this.setState(prevState => ({
                                                         show: {
                                                             ...prevState.show,
-                                                            note: true
-                                                        }
+                                                            note: true,
+                                                        },
                                                     }));
                                                     $('textarea[name="note"]').focus();
                                                     $('button[name="note"]').addClass("active");
@@ -1192,7 +1180,7 @@ export class Add extends Component {
                                             assignParents={parents =>
                                                 this.setState({
                                                     parents: parents,
-                                                    parentError: parents.length > 0 ? false : true
+                                                    parentError: parents.length > 0 ? false : true,
                                                 })
                                             }
                                         />

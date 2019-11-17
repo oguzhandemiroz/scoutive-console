@@ -17289,6 +17289,10 @@ Dimmer
 	pointer-events: none;
 }
 
+.dimmer.active .dimmer-content.bussy-opacity {
+	opacity: 0.15;
+}
+
 /**
 Loader
 */

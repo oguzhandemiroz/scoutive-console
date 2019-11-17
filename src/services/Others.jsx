@@ -96,13 +96,6 @@ const formatDate = (date, format) => {
     } catch (e) {}
 };
 
-const formatMoney = (money, currency) => {
-    try {
-        if (!currency) currency = "₺";
-        return money !== null && money !== undefined ? (!isNaN(money) ? money.format() + " " + currency : money) : "—";
-    } catch (e) {}
-};
-
 const formatPhone = (phone, instead, mask) => {
     try {
         if (!mask) mask = "(999) 999 9999";
@@ -112,6 +105,19 @@ const formatPhone = (phone, instead, mask) => {
                   mask: mask
               })
             : instead;
+    } catch (e) {}
+};
+
+const formatMaskMoney = money => {
+    try {
+        return money !== null && money !== undefined ? (!isNaN(money) ? money.format() : money) : "0,00";
+    } catch (e) {}
+};
+
+const formatMoney = (money, currency) => {
+    try {
+        if (!currency) currency = "₺";
+        return money !== null && money !== undefined ? (!isNaN(money) ? money.format() + " " + currency : money) : "—";
     } catch (e) {}
 };
 
@@ -259,6 +265,7 @@ export {
     nullCheck,
     formatDate,
     formatMoney,
+    formatMaskMoney,
     formatPhone,
     fullnameGenerator,
     clearMoney,

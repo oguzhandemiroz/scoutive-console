@@ -241,7 +241,7 @@ var indexRoutes = [
 		prop: { exact: true }
 	},
 	{
-		path: "/players/payment/:uid?",
+		path: "/players/payment/fee/:uid?",
 		name: "Receive Payment",
 		component: PaymentPlayer,
 		layout: "/app"

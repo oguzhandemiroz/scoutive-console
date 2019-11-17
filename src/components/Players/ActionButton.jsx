@@ -34,8 +34,8 @@ export class ActionButton extends Component {
                 tag: "Link",
                 elementAttr: {
                     className: "dropdown-item",
-                    to: `/app/players/payment/${to}`,
-                    onClick: () => history.push(`/app/players/payment/${to}`)
+                    to: `/app/players/payment/fee/${to}`,
+                    onClick: () => history.push(`/app/players/payment/fee/${to}`)
                 },
                 childText: "Ödeme Al",
                 child: {

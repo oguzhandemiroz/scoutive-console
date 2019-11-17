@@ -8,19 +8,9 @@ import {
     difference,
     securityNoRegEx
 } from "../../assets/js/core";
-import { Branchs, PlayerPositions, Bloods, Kinship } from "../../services/FillSelect";
+import { Branchs, PlayerPositions, Bloods } from "../../services/FillSelect";
 import { DetailPlayer, UpdatePlayer } from "../../services/Player";
-import {
-    SplitBirthday,
-    getSelectValue,
-    UploadFile,
-    nullCheck,
-    formatDate,
-    formatMoney,
-    clearMoney,
-    fullnameGenerator,
-    formatPhone
-} from "../../services/Others";
+import { UploadFile, nullCheck, formatDate, formatMoney, fullnameGenerator, formatPhone } from "../../services/Others";
 import { showSwal } from "../../components/Alert";
 import Select from "react-select";
 import Inputmask from "inputmask";

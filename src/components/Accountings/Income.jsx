@@ -81,7 +81,7 @@ export class Income extends Component {
                                         (<i className="fe fe-lock mr-0" />)
                                     </span>
                                 </Link>
-                                <Link to="/app/players/payment" className="dropdown-item">
+                                <Link to="/app/players/payment/fee" className="dropdown-item">
                                     <i className="dropdown-icon fa fa-hand-holding-usd"></i> Aidat Ödemesi
                                 </Link>
                             </div>
