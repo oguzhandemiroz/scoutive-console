@@ -69,7 +69,7 @@ export class Detail extends Component {
         } else if (data.fee === null) {
             return "&mdash;";
         } else {
-            return "&mdash;";
+            return "—";
         }
     };
 
@@ -183,9 +183,13 @@ export class Detail extends Component {
                                                                             Yoklama Durumu (Bugün)
                                                                         </label>
                                                                         <div
-                                                                            className={`form-control-plaintext text-${dailyType[el.daily].color}`}>
+                                                                            className={`form-control-plaintext text-${
+                                                                                dailyType[el.daily].color
+                                                                            }`}>
                                                                             <i
-                                                                                className={`fe fe-${dailyType[el.daily].icon} mr-2`}
+                                                                                className={`fe fe-${
+                                                                                    dailyType[el.daily].icon
+                                                                                } mr-2`}
                                                                             />
                                                                             {dailyType[el.daily].text}
                                                                         </div>

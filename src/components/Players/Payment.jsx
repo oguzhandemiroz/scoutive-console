@@ -19,6 +19,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { selectCustomStyles, selectCustomStylesError, formValid } from "../../assets/js/core";
 import tr from "date-fns/locale/tr";
 import moment from "moment";
+import _ from "lodash";
 import Inputmask from "inputmask";
 const $ = require("jquery");
 
@@ -822,7 +823,7 @@ export class Payment extends Component {
     };
 
     // Tek Ödeme Ödeme Tipi
-    renderOneTime = () => {
+    renderOnetime = () => {
         const { player, select, tab, image, name, surname } = this.state;
         return (
             <div className="col-12">
@@ -866,25 +867,10 @@ export class Payment extends Component {
                             </div>
                         </div>
                         <div className="row">
-                            <div className="col-12">
-                                <div className="form-group">
-                                    <label className="form-label">Özet Taksit Ödeme Durumu</label>
-                                    <div className="installment-detail">
-                                        <span class="tag tag-dark" />
-                                        <span class="tag tag-dark" />
-                                        <span class="tag tag-dark" />
-                                        <span class="tag tag-dark" />
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="col-12">
-                                <div className="alert alert-icon alert-warning mb-0" role="alert">
-                                    <i className="fa fa-graduation-cap mr-2" aria-hidden="true"></i>
-                                    <strong className="d-block">Burslu öğrenci seçtiniz!</strong>
-                                    Burslu öğrenciler aidat ödemelerinden muaf tutulur.
-                                </div>
-                            </div>
+                            {this.renderOnetimeSummary()}
+                            {this.renderOnetimeFinalSituation()}
                         </div>
+                        {this.renderOnetimeInstallmentPlan()}
                     </div>
                 </div>
             </div>
@@ -974,7 +960,7 @@ export class Payment extends Component {
                 case 1:
                     return this.renderScholarship();
                 case 2:
-                    return this.renderOneTime();
+                    return this.renderOnetime();
                 default:
                     break;
             }
@@ -1063,6 +1049,218 @@ export class Payment extends Component {
                             )
                         ) : (
                             noRow(true)
+                        )}
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
+    // Tek Ödeme ve Özet Taksit Ödeme Durumu
+    renderOnetimeSummary = () => {
+        const { pastData } = this.state;
+        return (
+            <div className="col-lg-8 col-md-6 col-sm-12">
+                <div className="form-group">
+                    <label className="form-label">Özet Taksit Ödeme Durumu</label>
+                    <div className="installment-detail d-flex flex-row">
+                        {pastData ? (
+                            pastData
+                                .sort((a, b) => a.required_payment_date.localeCompare(b.required_payment_date))
+                                .map((el, key) => {
+                                    let tag_color = "";
+                                    const fee_type = el.fee_type;
+                                    const fee = el.fee;
+                                    const fee_id = el.fee_id;
+                                    const amount = el.amount;
+                                    const idx = pastData.filter(x => x.fee_type === 1).length === 0 ? key + 1 : key;
+                                    const type_text = fee_type === 1 ? "Peşinat" : idx + ". Taksit";
+
+                                    if (fee_type === 1) tag_color = "tag-primary";
+                                    else if (fee_type === 2 && fee === amount) tag_color = "tag-success";
+                                    else if (amount !== 0) tag_color = "tag-warning";
+
+                                    return (
+                                        <span key={fee_id.toString()} className={"tag " + tag_color}>
+                                            {type_text}
+                                        </span>
+                                    );
+                                })
+                        ) : (
+                            <span className="tag" />
+                        )}
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
+    // Tek Ödeme ve Son Durum
+    renderOnetimeFinalSituation = () => {
+        const { pastData } = this.state;
+        return (
+            <div className="col-lg-4 col-md-6 col-sm-12">
+                <div className="form-group">
+                    <label className="form-label">Son Durum</label>
+                    {pastData ? (
+                        <>
+                            <div className="text-body">
+                                <span className="status-icon bg-success" />
+                                Şimdiye kadar <strong>{formatMoney(_.sumBy(pastData, "amount"))}</strong> ödeme
+                                yapılmıştır.
+                            </div>
+                            <div className="text-body">
+                                <span className="status-icon bg-gray-lighter" />
+                                Gelecek taksit tarihi &mdash;{" "}
+                                <strong>
+                                    {formatDate(
+                                        pastData
+                                            .filter(x => x.amount === 0)
+                                            .sort((a, b) =>
+                                                a.required_payment_date.localeCompare(b.required_payment_date)
+                                            )[0].required_payment_date,
+                                        "LL"
+                                    )}
+                                </strong>
+                            </div>
+                        </>
+                    ) : (
+                        <>
+                            <div className="text-body">
+                                <span className="status-icon bg-success" />
+                                Şimdiye kadar <strong>0,00 ₺</strong> ödeme yapılmıştır.
+                            </div>
+                            <div className="text-body">
+                                <span className="status-icon bg-gray-lighter" />
+                                Gelecek taksit tarihi &mdash; <strong>00 Ocak 0000</strong>
+                            </div>
+                        </>
+                    )}
+                </div>
+            </div>
+        );
+    };
+
+    renderOnetimeInstallmentPlan = () => {
+        const { pastData } = this.state;
+        return (
+            <div className="row">
+                <div className="col-12">
+                    <div className="form-group">
+                        <label className="form-label">Taksit Planı</label>
+                        {pastData ? (
+                            <div className="row row-cards row-deck">
+                                <div className="col-lg-3">
+                                    <div className="card card-hover hover-primary">
+                                        <div className="card-status bg-primary"></div>
+                                        <div className="card-body text-center">
+                                            <div className="card-category text-muted">Peşinat Ödemesi</div>
+                                            <div className="form-group">
+                                                <label className="form-label">Tutar</label>
+                                                <div className="form-control-plaintext p-0">500,00₺</div>
+                                            </div>
+                                            <div className="form-group">
+                                                <label className="form-label">Ödenen Tutar</label>
+                                                <div className="form-control-plaintext p-0">500,00₺</div>
+                                            </div>
+                                            <div className="form-group">
+                                                <label className="form-label">Ödeme Tarihi</label>
+                                                <div className="form-control-plaintext p-0">29/12/2019</div>
+                                            </div>
+                                            <div className="form-group">
+                                                <label className="form-label">Kapsadığı Ay</label>
+                                                <div className="form-control-plaintext p-0">29/12/2019</div>
+                                            </div>
+                                        </div>
+                                        <div className="ribbon ribbon-left ribbon-bottom">
+                                            <i className="fa fa-check" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="col-lg-3">
+                                    <div className="card card-hover hover-success">
+                                        <div className="card-status bg-success"></div>
+                                        <div className="card-body text-center">
+                                            <div className="card-category text-muted">1. Taksit Ödemesi</div>
+                                            <div className="form-group">
+                                                <label className="form-label">Tutar</label>
+                                                <div className="form-control-plaintext p-0">500,00₺</div>
+                                            </div>
+                                            <div className="form-group">
+                                                <label className="form-label">Ödenen Tutar</label>
+                                                <div className="form-control-plaintext p-0">500,00₺</div>
+                                            </div>
+                                            <div className="form-group">
+                                                <label className="form-label">Ödeme Tarihi</label>
+                                                <div className="form-control-plaintext p-0">29/12/2019</div>
+                                            </div>
+                                            <div className="form-group">
+                                                <label className="form-label">Kapsadığı Ay</label>
+                                                <div className="form-control-plaintext p-0">29/12/2019</div>
+                                            </div>
+                                        </div>
+                                        <div className="ribbon bg-green ribbon-left ribbon-bottom">
+                                            <i className="fa fa-check" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="col-lg-3">
+                                    <div className="card card-hover hover-warning">
+                                        <div className="card-status bg-warning"></div>
+                                        <div className="card-body text-center">
+                                            <div className="card-category text-muted">2. Taksit Ödemesi</div>
+                                            <div className="form-group">
+                                                <label className="form-label">Tutar</label>
+                                                <div className="form-control-plaintext p-0">500,00₺</div>
+                                            </div>
+                                            <div className="form-group">
+                                                <label className="form-label">Ödenen Tutar</label>
+                                                <div className="form-control-plaintext p-0">150,00₺</div>
+                                            </div>
+                                            <div className="form-group">
+                                                <label className="form-label">Ödeme Tarihi</label>
+                                                <div className="form-control-plaintext p-0">29/12/2019</div>
+                                            </div>
+                                            <div className="form-group">
+                                                <label className="form-label">Kapsadığı Ay</label>
+                                                <div className="form-control-plaintext p-0">29/12/2019</div>
+                                            </div>
+                                        </div>
+                                        <div className="ribbon bg-green ribbon-left ribbon-bottom">Ödeme Al</div>
+                                    </div>
+                                </div>
+                                <div className="col-lg-3">
+                                    <div className="card card-hover">
+                                        <div className="card-status bg-gray-lighter"></div>
+                                        <div className="card-body text-center">
+                                            <div className="card-category text-muted">3. Taksit Ödemesi</div>
+                                            <div className="form-group">
+                                                <label className="form-label">Tutar</label>
+                                                <div className="form-control-plaintext p-0">500,00₺</div>
+                                            </div>
+                                            <div className="form-group">
+                                                <label className="form-label">Ödenen Tutar</label>
+                                                <div className="form-control-plaintext p-0">0,00₺</div>
+                                            </div>
+                                            <div className="form-group">
+                                                <label className="form-label">Ödeme Tarihi</label>
+                                                <div className="form-control-plaintext p-0">29/12/2019</div>
+                                            </div>
+                                            <div className="form-group">
+                                                <label className="form-label">Kapsadığı Ay</label>
+                                                <div className="form-control-plaintext p-0">29/12/2019</div>
+                                            </div>
+                                        </div>
+                                        <div className="ribbon bg-green ribbon-left ribbon-bottom">Ödeme Al</div>
+                                    </div>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="row row-cards row-deck">
+                                <div className="col-12">
+                                    <div className="loader"></div>
+                                </div>
+                            </div>
                         )}
                     </div>
                 </div>
