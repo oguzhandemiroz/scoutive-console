@@ -538,7 +538,8 @@ SOCIAL COLORS
     border-left: 0.5px solid #fff;
     border-radius: 0;
     width: 100%;
-    height: 25px;
+    height: 30px;
+    align-items: center;
 }
 
 .card.card-hover {
