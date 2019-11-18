@@ -478,7 +478,7 @@ export class Add extends Component {
 									}}
 									renderButton={() => (
 										<a
-											href="javascript:void(0)"
+											
 											className="icon"
 											data-toggle="dropdown"
 											aria-haspopup="true"

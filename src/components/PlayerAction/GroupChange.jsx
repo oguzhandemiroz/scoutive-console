@@ -163,7 +163,7 @@ export class GroupChange extends Component {
 							{alert ? alertMessage() : null}
 							<div className="modal-footer">
 								<a
-									href="javascript:void(0)"
+									
 									onClick={() => {
 										showSwal({
 											type: "info",

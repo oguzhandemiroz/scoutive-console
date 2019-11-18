@@ -96,7 +96,7 @@ export class Detail extends Component {
                                                             href={
                                                                 email
                                                                     ? `mailto:${nullCheck(email)}`
-                                                                    : "javascript:void(0)"
+                                                                    : ""
                                                             }>
                                                             {nullCheck(email)}
                                                         </a>
@@ -109,7 +109,7 @@ export class Detail extends Component {
                                                             href={
                                                                 phone
                                                                     ? `tel:+90${nullCheck(phone)}`
-                                                                    : "javascript:void(0)"
+                                                                    : ""
                                                             }>
                                                             {formatPhone(phone)}
                                                         </a>

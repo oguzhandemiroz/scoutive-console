@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
+import { Link, withRouter } from "react-router-dom";
 import { UnpaidPlayers } from "../../services/Report";
 import { fullnameGenerator, avatarPlaceholder } from "../../services/Others";
 import moment from "moment";
@@ -148,16 +148,16 @@ export class UnpaidPlayer extends Component {
                                                       name: fullnameGenerator(el.name, el.surname),
                                                       is_trial: 0
                                                   }}
+                                                  history={this.props.history}
                                                   dropdown={true}
                                                   renderButton={() => (
-                                                      <a
-                                                          href="javascript:void(0)"
-                                                          className="icon"
+                                                      <span
+                                                          className="icon cursor-pointer"
                                                           data-toggle="dropdown"
                                                           aria-haspopup="true"
                                                           aria-expanded="false">
                                                           <i className="fe fe-more-vertical"></i>
-                                                      </a>
+                                                      </span>
                                                   )}
                                               />
                                           </div>
@@ -181,4 +181,4 @@ export class UnpaidPlayer extends Component {
     }
 }
 
-export default UnpaidPlayer;
+export default withRouter(UnpaidPlayer);

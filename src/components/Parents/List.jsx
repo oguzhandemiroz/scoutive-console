@@ -216,7 +216,7 @@ export class List extends Component {
 												</Link>
 												<a
 													title="İşlem Menüsü"
-													href="javascript:void(0)"
+													
 													className="btn btn-icon btn-sm btn-secondary"
 													data-toggle="dropdown"
 													aria-haspopup="true"

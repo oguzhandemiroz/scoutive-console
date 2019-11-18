@@ -123,7 +123,7 @@ export class ActionButton extends Component {
                     className="dropdown-menu dropdown-menu-right"
                     aria-labelledby="parent-action"
                     x-placement="top-end">
-                    <a className="dropdown-item disabled text-azure" href="javascript:void(0)">
+                    <a className="dropdown-item disabled text-azure" >
                         <i className="dropdown-icon fa fa-user text-azure" />
                         {fullname}
                     </a>

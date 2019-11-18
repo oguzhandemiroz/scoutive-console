@@ -387,7 +387,7 @@ export class Payment extends Component {
         }));
     };
 
-    formatPaidDate = date => {
+    formatPaidDate = (date, show_day) => {
         try {
             const splitDate = date.split(",");
             const firstDate = moment(splitDate[0]);
@@ -396,7 +396,7 @@ export class Payment extends Component {
 
             return `${firstDate.format("MMMM")} ${firstDate.format("YYYY")} - ${secondDate.format(
                 "MMMM"
-            )} ${secondDate.format("YYYY")} (${diff} günlük)`;
+            )} ${secondDate.format("YYYY")} ${show_day ? "(" + diff + " günlük)" : ""}`;
         } catch (e) {}
     };
 
@@ -486,6 +486,72 @@ export class Payment extends Component {
         } catch (e) {
             console.log(e);
         }
+    };
+
+    payInstallment = data => {
+        if (data.fee === data.amount) return null;
+        const { uid, to, fee, label, payment_type, budget } = this.state;
+        if (fee === null) {
+            Toast.fire({
+                type: "error",
+                title: "Tanımsız ödeme bilgisi..."
+            });
+            return null;
+        }
+        showSwal({
+            type: "question",
+            title: "Taksit Ödemesi",
+            html: `<strong>${label}</strong> adlı öğrencinin, <strong>${formatMoney(
+                data.fee
+            )} </strong> tutarında taksit ödemesi yapılacaktır.<hr>Ne kadarını ödemek istiyorsunuz?`,
+            input: "number",
+            inputValue: data.fee,
+            inputAttributes: {
+                min: 0,
+                max: data.fee
+            },
+            inputValidator: value => {
+                return new Promise(resolve => {
+                    if (value > 0 && value <= data.fee) {
+                        showSwal({
+                            type: "info",
+                            title: "Bilgi",
+                            html: `<b>${label}</b> adlı öğrencinin, <strong>${formatMoney(
+                                data.fee
+                            )} </strong> tutarındaki taksidi için toplamda <strong>${formatMoney(
+                                parseFloat(value)
+                            )} </strong> ödeme yapılacaktır.<br><strong>${
+                                budget.label
+                            }</strong> adlı kasa hesabına yatırılacaktır.<br>Onaylıyor musunuz?`,
+                            confirmButtonText: "Onaylıyorum",
+                            cancelButtonText: "İptal",
+                            confirmButtonColor: "#467fcf",
+                            cancelButtonColor: "#868e96",
+                            showCancelButton: true,
+                            reverseButtons: true
+                        }).then(re => {
+                            if (re.value) {
+                                UpdatePaymentFee({
+                                    uid: uid,
+                                    to: to,
+                                    fee_id: data.fee_id,
+                                    amount: clearMoney(value),
+                                    paid_date: moment().format("YYYY-MM-DD"),
+                                    payment_type: payment_type,
+                                    budget_id: budget.value
+                                }).then(response => {
+                                    if (response) {
+                                        console.log(response);
+                                    }
+                                });
+                            }
+                        });
+                    } else {
+                        resolve("Hatalı değer!");
+                    }
+                });
+            }
+        });
     };
 
     // Aylık Ödeme Tipi
@@ -841,7 +907,7 @@ export class Payment extends Component {
                                     style={{
                                         backgroundImage: `url(${image})`
                                     }}>
-                                    {avatarPlaceholder(name, surname)}
+                                    {image ? null : avatarPlaceholder(name, surname)}
                                 </span>
                             </div>
                             <div className="col">
@@ -1000,7 +1066,7 @@ export class Payment extends Component {
                                                         </strong>
                                                         &nbsp;borcu kaldı.
                                                         <div className="small text-muted">
-                                                            {this.formatPaidDate(el.month)}
+                                                            {this.formatPaidDate(el.month, true)}
                                                         </div>
                                                     </div>
                                                     <div className="timeline-time">
@@ -1025,7 +1091,7 @@ export class Payment extends Component {
                                                         <strong>{formatMoney(el.amount)}</strong>
                                                         &nbsp;ödendi
                                                         <div className="small text-muted">
-                                                            {this.formatPaidDate(el.month)}
+                                                            {this.formatPaidDate(el.month, true)}
                                                         </div>
                                                     </div>
                                                     <div className="timeline-time">
@@ -1064,7 +1130,7 @@ export class Payment extends Component {
                 <div className="form-group">
                     <label className="form-label">Özet Taksit Ödeme Durumu</label>
                     <div className="installment-detail d-flex flex-row">
-                        {pastData ? (
+                        {pastData && pastData.length > 0 ? (
                             pastData
                                 .sort((a, b) => a.required_payment_date.localeCompare(b.required_payment_date))
                                 .map((el, key) => {
@@ -1102,7 +1168,7 @@ export class Payment extends Component {
             <div className="col-lg-4 col-md-6 col-sm-12">
                 <div className="form-group">
                     <label className="form-label">Son Durum</label>
-                    {pastData ? (
+                    {pastData && pastData.length > 0 ? (
                         <>
                             <div className="text-body">
                                 <span className="status-icon bg-success" />
@@ -1150,110 +1216,76 @@ export class Payment extends Component {
                         <label className="form-label">Taksit Planı</label>
                         {pastData ? (
                             <div className="row row-cards row-deck">
-                                <div className="col-lg-3">
-                                    <div className="card card-hover hover-primary">
-                                        <div className="card-status bg-primary"></div>
-                                        <div className="card-body text-center">
-                                            <div className="card-category text-muted">Peşinat Ödemesi</div>
-                                            <div className="form-group">
-                                                <label className="form-label">Tutar</label>
-                                                <div className="form-control-plaintext p-0">500,00₺</div>
+                                {pastData
+                                    .sort((a, b) => a.required_payment_date.localeCompare(b.required_payment_date))
+                                    .map((el, key) => {
+                                        const fee_type = el.fee_type;
+                                        const fee = el.fee;
+                                        const amount = el.amount;
+                                        const month = el.month;
+                                        const required_payment_date = el.required_payment_date;
+                                        const idx = pastData.filter(x => x.fee_type === 1).length === 0 ? key + 1 : key;
+                                        const type_text = fee_type === 1 ? "Peşinat" : idx + ". Taksit";
+
+                                        let status_type = "bg-gray-lighter";
+                                        let ribbon_type = "bg-success";
+                                        let status_hover = "";
+
+                                        if (fee_type === 1) {
+                                            status_type = "bg-primary";
+                                            ribbon_type = "bg-primary";
+                                            status_hover = "hover-primary";
+                                        } else if (fee === amount) {
+                                            status_type = "bg-success";
+                                            status_hover = "hover-success";
+                                        } else if (amount > 0) {
+                                            status_type = "bg-warning";
+                                            status_hover = "hover-warning";
+                                        }
+
+                                        return (
+                                            <div className="col-lg-3 col-md-4 col-sm-6">
+                                                <div className={"card card-hover " + status_hover}>
+                                                    <div className={"card-status " + status_type} />
+                                                    <div className="card-body text-center">
+                                                        <div className="card-category text-muted">
+                                                            <div>{type_text + " Ödemesi"}</div>
+                                                            <div className="text-muted small">
+                                                                {fee_type === 1
+                                                                    ? formatDate(required_payment_date, "MMMM YYYY")
+                                                                    : this.formatPaidDate(month)}
+                                                            </div>
+                                                        </div>
+                                                        <div className="form-group">
+                                                            <label className="form-label">Tutar</label>
+                                                            <div className="form-control-plaintext p-0">
+                                                                {formatMoney(fee)}
+                                                            </div>
+                                                        </div>
+                                                        <div className="form-group">
+                                                            <label className="form-label">Ödenen Tutar</label>
+                                                            <div className="form-control-plaintext p-0">
+                                                                {formatMoney(amount)}
+                                                            </div>
+                                                        </div>
+                                                        <div className="form-group">
+                                                            <label className="form-label">Ödeme Tarihi</label>
+                                                            <div className="form-control-plaintext p-0">
+                                                                {formatDate(required_payment_date, "LL")}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div
+                                                        onClick={() => this.payInstallment(el)}
+                                                        className={"ribbon ribbon-left ribbon-bottom " + ribbon_type}
+                                                        data-toggle="tooltip"
+                                                        title={fee === amount ? "Ödeme Alındı" : "Ödeme Al"}>
+                                                        <i className={`fa fa-${fee === amount ? "check" : "plus"}`} />
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <div className="form-group">
-                                                <label className="form-label">Ödenen Tutar</label>
-                                                <div className="form-control-plaintext p-0">500,00₺</div>
-                                            </div>
-                                            <div className="form-group">
-                                                <label className="form-label">Ödeme Tarihi</label>
-                                                <div className="form-control-plaintext p-0">29/12/2019</div>
-                                            </div>
-                                            <div className="form-group">
-                                                <label className="form-label">Kapsadığı Ay</label>
-                                                <div className="form-control-plaintext p-0">29/12/2019</div>
-                                            </div>
-                                        </div>
-                                        <div className="ribbon ribbon-left ribbon-bottom">
-                                            <i className="fa fa-check" />
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="col-lg-3">
-                                    <div className="card card-hover hover-success">
-                                        <div className="card-status bg-success"></div>
-                                        <div className="card-body text-center">
-                                            <div className="card-category text-muted">1. Taksit Ödemesi</div>
-                                            <div className="form-group">
-                                                <label className="form-label">Tutar</label>
-                                                <div className="form-control-plaintext p-0">500,00₺</div>
-                                            </div>
-                                            <div className="form-group">
-                                                <label className="form-label">Ödenen Tutar</label>
-                                                <div className="form-control-plaintext p-0">500,00₺</div>
-                                            </div>
-                                            <div className="form-group">
-                                                <label className="form-label">Ödeme Tarihi</label>
-                                                <div className="form-control-plaintext p-0">29/12/2019</div>
-                                            </div>
-                                            <div className="form-group">
-                                                <label className="form-label">Kapsadığı Ay</label>
-                                                <div className="form-control-plaintext p-0">29/12/2019</div>
-                                            </div>
-                                        </div>
-                                        <div className="ribbon bg-green ribbon-left ribbon-bottom">
-                                            <i className="fa fa-check" />
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="col-lg-3">
-                                    <div className="card card-hover hover-warning">
-                                        <div className="card-status bg-warning"></div>
-                                        <div className="card-body text-center">
-                                            <div className="card-category text-muted">2. Taksit Ödemesi</div>
-                                            <div className="form-group">
-                                                <label className="form-label">Tutar</label>
-                                                <div className="form-control-plaintext p-0">500,00₺</div>
-                                            </div>
-                                            <div className="form-group">
-                                                <label className="form-label">Ödenen Tutar</label>
-                                                <div className="form-control-plaintext p-0">150,00₺</div>
-                                            </div>
-                                            <div className="form-group">
-                                                <label className="form-label">Ödeme Tarihi</label>
-                                                <div className="form-control-plaintext p-0">29/12/2019</div>
-                                            </div>
-                                            <div className="form-group">
-                                                <label className="form-label">Kapsadığı Ay</label>
-                                                <div className="form-control-plaintext p-0">29/12/2019</div>
-                                            </div>
-                                        </div>
-                                        <div className="ribbon bg-green ribbon-left ribbon-bottom">Ödeme Al</div>
-                                    </div>
-                                </div>
-                                <div className="col-lg-3">
-                                    <div className="card card-hover">
-                                        <div className="card-status bg-gray-lighter"></div>
-                                        <div className="card-body text-center">
-                                            <div className="card-category text-muted">3. Taksit Ödemesi</div>
-                                            <div className="form-group">
-                                                <label className="form-label">Tutar</label>
-                                                <div className="form-control-plaintext p-0">500,00₺</div>
-                                            </div>
-                                            <div className="form-group">
-                                                <label className="form-label">Ödenen Tutar</label>
-                                                <div className="form-control-plaintext p-0">0,00₺</div>
-                                            </div>
-                                            <div className="form-group">
-                                                <label className="form-label">Ödeme Tarihi</label>
-                                                <div className="form-control-plaintext p-0">29/12/2019</div>
-                                            </div>
-                                            <div className="form-group">
-                                                <label className="form-label">Kapsadığı Ay</label>
-                                                <div className="form-control-plaintext p-0">29/12/2019</div>
-                                            </div>
-                                        </div>
-                                        <div className="ribbon bg-green ribbon-left ribbon-bottom">Ödeme Al</div>
-                                    </div>
-                                </div>
+                                        );
+                                    })}
                             </div>
                         ) : (
                             <div className="row row-cards row-deck">

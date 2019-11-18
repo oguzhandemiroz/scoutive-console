@@ -627,7 +627,7 @@ export class Edit extends Component {
                             <div className="card-footer">
                                 <div className="d-flex" style={{ justifyContent: "space-between" }}>
                                     <a
-                                        href="javascript:void(0)"
+                                        
                                         onClick={() => {
                                             showSwal({
                                                 type: "info",

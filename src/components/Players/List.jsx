@@ -41,7 +41,7 @@ const footType = {
 const filteredList = () => {
     if (!document.getElementById("clearFilter")) {
         $("div.filterTools").append(
-            `<a href="javascript:void(0)" id="clearFilter" class="btn btn-link text-truncate">Filtreyi temizle</a>`
+            `<a  id="clearFilter" class="btn btn-link text-truncate">Filtreyi temizle</a>`
         );
 
         $(".filterTools #clearFilter").on("click", function() {
@@ -347,7 +347,7 @@ class Table extends Component {
                                                 </Link>
                                                 <a
                                                     title="İşlem Menüsü"
-                                                    href="javascript:void(0)"
+                                                    
                                                     className="btn btn-icon btn-sm btn-secondary"
                                                     data-toggle="dropdown"
                                                     aria-haspopup="true"

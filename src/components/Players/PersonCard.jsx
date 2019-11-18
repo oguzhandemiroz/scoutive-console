@@ -60,7 +60,7 @@ export class PersonCard extends Component {
                                                     href={
                                                         data.email
                                                             ? `mailto:${nullCheck(data.email)}`
-                                                            : "javascript:void(0)"
+                                                            : ""
                                                     }
                                                     data-original-title={nullCheck(data.email)}
                                                     data-toggle="tooltip">
@@ -73,7 +73,7 @@ export class PersonCard extends Component {
                                                     href={
                                                         data.phone
                                                             ? `tel:+90${nullCheck(data.phone)}`
-                                                            : "javascript:void(0)"
+                                                            : ""
                                                     }
                                                     data-original-title={formatPhone(data.phone)}
                                                     data-toggle="tooltip">
@@ -169,7 +169,7 @@ export class PersonCard extends Component {
                                         Düzenle
                                     </Link>
                                     <a
-                                        href="javascript:void(0)"
+                                        
                                         className="btn btn-icon btn-dark btn-block"
                                         data-toggle="dropdown"
                                         aria-haspopup="true"
