@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { ListAccountingRecords } from "../../services/Accounting";
+import Chart from "react-apexcharts";
 import "jquery";
 import c3 from "c3";
 import * as d3 from "d3";
@@ -51,6 +52,79 @@ const chartOptions = {
     }
 };
 
+const chartOptionsChart = {
+    optionsMixedChart: {
+        chart: {
+            id: "basic-bar",
+            toolbar: {
+                show: false
+            }
+        },
+        stroke: {
+            width: 2
+        },
+        xaxis: {
+            categories: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+        },
+        colors: [sc.colors["green"], sc.colors["red"]],
+        grid: {
+            strokeDashArray: 5,
+            borderColor: "#f0f0f0",
+            position: "back"
+        },
+        markers: {
+            size: 4,
+            strokeWidth: 2,
+            fillOpacity: 0,
+            strokeOpacity: 0,
+            hover: {
+                size: 6
+            }
+        },
+        yaxis: {
+            show: false
+        },
+        xaxis: {
+            type: "category"
+        },
+        legend: {
+            position: "top",
+            horizontalAlign: "left",
+            floating: true,
+            offsetX: 1,
+            offsetY: 20
+        }
+    },
+    seriesMixedChart: [
+        {
+            name: "Gelir",
+            data: [
+                {
+                    x: "19 Ekim",
+                    y: 15
+                },
+                {
+                    x: "20 Ekim",
+                    y: 35
+                }
+            ]
+        },
+        {
+            name: "Gider",
+            data: [
+                {
+                    x: "19 Ekim",
+                    y: -3
+                },
+                {
+                    x: "20 Ekim",
+                    y: -66
+                }
+            ]
+        }
+    ]
+};
+
 export class AccountingChart extends Component {
     constructor(props) {
         super(props);
@@ -58,7 +132,7 @@ export class AccountingChart extends Component {
         this.state = {
             uid: localStorage.getItem("UID"),
             list: null,
-            error: false
+            error: true
         };
     }
 
@@ -87,6 +161,7 @@ export class AccountingChart extends Component {
     };
 
     renderChart = data => {
+        console.log(data);
         try {
             c3.generate({
                 bindto: "#general-stacked-report", // id of chart wrapper
@@ -117,6 +192,20 @@ export class AccountingChart extends Component {
 
     listAccountingRecord = () => {
         const { uid } = this.state;
+        let data_income_template = {
+            name: "Gelir",
+            data: [
+                {
+                    x: "19 Ekim",
+                    y: 15
+                },
+                {
+                    x: "20 Ekim",
+                    y: 35
+                }
+            ]
+        };
+
         ListAccountingRecords({
             uid: uid,
             filter: {
@@ -133,10 +222,51 @@ export class AccountingChart extends Component {
                 const status = response.status;
                 if (status.code === 1020) {
                     const data = response.data;
-                    const grouped = _(data)
+                    const generated_data = [
+                        {
+                            name: "Gelir",
+                            data: [
+                                ..._(data)
+                                    .groupBy("payment_date")
+                                    .map((objs, key) => {
+                                        return {
+                                            x: moment(key).format("DD MMMM, ddd"),
+                                            y: _.sumBy(
+                                                _(objs)
+                                                    .filter(x => x.type === 1)
+                                                    .value(),
+                                                "amount"
+                                            )
+                                        };
+                                    })
+                                    .value()
+                            ]
+                        },
+                        {
+                            name: "Gider",
+                            data: [
+                                ..._(data)
+                                    .groupBy("payment_date")
+                                    .map((objs, key) => {
+                                        return {
+                                            x: moment(key).format("DD MMMM, ddd"),
+                                            y:
+                                                _.sumBy(
+                                                    _(objs)
+                                                        .filter(x => x.type === 0)
+                                                        .value(),
+                                                    "amount"
+                                                ) * -1
+                                        };
+                                    })
+                                    .value()
+                            ]
+                        }
+                    ];
+                    console.log(generated_data);
+                    /* const grouped = _(data)
                         .groupBy("payment_date")
                         .map((objs, key) => {
-                            console.log(key);
                             return {
                                 payment_date: moment(key).format("DD MMMM, ddd"),
                                 incomeAmount: _.sumBy(
@@ -154,19 +284,19 @@ export class AccountingChart extends Component {
                                     ) * -1
                             };
                         })
-                        .value();
+                        .value(); */
 
                     this.getDays();
-                    this.setState({ list: grouped });
+                    //this.setState({ list: grouped });
 
-                    this.renderChart(
+                    /*this.renderChart(
                         _.sortBy(
                             _.values(
                                 _.merge(_.keyBy(this.getDays(), "payment_date"), _.keyBy(grouped, "payment_date"))
                             ),
                             "payment_date"
                         )
-                    );
+                    );*/
                 }
             }
         });
@@ -181,13 +311,12 @@ export class AccountingChart extends Component {
                         <h3 className="card-title">Bu Haftanın Gelir/Gider Grafiği</h3>
                     </div>
                     <div className="card-body p-0">
-                        <div id="general-stacked-report">
-                            {error ? (
-                                <div className="text-center p-5 text-muted font-italic">
-                                    Bir hata oluştu. Üzerinde çalışıyoruz. Lütfen daha sonra tekrar deneyin...
-                                </div>
-                            ) : null}
-                        </div>
+                        <Chart
+                            options={chartOptionsChart.optionsMixedChart}
+                            series={chartOptionsChart.seriesMixedChart}
+                            type="line"
+                            height="320"
+                        />
                     </div>
                 </div>
             </div>

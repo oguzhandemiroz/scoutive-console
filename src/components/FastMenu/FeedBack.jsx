@@ -38,7 +38,6 @@ export class FeedBack extends Component {
 
     componentDidMount() {
         const { type } = this.props;
-        console.log("componentDidMount ", type);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -47,7 +46,6 @@ export class FeedBack extends Component {
             this.getServices();
             this.setState({ type: type });
         }
-        console.log("componentWillReceiveProps ", type);
     }
 
     handleUpload = e => {
