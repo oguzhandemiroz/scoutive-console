@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { ListPlayers } from "../../services/Player";
 import Tabs from "./PaymentTabs";
-import { CreatePaymentFee, UpdatePaymentFee, ListFees } from "../../services/PlayerAction";
+import { CreatePaymentFee, UpdatePaymentFee, ListFees, DeletePaymentFee } from "../../services/PlayerAction";
 import { GetBudgets } from "../../services/FillSelect";
 import {
     fullnameGenerator,
@@ -169,7 +169,6 @@ export class Payment extends Component {
                 uid,
                 to,
                 fee,
-                necessary_fee,
                 paid_date,
                 period,
                 month,
@@ -197,7 +196,7 @@ export class Payment extends Component {
                         CreatePaymentFee({
                             uid: uid,
                             to: value,
-                            fee: clearMoney(fee),
+                            fee: clearMoney(fee) * parseInt(period),
                             amount: clearMoney(amount),
                             required_payment_date: moment(required_payment_date)
                                 .month(parseInt(month.value) - 1)
@@ -325,8 +324,7 @@ export class Payment extends Component {
                                 players: players
                             },
                             player: thisplayer[0],
-                            ...thisplayer[0],
-                            necessary_fee: to ? thisplayer[0].fee : null
+                            ...thisplayer[0]
                         }));
                     }
                 }
@@ -466,16 +464,52 @@ export class Payment extends Component {
         });
     };
 
+    deleteFee = data => {
+        const { uid, to, fee, label, payment_type, budget } = this.state;
+        if (fee === null) {
+            Toast.fire({
+                type: "error",
+                title: "Tanımsız ödeme bilgisi..."
+            });
+            return null;
+        }
+        showSwal({
+            type: "warning",
+            title: "Ödeme İptali",
+            html: `<strong>${label}</strong> adlı öğrencinin, <strong>${this.formatPaidDate(
+                data.month
+            )}</strong> tarihleri arasındaki ödemesi silinecektir.<br>Onaylıyor musunuz?`,
+            confirmButtonText: "Onaylıyorum",
+            cancelButtonText: "İptal",
+            confirmButtonColor: "#cd201f",
+            cancelButtonColor: "#868e96",
+            showCancelButton: true,
+            reverseButtons: true
+        }).then(re => {
+            if (re.value) {
+                DeletePaymentFee({
+                    uid: uid,
+                    to: to,
+                    fee_id: data.fee_id
+                }).then(response => {
+                    if (response) {
+                        this.listPastPayment(to);
+                    }
+                });
+            }
+        });
+    };
+
     feePaymentAlert = () => {
         try {
-            const { label, fee } = this.state;
+            const { label, amount, period } = this.state;
             return showSwal({
                 type: "warning",
                 title: "Uyarı",
                 html: `Aidat ödemesi yapmadan önce <b>Geçmiş İşlemler</b>'i kontrol et. 
 					Tamamlanmamış ödeme var ise yeni bir ödeme <u>alınmayacaktır.</u> Ödemeleri tamamladıktan sonra devam edebilirsin.
 					<hr>
-					<b>${label}</b> adlı öğrencinin <b>${formatMoney(fee)}</b> ödemesi alınacaktır.`,
+					<b>${label}</b> adlı öğrencinin <b>${formatMoney(amount)}</b> ödemesi alınacaktır.`,
                 confirmButtonText: "Devam et",
                 cancelButtonText: "Kontrol et",
                 confirmButtonColor: "#cd201f",
@@ -490,7 +524,7 @@ export class Payment extends Component {
 
     payInstallment = data => {
         if (data.fee_type === 1 || data.amount >= data.fee) return null;
-        const { uid, to, fee, label, payment_type, budget } = this.state;
+        const { uid, to, fee, label, payment_type, budget, period } = this.state;
         if (fee === null) {
             Toast.fire({
                 type: "error",
@@ -499,7 +533,7 @@ export class Payment extends Component {
             return null;
         }
 
-        const totalDept = parseFloat((data.fee - data.amount).toFixed(2));
+        const totalDept = parseFloat((data.fee * parseInt(period) - data.amount).toFixed(2));
         showSwal({
             type: "question",
             title: "Taksit Ödemesi",
@@ -1083,7 +1117,7 @@ export class Payment extends Component {
                                                             data-title="Ödemeyi Tamamla"
                                                             className="fa fa-plus-circle text-primary cursor-pointer product-price"></i>
                                                         <i
-                                                            onClick={() => console.log("iptal")}
+                                                            onClick={() => this.deleteFee(el)}
                                                             data-toggle="tooltip"
                                                             data-title="Ödemeyi İptal Et"
                                                             className="fa fa-times-circle text-danger ml-1 cursor-pointer product-price"></i>
@@ -1107,7 +1141,7 @@ export class Payment extends Component {
                                                             data-title="Ödeme Başarılı"
                                                             className="fa fa-check-circle text-success product-price"></i>
                                                         <i
-                                                            onClick={() => console.log("iptal")}
+                                                            onClick={() => this.deleteFee(el)}
                                                             data-toggle="tooltip"
                                                             data-title="Ödemeyi İptal Et"
                                                             className="fa fa-times-circle text-danger ml-1 cursor-pointer product-price"></i>
