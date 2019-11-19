@@ -195,7 +195,7 @@ export class Add extends Component {
         let feeJSON = {
             fee: clearMoney(fee),
             payment_date: formatDate(downpayment_date, "YYYY-MM-DD"), //tek ödeme seçildiğinde sil
-            downpayment: clearMoney(downpayment), //aylık seçildiğinde sil
+            downpayment: is_cash ? clearMoney(fee) : clearMoney(downpayment), //aylık seçildiğinde sil
             downpayment_date: formatDate(downpayment_date, "YYYY-MM-DD"), //aylık seçildiğinde sil
             installment: parseInt(installment), //aylık seçildiğinde sil
             installment_date: formatDate(installment_date, "YYYY-MM-DD"), //aylık seçildiğinde sil

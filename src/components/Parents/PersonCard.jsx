@@ -26,11 +26,7 @@ export class PersonCard extends Component {
                                             <li className="list-inline-item">
                                                 <a
                                                     className="employee_email"
-                                                    href={
-                                                        data.email
-                                                            ? `mailto:${nullCheck(data.email)}`
-                                                            : ""
-                                                    }
+                                                    href={data.email ? `mailto:${nullCheck(data.email)}` : ""}
                                                     data-original-title={nullCheck(data.email)}
                                                     data-toggle="tooltip">
                                                     <i className="fa fa-envelope" />
@@ -39,11 +35,7 @@ export class PersonCard extends Component {
                                             <li className="list-inline-item">
                                                 <a
                                                     className="employee_phone"
-                                                    href={
-                                                        data.phone
-                                                            ? `tel:+90${nullCheck(data.phone)}`
-                                                            : ""
-                                                    }
+                                                    href={data.phone ? `tel:+90${nullCheck(data.phone)}` : ""}
                                                     data-original-title={formatPhone(data.phone)}
                                                     data-toggle="tooltip">
                                                     <i className="fa fa-phone" />
@@ -95,14 +87,13 @@ export class PersonCard extends Component {
                                         <i className="fe fe-edit mr-2" />
                                         Düzenle
                                     </Link>
-                                    <a
-                                        
+                                    <button
                                         className="btn btn-icon btn-dark btn-block"
                                         data-toggle="dropdown"
                                         aria-haspopup="true"
                                         aria-expanded="false">
                                         İşlem Menüsü
-                                    </a>
+                                    </button>
                                 </>
                             )}
                         />

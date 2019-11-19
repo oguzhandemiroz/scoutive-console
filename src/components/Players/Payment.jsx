@@ -489,7 +489,7 @@ export class Payment extends Component {
     };
 
     payInstallment = data => {
-        if (data.fee === data.amount) return null;
+        if (data.fee_type === 1 || data.amount >= data.fee) return null;
         const { uid, to, fee, label, payment_type, budget } = this.state;
         if (fee === null) {
             Toast.fire({
@@ -498,26 +498,28 @@ export class Payment extends Component {
             });
             return null;
         }
+
+        const totalDept = parseFloat((data.fee - data.amount).toFixed(2));
         showSwal({
             type: "question",
             title: "Taksit Ödemesi",
             html: `<strong>${label}</strong> adlı öğrencinin, <strong>${formatMoney(
-                data.fee
+                totalDept
             )} </strong> tutarında taksit ödemesi yapılacaktır.<hr>Ne kadarını ödemek istiyorsunuz?`,
             input: "number",
-            inputValue: data.fee,
+            inputValue: totalDept,
             inputAttributes: {
                 min: 0,
-                max: data.fee
+                max: totalDept
             },
             inputValidator: value => {
                 return new Promise(resolve => {
-                    if (value > 0 && value <= data.fee) {
+                    if (value > 0 && value <= totalDept) {
                         showSwal({
                             type: "info",
                             title: "Bilgi",
                             html: `<b>${label}</b> adlı öğrencinin, <strong>${formatMoney(
-                                data.fee
+                                totalDept
                             )} </strong> tutarındaki taksidi için toplamda <strong>${formatMoney(
                                 parseFloat(value)
                             )} </strong> ödeme yapılacaktır.<br><strong>${
@@ -541,7 +543,7 @@ export class Payment extends Component {
                                     budget_id: budget.value
                                 }).then(response => {
                                     if (response) {
-                                        console.log(response);
+                                        this.listPastPayment(to);
                                     }
                                 });
                             }
@@ -890,7 +892,7 @@ export class Payment extends Component {
 
     // Tek Ödeme Ödeme Tipi
     renderOnetime = () => {
-        const { player, select, tab, image, name, surname } = this.state;
+        const { player, select, tab, image, name, surname, fee } = this.state;
         return (
             <div className="col-12">
                 <div className="card">
@@ -933,9 +935,14 @@ export class Payment extends Component {
                             </div>
                         </div>
                         <div className="row">
-                            {this.renderOnetimeSummary()}
-                            {this.renderOnetimeFinalSituation()}
+                            <div className="col-12">
+                                <div className="form-group">
+                                    <label className="form-label">Aidat Bilgisi</label>
+                                    {formatMoney(fee) + " — " + paymentTypeText[2]}
+                                </div>
+                            </div>
                         </div>
+                        <div className="row">{this.renderOnetimeSummary()}</div>
                         {this.renderOnetimeInstallmentPlan()}
                     </div>
                 </div>
@@ -1126,7 +1133,7 @@ export class Payment extends Component {
     renderOnetimeSummary = () => {
         const { pastData } = this.state;
         return (
-            <div className="col-lg-8 col-md-6 col-sm-12">
+            <div className="col-12">
                 <div className="form-group">
                     <label className="form-label">Özet Taksit Ödeme Durumu</label>
                     <div className="installment-detail d-flex flex-row">
@@ -1143,12 +1150,12 @@ export class Payment extends Component {
                                     const type_text = fee_type === 1 ? "Peşinat" : idx + ". Taksit";
 
                                     if (fee_type === 1) tag_color = "tag-primary";
-                                    else if (fee_type === 2 && fee === amount) tag_color = "tag-success";
+                                    else if (fee_type === 2 && amount >= fee) tag_color = "tag-success";
                                     else if (amount !== 0) tag_color = "tag-warning";
 
                                     return (
                                         <span key={fee_id.toString()} className={"tag " + tag_color}>
-                                            {type_text}
+                                            <div className="d-none d-lg-block">{type_text}</div>
                                         </span>
                                     );
                                 })
@@ -1156,6 +1163,7 @@ export class Payment extends Component {
                             <span className="tag" />
                         )}
                     </div>
+                    {this.renderOnetimeFinalSituation()}
                 </div>
             </div>
         );
@@ -1165,23 +1173,21 @@ export class Payment extends Component {
     renderOnetimeFinalSituation = () => {
         const { pastData } = this.state;
         return (
-            <div className="col-lg-4 col-md-6 col-sm-12">
-                <div className="form-group">
-                    <label className="form-label">Son Durum</label>
-                    {pastData && pastData.length > 0 ? (
-                        <>
-                            <div className="text-body">
-                                <span className="status-icon bg-success" />
-                                Şimdiye kadar <strong>{formatMoney(_.sumBy(pastData, "amount"))}</strong> ödeme
-                                yapılmıştır.
-                            </div>
-                            <div className="text-body">
+            <div className="d-flex justify-content-between mt-2">
+                {pastData && pastData.length > 0 ? (
+                    <>
+                        <div className="text-body font-italic">
+                            <span className="status-icon bg-success" />
+                            Şimdiye kadar <strong>{formatMoney(_.sumBy(pastData, "amount"))}</strong> ödeme yapılmıştır.
+                        </div>
+                        {pastData.filter(x => x.fee_type === 2 && x.fee !== x.amount).length > 0 ? (
+                            <div className="text-body text-right">
                                 <span className="status-icon bg-gray-lighter" />
                                 Gelecek taksit tarihi &mdash;{" "}
                                 <strong>
                                     {formatDate(
                                         pastData
-                                            .filter(x => x.amount === 0)
+                                            .filter(x => x.fee_type !== 1 && x.fee !== x.amount)
                                             .sort((a, b) =>
                                                 a.required_payment_date.localeCompare(b.required_payment_date)
                                             )[0].required_payment_date,
@@ -1189,20 +1195,20 @@ export class Payment extends Component {
                                     )}
                                 </strong>
                             </div>
-                        </>
-                    ) : (
-                        <>
-                            <div className="text-body">
-                                <span className="status-icon bg-success" />
-                                Şimdiye kadar <strong>0,00 ₺</strong> ödeme yapılmıştır.
-                            </div>
-                            <div className="text-body">
-                                <span className="status-icon bg-gray-lighter" />
-                                Gelecek taksit tarihi &mdash; <strong>00 Ocak 0000</strong>
-                            </div>
-                        </>
-                    )}
-                </div>
+                        ) : null}
+                    </>
+                ) : (
+                    <>
+                        <div className="text-body">
+                            <span className="status-icon bg-success" />
+                            Şimdiye kadar <strong>0,00 ₺</strong> ödeme yapılmıştır.
+                        </div>
+                        <div className="text-body">
+                            <span className="status-icon bg-gray-lighter" />
+                            Gelecek taksit tarihi &mdash; <strong>00 Ocak 0000</strong>
+                        </div>
+                    </>
+                )}
             </div>
         );
     };
@@ -1228,15 +1234,16 @@ export class Payment extends Component {
                                         const type_text = fee_type === 1 ? "Peşinat" : idx + ". Taksit";
 
                                         let status_type = "bg-gray-lighter";
-                                        let ribbon_type = "bg-success";
+                                        let ribbon_type = "bg-dark";
                                         let status_hover = "";
 
                                         if (fee_type === 1) {
                                             status_type = "bg-primary";
                                             ribbon_type = "bg-primary";
                                             status_hover = "hover-primary";
-                                        } else if (fee === amount) {
+                                        } else if (amount >= fee) {
                                             status_type = "bg-success";
+                                            ribbon_type = "bg-success";
                                             status_hover = "hover-success";
                                         } else if (amount > 0) {
                                             status_type = "bg-warning";
@@ -1244,7 +1251,7 @@ export class Payment extends Component {
                                         }
 
                                         return (
-                                            <div className="col-lg-3 col-md-4 col-sm-6">
+                                            <div className="col-lg-3 col-md-4 col-sm-6" key={key.toString()}>
                                                 <div className={"card card-hover " + status_hover}>
                                                     <div className={"card-status " + status_type} />
                                                     <div className="card-body text-center">
@@ -1259,7 +1266,9 @@ export class Payment extends Component {
                                                         <div className="form-group">
                                                             <label className="form-label">Tutar</label>
                                                             <div className="form-control-plaintext p-0">
-                                                                {formatMoney(fee)}
+                                                                {fee_type === 1
+                                                                    ? formatMoney(amount)
+                                                                    : formatMoney(fee)}
                                                             </div>
                                                         </div>
                                                         <div className="form-group">
@@ -1279,8 +1288,22 @@ export class Payment extends Component {
                                                         onClick={() => this.payInstallment(el)}
                                                         className={"ribbon ribbon-left ribbon-bottom " + ribbon_type}
                                                         data-toggle="tooltip"
-                                                        title={fee === amount ? "Ödeme Alındı" : "Ödeme Al"}>
-                                                        <i className={`fa fa-${fee === amount ? "check" : "plus"}`} />
+                                                        title={
+                                                            fee_type === 1
+                                                                ? "Peşinat Alındı"
+                                                                : amount >= fee
+                                                                ? "Ödeme Alındı"
+                                                                : "Ödeme Al"
+                                                        }>
+                                                        <i
+                                                            className={`fa fa-${
+                                                                fee_type === 1
+                                                                    ? "check"
+                                                                    : amount >= fee
+                                                                    ? "check"
+                                                                    : "plus"
+                                                            }`}
+                                                        />
                                                     </div>
                                                 </div>
                                             </div>
