@@ -57,7 +57,8 @@ export class AccountingChart extends Component {
 
         this.state = {
             uid: localStorage.getItem("UID"),
-            list: null
+            list: null,
+            error: false
         };
     }
 
@@ -71,7 +72,7 @@ export class AccountingChart extends Component {
 
     componentDidUpdate() {
         const { list } = this.state;
-        //this.renderChart(list);
+        this.renderChart(list);
     }
 
     getDays = () => {
@@ -86,28 +87,32 @@ export class AccountingChart extends Component {
     };
 
     renderChart = data => {
-        c3.generate({
-            bindto: "#general-stacked-report", // id of chart wrapper
-            data: {
-                json: data,
-                keys: {
-                    x: "payment_date",
-                    value: ["incomeAmount", "expenseAmount"]
+        try {
+            c3.generate({
+                bindto: "#general-stacked-report", // id of chart wrapper
+                data: {
+                    json: data,
+                    keys: {
+                        x: "payment_date",
+                        value: ["incomeAmount", "expenseAmount"]
+                    },
+                    type: "line", // default type of chart
+                    //groups: [["incomeAmount", "expenseAmount"]],
+                    colors: {
+                        incomeAmount: sc.colors["green"],
+                        expenseAmount: sc.colors["red"]
+                    },
+                    names: {
+                        x: "İşlem Tarihi",
+                        incomeAmount: "Gelir",
+                        expenseAmount: "Gider"
+                    }
                 },
-                type: "line", // default type of chart
-                //groups: [["incomeAmount", "expenseAmount"]],
-                colors: {
-                    incomeAmount: sc.colors["green"],
-                    expenseAmount: sc.colors["red"]
-                },
-                names: {
-                    x: "İşlem Tarihi",
-                    incomeAmount: "Gelir",
-                    expenseAmount: "Gider"
-                }
-            },
-            ...chartOptions
-        });
+                ...chartOptions
+            });
+        } catch (e) {
+            this.setState({ error: true });
+        }
     };
 
     listAccountingRecord = () => {
@@ -168,6 +173,7 @@ export class AccountingChart extends Component {
     };
 
     render() {
+        const { error } = this.state;
         return (
             <div className="col-12">
                 <div className="card">
@@ -175,7 +181,13 @@ export class AccountingChart extends Component {
                         <h3 className="card-title">Bu Haftanın Gelir/Gider Grafiği</h3>
                     </div>
                     <div className="card-body p-0">
-                        <div id="general-stacked-report"></div>
+                        <div id="general-stacked-report">
+                            {error ? (
+                                <div className="text-center p-5 text-muted font-italic">
+                                    Bir hata oluştu. Üzerinde çalışıyoruz. Lütfen daha sonra tekrar deneyin...
+                                </div>
+                            ) : null}
+                        </div>
                     </div>
                 </div>
             </div>
