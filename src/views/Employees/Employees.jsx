@@ -41,16 +41,16 @@ class Employees extends Component {
                         Personel Ekle
                     </Link>
                 </div>
-                <div className="row row-cards">
-                    <div className="col-sm-6 col-md-4">
+                <div className="row row-cards row-deck">
+                    <div className="col-sm-12 col-md-6 col-lg-6">
                         <DailyEmployee data={data.filter(x => x.status === 1)} />
                     </div>
-                    <div className="col-sm-6 col-md-4">
+                    <div className="col-sm-12 col-md-6 col-lg-6">
                         <GeneralEmployee data={data.filter(x => x.status === 1)} />
                     </div>
-                    <div className="col-sm-6 col-md-4">
+                    {/* <div className="col-sm-6 col-md-4">
                         <TotalSalary data={data} />
-                    </div>
+                    </div> */}
                 </div>
                 <div className="row row-cards">
                     <div className="col">

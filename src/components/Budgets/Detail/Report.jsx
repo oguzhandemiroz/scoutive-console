@@ -1,4 +1,160 @@
 import React, { Component } from "react";
+import { BalanceHistoryBudget } from "../../../services/Budget";
+import Chart from "react-apexcharts";
+import "../../../assets/css/apex.css";
+import sc from "../../../assets/js/sc";
+import _ from "lodash";
+import moment from "moment";
+import "moment/locale/tr";
+import { formatMoney } from "../../../services/Others";
+
+export class AccountingChart extends Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            uid: localStorage.getItem("UID"),
+            chartOptions: {
+                chart: {
+                    id: "accounting-line-chart",
+                    toolbar: {
+                        show: false
+                    },
+                    stacked: false,
+                    animations: {
+                        enabled: true
+                    },
+                    height: 320
+                },
+                stroke: {
+                    width: 2
+                },
+                colors: [sc.colors["yellow"]],
+                grid: {
+                    strokeDashArray: 5,
+                    borderColor: "#f0f0f0",
+                    position: "back"
+                },
+                markers: {
+                    size: 4,
+                    strokeWidth: 2,
+                    fillOpacity: 0,
+                    strokeOpacity: 0,
+                    hover: {
+                        size: 6
+                    }
+                },
+                yaxis: {
+                    show: false
+                },
+                xaxis: {
+                    type: "category",
+                    labels: {
+                        hideOverlappingLabels: true,
+                        style: {
+                            colors: "#9aa0ac"
+                        }
+                    },
+                    axisBorder: {
+                        color: "#9aa0ac",
+                        height: 0.4
+                    },
+                    tickPlacement: "on",
+                    tooltip: {
+                        enabled: false
+                    }
+                },
+                tooltip: {
+                    y: {
+                        formatter: function(value) {
+                            return formatMoney(value);
+                        }
+                    }
+                },
+                dataLabels: {
+                    enabled: false
+                },
+                legend: {
+                    position: "top",
+                    horizontalAlign: "left",
+                    floating: true,
+                    offsetX: -2,
+                    offsetY: 7
+                },
+                noData: {
+                    text: "Veri yükleniyor veya bulunamadı...",
+                    style: {
+                        color: "#aab0b6"
+                    }
+                },
+                series: []
+            }
+        };
+    }
+
+    componentDidMount() {
+        this.listAccountingRecord();
+    }
+
+    listAccountingRecord = () => {
+        const { uid } = this.state;
+        const { bid } = this.props.match.params;
+        BalanceHistoryBudget({
+            uid: uid,
+            filter: {
+                budget_id: bid,
+                created_date__gte: moment()
+                    .subtract(15, "days")
+                    .endOf("day")
+                    .format("YYYY-MM-DD HH:mm:ss"),
+                created_date__lte: moment()
+                    .endOf("day")
+                    .format("YYYY-MM-DD HH:mm:ss")
+            }
+        }).then(response => {
+            if (response) {
+                const status = response.status;
+                if (status.code === 1020) {
+                    const data = response.data;
+
+                    var result = data.map(function(o) {
+                        return Object.assign(
+                            {
+                                x: o.date,
+                                y: o.balance
+                            },
+                            _.omit(o, "date", "balance")
+                        );
+                    });
+
+                    console.log(result);
+                    this.setState(prevState => ({
+                        chartOptions: {
+                            ...prevState.chartOptions,
+                            series: [{ name: "Günlük Değişim", data: result }]
+                        }
+                    }));
+                }
+            }
+        });
+    };
+
+    render() {
+        const { chartOptions } = this.state;
+        return (
+            <div className="card-body p-0">
+                <Chart options={chartOptions} series={chartOptions.series} type="area" height="200" />
+            </div>
+        );
+    }
+}
+
+export default AccountingChart;
+
+/* 
+
+
+import React, { Component } from "react";
 import c3 from "c3";
 import "../../../assets/css/c3.min.css";
 import sc from "../../../assets/js/sc";
@@ -135,3 +291,4 @@ class Report extends Component {
 }
 
 export default Report;
+ */

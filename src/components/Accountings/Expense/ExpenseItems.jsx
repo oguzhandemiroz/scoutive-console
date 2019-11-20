@@ -5,7 +5,7 @@ import { ListAccountingRecords } from "../../../services/Accounting";
 import "../../../assets/css/apex.css";
 import { formatMoney } from "../../../services/Others";
 
-export class BudgetAccountingCategories extends Component {
+export class ExpenseItems extends Component {
     constructor(props) {
         super(props);
 
@@ -13,7 +13,7 @@ export class BudgetAccountingCategories extends Component {
             uid: localStorage.getItem("UID"),
             chartOptions: {
                 chart: {
-                    id: "budget-accounting-categories",
+                    id: "expense-items",
                     toolbar: {
                         show: false
                     }
@@ -55,10 +55,9 @@ export class BudgetAccountingCategories extends Component {
 
     listRecords = () => {
         const { uid } = this.state;
-        const { bid } = this.props.match.params;
         ListAccountingRecords({
             uid: uid,
-            filter: { accounting_type__gt: 3, budget_id: bid }
+            filter: { type: 0, accounting_type__gt: 3 }
         }).then(response => {
             if (response) {
                 const status = response.status;
@@ -96,7 +95,7 @@ export class BudgetAccountingCategories extends Component {
         return (
             <div className="card">
                 <div className="card-body pt-3 pb-1 p-0 text-center d-flex flex-column justify-content-center">
-                    <div className="h5">Gelir/Gider Kalemleri Dağılımı</div>
+                    <div className="h5">Gider Kalemleri Dağılımı</div>
                     <Chart options={chartOptions} series={chartOptions.series} type="pie" height={280} />
                 </div>
             </div>
@@ -104,4 +103,4 @@ export class BudgetAccountingCategories extends Component {
     }
 }
 
-export default BudgetAccountingCategories;
+export default ExpenseItems;

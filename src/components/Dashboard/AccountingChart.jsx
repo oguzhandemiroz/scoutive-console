@@ -8,85 +8,87 @@ import moment from "moment";
 import "moment/locale/tr";
 import { formatMoney } from "../../services/Others";
 
-const chartOptions = {
-    optionsMixedChart: {
-        chart: {
-            id: "accounting-line-chart",
-            toolbar: {
-                show: false
-            },
-            stacked: false,
-            animations: {
-                enabled: true
-            },
-            height: 320
-        },
-        stroke: {
-            width: 2
-        },
-        colors: [sc.colors["green"], sc.colors["red"]],
-        grid: {
-            strokeDashArray: 5,
-            borderColor: "#f0f0f0",
-            position: "back"
-        },
-        markers: {
-            size: 4,
-            strokeWidth: 2,
-            fillOpacity: 0,
-            strokeOpacity: 0,
-            hover: {
-                size: 6
-            }
-        },
-        yaxis: {
-            show: false
-        },
-        xaxis: {
-            type: "category",
-            labels: {
-                hideOverlappingLabels: true,
-                style: {
-                    colors: "#9aa0ac"
-                }
-            },
-            axisBorder: {
-                color: "#9aa0ac",
-                height: 0.4
-            },
-            tickPlacement: "on",
-            tooltip: {
-                enabled: false
-            }
-        },
-        tooltip: {
-            y: {
-                formatter: function(value) {
-                    return formatMoney(value);
-                }
-            }
-        },
-        dataLabels: {
-            enabled: false
-        },
-        legend: {
-            position: "top",
-            horizontalAlign: "left",
-            floating: true,
-            offsetX: -2,
-            offsetY: 7
-        }
-    }
-};
-
 export class AccountingChart extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
             uid: localStorage.getItem("UID"),
-            list: [],
-            error: true
+            chartOptions: {
+                chart: {
+                    id: "accounting-line-chart",
+                    toolbar: {
+                        show: false
+                    },
+                    stacked: false,
+                    animations: {
+                        enabled: true
+                    },
+                    height: 320
+                },
+                stroke: {
+                    width: 2
+                },
+                colors: [sc.colors["green"], sc.colors["red"]],
+                grid: {
+                    strokeDashArray: 5,
+                    borderColor: "#f0f0f0",
+                    position: "back"
+                },
+                markers: {
+                    size: 4,
+                    strokeWidth: 2,
+                    fillOpacity: 0,
+                    strokeOpacity: 0,
+                    hover: {
+                        size: 6
+                    }
+                },
+                yaxis: {
+                    show: false
+                },
+                xaxis: {
+                    type: "category",
+                    labels: {
+                        hideOverlappingLabels: true,
+                        style: {
+                            colors: "#9aa0ac"
+                        }
+                    },
+                    axisBorder: {
+                        color: "#9aa0ac",
+                        height: 0.4
+                    },
+                    tickPlacement: "on",
+                    tooltip: {
+                        enabled: false
+                    }
+                },
+                tooltip: {
+                    y: {
+                        formatter: function(value) {
+                            return formatMoney(value);
+                        }
+                    }
+                },
+                dataLabels: {
+                    enabled: false
+                },
+                legend: {
+                    position: "top",
+                    horizontalAlign: "left",
+                    floating: true,
+                    offsetX: -2,
+                    offsetY: 7
+                },
+                noData: {
+                    text: "Veri yükleniyor veya bulunamadı...",
+                    style: {
+                        color: "#aab0b6"
+                    }
+                },
+                series: []
+            }
         };
     }
 
@@ -153,14 +155,20 @@ export class AccountingChart extends Component {
                             ]
                         }
                     ];
-                    this.setState({ list: generated_data });
+
+                    this.setState(prevState => ({
+                        chartOptions: {
+                            ...prevState.chartOptions,
+                            series: generated_data
+                        }
+                    }));
                 }
             }
         });
     };
 
     render() {
-        const { list } = this.state;
+        const { chartOptions } = this.state;
         return (
             <div className="col-12">
                 <div className="card">
@@ -168,7 +176,7 @@ export class AccountingChart extends Component {
                         <h3 className="card-title">Bu Haftanın Gelir/Gider Grafiği</h3>
                     </div>
                     <div className="card-body p-0">
-                        <Chart options={chartOptions.optionsMixedChart} series={list} type="area" height="320" />
+                        <Chart options={chartOptions} series={chartOptions.series} type="area" height="320" />
                     </div>
                 </div>
             </div>
