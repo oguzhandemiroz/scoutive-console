@@ -1,35 +1,24 @@
-import React, {Component} from "react";
+import React, { Component } from "react";
 import c3 from "c3";
 import * as d3 from "d3";
 import "../../../assets/css/c3.min.css";
 import sc from "../../../assets/js/sc";
+import Chart from "react-apexcharts";
+import "../../../assets/css/apex.css";
 
 const chartOptions = {
-    axis: {},
-    legend: {
-        show: true //hide legend
-    },
-    padding: {
-        bottom: 0,
-        top: 0
-    },
-    tooltip: {
-        format: {
-            value: function(value) {
-                return d3.format("")(value);
+    optionsMixedChart: {
+        chart: {
+            id: "daily-employee",
+            toolbar: {
+                show: false
             }
-        }
-    },
-    pie: {
-        label: {
-            format: function(value) {
-                return d3.format("")(value);
-            }
-        }
-    },
-    empty: {
-        label: {
-            text: "Veri bulunamadı"
+        },
+        colors: [sc.colors["green"], sc.colors["red"], sc.colors["orange"], "#495057"],
+        labels: ["Geldi", "Gelmedi", "İzinli", "Tanımsız"],
+        legend: {
+            position: "bottom",
+            horizontalAlign: "center"
         }
     }
 };
@@ -39,96 +28,34 @@ class DailyEmployee extends Component {
         super(props);
         this.state = {
             uid: localStorage.getItem("UID"),
-            came: ["1"],
-            vacation: ["2"],
-            not_came: ["0"],
-            none: ["-1"],
-            noData: true
+            list: []
         };
     }
 
     componentWillReceiveProps(nextProps) {
-        const {data} = nextProps;
-        this.listEmployees(data);
+        const { data } = nextProps;
+        this.generateData(data);
     }
 
-    componentDidUpdate() {
-        this.renderChart();
-    }
+    generateData = data => {
+        const gen_data = [
+            data.filter(x => x.daily === 1).length,
+            data.filter(x => x.daily === 0).length,
+            data.filter(x => x.daily === 2).length,
+            data.filter(x => x.daily === -1).length
+        ];
 
-    listEmployees = data => {
-        const dataObj = {
-            "0": 0,
-            "1": 0,
-            "2": 0,
-            "-1": 0
-        };
-        data.map(el => {
-            dataObj[el.daily] = dataObj[el.daily] + 1;
-        });
-        Object.keys(dataObj).map(el => {
-            switch (el) {
-                case "0":
-                    this.setState({not_came: ["0", dataObj[el]]});
-                    break;
-                case "1":
-                    this.setState({came: ["1", dataObj[el]]});
-                    break;
-                case "2":
-                    this.setState({vacation: ["2", dataObj[el]]});
-                    break;
-                case "-1":
-                    this.setState({none: ["-1", dataObj[el]]});
-                    break;
-                default:
-                    break;
-            }
-        });
-        this.renderChart();
-        this.setState({noData: false});
+        console.log(gen_data);
+        this.setState({ list: gen_data });
     };
 
-    renderChart() {
-        const {came, vacation, not_came, none} = this.state;
-        c3.generate({
-            bindto: "#daily-employee",
-            data: {
-                columns: [[...came], [...vacation], [...not_came], [...none]],
-                type: "pie", // default type of chart
-                colors: {
-                    "1": sc.colors["green"],
-                    "2": sc.colors["orange"],
-                    "0": sc.colors["red"],
-                    "-1": "#495057"
-                },
-                names: {
-                    // name of each serie
-                    "1": "Geldi",
-                    "2": "İzinli",
-                    "0": "Gelmedi",
-                    "-1": "Tanımsız"
-                }
-            },
-            ...chartOptions
-        });
-    }
     render() {
-        const {noData} = this.state;
+        const { list } = this.state;
         return (
             <div className="card">
-                <div
-                    className="card-body p-3 text-center d-flex flex-column justify-content-center"
-                    style={{height: 280}}>
+                <div className="card-body p-3 text-center d-flex flex-column justify-content-center">
                     <div className="h5">Günlük Personel Raporu</div>
-                    {noData ? (
-                        <div
-                            className="text-muted font-italic d-flex justify-content-center align-items-center"
-                            style={{height: 210}}>
-                            <div className="loader"></div>
-                        </div>
-                    ) : (
-                        <div id="daily-employee" style={{height: 210}} />
-                    )}
+                    <Chart options={chartOptions.optionsMixedChart} series={list} type="pie" />
                 </div>
             </div>
         );

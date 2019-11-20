@@ -1,6 +1,5 @@
 import "./assets/css/dashboard.css";
 import "./assets/css/custom.css";
-import "./assets/css/apex.css";
 import { registerLocale } from "react-datepicker";
 import tr from "date-fns/locale/tr";
 import "jquery";
