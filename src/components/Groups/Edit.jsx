@@ -146,9 +146,7 @@ export class Edit extends Component {
         this.setState({ loadingData: true });
         ListPlayers({
             uid: uid,
-            filter: {
-                "group.group_id": parseInt(gid)
-            }
+            filter: { groups: { $elemMatch: { group_id: parseInt(gid) } } }
         }).then(response => {
             if (response) {
                 const status = response.status;
@@ -453,7 +451,7 @@ export class Edit extends Component {
                                         placeholder="Grup Adı *"
                                         name="name"
                                         onChange={this.handleChange}
-                                        value={nullCheck(name)}
+                                        value={nullCheck(name, "")}
                                     />
                                 </h3>
                                 <div className="card-options mr-0">
@@ -627,7 +625,6 @@ export class Edit extends Component {
                             <div className="card-footer">
                                 <div className="d-flex" style={{ justifyContent: "space-between" }}>
                                     <a
-                                        
                                         onClick={() => {
                                             showSwal({
                                                 type: "info",

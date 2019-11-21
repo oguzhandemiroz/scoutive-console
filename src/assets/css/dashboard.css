@@ -18925,6 +18925,7 @@ a.tag-addon:hover {
 
 .selectgroup-pills .selectgroup-item {
 	margin-right: 0.5rem;
+	margin-bottom: 0.5rem;
 	-ms-flex-positive: 0;
 	flex-grow: 0;
 }

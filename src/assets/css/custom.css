@@ -563,6 +563,21 @@ SOCIAL COLORS
     border: 1px solid #f1c40f;
 }
 
+.card-active {
+    position: relative;
+    background-color: rgba(32, 107, 196, 0.03);
+}
+.card-active::before {
+    position: absolute;
+    top: -1px;
+    right: -1px;
+    bottom: -1px;
+    left: -1px;
+    content: "";
+    border: 1px solid #206bc4;
+    border-radius: inherit;
+}
+
 .ribbon {
     position: absolute;
     top: 0.75rem;
@@ -790,3 +805,146 @@ SOCIAL COLORS
     color: #354052;
 }
  */
+
+.badge {
+    display: inline-block;
+    padding: 0.25em 0.5em;
+    font-size: 0.75em;
+    font-weight: 500;
+    line-height: 1;
+    color: #fff;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: 3px;
+}
+
+.badge:empty {
+    display: none;
+}
+
+.btn .badge,
+.jqvmap-zoomin .badge,
+.jqvmap-zoomout .badge {
+    position: relative;
+    top: -1px;
+}
+.badge {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    background: #e9ecef;
+}
+
+a.badge {
+    color: #fff;
+}
+
+.badge:empty {
+    display: inline-block;
+    width: 8px;
+    min-width: 0;
+    height: 8px;
+    min-height: auto;
+    padding: 0;
+    border-radius: 50%;
+}
+
+.badge-up {
+    position: absolute;
+    top: 25%;
+    right: 0;
+    min-width: 1rem;
+    min-height: 1rem;
+    padding: 0 0.25rem;
+    line-height: 1rem;
+    background-clip: padding-box;
+    transform: translate(0, -50%);
+}
+
+.badge-outline {
+    background-color: transparent;
+    border: 1px solid currentColor;
+}
+
+.badge-pill {
+    border-radius: 100px;
+}
+
+.badge .badge-secondary {
+    color: #fff;
+    background-color: #868e96;
+}
+.badge.badge-primary {
+    color: #fff;
+    background-color: #467fcf;
+}
+.badge.badge-secondary {
+    color: #fff;
+    background-color: #868e96;
+}
+.badge.badge-success {
+    color: #fff;
+    background-color: #5eba00;
+}
+.badge .badge-info {
+    color: #fff;
+    background-color: #45aaf2;
+}
+.badge .badge-warning {
+    color: #fff;
+    background-color: #f1c40f;
+}
+.badge.badge-danger {
+    color: #fff;
+    background-color: #cd201f;
+}
+.badge.badge-dark {
+    color: #fff;
+    background-color: #343a40;
+}
+.text-h1 {
+    font-size: 1.625rem !important;
+}
+
+.text-h2 {
+    font-size: 1.3125rem !important;
+}
+
+.text-h3 {
+    font-size: 1.125rem !important;
+}
+
+.text-h4 {
+    font-size: 1rem !important;
+}
+
+.text-h5 {
+    font-size: 0.875rem !important;
+}
+
+.text-h6 {
+    font-size: 0.75rem !important;
+}
+
+.p-125 {
+    padding: 1.25rem !important;
+}
+
+.work-days .tag {
+    border-right: 0.5px solid #fff;
+    border-left: 0.5px solid #fff;
+    border-radius: 0;
+    width: 100%;
+    height: 18px;
+    align-items: center;
+    font-size: 11px;
+    justify-content: center;
+}
+.work-days .tag:last-child {
+    border-right: 0;
+}
+.work-days .tag:first-child {
+    border-left: 0;
+}
