@@ -24,44 +24,21 @@ export class AccountingChart extends Component {
                     animations: {
                         enabled: true
                     },
-                    height: 320
-                },
-                stroke: {
-                    width: 2
-                },
-                colors: [sc.colors["yellow"]],
-                grid: {
-                    strokeDashArray: 5,
-                    borderColor: "#f0f0f0",
-                    position: "back"
-                },
-                markers: {
-                    size: 4,
-                    strokeWidth: 2,
-                    fillOpacity: 0,
-                    strokeOpacity: 0,
-                    hover: {
-                        size: 6
+                    sparkline: {
+                        enabled: true
                     }
                 },
-                yaxis: {
-                    show: false
+                stroke: {
+                    width: 2,
+                    curve: "straight"
                 },
+                colors: [sc.colors["yellow"]],
                 xaxis: {
-                    type: "category",
+                    type: "datetime",
                     labels: {
-                        hideOverlappingLabels: true,
-                        style: {
-                            colors: "#9aa0ac"
+                        formatter: function(value, timestamp, index) {
+                            return moment(new Date(timestamp)).format("DD MMMM YYYY");
                         }
-                    },
-                    axisBorder: {
-                        color: "#9aa0ac",
-                        height: 0.4
-                    },
-                    tickPlacement: "on",
-                    tooltip: {
-                        enabled: false
                     }
                 },
                 tooltip: {
@@ -71,21 +48,14 @@ export class AccountingChart extends Component {
                         }
                     }
                 },
-                dataLabels: {
-                    enabled: false
-                },
-                legend: {
-                    position: "top",
-                    horizontalAlign: "left",
-                    floating: true,
-                    offsetX: -2,
-                    offsetY: 7
-                },
                 noData: {
                     text: "Veri yükleniyor veya bulunamadı...",
                     style: {
                         color: "#aab0b6"
                     }
+                },
+                point: {
+                    show: false
                 },
                 series: []
             }
@@ -143,7 +113,7 @@ export class AccountingChart extends Component {
         const { chartOptions } = this.state;
         return (
             <div className="card-body p-0">
-                <Chart options={chartOptions} series={chartOptions.series} type="area" height="200" />
+                <Chart options={chartOptions} series={chartOptions.series} type="area" height={120} />
             </div>
         );
     }

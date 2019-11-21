@@ -10,7 +10,7 @@ import ListFilter from "./ListFilter";
 import GroupChange from "../PlayerAction/GroupChange";
 import Vacation from "../PlayerAction/Vacation";
 import ActionButton from "../Players/ActionButton";
-import Inputmask from "inputmask";
+import _ from "lodash";
 import moment from "moment";
 import "moment/locale/tr";
 import "../../assets/css/datatables.responsive.css";
@@ -40,9 +40,7 @@ const footType = {
 
 const filteredList = () => {
     if (!document.getElementById("clearFilter")) {
-        $("div.filterTools").append(
-            `<a  id="clearFilter" class="btn btn-link text-truncate">Filtreyi temizle</a>`
-        );
+        $("div.filterTools").append(`<a  id="clearFilter" class="btn btn-link text-truncate">Filtreyi temizle</a>`);
 
         $(".filterTools #clearFilter").on("click", function() {
             $.fn.dataTable.ext.search = [];
@@ -173,7 +171,10 @@ class Table extends Component {
                 },
                 fixedHeader: true,
                 order: [4, "asc"],
-                aLengthMenu: [[20, 50, 100, -1], [20, 50, 100, "Tümü"]],
+                aLengthMenu: [
+                    [20, 50, 100, -1],
+                    [20, 50, 100, "Tümü"]
+                ],
                 stateSave: false, // change true
                 language: {
                     ...datatable_turkish,
@@ -197,7 +198,6 @@ class Table extends Component {
                     contentType: "application/json",
                     complete: function(res) {
                         try {
-                            console.log(res);
                             if (res.responseJSON.status.code !== 1020) {
                                 if (res.status !== 200) fatalSwal();
                                 else errorSwal(res.responseJSON.status);
@@ -269,7 +269,6 @@ class Table extends Component {
                             );
                         }
                     },
-
                     {
                         targets: "groups",
                         responsivePriority: 10007,
@@ -347,7 +346,6 @@ class Table extends Component {
                                                 </Link>
                                                 <a
                                                     title="İşlem Menüsü"
-                                                    
                                                     className="btn btn-icon btn-sm btn-secondary"
                                                     data-toggle="dropdown"
                                                     aria-haspopup="true"
@@ -410,22 +408,26 @@ class Table extends Component {
                         data: "fee",
                         responsivePriority: 10009,
                         render: function(data, type, row) {
-                            const { is_trial, is_scholarship } = row;
+                            const { is_trial, payment_type } = row;
                             if (type === "sort" || type === "type") {
                                 return data;
                             }
 
-                            if (!is_trial && !is_scholarship & (data !== null)) {
-                                return data.format() + " ₺";
-                            } else if (is_trial) {
-                                return "<b>ÖN KAYIT</b>";
-                            } else if (is_scholarship) {
-                                return "<b>BURSLU</b>";
-                            } else if (data === null) {
-                                return "&mdash;";
-                            } else {
-                                return "&mdash;";
+                            if (type === "display") {
+                                if (!is_trial && (payment_type !== 1) & (data !== null)) {
+                                    return data.format() + " ₺";
+                                } else if (is_trial) {
+                                    return "<b>ÖN KAYIT</b>";
+                                } else if (payment_type === 1) {
+                                    return "<b>BURSLU</b>";
+                                } else if (data === null) {
+                                    return "&mdash;";
+                                } else {
+                                    return "&mdash;";
+                                }
                             }
+
+                            return data;
                         }
                     },
                     {
@@ -460,15 +462,32 @@ class Table extends Component {
                         responsivePriority: 10008,
                         render: function(data, type, row) {
                             if (type === "sort" || type === "type") {
-                                return data ? data.split(".")[0] : data;
+                                return data;
+                            }
+                            if (type === "display") {
+                                return moment(data).format("LL");
                             }
 
-                            if (data && data !== "") return moment(data).format("LL");
-                            else return "&mdash;";
+                            return moment(data).format("LL");
                         }
                     },
                     {
-                        data: null
+                        data: "groups",
+                        render: function(data, type, row) {
+                            if (type === "sort" || type === "type") {
+                                return _(data)
+                                    .groupBy("label")
+                                    .keys("label")
+                                    .join(", ");
+                            }
+                            if (type === "display") {
+                                return _(data)
+                                    .groupBy("label")
+                                    .keys("label")
+                                    .join(", ");
+                            }
+                            return JSON.stringify(data);
+                        }
                     },
                     {
                         data: "daily",
@@ -601,7 +620,7 @@ class Table extends Component {
                             <th className="point">GENEL PUAN</th>
                             <th className="foot">KULLANDIĞI AYAK</th>
                             <th className="position">MEVKİİ</th>
-                            <th className="birthday">YAŞ</th>
+                            <th className="birthday">DOĞUM GÜNÜ</th>
                             <th className="groups">GRUP</th>
                             <th className="daily" title="Yoklama Durumu">
                                 YOKLAMA DURUMU

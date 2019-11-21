@@ -11,6 +11,7 @@ import { fullnameGenerator } from "../../services/Others";
 import ActionButton from "./ActionButton";
 import ReactDOM from "react-dom";
 import Inputmask from "inputmask";
+import _ from "lodash";
 const $ = require("jquery");
 $.DataTable = require("datatables.net");
 
@@ -43,7 +44,10 @@ class Table extends Component {
                 dom: '<"top"f>rt<"bottom"ilp><"clear">',
                 responsive: false,
                 order: [3, "asc"],
-                aLengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "Tümü"]],
+                aLengthMenu: [
+                    [10, 25, 50, 100, -1],
+                    [10, 25, 50, 100, "Tümü"]
+                ],
                 stateSave: false, // change true
                 language: {
                     ...datatable_turkish,
@@ -80,6 +84,31 @@ class Table extends Component {
                                         onClick={() => this.props.history.push(`/app/employees/detail/${uid}`)}>
                                         {fullname}
                                     </Link>
+                                </BrowserRouter>,
+                                td
+                            );
+                        }
+                    },
+                    {
+                        targets: "groups",
+                        responsivePriority: 10007,
+                        createdCell: (td, cellData, rowData) => {
+                            const { groups } = rowData;
+                            ReactDOM.render(
+                                <BrowserRouter>
+                                    {groups.length > 0
+                                        ? groups.map(el => (
+                                              <Link
+                                                  key={el.value.toString()}
+                                                  className="d-block text-inherit"
+                                                  to={`/app/groups/detail/${el.value}`}
+                                                  onClick={() =>
+                                                      this.props.history.push(`/app/groups/detail/${el.value}`)
+                                                  }>
+                                                  {el.label}
+                                              </Link>
+                                          ))
+                                        : "—"}
                                 </BrowserRouter>,
                                 td
                             );
@@ -225,6 +254,24 @@ class Table extends Component {
                         }
                     },
                     {
+                        data: "groups",
+                        render: function(data, type, row) {
+                            if (type === "sort" || type === "type") {
+                                return _(data)
+                                    .groupBy("label")
+                                    .keys("label")
+                                    .join(", ");
+                            }
+                            if (type === "display") {
+                                return _(data)
+                                    .groupBy("label")
+                                    .keys("label")
+                                    .join(", ");
+                            }
+                            return JSON.stringify(data);
+                        }
+                    },
+                    {
                         data: "daily",
                         render: function(data, type, row) {
                             return (
@@ -274,6 +321,7 @@ class Table extends Component {
                             <th className="phone">TELEFON</th>
                             <th className="position">POZİSYON</th>
                             <th className="salary">MAAŞ</th>
+                            <th className="groups">GRUP</th>
                             <th className="status" title="Yoklama Durumu">
                                 YOKL. DURUMU
                             </th>
