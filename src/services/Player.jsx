@@ -230,12 +230,12 @@ const ActivatePlayer = data => {
     }
 };
 
-const ListPlayers = uid => {
+const ListPlayers = () => {
     try {
         return fetch(ep.PLAYER_LIST, {
             method: "POST",
             body: JSON.stringify({
-                uid: uid || localStorage.getItem("UID")
+                uid: localStorage.getItem("UID")
             }),
             headers: h
         })

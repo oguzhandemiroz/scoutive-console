@@ -93,9 +93,9 @@ export class List extends Component {
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className="row align-items-center mt-5">
+                                        <div className="row align-items-center mt-4">
                                             <div
-                                                className="col"
+                                                className="col my-2"
                                                 data-original-title="Çalışma Günleri"
                                                 data-toggle="tooltip">
                                                 {this.getWorkDays(el.work_days)}

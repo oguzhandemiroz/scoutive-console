@@ -27,7 +27,7 @@ class HeaderMenu extends Component {
         const { systemClock, uid } = this.state;
         return (
             <div id="header-menu">
-                <div className="header py-4">
+                <div className="header py-4 bg-scoutive">
                     <div className="container">
                         <div className="d-flex">
                             <Link className="d-flex header-brand" to="/app">
@@ -38,7 +38,7 @@ class HeaderMenu extends Component {
                                 data-toggle="tooltip"
                                 className="d-flex justify-content-center align-items-center cursor-pointer px-4 mr-auto icon"
                                 style={{
-                                    borderLeftColor: "#e0e5ec",
+                                    borderLeftColor: "#9aa0ac",
                                     borderLeftWidth: 1,
                                     borderLeftStyle: "solid",
                                     fontSize: "1.2rem"
@@ -49,7 +49,7 @@ class HeaderMenu extends Component {
                             <div className="d-flex order-lg-2 ml-auto">
                                 <div className="d-flex align-items-center">
                                     <span
-                                        className="tag tag-gray-dark"
+                                        className="badge badge-secondary user-select-none"
                                         data-original-title="Sistem Saati"
                                         data-toggle="tooltip">
                                         {systemClock}
@@ -64,11 +64,11 @@ class HeaderMenu extends Component {
                                 <div className="dropdown">
                                     <span className="nav-link pr-0 leading-none" data-toggle="dropdown">
                                         <span
-                                            className="avatar"
+                                            className="avatar avatar-transparent"
                                             style={{ backgroundImage: `url(${this.state.sImage})` }}
                                         />
                                         <span className="ml-2 d-none d-lg-block">
-                                            <span className="text-default">{this.state.sName}</span>
+                                            <span className="text-white">{this.state.sName}</span>
                                             <small className="text-muted d-block mt-1">{this.state.sPosition}</small>
                                         </span>
                                     </span>
