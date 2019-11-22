@@ -1,12 +1,24 @@
 import React, { Component } from "react";
 import Select, { components } from "react-select";
-import { withRouter, Link } from "react-router-dom";
 import { Areas, GetEmployees } from "../../services/FillSelect";
 import { selectCustomStyles, selectCustomStylesError, formValid } from "../../assets/js/core";
 import { avatarPlaceholder, formatDate, fullnameGenerator } from "../../services/Others";
 import { ListPlayers } from "../../services/Player";
+import { CreateGroup, ChangeGroup } from "../../services/Group";
 import _ from "lodash";
+import moment from "moment";
+import Inputmask from "inputmask";
 const $ = require("jquery");
+
+Inputmask.extendDefaults({
+    autoUnmask: true
+});
+
+const InputmaskDefaultOptions = {
+    showMaskOnHover: false,
+    showMaskOnFocus: false,
+    placeholder: ""
+};
 
 const { Option } = components;
 const ImageOptionEmployee = props => (
@@ -24,18 +36,45 @@ export class Add extends Component {
         super(props);
 
         this.state = {
+            uid: localStorage.getItem("UID"),
+            name: null,
+            start_age: null,
+            end_age: null,
+            start_time: null,
+            end_time: null,
+            employee: null,
             players: [],
-            formErrors: {
-                employee: ""
-            },
+            work_days: [],
             select: {
                 employees: null,
                 areas: null,
                 players: null,
                 initialPlayers: null
-            }
+            },
+            formErrors: {
+                name: "",
+                start_time: "",
+                end_time: "",
+                start_age: "",
+                end_age: "",
+                employee: ""
+            },
+            loadingButton: ""
         };
     }
+
+    fieldMasked = () => {
+        try {
+            const elemArray = {
+                start_time: $("[name=start_time]"),
+                end_time: $("[name=end_time]")
+            };
+            Inputmask({ alias: "datetime", inputFormat: "HH:MM", ...InputmaskDefaultOptions }).mask(
+                elemArray.start_time
+            );
+            Inputmask({ alias: "datetime", inputFormat: "HH:MM", ...InputmaskDefaultOptions }).mask(elemArray.end_time);
+        } catch (e) {}
+    };
 
     componentDidUpdate() {
         $('[data-toggle="tooltip"]').tooltip();
@@ -47,7 +86,104 @@ export class Add extends Component {
 
     componentDidMount() {
         this.getFillSelect();
+        this.fieldMasked();
     }
+
+    handleSubmit = e => {
+        e.preventDefault();
+        const { uid, name, work_days, start_time, end_time, employee, start_age, end_age, area, players } = this.state;
+
+        if (formValid(this.state)) {
+            this.setState({ loadingButton: "btn-loading" });
+
+            CreateGroup({
+                uid: uid,
+                name: name.capitalize(),
+                start_time: start_time,
+                end_time: end_time,
+                employee_id: employee.value,
+                age: `${start_age}-${end_age}`,
+                area_id: area ? area.value : 1,
+                work_days: _.join(work_days, ",")
+            }).then(response => {
+                if (response) {
+                    if (response.status.code === 1020) {
+                        const group_id = response.group_id;
+                        if (players.length > 0) {
+                            ChangeGroup({
+                                uid: uid,
+                                group_id: group_id,
+                                add: players,
+                                remove: []
+                            }).then(response => {
+                                if (response) {
+                                    const status = response.status;
+                                    if (status.code === 1020) {
+                                        this.props.history.push("/app/groups/detail/" + group_id);
+                                    }
+                                }
+                            });
+                        } else {
+                            this.props.history.push("/app/groups/detail/" + group_id);
+                        }
+                    }
+                }
+                this.setState({ loadingButton: "" });
+            });
+        } else {
+            this.setState(prevState => ({
+                formErrors: {
+                    ...prevState.formErrors,
+                    employee: employee ? false : true,
+                    name: name ? "" : "is-invalid",
+                    start_time: moment(start_time, "HH:mm", true).isValid("HH:mm") ? "" : "is-invalid-iconless",
+                    end_time: moment(end_time, "HH:mm", true).isValid("HH:mm") ? "" : "is-invalid-iconless",
+                    start_age: start_age ? "" : "is-invalid",
+                    end_age: end_age ? "" : "is-invalid"
+                }
+            }));
+        }
+    };
+
+    handleChange = e => {
+        try {
+            e.preventDefault();
+            const { value, name } = e.target;
+            let formErrors = { ...this.state.formErrors };
+            switch (name) {
+                case "start_time":
+                    formErrors[name] = moment(value, "HH:mm", true).isValid("HH:mm") ? "" : "is-invalid-iconless";
+                    break;
+                case "end_time":
+                    formErrors[name] = moment(value, "HH:mm", true).isValid("HH:mm") ? "" : "is-invalid-iconless";
+                    break;
+                default:
+                    formErrors[name] = value ? "" : "is-invalid";
+                    break;
+            }
+            this.setState({ formErrors, [name]: value });
+        } catch (e) {}
+    };
+
+    handleSelect = (value, name) => {
+        this.setState(prevState => ({
+            formErrors: {
+                ...prevState.formErrors,
+                [name]: value ? false : true
+            },
+            [name]: value
+        }));
+    };
+
+    handleWorkDays = e => {
+        const { name, value, checked } = e.target;
+        const { work_days } = this.state;
+        if (work_days.indexOf(parseInt(value)) > -1) {
+            this.setState({ work_days: work_days.filter(x => x !== parseInt(value)) });
+        } else {
+            this.setState(prevState => ({ work_days: [...prevState.work_days, parseInt(value)] }));
+        }
+    };
 
     handleSearch = e => {
         const { value } = e.target;
@@ -125,20 +261,46 @@ export class Add extends Component {
         return (
             <span
                 style={{ width: 12, height: 12 }}
-                className="badge badge-primary"
+                className="icon"
                 data-toggle="popover"
                 data-content={`
                     <p class="font-weight-600">
                         <span class="badge badge-primary mr-1"></span>Dahil Olduğu Grup(lar)
                     </p>
                     ${list_group}
-                `}
-            />
+                `}>
+                <i className="fa fa-th" />
+            </span>
+        );
+    };
+
+    renderWorkDays = () => {
+        const { work_days } = this.state;
+        const weekdays = moment.weekdays();
+        return (
+            <div className="form-group">
+                <label className="form-label">Çalışma Günleri</label>
+                <div className="selectgroup selectgroup-pills">
+                    {weekdays.map((el, key) => (
+                        <label className="selectgroup-item">
+                            <input
+                                type="checkbox"
+                                name="work_days"
+                                value={key}
+                                className="selectgroup-input"
+                                onChange={this.handleWorkDays}
+                                checked={work_days.indexOf(key) > -1 ? true : false}
+                            />
+                            <span className="selectgroup-button">{el}</span>
+                        </label>
+                    ))}
+                </div>
+            </div>
         );
     };
 
     render() {
-        const { select, players, loadingImage, imagePreview, playerList, loadingButton, formErrors } = this.state;
+        const { select, players, start_age, loadingButton, formErrors } = this.state;
         return (
             <div className="container">
                 <div className="page-header">
@@ -155,7 +317,12 @@ export class Add extends Component {
                                     <label className="form-label">
                                         Grup Adı<span className="form-required">*</span>
                                     </label>
-                                    <input type="text" className="form-control" name="name" />
+                                    <input
+                                        type="text"
+                                        name="name"
+                                        onChange={this.handleChange}
+                                        className={`form-control ${formErrors.name}`}
+                                    />
                                 </div>
                                 <div className="row gutters-xs">
                                     <div className="col">
@@ -163,7 +330,15 @@ export class Add extends Component {
                                             <label className="form-label">
                                                 Başlangıç Saati<span className="form-required">*</span>
                                             </label>
-                                            <input type="text" className="form-control" name="start_time" />
+                                            <input
+                                                type="text"
+                                                name="start_time"
+                                                className={`form-control ${formErrors.start_time}`}
+                                                placeholder="08:00"
+                                                data-toggle="tooltip"
+                                                title="Antrenman Başlangıç Saati"
+                                                onChange={this.handleChange}
+                                            />
                                         </div>
                                     </div>
                                     <div className="col">
@@ -171,7 +346,15 @@ export class Add extends Component {
                                             <label className="form-label">
                                                 Bitiş Saati<span className="form-required">*</span>
                                             </label>
-                                            <input type="text" className="form-control" name="end_time" />
+                                            <input
+                                                type="text"
+                                                name="end_time"
+                                                className={`form-control ${formErrors.end_time}`}
+                                                placeholder="08:30"
+                                                data-toggle="tooltip"
+                                                title="Antrenman Bitiş Saati"
+                                                onChange={this.handleChange}
+                                            />
                                         </div>
                                     </div>
                                 </div>
@@ -181,10 +364,26 @@ export class Add extends Component {
                                     </label>
                                     <div className="row gutters-xs">
                                         <div className="col">
-                                            <input type="text" className="form-control" name="start_time" />
+                                            <input
+                                                placeholder="Başlangıç"
+                                                type="number"
+                                                min="1980"
+                                                max="2019"
+                                                className={`form-control ${formErrors.start_age}`}
+                                                name="start_age"
+                                                onChange={this.handleChange}
+                                            />
                                         </div>
                                         <div className="col">
-                                            <input type="text" className="form-control" name="end_time" />
+                                            <input
+                                                placeholder="Bitiş"
+                                                type="number"
+                                                min={start_age || "1981"}
+                                                max="2019"
+                                                className={`form-control ${formErrors.end_age}`}
+                                                name="end_age"
+                                                onChange={this.handleChange}
+                                            />
                                         </div>
                                     </div>
                                 </div>
@@ -226,82 +425,12 @@ export class Add extends Component {
                                     />
                                 </div>
 
-                                <div className="form-group">
-                                    <label className="form-label">Çalışma Günleri</label>
-                                    <div className="selectgroup selectgroup-pills">
-                                        <label className="selectgroup-item">
-                                            <input
-                                                type="checkbox"
-                                                name="value"
-                                                value="1"
-                                                className="selectgroup-input"
-                                            />
-                                            <span className="selectgroup-button">Pazartesi</span>
-                                        </label>
-                                        <label className="selectgroup-item">
-                                            <input
-                                                type="checkbox"
-                                                name="value"
-                                                value="2"
-                                                className="selectgroup-input"
-                                            />
-                                            <span className="selectgroup-button">Salı</span>
-                                        </label>
-                                        <label className="selectgroup-item">
-                                            <input
-                                                type="checkbox"
-                                                name="value"
-                                                value="3"
-                                                className="selectgroup-input"
-                                            />
-                                            <span className="selectgroup-button">Çarşamba</span>
-                                        </label>
-                                        <label className="selectgroup-item">
-                                            <input
-                                                type="checkbox"
-                                                name="value"
-                                                value="4"
-                                                className="selectgroup-input"
-                                            />
-                                            <span className="selectgroup-button">Perşembe</span>
-                                        </label>
-                                        <label className="selectgroup-item">
-                                            <input
-                                                type="checkbox"
-                                                name="value"
-                                                value="5"
-                                                className="selectgroup-input"
-                                            />
-                                            <span className="selectgroup-button">Cuma</span>
-                                        </label>
-                                        <label className="selectgroup-item">
-                                            <input
-                                                type="checkbox"
-                                                name="value"
-                                                value="6"
-                                                className="selectgroup-input"
-                                            />
-                                            <span className="selectgroup-button">Cumartesi</span>
-                                        </label>
-                                        <label className="selectgroup-item">
-                                            <input
-                                                type="checkbox"
-                                                name="value"
-                                                value="0"
-                                                className="selectgroup-input"
-                                            />
-                                            <span className="selectgroup-button">Pazar</span>
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="alert alert-info card-alert">
-                                <p>
-                                    <strong>Öğrenci Seçmeyi Unutma!</strong>
-                                </p>
+                                {this.renderWorkDays()}
                             </div>
                             <div className="card-footer">
-                                <button className="btn btn-success btn-block">Oluştur</button>
+                                <button type="submit" className={`btn btn-block btn-success ${loadingButton}`}>
+                                    Oluştur
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -320,6 +449,12 @@ export class Add extends Component {
                                     />
                                 </div>
                             </div>
+                            <div className="alert alert-info card-alert pl-5">
+                                <p>
+                                    <strong>Öğrenci Seçmeyi Unutma!</strong>
+                                </p>
+                                Grubun bilgilerini girdikten sonra aşağıdan gruba eklenecek öğrencileri seçebilirsiniz.
+                            </div>
                             <div className="card-body pb-0">
                                 <div className="row row-cards row-deck">
                                     {select.initialPlayers ? (
@@ -328,7 +463,7 @@ export class Add extends Component {
                                                 <div className="col-lg-3 col-sm-4" key={el.player_id.toString()}>
                                                     <div
                                                         onClick={() => this.handleCard(el.player_id)}
-                                                        className={`card user-select-none shadow-sm ${
+                                                        className={`card user-select-none cursor-pointer shadow-sm ${
                                                             players.indexOf(el.player_id) > -1 ? "card-active" : ""
                                                         }`}>
                                                         <div className="card-body p-4 text-center card-checkbox">
@@ -342,7 +477,7 @@ export class Add extends Component {
                                                                 }}>
                                                                 {this.renderGroups(el.groups)}
                                                                 <div
-                                                                    className="text-muted text-h6"
+                                                                    className="text-muted text-h6 ml-auto"
                                                                     data-toggle="tooltip"
                                                                     title="Okula Başlama Tarihi">
                                                                     {formatDate(el.start_date, "DD/MM/YYYY")}

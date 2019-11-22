@@ -10,7 +10,6 @@ import { Bloods, Branchs, PlayerPositions, Groups } from "../../services/FillSel
 import { UploadFile, clearMoney, formatDate, fullnameGenerator, formatPhone, formatMoney } from "../../services/Others";
 import { CreatePlayer } from "../../services/Player";
 import Select from "react-select";
-import Inputmask from "inputmask";
 import { Link } from "react-router-dom";
 import DatePicker, { registerLocale } from "react-datepicker";
 import ParentModal from "./ParentModal";
@@ -18,6 +17,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import tr from "date-fns/locale/tr";
 import _ from "lodash";
 import moment from "moment";
+import Inputmask from "inputmask";
 const $ = require("jquery");
 
 registerLocale("tr", tr);

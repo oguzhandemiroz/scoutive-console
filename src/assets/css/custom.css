@@ -888,11 +888,11 @@ a.badge {
     color: #fff;
     background-color: #5eba00;
 }
-.badge .badge-info {
+.badge.badge-info {
     color: #fff;
     background-color: #45aaf2;
 }
-.badge .badge-warning {
+.badge.badge-warning {
     color: #fff;
     background-color: #f1c40f;
 }

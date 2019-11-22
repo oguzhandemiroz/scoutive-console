@@ -78,9 +78,15 @@ export class TrainingPlayers extends Component {
                                                                       className={`badge ${
                                                                           el.status === 1
                                                                               ? "badge-success"
-                                                                              : "badge-danger"
+                                                                              : el.status === 0 || el.status === -1
+                                                                              ? "badge-danger"
+                                                                              : "badge-warning"
                                                                       }`}>
-                                                                      {el.status === 1 ? "Antrenmanda" : "Gelmedi"}
+                                                                      {el.status === 1
+                                                                          ? "Antrenmanda"
+                                                                          : el.status === 0 || el.status === -1
+                                                                          ? "Gelmedi"
+                                                                          : "İzinli"}
                                                                   </div>
                                                               </div>
                                                           </div>
