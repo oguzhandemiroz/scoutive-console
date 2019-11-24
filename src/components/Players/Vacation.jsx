@@ -39,6 +39,7 @@ export class VacationPlayer extends Component {
         this.state = {
             uid: localStorage.getItem("UID"),
             to: props.match.params.uid,
+            attributes: {},
             data: {},
             groups: [],
             loading: "active"
@@ -52,7 +53,7 @@ export class VacationPlayer extends Component {
 
     detailPlayer = () => {
         const { uid, to } = this.state;
-        DetailPlayer({ uid: uid, to: to }).then(response => {
+        DetailPlayer({ uid: uid, to: to, attribute_values: [] }).then(response => {
             if (response !== null) {
                 const status = response.status;
                 if (status.code === 1020) {
@@ -176,7 +177,9 @@ export class VacationPlayer extends Component {
                                                                   <td>{el.day}</td>
                                                                   <td>
                                                                       <span
-                                                                          className={`badge badge-${vacationStatus[el.status].type}`}>
+                                                                          className={`badge badge-${
+                                                                              vacationStatus[el.status].type
+                                                                          }`}>
                                                                           {vacationStatus[el.status].text}
                                                                       </span>
                                                                   </td>

@@ -91,7 +91,7 @@ export class PersonCard extends Component {
                                 </div>
                                 <div className="form-group">
                                     <label className="form-label">Genel Puan</label>
-                                    <div className="form-control-plaintext">{nullCheck(data.point)}</div>
+                                    <div className="form-control-plaintext">{nullCheck(data.attributes.point)}</div>
                                 </div>
                                 <div className="form-group">
                                     <label className="form-label">Branş</label>

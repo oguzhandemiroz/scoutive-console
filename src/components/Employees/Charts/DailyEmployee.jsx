@@ -59,12 +59,11 @@ class DailyEmployee extends Component {
             data.filter(x => x.daily === 2).length,
             data.filter(x => x.daily === -1).length
         ];
-
         this.setState(prevState => ({
             chartOptions: {
                 ...prevState.chartOptions,
                 labels: ["Geldi", "Gelmedi", "İzinli", "Tanımsız"],
-                series: gen_data
+                series: gen_data.filter(x => x !== 0).length === 0 ? [] : gen_data
             }
         }));
     };

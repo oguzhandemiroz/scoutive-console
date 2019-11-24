@@ -596,7 +596,7 @@ export class Edit extends Component {
                                                 </div>
                                             ))
                                         ) : (
-                                            <div className="text-center w-100 text-muted font-italic mb-5s">
+                                            <div className="text-center w-100 text-muted font-italic mb-5">
                                                 Sistemde kayıtlı öğrenci bulunamadı...
                                             </div>
                                         )

@@ -41,6 +41,10 @@ const generateSelectValue = (value, label, custom) => {
     return { value: value, label: label, ...custom };
 };
 
+const parseJSON = data => {
+    return JSON.parse(data.split("'").join('"'));
+};
+
 const UploadFile = formData => {
     try {
         if (formData) {
@@ -274,5 +278,6 @@ export {
     clearMoney,
     groupAgeSplit,
     ActivateSchool,
-    avatarPlaceholder
+    avatarPlaceholder,
+    parseJSON
 };

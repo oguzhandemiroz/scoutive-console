@@ -5,11 +5,11 @@ import HeaderMenu from "../components/includes/HeaderMenu.jsx";
 import Footer from "../components/includes/Footer.jsx";
 import FABs from "../components/Others/FABs";
 import indexRoutes from "../routes/index.jsx";
+import { Start } from "../services/Starts.jsx";
 const $ = require("jquery");
 
 class App extends Component {
     componentDidUpdate() {
-        console.log("render");
         if ($(".tooltip.show")) {
             $(".tooltip.show").remove();
         }
@@ -24,6 +24,10 @@ class App extends Component {
         });
 
         $('[data-toggle="tooltip"]').tooltip();
+    }
+
+    componentDidMount() {
+        Start().then(response => console.log("Start: ", response));
     }
     render() {
         return (

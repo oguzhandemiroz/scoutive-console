@@ -49,14 +49,14 @@ const InputmaskDefaultOptions = {
     placeholder: ""
 };
 
-const body_measure_list = [
+/* const body_measure_list = [
     "Göğüs Çevresi",
     "Bel Çevresi",
     "Kalça Ölçüsü",
     "Kol Ölçüsü",
     "Kol Uzunluğu",
     "Bacak Uzunluğu"
-];
+]; */
 
 export class Add extends Component {
     constructor(props) {
@@ -84,7 +84,6 @@ export class Add extends Component {
             start_date: new Date(),
             birthday: null,
             end_date: null,
-            body_measure: [],
             parents: [],
             select: {
                 bloods: null,
@@ -136,10 +135,6 @@ export class Add extends Component {
         setTimeout(this.fieldMasked, 150);
     }
 
-    componentWillUnmount() {
-        this.setState({ body_measure: [] });
-    }
-
     handleSubmit = e => {
         e.preventDefault();
         const {
@@ -164,7 +159,6 @@ export class Add extends Component {
             birthday,
             is_active,
             note,
-            body_measure,
             addContinuously,
             file,
             start_date,
@@ -244,15 +238,14 @@ export class Add extends Component {
                 attributes: _.pickBy({
                     start_date: formatDate(start_date, "YYYY-MM-DD"),
                     fee: fee,
-                    position: position,
+                    position: position ? position.value : null,
                     email: email,
                     phone: phone,
                     body_height: body_height,
                     body_weight: body_weight,
-                    body_measure: body_measure,
                     foot_no: foot_no,
                     point: point,
-                    branch: branch
+                    branch: branch.value
                 }),
                 parents: parents
             }).then(response => {
@@ -533,18 +526,6 @@ export class Add extends Component {
                 }
             }));
         });
-
-        body_measure_list.map(el =>
-            this.setState(prevState => ({
-                body_measure: [
-                    ...prevState.body_measure,
-                    {
-                        type: el,
-                        value: ""
-                    }
-                ]
-            }))
-        );
     };
 
     render() {
@@ -557,7 +538,6 @@ export class Add extends Component {
             point,
             groups,
             foot,
-            body_measure,
             select,
             birthday,
             is_active,
@@ -1238,7 +1218,7 @@ export class Add extends Component {
                                             </div>
                                         </div>
                                         <div className={`form-group ${show.measure ? "d-block" : "d-none"}`}>
-                                            <label className="form-label">Vücut Metrikleri (Boy & Kilo)</label>
+                                            <label className="form-label">Boy & Kilo</label>
                                             <div className="row gutters-xs">
                                                 <div className="col-6">
                                                     <input
@@ -1329,39 +1309,6 @@ export class Add extends Component {
                                                 min="10"
                                                 max="50"
                                             />
-                                        </div>
-                                        <div className={`form-group ${show.metrics ? "d-block" : "d-none"}`}>
-                                            <label className="form-label">Vücut Ölçüleri</label>
-                                            <table className="table mb-0">
-                                                <thead>
-                                                    <tr>
-                                                        <th className="w-11 pl-0">Tür</th>
-                                                        <th className="pl-0">Değer</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {body_measure.map((el, key) => {
-                                                        return (
-                                                            <tr key={key.toString()}>
-                                                                <td className="w-11 pl-0 pr-0">
-                                                                    <div className="form-control-plaintext">
-                                                                        {el.type}:
-                                                                    </div>
-                                                                </td>
-                                                                <td className="pl-0">
-                                                                    <input
-                                                                        type="number"
-                                                                        name={`body_measure.value.${key}`}
-                                                                        onChange={this.handleChange}
-                                                                        className="form-control"
-                                                                        placeholder="(cm)"
-                                                                    />
-                                                                </td>
-                                                            </tr>
-                                                        );
-                                                    })}
-                                                </tbody>
-                                            </table>
                                         </div>
                                         <div className={`form-group ${show.note ? "d-block" : "d-none"}`}>
                                             <label className="form-label">Not</label>
@@ -1462,13 +1409,6 @@ export class Add extends Component {
                                             onClick={this.handleOtherInfo}
                                             className="btn btn-secondary btn-block">
                                             Ayak Numarası
-                                        </button>
-                                        <button
-                                            name="metrics"
-                                            type="button"
-                                            onClick={this.handleOtherInfo}
-                                            className="btn btn-secondary btn-block">
-                                            Vücut Ölçüleri
                                         </button>
                                         <button
                                             name="note"

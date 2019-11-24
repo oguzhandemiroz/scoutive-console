@@ -64,7 +64,7 @@ class TotalPlayerCount extends Component {
             chartOptions: {
                 ...prevState.chartOptions,
                 labels: ["Aktif", "Pasif", "Donuk", "Ön Kayıt"],
-                series: gen_data
+                series: gen_data.filter(x => x !== 0).length === 0 ? [] : gen_data
             }
         }));
     };

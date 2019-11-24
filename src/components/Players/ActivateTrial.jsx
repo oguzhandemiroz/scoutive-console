@@ -466,7 +466,8 @@ export class ActivateTrial extends Component {
         const { uid, to } = this.state;
         DetailPlayer({
             uid: uid,
-            to: to
+            to: to,
+            attribute_values: []
         }).then(response => {
             try {
                 const status = response.status;
@@ -1149,7 +1150,6 @@ export class ActivateTrial extends Component {
                             <div className="card-footer text-right">
                                 <div className="d-flex" style={{ justifyContent: "space-between" }}>
                                     <a
-                                        
                                         onClick={() => {
                                             showSwal({
                                                 type: "info",

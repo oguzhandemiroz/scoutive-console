@@ -94,12 +94,12 @@ export class Area extends Component {
                         </button>
                     )}
 
-                    <p className="font-italic text-muted mt-2 mb-0">
+                    <div className="font-italic text-muted mt-2 mb-0">
                         Sahalar, gruplarda kullanılır. Sahaları gruplarda <b>Antrenman Sahası</b> olarak
                         tanımlayabilirsiniz.
                         <br />
                         Sistemde kayıtlı olan sahaların isimlerini değiştirebilirsiniz.
-                    </p>
+                    </div>
                 </div>
             </form>
         );

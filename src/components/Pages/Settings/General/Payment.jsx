@@ -17,14 +17,7 @@ export class Payment extends Component {
         };
     }
 
-    componentDidMount() {
-        this.setState(prevState => ({
-            select: {
-                ...prevState.select,
-                days: Days()
-            }
-        }));
-    }
+    componentDidMount() {}
 
     handleSelect = (value, name) => {
         this.setState({ [name]: value });
@@ -36,7 +29,13 @@ export class Payment extends Component {
     };
 
     showPaymentSettings = () => {
-        this.setState({ show: true });
+        this.setState(prevState => ({
+            select: {
+                ...prevState.select,
+                days: Days()
+            },
+            show: true
+        }));
     };
 
     render() {
@@ -125,12 +124,10 @@ export class Payment extends Component {
                         </button>
                     )}
 
-                    <p className="font-italic text-muted mt-2 mb-0">
-                        Ödeme ayarlarından, aidat gününü belirleyebilirsiniz. Ödeme hatırlatıcısı buradaki ayara göre
-                        çalışır.
-                        <br />
+                    <div className="font-italic text-muted mt-2 mb-0">
                         <p>
-                            Aidat gününü sabit bir gün veya <u>öğrencinin okula başlama tarihine</u> göre
+                            Ödeme ayarlarından, aidat gününü belirleyebilirsiniz. Ödeme hatırlatıcısı buradaki ayara
+                            göre çalışır. Aidat gününü sabit bir gün veya <u>öğrencinin okula başlama tarihine</u> göre
                             ayarlayabilirsiniz.
                         </p>
                         <p>
@@ -141,7 +138,7 @@ export class Payment extends Component {
                             <strong>Sabit gün ayarlandığında;</strong> öğrencilerin okula başlama tarihleri önemsenmeden
                             tüm öğrencilerin aidatları belirlenen güne göre hatırlatma yapılır.
                         </p>
-                    </p>
+                    </div>
                 </div>
             </form>
         );

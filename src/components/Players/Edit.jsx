@@ -50,14 +50,14 @@ const InputmaskDefaultOptions = {
     placeholder: ""
 };
 
-const body_measure_list = [
+/* const body_measure_list = [
     "Göğüs Çevresi",
     "Bel Çevresi",
     "Kalça Ölçüsü",
     "Kol Ölçüsü",
     "Kol Uzunluğu",
     "Bacak Uzunluğu"
-];
+]; */
 
 export class Edit extends Component {
     constructor(props) {
@@ -67,7 +67,6 @@ export class Edit extends Component {
             uid: localStorage.getItem("UID"),
             to: props.match.params.uid,
             responseData: {},
-            body_measure: [],
             is_cash: true,
             select: {
                 bloods: null,
@@ -141,7 +140,6 @@ export class Edit extends Component {
                 point,
                 status,
                 end_date,
-                body_measure,
                 formErrors,
                 payment_type,
                 note,
@@ -170,7 +168,7 @@ export class Edit extends Component {
                     surname: surname.toLocaleUpperCase("tr-TR"),
                     security_id: security_id,
                     position_id: position ? position.value : null,
-                    branch_id: branch ? branch.value : null,
+                    branch_id: branch.value,
                     blood_id: blood ? blood.value : null,
                     email: email,
                     phone: phone,
@@ -187,20 +185,19 @@ export class Edit extends Component {
                     attributes: difference(
                         {
                             start_date: formatDate(start_date, "YYYY-MM-DD"),
-                            position: position,
+                            position: position ? position.value : null,
                             email: email,
                             phone: phone,
                             body_height: body_height,
                             body_weight: body_weight,
-                            body_measure: body_measure,
                             foot_no: foot_no,
                             point: point,
                             image: image,
-                            branch: branch
+                            branch: branch.value
                         },
                         {
                             start_date: response_data.start_date,
-                            position: response_data.position,
+                            position: response_data.position ? response_data.position.value : null,
                             email: response_data.email,
                             phone: response_data.phone,
                             body_height: response_data.attributes.body_height,
@@ -208,7 +205,7 @@ export class Edit extends Component {
                             foot_no: response_data.foot_no,
                             point: response_data.point,
                             image: response_data.image,
-                            branch: response_data.branch
+                            branch: response_data.branch.value
                         }
                     ),
                     parents: parents
@@ -469,25 +466,14 @@ export class Edit extends Component {
                 }
             }));
         });
-
-        body_measure_list.map(el =>
-            this.setState(prevState => ({
-                body_measure: [
-                    ...prevState.body_measure,
-                    {
-                        type: el,
-                        value: ""
-                    }
-                ]
-            }))
-        );
     };
 
     detailPlayer = () => {
         const { uid, to } = this.state;
         DetailPlayer({
             uid: uid,
-            to: to
+            to: to,
+            attribute_values: []
         }).then(response => {
             try {
                 const status = response.status;
@@ -516,12 +502,7 @@ export class Edit extends Component {
                         response_data: { ...edited_data },
                         body_height: data.attributes.body_height,
                         body_weight: data.attributes.body_weight,
-                        body_measure:
-                            data.attributes.body_measure ||
-                            body_measure_list.map(el => ({
-                                type: el,
-                                value: ""
-                            })),
+                        point: data.attributes.point,
                         foot_no: data.attributes.foot_no,
                         loading: ""
                     }));
@@ -547,7 +528,6 @@ export class Edit extends Component {
             foot,
             birthday,
             foot_no,
-            body_measure,
             body_height,
             body_weight,
             end_date,
@@ -1118,7 +1098,7 @@ export class Edit extends Component {
                                                                 min="0"
                                                                 max="5"
                                                                 name="point"
-                                                                value={point || "0"}
+                                                                value={nullCheck(point, "0")}
                                                                 onChange={this.handleChange}
                                                             />
                                                         </div>
@@ -1129,7 +1109,7 @@ export class Edit extends Component {
                                                                 step="0.1"
                                                                 min="0"
                                                                 max="5"
-                                                                value={point || "0"}
+                                                                value={nullCheck(point, "0")}
                                                                 className={`form-control w-8 ${formErrors.point}`}
                                                                 onChange={this.handleChange}
                                                             />
@@ -1137,7 +1117,7 @@ export class Edit extends Component {
                                                     </div>
                                                 </div>
                                                 <div className={`form-group ${show.measure ? "d-block" : "d-none"}`}>
-                                                    <label className="form-label">Vücut Metrikleri (Boy & Kilo)</label>
+                                                    <label className="form-label">Boy & Kilo</label>
                                                     <div className="row gutters-xs">
                                                         <div className="col-6">
                                                             <input
@@ -1232,40 +1212,6 @@ export class Edit extends Component {
                                                         value={nullCheck(foot_no, "")}
                                                     />
                                                 </div>
-                                                <div className={`form-group ${show.metrics ? "d-block" : "d-none"}`}>
-                                                    <label className="form-label">Vücut Ölçüleri</label>
-                                                    <table className="table mb-0">
-                                                        <thead>
-                                                            <tr>
-                                                                <th className="w-11 pl-0">Tür</th>
-                                                                <th className="pl-0">Değer</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            {body_measure.map((el, key) => {
-                                                                return (
-                                                                    <tr key={key.toString()}>
-                                                                        <td className="w-11 pl-0 pr-0">
-                                                                            <div className="form-control-plaintext">
-                                                                                {el.type}:
-                                                                            </div>
-                                                                        </td>
-                                                                        <td className="pl-0">
-                                                                            <input
-                                                                                type="number"
-                                                                                name={`body_measure.value.${key}`}
-                                                                                onChange={this.handleChange}
-                                                                                className="form-control"
-                                                                                placeholder="(cm)"
-                                                                                value={nullCheck(el.value, "")}
-                                                                            />
-                                                                        </td>
-                                                                    </tr>
-                                                                );
-                                                            })}
-                                                        </tbody>
-                                                    </table>
-                                                </div>
                                                 <div className={`form-group ${show.note ? "d-block" : "d-none"}`}>
                                                     <label className="form-label">Not</label>
                                                     <textarea
@@ -1285,7 +1231,6 @@ export class Edit extends Component {
                             <div className="card-footer text-right">
                                 <div className="d-flex" style={{ justifyContent: "space-between" }}>
                                     <a
-                                        
                                         onClick={() => {
                                             showSwal({
                                                 type: "info",
@@ -1369,13 +1314,6 @@ export class Edit extends Component {
                                             onClick={this.handleOtherInfo}
                                             className="btn btn-secondary btn-block">
                                             Ayak Numarası
-                                        </button>
-                                        <button
-                                            name="metrics"
-                                            type="button"
-                                            onClick={this.handleOtherInfo}
-                                            className="btn btn-secondary btn-block">
-                                            Vücut Ölçüleri
                                         </button>
                                         <button
                                             name="note"

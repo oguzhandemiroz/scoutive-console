@@ -99,7 +99,9 @@ var ep = {
     PARENT_CREATE: host + api_version + "create/parent",
     PARENT_LIST: host + api_version + "list/parents",
     PARENT_GET: host + api_version + "get/parent",
-    PARENT_PLAYERS: host + api_version + "get/parent/players"
+    PARENT_PLAYERS: host + api_version + "get/parent/players",
+    PARENT_PLAYERS: host + api_version + "get/parent/players",
+    START: host + api_version + "start"
 };
 
 export default ep;

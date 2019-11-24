@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Link, withRouter } from "react-router-dom";
-import logo from "../../assets/images/logo.svg";
+import logo from "../../assets/images/logo_white.svg";
 import { Logout } from "../../services/Login.jsx";
 import { systemClock } from "../../services/Others";
 
@@ -64,7 +64,7 @@ class HeaderMenu extends Component {
                                 <div className="dropdown">
                                     <span className="nav-link pr-0 leading-none" data-toggle="dropdown">
                                         <span
-                                            className="avatar avatar-transparent"
+                                            className="avatar"
                                             style={{ backgroundImage: `url(${this.state.sImage})` }}
                                         />
                                         <span className="ml-2 d-none d-lg-block">

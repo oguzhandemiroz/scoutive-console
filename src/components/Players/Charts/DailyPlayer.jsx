@@ -64,7 +64,7 @@ class DailyPlayer extends Component {
             chartOptions: {
                 ...prevState.chartOptions,
                 labels: ["Geldi", "Gelmedi", "İzinli", "Tanımsız"],
-                series: gen_data
+                series: gen_data.filter(x => x !== 0).length === 0 ? [] : gen_data
             }
         }));
     };

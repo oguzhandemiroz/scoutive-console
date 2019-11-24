@@ -27,8 +27,7 @@ export class Detail extends Component {
             attributes: { body_height: null, body_weight: null },
             groups: [],
             show: {
-                parents: false,
-                body_metrics: false
+                parents: false
             }
         };
     }
@@ -39,7 +38,7 @@ export class Detail extends Component {
 
     detailPlayer = () => {
         const { uid, to } = this.state;
-        DetailPlayer({ uid: uid, to: to }).then(response => {
+        DetailPlayer({ uid: uid, to: to, attribute_values: [] }).then(response => {
             if (response) {
                 const status = response.status;
                 if (status.code === 1020) {
@@ -92,12 +91,7 @@ export class Detail extends Component {
                                                 <div className="form-group">
                                                     <label className="form-label">Email</label>
                                                     <div className="form-control-plaintext">
-                                                        <a
-                                                            href={
-                                                                email
-                                                                    ? `mailto:${nullCheck(email)}`
-                                                                    : ""
-                                                            }>
+                                                        <a href={email ? `mailto:${nullCheck(email)}` : ""}>
                                                             {nullCheck(email)}
                                                         </a>
                                                     </div>
@@ -105,12 +99,7 @@ export class Detail extends Component {
                                                 <div className="form-group">
                                                     <label className="form-label">Telefonu</label>
                                                     <div className="form-control-plaintext">
-                                                        <a
-                                                            href={
-                                                                phone
-                                                                    ? `tel:+90${nullCheck(phone)}`
-                                                                    : ""
-                                                            }>
+                                                        <a href={phone ? `tel:+90${nullCheck(phone)}` : ""}>
                                                             {formatPhone(phone)}
                                                         </a>
                                                     </div>
@@ -233,57 +222,6 @@ export class Detail extends Component {
                                                 )}
                                             </div>
 
-                                            <div className="col-12 mt-3">
-                                                <label className="form-label">Vücut Ölçüleri</label>
-                                                {show.body_metrics ? (
-                                                    <div className="table-responsive">
-                                                        <table className="table mb-0">
-                                                            <thead>
-                                                                <tr>
-                                                                    <th className="pl-0">Tür</th>
-                                                                    <th>Değer</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                                {Array.isArray(attributes.body_measure)
-                                                                    ? attributes.body_measure.map((el, key) => {
-                                                                          if (el.type !== "" && el.value !== "")
-                                                                              return (
-                                                                                  <tr key={key.toString()}>
-                                                                                      <td className="pl-0 pr-0">
-                                                                                          <div className="form-control-plaintext">
-                                                                                              {el.type}
-                                                                                          </div>
-                                                                                      </td>
-                                                                                      <td>
-                                                                                          <div className="form-control-plaintext">
-                                                                                              {el.value}cm
-                                                                                          </div>
-                                                                                      </td>
-                                                                                  </tr>
-                                                                              );
-                                                                      })
-                                                                    : null}
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-                                                ) : (
-                                                    <button
-                                                        type="button"
-                                                        className="btn btn-gray btn-icon"
-                                                        onClick={() =>
-                                                            this.setState(prevState => ({
-                                                                show: {
-                                                                    ...prevState.show,
-                                                                    body_metrics: true
-                                                                }
-                                                            }))
-                                                        }>
-                                                        <i className="fa fa-stream mr-2" />
-                                                        Vücut Ölçülerini Görüntüle
-                                                    </button>
-                                                )}
-                                            </div>
                                             <div className="col-12 mt-5">
                                                 <div className="form-group">
                                                     <label className="form-label">Not</label>

@@ -27,6 +27,7 @@ export class Rollcall extends Component {
         this.state = {
             uid: localStorage.getItem("UID"),
             to: props.match.params.uid,
+            attributes: {},
             data: {},
             groups: [],
             loading: "active"
@@ -43,7 +44,7 @@ export class Rollcall extends Component {
 
     detailPlayer = () => {
         const { uid, to } = this.state;
-        DetailPlayer({ uid: uid, to: to }).then(response => {
+        DetailPlayer({ uid: uid, to: to, attribute_values: [] }).then(response => {
             if (response !== null) {
                 const status = response.status;
                 if (status.code === 1020) {

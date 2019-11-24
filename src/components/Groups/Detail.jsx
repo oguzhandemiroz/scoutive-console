@@ -6,6 +6,7 @@ import { DetailGroup, DeleteGroup } from "../../services/Group";
 import { nullCheck, groupAgeSplit, fullnameGenerator, formatDate, avatarPlaceholder } from "../../services/Others";
 import { ListPlayers } from "../../services/Player";
 import { Toast, showSwal } from "../Alert";
+const $ = require("jquery");
 
 export class Detail extends Component {
     constructor(props) {
@@ -18,6 +19,14 @@ export class Detail extends Component {
             weekdays: moment.weekdaysShort(),
             players: []
         };
+    }
+
+    componentDidUpdate() {
+        $('[data-toggle="tooltip"]').tooltip();
+        $('[data-toggle="popover"]').popover({
+            html: true,
+            trigger: "hover"
+        });
     }
 
     componentDidMount() {
