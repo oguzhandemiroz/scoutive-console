@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import List from "../../components/Groups/NewList";
+import List from "../../components/Groups/List";
 import All from "../../components/Groups/All";
 import { Link, withRouter } from "react-router-dom";
 

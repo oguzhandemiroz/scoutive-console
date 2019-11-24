@@ -148,19 +148,22 @@ const avatarPlaceholder = (name, surname) => {
 const groupAgeSplit = age => {
     try {
         var result = {};
-        const __split = age.indexOf("-") > -1 ? age.split("-") : null;
-        if (__split) {
-            const start = parseInt(__split[0]);
-            const end = parseInt(__split[1]);
-            result = {
-                start: start,
-                end: end,
-                diff: end - start
-            };
-        } else {
-            result = { start: age, end: age, diff: age - age };
+        if (age) {
+            const __split = age.indexOf("-") > -1 ? age.split("-") : null;
+            if (__split) {
+                const start = parseInt(__split[0]);
+                const end = parseInt(__split[1]);
+                result = {
+                    start: start,
+                    end: end,
+                    diff: end - start
+                };
+            } else {
+                result = { start: age, end: age, diff: age - age };
+            }
+            return result;
         }
-        return result;
+        return { start: "—", end: "—", diff: "—" };
     } catch (e) {}
 };
 

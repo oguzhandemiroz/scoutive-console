@@ -1,27 +1,26 @@
 import React, { Component } from "react";
 import Select, { components } from "react-select";
-import { withRouter, Link } from "react-router-dom";
-import List from "./List";
-import { CreateGroup, ChangeGroup } from "../../services/Group";
-import { Areas, GetEmployees, GetPlayers } from "../../services/FillSelect";
+import { Areas, GetEmployees } from "../../services/FillSelect";
 import { selectCustomStyles, selectCustomStylesError, formValid } from "../../assets/js/core";
-import { UpdatePlayers } from "../../services/Player";
-import { UploadFile } from "../../services/Others";
-import { Toast, showSwal } from "../../components/Alert";
+import { avatarPlaceholder, formatDate, fullnameGenerator } from "../../services/Others";
+import { ListPlayers } from "../../services/Player";
+import { CreateGroup, ChangeGroup } from "../../services/Group";
+import _ from "lodash";
 import moment from "moment";
-import "moment/locale/tr";
+import Inputmask from "inputmask";
+const $ = require("jquery");
+
+Inputmask.extendDefaults({
+    autoUnmask: true
+});
+
+const InputmaskDefaultOptions = {
+    showMaskOnHover: false,
+    showMaskOnFocus: false,
+    placeholder: ""
+};
 
 const { Option } = components;
-const ImageOptionPlayer = props => (
-    <Option {...props}>
-        <span className="avatar avatar-sm mr-2" style={{ backgroundImage: `url(${props.data.image})` }} />
-        {props.data.label} ({props.data.birthday ? moment(props.data.birthday).format("YYYY") : null})
-        <div className="small text-muted mt-1">
-            Mevcut Grup: <b className="text-blue">{props.data.group || "—"}</b>
-        </div>
-    </Option>
-);
-
 const ImageOptionEmployee = props => (
     <Option {...props}>
         <span className="avatar avatar-sm mr-2" style={{ backgroundImage: `url(${props.data.image})` }} />
@@ -32,29 +31,25 @@ const ImageOptionEmployee = props => (
     </Option>
 );
 
-const initialState = {
-    name: null,
-    start_time: null,
-    end_time: null,
-    start_age: null,
-    end_age: null,
-    area: null,
-    employee: null,
-    players: null,
-    imagePreview: null
-};
-
 export class Add extends Component {
     constructor(props) {
         super(props);
-        const now = Date.now();
+
         this.state = {
             uid: localStorage.getItem("UID"),
-            ...initialState,
+            name: null,
+            start_age: null,
+            end_age: null,
+            start_time: null,
+            end_time: null,
+            employee: null,
+            players: [],
+            work_days: [],
             select: {
                 employees: null,
+                areas: null,
                 players: null,
-                areas: null
+                initialPlayers: null
             },
             formErrors: {
                 name: "",
@@ -64,231 +59,90 @@ export class Add extends Component {
                 end_age: "",
                 employee: ""
             },
-            loadingImage: "",
-            loadingButton: "",
-            players: [{ key: now, player_id: "" }],
-            playerList: [
-                {
-                    id: now,
-                    select: states => {
-                        const { select } = states;
-                        return (
-                            <Select
-                                isClearable={true}
-                                isSearchable={true}
-                                isDisabled={select.players ? false : true}
-                                onChange={val => this.handleSelect(val, "player", now, true)}
-                                placeholder="Seç..."
-                                name="player"
-                                autosize
-                                styles={selectCustomStyles}
-                                options={select.players}
-                                noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
-                                components={{ Option: ImageOptionPlayer }}
-                            />
-                        );
-                    },
-                    buttons: (
-                        <div>
-                            <button type="button" className="btn btn-sm btn-success" onClick={this.addItemList}>
-                                <i className="fe fe-plus" />
-                            </button>
-                            <button
-                                type="button"
-                                className="btn btn-sm btn-danger ml-2"
-                                onClick={() => this.removeItemList(now)}>
-                                <i className="fe fe-minus" />
-                            </button>
-                        </div>
-                    )
-                }
-            ]
+            loadingButton: ""
         };
     }
 
-    addItemList = () => {
+    fieldMasked = () => {
         try {
-            const { playerList, players } = this.state;
-            const now = Date.now();
-            this.setState({
-                playerList: [
-                    ...playerList,
-                    {
-                        id: now,
-                        select: states => {
-                            const { select } = states;
-                            return (
-                                <Select
-                                    isSearchable={true}
-                                    isClearable={true}
-                                    isDisabled={select.players ? false : true}
-                                    onChange={val => this.handleSelect(val, "player", now, true)}
-                                    placeholder="Seç..."
-                                    name="player"
-                                    autosize
-                                    styles={selectCustomStyles}
-                                    options={select.players}
-                                    noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
-                                    components={{ Option: ImageOptionPlayer }}
-                                />
-                            );
-                        },
-                        buttons: (
-                            <div>
-                                <button type="button" className="btn btn-sm btn-success" onClick={this.addItemList}>
-                                    <i className="fe fe-plus" />
-                                </button>
-                                <button
-                                    type="button"
-                                    className="btn btn-sm btn-danger ml-2"
-                                    onClick={() => this.removeItemList(now)}>
-                                    <i className="fe fe-minus" />
-                                </button>
-                            </div>
-                        )
-                    }
-                ],
-                players: [...players, { key: now, player_id: "" }]
-            });
+            const elemArray = {
+                start_time: $("[name=start_time]"),
+                end_time: $("[name=end_time]")
+            };
+            Inputmask({ alias: "datetime", inputFormat: "HH:MM", ...InputmaskDefaultOptions }).mask(
+                elemArray.start_time
+            );
+            Inputmask({ alias: "datetime", inputFormat: "HH:MM", ...InputmaskDefaultOptions }).mask(elemArray.end_time);
         } catch (e) {}
     };
 
-    removeItemList = key => {
-        try {
-            const { playerList, players } = this.state;
-            if (playerList.length > 1) {
-                const filteredItems = playerList.filter(x => x.id !== key);
-                const filteredPlayers = players.filter(x => x.key !== key);
-                this.setState({ playerList: filteredItems, players: filteredPlayers });
-            } else if (playerList.length === 1) {
-                Toast.fire({
-                    type: "warning",
-                    title: "Daha fazla silme işlemi yapılamaz!",
-                    timer: 2000
-                });
-            }
-        } catch (e) {}
-    };
+    componentDidUpdate() {
+        $('[data-toggle="tooltip"]').tooltip();
+        $('[data-toggle="popover"]').popover({
+            html: true,
+            trigger: "hover"
+        });
+    }
 
     componentDidMount() {
         this.getFillSelect();
+        this.fieldMasked();
     }
 
     handleSubmit = e => {
-        try {
-            e.preventDefault();
-            const {
-                uid,
-                name,
-                start_time,
-                end_time,
-                employee,
-                start_age,
-                end_age,
-                file,
-                area,
-                imagePreview,
-                players
-            } = this.state;
+        e.preventDefault();
+        const { uid, name, work_days, start_time, end_time, employee, start_age, end_age, area, players } = this.state;
 
-            const require = { ...this.state };
-            delete require.imagePreview;
-            delete require.area;
+        if (formValid(this.state)) {
+            this.setState({ loadingButton: "btn-loading" });
 
-            const playersArr = [];
-            const formData = new FormData();
-
-            console.log(players);
-
-            if (
-                moment(end_time, "HH:mm", true).isValid("HH:mm") &&
-                moment(start_time, "HH:mm", true).isValid("HH:mm") &&
-                !moment(end_time, "HH:mm").isAfter(moment(start_time, "HH:mm"))
-            ) {
-                Toast.fire({
-                    type: "warning",
-                    title: "Bitiş saati, Başlangıç saatinden büyük olmalı!",
-                    timer: 3000
-                });
-            } else if (formValid(require)) {
-                players.map(el => {
-                    if (el.player_id && el.player_id !== "") playersArr.push(el.player_id);
-                });
-
-                this.setState({ loadingButton: "btn-loading" });
-                CreateGroup({
-                    uid: uid,
-                    name: name.capitalize(),
-                    start_time: start_time,
-                    end_time: end_time,
-                    employee_id: employee.value,
-                    age: `${start_age}-${end_age}`,
-                    area_id: area ? area.value : 1
-                }).then(response => {
-                    if (response) {
-                        if (response.status.code === 1020) {
-                            const group_id = response.group_id;
-
-                            if (playersArr.length > 0) {
-                                ChangeGroup({
-                                    uid: uid,
-                                    group_id: group_id,
-                                    add: playersArr,
-                                    remove: []
-                                }).then(response => {
-                                    if (response) {
-                                        const status = response.status;
-                                        if (status.code !== 1020) {
-                                            Toast.fire({
-                                                type: "error",
-                                                title: "Öğrenciler eklenemedi..."
-                                            });
-                                        }
+            CreateGroup({
+                uid: uid,
+                name: name.capitalize(),
+                start_time: start_time,
+                end_time: end_time,
+                employee_id: employee.value,
+                age: `${start_age}-${end_age}`,
+                area_id: area ? area.value : 1,
+                work_days: _.join(work_days, ",")
+            }).then(response => {
+                if (response) {
+                    if (response.status.code === 1020) {
+                        const group_id = response.group_id;
+                        if (players.length > 0) {
+                            ChangeGroup({
+                                uid: uid,
+                                group_id: group_id,
+                                add: players,
+                                remove: []
+                            }).then(response => {
+                                if (response) {
+                                    const status = response.status;
+                                    if (status.code === 1020) {
+                                        this.props.history.push("/app/groups/detail/" + group_id);
                                     }
-                                });
-                            }
-
-                            if (imagePreview) {
-                                formData.append("image", file);
-                                formData.append("uid", uid);
-                                formData.append("to", group_id);
-                                formData.append("type", "group");
-                                formData.append("update", true);
-                                this.setState({ loadingImage: "btn-loading" });
-                                UploadFile(formData).then(response => {
-                                    if (response) {
-                                        const status = response.status;
-                                        if (status.code === 1020) {
-                                            this.setState({ loadingImage: "" });
-                                        } else {
-                                            Toast.fire({
-                                                type: "error",
-                                                title: "Görsel yüklenemedi..."
-                                            });
-                                        }
-                                    }
-                                });
-                            }
-
+                                }
+                            });
+                        } else {
                             this.props.history.push("/app/groups/detail/" + group_id);
                         }
                     }
-                    this.setState({ loadingButton: "" });
-                });
-            } else {
-                this.setState(prevState => ({
-                    formErrors: {
-                        ...prevState.formErrors,
-                        employee: employee ? false : true,
-                        name: name ? "" : "is-invalid",
-                        start_time: moment(start_time, "HH:mm", true).isValid("HH:mm") ? "" : "is-invalid-iconless",
-                        end_time: moment(end_time, "HH:mm", true).isValid("HH:mm") ? "" : "is-invalid-iconless",
-                        start_age: start_age ? "" : "is-invalid",
-                        end_age: end_age ? "" : "is-invalid"
-                    }
-                }));
-            }
-        } catch (e) {}
+                }
+                this.setState({ loadingButton: "" });
+            });
+        } else {
+            this.setState(prevState => ({
+                formErrors: {
+                    ...prevState.formErrors,
+                    employee: employee ? false : true,
+                    name: name ? "" : "is-invalid",
+                    start_time: moment(start_time, "HH:mm", true).isValid("HH:mm") ? "" : "is-invalid-iconless",
+                    end_time: moment(end_time, "HH:mm", true).isValid("HH:mm") ? "" : "is-invalid-iconless",
+                    start_age: start_age ? "" : "is-invalid",
+                    end_age: end_age ? "" : "is-invalid"
+                }
+            }));
+        }
     };
 
     handleChange = e => {
@@ -296,7 +150,6 @@ export class Add extends Component {
             e.preventDefault();
             const { value, name } = e.target;
             let formErrors = { ...this.state.formErrors };
-            console.log(moment(value, "HH:mm", true).isValid("HH:mm"));
             switch (name) {
                 case "start_time":
                     formErrors[name] = moment(value, "HH:mm", true).isValid("HH:mm") ? "" : "is-invalid-iconless";
@@ -312,33 +165,59 @@ export class Add extends Component {
         } catch (e) {}
     };
 
-    handleImage = e => {
-        try {
-            e.preventDefault();
-            let reader = new FileReader();
-            let file = e.target.files[0];
-            reader.onloadend = () => {
-                if (reader.result !== null) {
-                    this.setState({
-                        imagePreview: reader.result,
-                        file: file
-                    });
-                }
-            };
-            reader.readAsDataURL(file);
-        } catch (e) {}
+    handleSelect = (value, name) => {
+        this.setState(prevState => ({
+            formErrors: {
+                ...prevState.formErrors,
+                [name]: value ? false : true
+            },
+            [name]: value
+        }));
     };
 
-    handleSelect = (value, name, extraData, arr) => {
-        const { players } = this.state;
-        let formErrors = { ...this.state.formErrors };
-
-        if (arr) {
-            const findPlayer = players.find(x => x.key === extraData);
-            findPlayer.player_id = value ? value.id : "";
+    handleWorkDays = e => {
+        const { name, value, checked } = e.target;
+        const { work_days } = this.state;
+        if (work_days.indexOf(parseInt(value)) > -1) {
+            this.setState({ work_days: work_days.filter(x => x !== parseInt(value)) });
         } else {
-            formErrors[name] = value ? false : true;
-            this.setState({ formErrors, [name]: value });
+            this.setState(prevState => ({ work_days: [...prevState.work_days, parseInt(value)] }));
+        }
+    };
+
+    handleSearch = e => {
+        const { value } = e.target;
+        const { players } = this.state.select;
+
+        const searched = _(players)
+            .map(item => JSON.stringify(item).toLocaleLowerCase("tr-TR"))
+            .value();
+
+        const filtered = _.filter(searched, x => x.indexOf(value.toLocaleLowerCase("tr-TR")) > -1);
+
+        const parsed = _(filtered)
+            .map(objs => JSON.parse(objs))
+            .value();
+
+        const result = _(parsed)
+            .map(objs => players.find(x => x.player_id === objs.player_id))
+            .value();
+
+        this.setState(prevState => ({
+            select: {
+                ...prevState.select,
+                initialPlayers: result
+            }
+        }));
+    };
+
+    handleCard = player_id => {
+        console.log(player_id);
+        const { players } = this.state;
+        if (players.indexOf(player_id) > -1) {
+            this.setState({ players: players.filter(x => x !== player_id) });
+        } else {
+            this.setState(prevState => ({ players: [...prevState.players, player_id] }));
         }
     };
 
@@ -361,231 +240,294 @@ export class Add extends Component {
             }));
         });
 
-        GetPlayers().then(response => {
-            this.setState(prevState => ({
-                select: {
-                    ...prevState.select,
-                    players: response
-                }
-            }));
+        ListPlayers().then(response => {
+            if (response) {
+                this.setState(prevState => ({
+                    select: {
+                        ...prevState.select,
+                        players: response.data.filter(x => x.status !== 0),
+                        initialPlayers: response.data.filter(x => x.status !== 0)
+                    }
+                }));
+            }
         });
     };
 
+    renderGroups = groups => {
+        if (groups.length === 0) return null;
+
+        let list_group = "";
+        groups.map(i => (list_group += `<div>${i.label}</div>`));
+        return (
+            <span
+                style={{ width: 12, height: 12 }}
+                className="icon"
+                data-toggle="popover"
+                data-content={`
+                    <p class="font-weight-600">
+                        <span class="badge badge-primary mr-1"></span>Dahil Olduğu Grup(lar)
+                    </p>
+                    ${list_group}
+                `}>
+                <i className="fa fa-th" />
+            </span>
+        );
+    };
+
+    renderWorkDays = () => {
+        const { work_days } = this.state;
+        const weekdays = moment.weekdays();
+        return (
+            <div className="form-group">
+                <label className="form-label">Çalışma Günleri</label>
+                <div className="selectgroup selectgroup-pills">
+                    {weekdays.map((el, key) => (
+                        <label className="selectgroup-item" key={key.toString()}>
+                            <input
+                                type="checkbox"
+                                name="work_days"
+                                value={key}
+                                className="selectgroup-input"
+                                onChange={this.handleWorkDays}
+                                checked={work_days.indexOf(key) > -1 ? true : false}
+                            />
+                            <span className="selectgroup-button">{el}</span>
+                        </label>
+                    ))}
+                </div>
+            </div>
+        );
+    };
+
     render() {
-        const { select, start_age, loadingImage, imagePreview, playerList, loadingButton, formErrors } = this.state;
+        const { select, players, start_age, loadingButton, formErrors } = this.state;
         return (
             <div className="container">
                 <div className="page-header">
                     <h1 className="page-title">Gruplar &mdash; Grup Oluştur</h1>
                 </div>
-                <div className="row">
-                    <div className="col-12">
-                        <form className="card" onSubmit={this.handleSubmit}>
-                            <div className="card-header p-4">
-                                <div className="card-status bg-blue" />
-                                <h3 className="card-title">
-                                    <input
-                                        type="text"
-                                        style={{ width: "13rem" }}
-                                        className={`form-control ${formErrors.name}`}
-                                        placeholder="Grup Adı *"
-                                        name="name"
-                                        onChange={this.handleChange}
-                                    />
-                                </h3>
-                                <div className="card-options mr-0">
-                                    <div style={{ width: "4rem" }}>
-                                        <input
-                                            type="text"
-                                            name="start_time"
-                                            className={`form-control ${formErrors.start_time} text-center`}
-                                            placeholder="08:00"
-                                            data-toggle="tooltip"
-                                            title="Antrenman Başlangıç Saati"
-                                            onChange={this.handleChange}
-                                        />
-                                    </div>
-                                    <span
-                                        className="mx-2 font-weight-bold d-flex align-items-center"
-                                        style={{ fontSize: ".75rem", color: "#6e7687" }}>
-                                        &mdash;
-                                    </span>
-                                    <div style={{ width: "4rem" }}>
-                                        <input
-                                            type="text"
-                                            name="end_time"
-                                            className={`form-control ${formErrors.end_time} text-center`}
-                                            placeholder="08:30"
-                                            data-toggle="tooltip"
-                                            title="Antrenman Bitiş Saati"
-                                            onChange={this.handleChange}
-                                        />
-                                    </div>
-                                </div>
+                <form className="row" onSubmit={this.handleSubmit}>
+                    <div className="col-lg-4">
+                        <div className="card">
+                            <div className="card-header">
+                                <h3 className="card-title">Grup Bilgileri</h3>
                             </div>
                             <div className="card-body">
-                                <div className="row">
-                                    <div className="col-auto">
-                                        <label
-                                            htmlFor="image"
-                                            className={`avatar ${loadingImage} avatar-xxxl cursor-pointer disabled`}
-                                            style={{
-                                                border: "none",
-                                                outline: "none",
-                                                fontSize: ".875rem",
-                                                backgroundImage: `url(${imagePreview})`
-                                            }}>
-                                            {!imagePreview ? "Fotoğraf ekle" : ""}
-                                        </label>
-                                        <input
-                                            type="file"
-                                            accept="image/*"
-                                            name="image"
-                                            id="image"
-                                            hidden
-                                            onChange={this.handleImage}
-                                        />
-                                    </div>
-                                    <div className="col d-flex flex-column justify-content-center">
+                                <div className="form-group">
+                                    <label className="form-label">
+                                        Grup Adı<span className="form-required">*</span>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        name="name"
+                                        onChange={this.handleChange}
+                                        className={`form-control ${formErrors.name}`}
+                                    />
+                                </div>
+                                <div className="row gutters-xs">
+                                    <div className="col">
                                         <div className="form-group">
                                             <label className="form-label">
-                                                Grup Yaş Aralığı
-                                                <span className="form-required">*</span>
+                                                Başlangıç Saati<span className="form-required">*</span>
                                             </label>
-                                            <div className="row gutters-xs">
-                                                <div className="col">
-                                                    <input
-                                                        placeholder="Başlangıç"
-                                                        type="number"
-                                                        min="1980"
-                                                        max="2019"
-                                                        className={`form-control ${formErrors.start_age}`}
-                                                        name="start_age"
-                                                        onChange={this.handleChange}
-                                                    />
-                                                </div>
-                                                <span
-                                                    className="mx-1 font-weight-bold d-flex align-items-center"
-                                                    style={{ fontSize: ".75rem", color: "#6e7687" }}>
-                                                    &mdash;
-                                                </span>
-                                                <div className="col">
-                                                    <input
-                                                        placeholder="Bitiş"
-                                                        type="number"
-                                                        min={start_age || "1981"}
-                                                        max="2019"
-                                                        className={`form-control ${formErrors.end_age}`}
-                                                        name="end_age"
-                                                        onChange={this.handleChange}
-                                                    />
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="form-group">
-                                            <label className="form-label">Antrenman Sahası</label>
-                                            <Select
-                                                options={select.areas}
-                                                isSearchable={true}
-                                                isDisabled={select.areas ? false : true}
-                                                isLoading={select.areas ? false : true}
-                                                placeholder="Seç..."
-                                                onChange={val => this.handleSelect(val, "area")}
-                                                name="area"
-                                                autosize
-                                                styles={
-                                                    formErrors.areas === true
-                                                        ? selectCustomStylesError
-                                                        : selectCustomStyles
-                                                }
-                                                noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
+                                            <input
+                                                type="text"
+                                                name="start_time"
+                                                className={`form-control ${formErrors.start_time}`}
+                                                placeholder="08:00"
+                                                data-toggle="tooltip"
+                                                title="Antrenman Başlangıç Saati"
+                                                onChange={this.handleChange}
                                             />
                                         </div>
                                     </div>
-                                    <div className="col d-flex flex-column justify-content-start">
+                                    <div className="col">
                                         <div className="form-group">
                                             <label className="form-label">
-                                                Sorumlu Antrenör
-                                                <span className="form-required">*</span>
+                                                Bitiş Saati<span className="form-required">*</span>
                                             </label>
-                                            <Select
-                                                isSearchable={true}
-                                                isDisabled={select.employees ? false : true}
-                                                placeholder="Seç..."
-                                                onChange={val => this.handleSelect(val, "employee")}
-                                                name="employee"
-                                                autosize
-                                                styles={
-                                                    formErrors.employee === true
-                                                        ? selectCustomStylesError
-                                                        : selectCustomStyles
-                                                }
-                                                options={select.employees}
-                                                noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
-                                                components={{ Option: ImageOptionEmployee }}
+                                            <input
+                                                type="text"
+                                                name="end_time"
+                                                className={`form-control ${formErrors.end_time}`}
+                                                placeholder="08:30"
+                                                data-toggle="tooltip"
+                                                title="Antrenman Bitiş Saati"
+                                                onChange={this.handleChange}
                                             />
                                         </div>
                                     </div>
                                 </div>
-                                <div className="row">
-                                    <div className="col-12 mt-5">
-                                        <label className="form-label" style={{ fontSize: "1.15rem" }}>
-                                            Öğrenci Ekle
-                                        </label>
-                                        <div>
-                                            <table className="table table-vcenter text-nowrap table-outline mb-0">
-                                                <tbody>
-                                                    {Array.isArray(playerList)
-                                                        ? playerList.map((el, key) => (
-                                                              <tr key={el.id.toString()}>
-                                                                  <td className="w-4 text-muted">#{key + 1}</td>
-                                                                  <td>{el.select(this.state)}</td>
-                                                                  <td className="w-1 pl-0">{el.buttons}</td>
-                                                              </tr>
-                                                          ))
-                                                        : null}
-                                                </tbody>
-                                            </table>
+                                <div className="form-group">
+                                    <label className="form-label">
+                                        Grup Yaş Aralığı<span className="form-required">*</span>
+                                    </label>
+                                    <div className="row gutters-xs">
+                                        <div className="col">
+                                            <input
+                                                placeholder="Başlangıç"
+                                                type="number"
+                                                min="1980"
+                                                max="2019"
+                                                className={`form-control ${formErrors.start_age}`}
+                                                name="start_age"
+                                                onChange={this.handleChange}
+                                            />
+                                        </div>
+                                        <div className="col">
+                                            <input
+                                                placeholder="Bitiş"
+                                                type="number"
+                                                min={start_age || "1981"}
+                                                max="2019"
+                                                className={`form-control ${formErrors.end_age}`}
+                                                name="end_age"
+                                                onChange={this.handleChange}
+                                            />
                                         </div>
                                     </div>
                                 </div>
+
+                                <div className="form-group">
+                                    <label className="form-label">
+                                        Sorumlu Antrenör<span className="form-required">*</span>
+                                    </label>
+                                    <Select
+                                        isSearchable={true}
+                                        isDisabled={select.employees ? false : true}
+                                        isLoading={select.employees ? false : true}
+                                        placeholder="Seç..."
+                                        onChange={val => this.handleSelect(val, "employee")}
+                                        name="employee"
+                                        autosize
+                                        styles={
+                                            formErrors.employee === true ? selectCustomStylesError : selectCustomStyles
+                                        }
+                                        options={select.employees}
+                                        noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
+                                        components={{ Option: ImageOptionEmployee }}
+                                    />
+                                </div>
+
+                                <div className="form-group">
+                                    <label className="form-label">Antrenman Sahası</label>
+                                    <Select
+                                        options={select.areas}
+                                        isSearchable={true}
+                                        isDisabled={select.areas ? false : true}
+                                        isLoading={select.areas ? false : true}
+                                        placeholder="Seç..."
+                                        onChange={val => this.handleSelect(val, "area")}
+                                        name="area"
+                                        autosize
+                                        styles={selectCustomStyles}
+                                        noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
+                                    />
+                                </div>
+
+                                {this.renderWorkDays()}
                             </div>
                             <div className="card-footer">
-                                <div className="d-flex" style={{ justifyContent: "space-between" }}>
-                                    <a
-                                        onClick={() => {
-                                            showSwal({
-                                                type: "info",
-                                                title: "Emin misiniz?",
-                                                text: "İşlemi iptal etmek istediğinize emin misiniz?",
-                                                confirmButtonText: "Evet",
-                                                cancelButtonText: "Hayır",
-                                                cancelButtonColor: "#cd201f",
-                                                showCancelButton: true,
-                                                reverseButtons: true
-                                            }).then(result => {
-                                                if (result.value) this.props.history.push("/app/groups");
-                                            });
-                                        }}
-                                        className="btn btn-link">
-                                        İptal
-                                    </a>
-                                    <div className="d-flex" style={{ alignItems: "center" }}>
-                                        <button
-                                            style={{ width: 100 }}
-                                            type="submit"
-                                            className={`btn btn-primary ml-3 ${loadingButton} ${loadingImage}`}>
-                                            Ekle
-                                        </button>
-                                    </div>
+                                <button type="submit" className={`btn btn-block btn-success ${loadingButton}`}>
+                                    Oluştur
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="col-lg-8">
+                        <div className="card">
+                            <div className="card-header">
+                                <h3 className="card-title">Öğrenciler</h3>
+                                <div className="card-options">
+                                    <input
+                                        type="text"
+                                        className="form-control form-control-sm"
+                                        placeholder="Öğrenci Ara..."
+                                        name="search"
+                                        onChange={this.handleSearch}
+                                    />
                                 </div>
                             </div>
-                        </form>
+                            <div className="alert alert-info card-alert pl-5">
+                                <p>
+                                    <strong>Öğrenci Seçmeyi Unutma!</strong>
+                                </p>
+                                Grubun bilgilerini girdikten sonra aşağıdan gruba eklenecek öğrencileri seçebilirsiniz.
+                            </div>
+                            <div className="card-body pb-0">
+                                <div className="row row-cards row-deck">
+                                    {select.initialPlayers ? (
+                                        select.initialPlayers.length > 0 ? (
+                                            select.initialPlayers.map(el => (
+                                                <div className="col-lg-3 col-sm-4" key={el.player_id.toString()}>
+                                                    <div
+                                                        onClick={() => this.handleCard(el.player_id)}
+                                                        className={`card user-select-none cursor-pointer shadow-sm ${
+                                                            players.indexOf(el.player_id) > -1 ? "card-active" : ""
+                                                        }`}>
+                                                        <div className="card-body p-4 text-center card-checkbox">
+                                                            <div
+                                                                className="d-flex justify-content-between align-items-center py-1 px-2"
+                                                                style={{
+                                                                    position: "absolute",
+                                                                    top: 0,
+                                                                    left: 0,
+                                                                    right: 0
+                                                                }}>
+                                                                {this.renderGroups(el.groups)}
+                                                                <div
+                                                                    className="text-muted text-h6 ml-auto"
+                                                                    data-toggle="tooltip"
+                                                                    title="Okula Başlama Tarihi">
+                                                                    {formatDate(el.start_date, "DD/MM/YYYY")}
+                                                                </div>
+                                                            </div>
+                                                            <span
+                                                                className="avatar avatar-lg my-4"
+                                                                style={{ backgroundImage: `url(${el.image})` }}>
+                                                                {el.image
+                                                                    ? null
+                                                                    : avatarPlaceholder(el.name, el.surname)}
+                                                            </span>
+                                                            <h5 className="mb-0">
+                                                                {fullnameGenerator(el.name, el.surname)}
+                                                            </h5>
+                                                            <div
+                                                                className="text-muted text-h6"
+                                                                data-toggle="tooltip"
+                                                                title="Doğum Yılı">
+                                                                {formatDate(el.birthday, "YYYY")}
+                                                            </div>
+
+                                                            {el.position ? (
+                                                                <span
+                                                                    className="badge badge-success mt-3"
+                                                                    data-toggle="tooltip"
+                                                                    title="Mevkii">
+                                                                    {el.position.name}
+                                                                </span>
+                                                            ) : null}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ))
+                                        ) : (
+                                            <div className="text-center w-100 text-muted font-italic">
+                                                Sistemde kayıtlı öğrenci bulunamadı...
+                                            </div>
+                                        )
+                                    ) : (
+                                        <div className="loader mx-auto mb-5" />
+                                    )}
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                </div>
+                </form>
             </div>
         );
     }
 }
 
-export default withRouter(Add);
+export default Add;

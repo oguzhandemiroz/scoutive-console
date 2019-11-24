@@ -36,7 +36,6 @@ import Attributes from "../components/Others/Attributes";
 
 import Groups from "../views/Groups/Groups";
 import GroupAdd from "../components/Groups/Add";
-import GroupNewAdd from "../components/Groups/NewAdd";
 import GroupDetail from "../components/Groups/Detail";
 import GroupEdit from "../components/Groups/Edit";
 
@@ -272,13 +271,6 @@ var indexRoutes = [
         path: "/groups/add",
         name: "Grup Oluştur",
         component: GroupAdd,
-        layout: "/app",
-        prop: { exact: true }
-    },
-    {
-        path: "/groups/add/new",
-        name: "Grup Oluştur",
-        component: GroupNewAdd,
         layout: "/app",
         prop: { exact: true }
     },
