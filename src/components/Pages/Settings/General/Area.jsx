@@ -9,7 +9,6 @@ export class Area extends Component {
             uid: localStorage.getItem("UID"),
             areas: null,
             show: false,
-            loading: "active",
             loadingButton: ""
         };
     }
@@ -39,17 +38,15 @@ export class Area extends Component {
     };
 
     showAreaSettings = () => {
-        this.setState({ show: true });
-        this.getAreas();
-    };
-
-    getAreas = () => {
+        this.setState({ loadingButton: "btn-loading" });
         ListAreas().then(response => {
             if (response) {
-                this.setState({ areas: response.data, loading: "" });
+                this.setState({ areas: response.data, loadingButton: "", show: true });
             }
         });
     };
+
+    getAreas = () => {};
 
     render() {
         const { areas, show, loading, loadingButton } = this.state;
@@ -89,7 +86,10 @@ export class Area extends Component {
                             </div>
                         </div>
                     ) : (
-                        <button type="button" onClick={this.showAreaSettings} className="btn btn-secondary text-left">
+                        <button
+                            type="button"
+                            onClick={this.showAreaSettings}
+                            className={`btn btn-secondary text-left ${loadingButton}`}>
                             Saha Ayarları
                         </button>
                     )}

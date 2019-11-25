@@ -18,6 +18,7 @@ import DatePicker, { registerLocale } from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import tr from "date-fns/locale/tr";
 import moment from "moment";
+import { GetSettings } from "../../services/School";
 const $ = require("jquery");
 
 registerLocale("tr", tr);
@@ -411,8 +412,7 @@ export class Edit extends Component {
 				select: {
 					...prevState.select,
 					branchs: response
-				},
-				branch: response.filter(x => x.value === localStorage.getItem("sBranch"))
+				}
 			}));
 		}
 		});

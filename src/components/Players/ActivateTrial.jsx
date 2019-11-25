@@ -28,6 +28,7 @@ import ParentModal from "./ParentModal";
 import "react-datepicker/dist/react-datepicker.css";
 import tr from "date-fns/locale/tr";
 import moment from "moment";
+import { GetSettings } from "../../services/School";
 const $ = require("jquery");
 
 registerLocale("tr", tr);
@@ -417,8 +418,15 @@ export class ActivateTrial extends Component {
                     ...prevState.select,
                     branchs: response
                 },
-                branch: response.filter(x => x.value === sBranch)
             }));
+            GetSettings().then(resSettings =>
+                this.setState({
+                    branch:
+                        response.filter(x => x.value === resSettings.settings.branch_id).length > 0
+                            ? response.filter(x => x.value === resSettings.settings.branch_id)
+                            : null
+                })
+            );
         });
 
         Bloods().then(response => {

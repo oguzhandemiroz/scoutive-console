@@ -17,6 +17,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import tr from "date-fns/locale/tr";
 import moment from "moment";
 import _ from "lodash";
+import { GetSettings } from "../../services/School";
 const $ = require("jquery");
 
 registerLocale("tr", tr);
@@ -353,9 +354,16 @@ export class Add extends Component {
                     select: {
                         ...prevState.select,
                         branchs: response
-                    },
-                    branch: response.filter(x => x.value === localStorage.getItem("sBranch"))[0] || null
+                    }
                 }));
+                GetSettings().then(resSettings =>
+                    this.setState({
+                        branch:
+                            response.filter(x => x.value === resSettings.settings.branch_id).length > 0
+                                ? response.filter(x => x.value === resSettings.settings.branch_id)
+                                : null
+                    })
+                );
             }
         });
 

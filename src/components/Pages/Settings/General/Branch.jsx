@@ -15,8 +15,15 @@ export class Branch extends Component {
             loadingButton: "",
             select: {
                 branchs: null
-            }
+            },
+            error: false
         };
+    }
+
+    componentDidMount() {
+        GetSettings().then(resSettings =>
+            this.setState({ error: resSettings.settings.branch_id === "-1" ? true : false })
+        );
     }
 
     handleSubmit = e => {
@@ -61,7 +68,7 @@ export class Branch extends Component {
     };
 
     render() {
-        const { show, select, branch, loadingButton } = this.state;
+        const { show, error, select, branch, loadingButton } = this.state;
         return (
             <form className="row" onSubmit={this.handleSubmit}>
                 <div className="col-2">
@@ -91,12 +98,17 @@ export class Branch extends Component {
                             </div>
                         </div>
                     ) : (
-                        <button
-                            type="button"
-                            onClick={this.showBranchSettings}
-                            className={`btn btn-secondary text-left ${loadingButton}`}>
-                            Branş Ayarı
-                        </button>
+                        <>
+                            <button
+                                type="button"
+                                onClick={this.showBranchSettings}
+                                className={`btn btn-secondary text-left ${loadingButton}`}>
+                                Branş Ayarı
+                            </button>
+                            {error === true ? (
+                                <div className="alert alert-danger mt-2">Branş ayarı ayarlanmadı</div>
+                            ) : null}
+                        </>
                     )}
                     <div className="font-italic text-muted mt-2 mb-0">
                         <p>

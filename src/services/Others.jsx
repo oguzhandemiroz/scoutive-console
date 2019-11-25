@@ -171,6 +171,14 @@ const groupAgeSplit = age => {
     } catch (e) {}
 };
 
+const isMobile = () => {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+};
+
+const isChrome = () => {
+    return /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
+};
+
 function ObjectIsEqual(objA, objB) {
     // Create arrays of property names
     var aProps = Object.getOwnPropertyNames(objA);
@@ -279,5 +287,7 @@ export {
     groupAgeSplit,
     ActivateSchool,
     avatarPlaceholder,
-    parseJSON
+    parseJSON,
+    isMobile,
+    isChrome
 };

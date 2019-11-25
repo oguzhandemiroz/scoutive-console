@@ -138,8 +138,9 @@ export class Payment extends Component {
                                             <br />
                                             <br />
                                             <span className="font-italic">
-                                                Not: <strong>{parseInt(day.value)}. günü</strong> seçtiniz, Şubat'ın
-                                                28'inde hatırlatma yapacaktır.
+                                                Not: <strong>{parseInt(day.value)}. günü</strong> seçtiniz, Şubat ayında
+                                                Mart'a atlama yapar. Şubat ayının gününe göre Mart'ın 1. ile 3.
+                                                günü arasında hatırlatma yapacaktır.
                                             </span>
                                         </>
                                     ) : null}
