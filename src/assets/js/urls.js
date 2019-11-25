@@ -27,6 +27,7 @@ var ep = {
     SCHOOL_UPDATE: host + api_version + "update/school",
     SCHOOL_LIST_PERMISSION: host + api_version + "list/permissions",
     SCHOOL_UPDATE_PERMISSION: host + api_version + "update/permissions",
+    SCHOOL_SET_SETTINGS: host + api_version + "set/school/settings",
     PASSWORD_FORGOT: host + api_version + "password/forgot",
     PASSWORD_RESET: host + api_version + "password/reset",
     PASSWORD_CHANGE: host + api_version + "password/change",

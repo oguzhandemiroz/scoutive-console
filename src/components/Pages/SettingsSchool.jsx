@@ -70,7 +70,6 @@ export class SettingsSchool extends Component {
     };
 
     render() {
-        console.log("Settings: ", this.props);
         const { location, match } = this.props.props;
         const { uid } = this.state;
         const path = match.path + "/" + uid;

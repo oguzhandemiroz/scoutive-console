@@ -27,7 +27,7 @@ class App extends Component {
     }
 
     componentDidMount() {
-        Start().then(response => console.log("Start: ", response));
+        Start();
     }
     render() {
         return (

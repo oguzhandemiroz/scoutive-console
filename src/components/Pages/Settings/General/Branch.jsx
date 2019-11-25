@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import Select from "react-select";
 import { Branchs } from "../../../../services/FillSelect";
 import { selectCustomStyles } from "../../../../assets/js/core";
+import { GetSettings, SetSettings } from "../../../../services/School";
+import { Start } from "../../../../services/Starts";
 
 export class Branch extends Component {
     constructor(props) {
@@ -17,20 +19,44 @@ export class Branch extends Component {
         };
     }
 
+    handleSubmit = e => {
+        e.preventDefault();
+        const { uid, branch } = this.state;
+        this.setState({ loadingButton: "btn-loading" });
+        SetSettings({
+            uid: uid,
+            branch_id: branch.value
+        }).then(response => {
+            if (response) {
+                const status = response.status;
+                if (status.code === 1020) {
+                    this.setState({ show: false });
+                }
+            }
+            this.setState({ loadingButton: "" });
+        });
+    };
+
     handleSelect = (value, name) => {
         this.setState({ [name]: value });
     };
 
     showBranchSettings = () => {
+        this.setState({ loadingButton: "btn-loading" });
         Branchs().then(response => {
             this.setState(prevState => ({
                 select: {
                     ...prevState.select,
                     branchs: response
-                },
-                branch: response.filter(x => x.value === "1"),
-                show: true
+                }
             }));
+            GetSettings().then(resSettings =>
+                this.setState({
+                    branch: response.filter(x => x.value === resSettings.settings.branch_id),
+                    show: true,
+                    loadingButton: ""
+                })
+            );
         });
     };
 
@@ -65,7 +91,10 @@ export class Branch extends Component {
                             </div>
                         </div>
                     ) : (
-                        <button type="button" onClick={this.showBranchSettings} className="btn btn-secondary text-left">
+                        <button
+                            type="button"
+                            onClick={this.showBranchSettings}
+                            className={`btn btn-secondary text-left ${loadingButton}`}>
                             Branş Ayarı
                         </button>
                     )}

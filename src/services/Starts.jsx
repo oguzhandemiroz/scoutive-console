@@ -18,9 +18,12 @@ const Start = () => {
             .then(res => res.json())
             .then(response => {
                 if (response) {
+                    console.log("Settings Request");
                     const status = response.status;
                     if (status.code !== 1020) errorSwal(status);
-
+                    else {
+                        localStorage.setItem("sSettings", JSON.stringify(response.data));
+                    }
                     return response;
                 }
             })
