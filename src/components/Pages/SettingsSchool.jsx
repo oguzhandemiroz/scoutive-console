@@ -79,10 +79,10 @@ export class SettingsSchool extends Component {
                     <h1 className="page-title">Ayarlar &mdash; {this.renderTitle(location.pathname.split("/")[4])}</h1>
                 </div>
                 <div className="row">
-                    <div className="col-lg-9 col-md-9 col-sm-12">
+                    <div className="col-lg-9 col-md-12 col-sm-12 order-1 order-lg-0">
                         {this.renderComponent(location.pathname.split("/")[4])}
                     </div>
-                    <div className="col-lg-3 col-md-3 col-sm-12">
+                    <div className="col-lg-3 col-md-12 col-sm-12 order-0 order-lg-1">
                         <div className={`dimmer`}>
                             <div className="loader" />
                             <div className="dimmer-content">

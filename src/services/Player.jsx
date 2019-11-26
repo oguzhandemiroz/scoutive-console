@@ -107,9 +107,8 @@ const UpdatePlayer = data => {
                         type: "success",
                         title: "Başarıyla güncellendi..."
                     });
-
-                    return status.code;
                 }
+                return response;
             })
             .catch(e => fatalSwal(true));
     } catch (e) {

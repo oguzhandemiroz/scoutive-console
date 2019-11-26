@@ -330,10 +330,10 @@ export class Add extends Component {
 													${feeType[this.getPaidStatus(el.fee, el.amount)].text}
 												</b>
 												<hr class="my-2"/>
-												<b>Ödemesi Gereken:</b> ${el.fee.format()} <br>
-												<b>Ödenen:</b> ${el.amount.format()} <br>
+												<b>Ödemesi Gereken:</b> ${el.fee ? el.fee.format() + " ₺" : "0,00 ₺"} <br>
+												<b>Ödenen:</b> ${el.amount ? el.amount.format() + " ₺" : "0,00 ₺"} <br>
 												<hr class="my-1"/>
-												<b>Borç:</b> ${(el.fee - el.amount).format()} <br>
+												<b>Borç:</b> ${(el.fee - (el.amount || 0)).format()} <br>
 											`}
                                                 data-toggle="popover"
                                                 className={`d-inline-flex justify-content-center align-items-center mr-1 badge ${

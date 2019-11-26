@@ -21,6 +21,7 @@ import tr from "date-fns/locale/tr";
 import moment from "moment";
 import _ from "lodash";
 import Inputmask from "inputmask";
+import { GetSettings } from "../../services/School";
 const $ = require("jquery");
 
 registerLocale("tr", tr);
@@ -155,8 +156,13 @@ export class Payment extends Component {
 
     componentDidMount() {
         const { to } = this.state;
+        GetSettings().then(resSettings => {
+            this.setState({
+                settings: resSettings.settings
+            });
+            this.listPlayers();
+        });
         this.generateMonthList();
-        this.listPlayers();
         this.listBudgets();
         if (to) this.listPastPayment(to);
         else this.setState({ pastData: [] });
@@ -293,7 +299,8 @@ export class Payment extends Component {
 
     listPlayers = () => {
         try {
-            const to = this.props.match.params.uid;
+            const { to, settings } = this.state;
+            console.log(settings);
             ListPlayers().then(response => {
                 if (response) {
                     const status = response.status;
@@ -308,7 +315,12 @@ export class Payment extends Component {
                             players.push({
                                 value: el.uid,
                                 label: fullnameGenerator(el.name, el.surname),
-                                required_payment_date: el.start_date,
+                                required_payment_date:
+                                    parseInt(settings.payment_day) <= 0
+                                        ? el.start_date
+                                        : moment()
+                                              .date(settings.payment_day)
+                                              .format("YYYY-MM-DD"),
                                 amount: el.fee,
                                 ...playerdata
                             });

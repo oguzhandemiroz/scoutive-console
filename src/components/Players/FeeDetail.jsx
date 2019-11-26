@@ -70,16 +70,19 @@ export class FeeDetail extends Component {
         });
     };
 
-    formatPaidDate = date => {
+    formatPaidDate = (date, fee_type) => {
         try {
             const splitDate = date.split(",");
             const firstDate = moment(splitDate[0]);
             const secondDate = moment(splitDate[1]);
             const diff = Math.ceil(moment(secondDate).diff(moment(firstDate), "months", true));
-
-            return `${firstDate.format("MMMM")} ${firstDate.format("YYYY")} - ${secondDate.format(
-                "MMMM"
-            )} ${secondDate.format("YYYY")} (${diff} aylık)`;
+            if (fee_type === 1) {
+                return `${firstDate.format("LL")} (Peşinat ödemesi)`;
+            } else {
+                return `${firstDate.format("MMMM")} ${firstDate.format("YYYY")} - ${secondDate.format(
+                    "MMMM"
+                )} ${secondDate.format("YYYY")} (${diff} aylık)`;
+            }
         } catch (e) {}
     };
 
@@ -208,7 +211,7 @@ export class FeeDetail extends Component {
                                                                 <strong>{el.fee.format() + " ₺ "}</strong>
                                                                 ödemenin, <br />
                                                                 <strong className="text-blue">
-                                                                    {el.amount.format() + " ₺ "}
+                                                                    {el.amount ? el.amount.format() + " ₺" : "0,00 ₺"}
                                                                 </strong>
                                                                 ödemesi yapıldı.
                                                                 <br />
@@ -240,7 +243,7 @@ export class FeeDetail extends Component {
                                                                 <strong>{el.amount.format() + " ₺ "}</strong>
                                                                 ödendi
                                                                 <div className="small text-muted">
-                                                                    {this.formatPaidDate(el.month)}
+                                                                    {this.formatPaidDate(el.month, el.fee_type)}
                                                                 </div>
                                                             </div>
                                                             <div className="timeline-time">

@@ -36,7 +36,7 @@ export class Payment extends Component {
             if (response) {
                 const status = response.status;
                 if (status.code === 1020) {
-                    this.setState({ show: false });
+                    this.setState({ show: false, error: false });
                 }
             }
             this.setState({ loadingButton: "" });
@@ -76,10 +76,10 @@ export class Payment extends Component {
         const { payment_day, show, loading, error, loadingButton, fee_reminder_type, select, day } = this.state;
         return (
             <form className="row" onSubmit={this.handleSubmit}>
-                <div className="col-2">
+                <div className="col-lg-2 col-md-12">
                     <strong>Ödeme Ayarları</strong>
                 </div>
-                <div className="col-10">
+                <div className="col-lg-10 col-md-12">
                     {show ? (
                         <>
                             <div className="row mb-2">
@@ -139,8 +139,8 @@ export class Payment extends Component {
                                             <br />
                                             <span className="font-italic">
                                                 Not: <strong>{parseInt(day.value)}. günü</strong> seçtiniz, Şubat ayında
-                                                Mart'a atlama yapar. Şubat ayının gününe göre Mart'ın 1. ile 3.
-                                                günü arasında hatırlatma yapacaktır.
+                                                Mart'a atlama yapar. Şubat ayının gününe göre Mart'ın 1. ile 3. günü
+                                                arasında hatırlatma yapacaktır.
                                             </span>
                                         </>
                                     ) : null}

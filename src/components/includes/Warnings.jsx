@@ -26,7 +26,6 @@ export class Warnings extends Component {
 
     renderWarning = () => {
         const { uid, settings, ischrome, isdesktop } = this.state;
-        console.log(settings);
         const warning_list = [
             {
                 title: "Ayarlarını Tamamla!",
@@ -36,7 +35,7 @@ export class Warnings extends Component {
                     </Link>
                 ),
                 element: {
-                    className: "alert card-alert alert-warning m-0"
+                    className: "alert card-alert alert-warning m-0 start-warning shadow-sm"
                 },
                 condition:
                     _(settings)
@@ -54,7 +53,7 @@ export class Warnings extends Component {
                     </>
                 ),
                 element: {
-                    className: "alert card-alert alert-secondary alert-dismissible m-0 text-center"
+                    className: "alert card-alert alert-danger alert-dismissible m-0 text-center"
                 },
                 condition: isdesktop && !ischrome
             }

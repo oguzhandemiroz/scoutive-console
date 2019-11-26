@@ -238,13 +238,13 @@ export class ActivateTrial extends Component {
                         }
                     ),
                     parents: parents
-                }).then(code => {
-                    this.setState({ loadingButton: "" });
-                    setTimeout(() => {
-                        if (code === 1020) {
-                            this.props.history.push("/app/players/detail/" + to);
+                }).then(response => {
+                    if (response) {
+                        if (response.status.code === 1020) {
+                            setTimeout(this.props.history.push("/app/players/detail/" + to), 1000);
                         }
-                    }, 1000);
+                    }
+                    this.setState({ loadingButton: "" });
                 });
             } else {
                 this.setState(prevState => ({
@@ -417,7 +417,7 @@ export class ActivateTrial extends Component {
                 select: {
                     ...prevState.select,
                     branchs: response
-                },
+                }
             }));
             GetSettings().then(resSettings =>
                 this.setState({

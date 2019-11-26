@@ -67,7 +67,7 @@ export class Detail extends Component {
         } else if (data.is_scholarship) {
             return "BURSLU";
         } else if (data.fee === null) {
-            return "&mdash;";
+            return "—";
         } else {
             return "—";
         }
@@ -103,7 +103,7 @@ export class Detail extends Component {
                                                             <div className="row">
                                                                 <div className="col-lg-4 col-md-6 col-sm-6">
                                                                     <div className="form-group">
-                                                                        <label class="form-label">Ad Soyad</label>
+                                                                        <label className="form-label">Ad Soyad</label>
                                                                         <Link
                                                                             className="form-control-plaintext text-blue"
                                                                             to={`/app/players/detail/${el.uid}`}>
@@ -113,7 +113,7 @@ export class Detail extends Component {
                                                                 </div>
                                                                 <div className="col-lg-4 col-md-6 col-sm-6">
                                                                     <div className="form-group">
-                                                                        <label class="form-label">
+                                                                        <label className="form-label">
                                                                             T.C. Kimlik Numarası
                                                                         </label>
                                                                         <div className="form-control-plaintext">
@@ -123,7 +123,7 @@ export class Detail extends Component {
                                                                 </div>
                                                                 <div className="col-lg-4 col-md-6 col-sm-6">
                                                                     <div className="form-group">
-                                                                        <label class="form-label">Aidat</label>
+                                                                        <label className="form-label">Aidat</label>
                                                                         <div className="form-control-plaintext">
                                                                             {this.renderFeeType(el)}
                                                                         </div>
@@ -133,7 +133,7 @@ export class Detail extends Component {
                                                             <div className="row">
                                                                 <div className="col-lg-4 col-md-6 col-sm-6">
                                                                     <div className="form-group">
-                                                                        <label class="form-label">Doğum Günü</label>
+                                                                        <label className="form-label">Doğum Günü</label>
                                                                         <div className="form-control-plaintext">
                                                                             {formatDate(el.birthday, "LL")}
                                                                         </div>
@@ -141,7 +141,7 @@ export class Detail extends Component {
                                                                 </div>
                                                                 <div className="col-lg-4 col-md-6 col-sm-6">
                                                                     <div className="form-group">
-                                                                        <label class="form-label">Grup</label>
+                                                                        <label className="form-label">Grup</label>
                                                                         <div className="form-control-plaintext">
                                                                             {nullCheck(el.group)}
                                                                         </div>
@@ -149,7 +149,7 @@ export class Detail extends Component {
                                                                 </div>
                                                                 <div className="col-lg-4 col-md-6 col-sm-6">
                                                                     <div className="form-group">
-                                                                        <label class="form-label">
+                                                                        <label className="form-label">
                                                                             Okula Başlama Tarihi
                                                                         </label>
                                                                         <div className="form-control-plaintext">
@@ -179,7 +179,7 @@ export class Detail extends Component {
                                                                 </div>
                                                                 <div className="col-lg-4 col-md-6 col-sm-6">
                                                                     <div className="form-group">
-                                                                        <label class="form-label">
+                                                                        <label className="form-label">
                                                                             Yoklama Durumu (Bugün)
                                                                         </label>
                                                                         <div

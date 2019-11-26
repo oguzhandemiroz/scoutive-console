@@ -41,15 +41,17 @@ export class UnpaidPlayer extends Component {
 
     getUnpaidPlayers = () => {
         UnpaidPlayers().then(response => {
-            const data = response.data;
-            const status = response.status;
-            if (status.code === 1020) {
-                this.setState({
-                    list: data.sort((a, b) => {
-                        return a.required_payment_date < b.required_payment_date ? -1 : 1;
-                    }),
-                    count: data.length
-                });
+            if (response) {
+                const data = response.data;
+                const status = response.status;
+                if (status.code === 1020) {
+                    this.setState({
+                        list: data.sort((a, b) => {
+                            return a.required_payment_date < b.required_payment_date ? -1 : 1;
+                        }),
+                        count: data.length
+                    });
+                }
             }
         });
     };
@@ -121,7 +123,7 @@ export class UnpaidPlayer extends Component {
                                               </span>
                                               <div className="small text-muted mt-1">
                                                   Tutar: <strong>{el.fee.format() + " ₺"}</strong>, Ödenen:{" "}
-                                                  <strong>{el.amount.format() + " ₺"}</strong>
+                                                  <strong>{el.amount ? el.amount.format() + " ₺" : "0,00 ₺"}</strong>
                                               </div>
 
                                               <div className="small text-muted">

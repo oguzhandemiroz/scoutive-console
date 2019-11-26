@@ -52,10 +52,10 @@ export class Area extends Component {
         const { areas, show, loading, loadingButton } = this.state;
         return (
             <form className="row" onSubmit={this.handleSubmit}>
-                <div className="col-2">
+                <div className="col-lg-2 col-md-12">
                     <strong>Saha Ayarları</strong>
                 </div>
-                <div className="col-10">
+                <div className="col-lg-10 col-md-12">
                     {show ? (
                         <div className={`dimmer ${loading}`}>
                             <div className="loader" />

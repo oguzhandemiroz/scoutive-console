@@ -976,3 +976,14 @@ a.badge {
     top: 3px;
     right: 0;
 }
+
+.start-warning {
+    position: fixed;
+    left: 0;
+    right: 0;
+    z-index: 999;
+}
+
+.start-warning + #header-menu {
+    margin-top: 48px;
+}

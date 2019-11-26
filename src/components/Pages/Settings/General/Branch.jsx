@@ -37,7 +37,7 @@ export class Branch extends Component {
             if (response) {
                 const status = response.status;
                 if (status.code === 1020) {
-                    this.setState({ show: false });
+                    this.setState({ show: false, error: false });
                 }
             }
             this.setState({ loadingButton: "" });
@@ -71,10 +71,10 @@ export class Branch extends Component {
         const { show, error, select, branch, loadingButton } = this.state;
         return (
             <form className="row" onSubmit={this.handleSubmit}>
-                <div className="col-2">
+                <div className="col-lg-2 col-md-12">
                     <strong>Branş Ayarı</strong>
                 </div>
-                <div className="col-10">
+                <div className="col-lg-10 col-md-12">
                     {show ? (
                         <div className="row">
                             <div className="col-12 mb-2">

@@ -7,6 +7,7 @@ import {
     securityNoRegEx
 } from "../../assets/js/core";
 import { Bloods, Branchs, PlayerPositions, Groups } from "../../services/FillSelect";
+import { GetSettings } from "../../services/School";
 import { UploadFile, clearMoney, formatDate, fullnameGenerator, formatPhone, formatMoney } from "../../services/Others";
 import { CreatePlayer } from "../../services/Player";
 import Select from "react-select";
@@ -18,7 +19,6 @@ import tr from "date-fns/locale/tr";
 import _ from "lodash";
 import moment from "moment";
 import Inputmask from "inputmask";
-import { GetSettings } from "../../services/School";
 const $ = require("jquery");
 
 registerLocale("tr", tr);
@@ -107,7 +107,8 @@ export class Add extends Component {
             loadingButton: "",
             loadingImage: "",
             addContinuously: true,
-            parentError: false
+            parentError: false,
+            paymentError: false
         };
     }
 
@@ -168,6 +169,7 @@ export class Add extends Component {
             parents,
             payment_type,
             is_cash,
+            payment_date,
             downpayment,
             downpayment_date,
             installment,
@@ -189,8 +191,8 @@ export class Add extends Component {
 
         let feeJSON = {
             fee: clearMoney(fee),
-            payment_date: formatDate(downpayment_date, "YYYY-MM-DD"), //tek ödeme seçildiğinde sil
-            downpayment: is_cash ? clearMoney(fee) : clearMoney(downpayment), //aylık seçildiğinde sil
+            payment_date: formatDate(payment_date, "YYYY-MM-DD"), //tek ödeme seçildiğinde sil
+            downpayment: is_cash ? clearMoney(fee) : clearMoney(downpayment || "0,00"), //aylık seçildiğinde sil
             downpayment_date: formatDate(downpayment_date, "YYYY-MM-DD"), //aylık seçildiğinde sil
             installment: parseInt(installment), //aylık seçildiğinde sil
             installment_date: formatDate(installment_date, "YYYY-MM-DD"), //aylık seçildiğinde sil
@@ -209,7 +211,7 @@ export class Add extends Component {
             delete feeJSON.payment_date;
         }
 
-        this.setState({ parentError: false });
+        this.setState({ parentError: false, paymentError: false });
         if (parents.length > 0 && formValid(require)) {
             this.setState({ loadingButton: "btn-loading" });
             CreatePlayer({
@@ -294,7 +296,8 @@ export class Add extends Component {
                     end_date: is_active === 0 ? (end_date ? "" : "is-invalid") : "",
                     branch: branch ? "" : true
                 },
-                parentError: parents.length === 0 ? true : false
+                parentError: parents.length === 0 ? true : false,
+                paymentError: payment_type === false ? true : false
             }));
         }
     };
@@ -403,7 +406,15 @@ export class Add extends Component {
     };
 
     handleDate = (date, name) => {
-        if (name === "start_date") this.setState({ end_date: null });
+        const { settings } = this.state;
+        if (name === "start_date") {
+            this.setState({ end_date: null });
+            if (parseInt(settings.payment_day) <= 0) {
+                this.setState({
+                    payment_date: date
+                });
+            }
+        }
 
         this.setState(prevState => ({
             formErrors: {
@@ -434,6 +445,7 @@ export class Add extends Component {
                 fee: ""
             },
             fee: null,
+            paymentError: false,
             [name]: parseInt(value)
         }));
     };
@@ -488,34 +500,48 @@ export class Add extends Component {
     };
 
     getFillSelect = () => {
-        var sBranch = localStorage.getItem("sBranch");
-        PlayerPositions(sBranch ? sBranch : 1).then(response => {
-            this.setState(prevState => ({
-                select: {
-                    ...prevState.select,
-                    positions: response
-                }
-            }));
-        });
+        GetSettings().then(resSettings =>
+            this.setState(
+                {
+                    settings: resSettings.settings
+                },
+                () => {
+                    PlayerPositions(
+                        parseInt(resSettings.settings.branch_id).length > 0
+                            ? parseInt(resSettings.settings.branch_id)
+                            : 1
+                    ).then(response => {
+                        this.setState(prevState => ({
+                            select: {
+                                ...prevState.select,
+                                positions: response
+                            }
+                        }));
+                    });
 
-        Branchs().then(response => {
-            if (response) {
-                this.setState(prevState => ({
-                    select: {
-                        ...prevState.select,
-                        branchs: response
-                    }
-                }));
-                GetSettings().then(resSettings =>
-                    this.setState({
-                        branch:
-                            response.filter(x => x.value === resSettings.settings.branch_id).length > 0
-                                ? response.filter(x => x.value === resSettings.settings.branch_id)
-                                : null
-                    })
-                );
-            }
-        });
+                    Branchs().then(response => {
+                        if (response) {
+                            this.setState(prevState => ({
+                                select: {
+                                    ...prevState.select,
+                                    branchs: response
+                                },
+                                branch:
+                                    response.filter(x => x.value === resSettings.settings.branch_id).length > 0
+                                        ? response.filter(x => x.value === resSettings.settings.branch_id)
+                                        : null,
+                                payment_date:
+                                    parseInt(resSettings.settings.payment_day) <= 0
+                                        ? moment().toDate()
+                                        : moment()
+                                              .date(resSettings.settings.payment_day)
+                                              .toDate()
+                            }));
+                        }
+                    });
+                }
+            )
+        );
 
         Bloods().then(response => {
             this.setState(prevState => ({
@@ -559,12 +585,14 @@ export class Add extends Component {
             show,
             parents,
             parentError,
+            paymentError,
             payment_type,
             is_cash,
             downpayment,
             downpayment_date,
             installment,
-            installment_date
+            installment_date,
+            payment_date
         } = this.state;
         return (
             <div className="container">
@@ -675,6 +703,12 @@ export class Add extends Component {
                                 <div className="form-group">
                                     <label className="form-label">
                                         Ödeme Tipi<span className="form-required">*</span>
+                                        {paymentError ? (
+                                            <span className="ml-2 text-red font-italic">
+                                                <i className="fe fe-alert-circle mr-1" />
+                                                Ödeme Tipi seçilmedi
+                                            </span>
+                                        ) : null}
                                     </label>
                                     <div className="selectgroup w-100">
                                         <label className="selectgroup-item">
@@ -736,19 +770,13 @@ export class Add extends Component {
                                             value={fee || "0,00"}
                                         />
                                     </div>
-                                    <div className="form-group">
-                                        Ödeme Tarihi<span className="form-required">*</span>
-                                        <DatePicker
-                                            autoComplete="off"
-                                            selected={downpayment_date}
-                                            selectsEnd
-                                            startDate={downpayment_date}
-                                            name="downpayment_date"
-                                            locale="tr"
-                                            dateFormat="dd/MM/yyyy"
-                                            onChange={date => this.handleDate(date, "downpayment_date")}
-                                            className={`form-control ${formErrors.downpayment_date}`}
-                                        />
+                                    <div className="form-group mb-0">
+                                        <label className="form-label">
+                                            Ödeme Tarihi<span className="form-required">*</span>
+                                        </label>
+                                        <div className="form-form-control-plaintext">
+                                            {formatDate(payment_date, "DD/MM/YYYY")}
+                                        </div>
                                     </div>
                                 </fieldset>
 
@@ -806,24 +834,26 @@ export class Add extends Component {
                                                     />
                                                 </div>
                                             </div>
-                                            <div className="col-lg-6 col-md-12">
-                                                <div className="form-group">
-                                                    <label className="form-label">
-                                                        Ödeme Tarihi<span className="form-required">*</span>
-                                                    </label>
-                                                    <DatePicker
-                                                        autoComplete="off"
-                                                        selected={downpayment_date}
-                                                        selectsEnd
-                                                        startDate={downpayment_date}
-                                                        name="downpayment_date"
-                                                        locale="tr"
-                                                        dateFormat="dd/MM/yyyy"
-                                                        onChange={date => this.handleDate(date, "downpayment_date")}
-                                                        className={`form-control ${formErrors.downpayment_date}`}
-                                                    />
+                                            {downpayment ? (
+                                                <div className="col-lg-6 col-md-12">
+                                                    <div className="form-group">
+                                                        <label className="form-label">
+                                                            Ödeme Tarihi<span className="form-required">*</span>
+                                                        </label>
+                                                        <DatePicker
+                                                            autoComplete="off"
+                                                            selected={downpayment_date}
+                                                            selectsEnd
+                                                            startDate={downpayment_date}
+                                                            name="downpayment_date"
+                                                            locale="tr"
+                                                            dateFormat="dd/MM/yyyy"
+                                                            onChange={date => this.handleDate(date, "downpayment_date")}
+                                                            className={`form-control ${formErrors.downpayment_date}`}
+                                                        />
+                                                    </div>
                                                 </div>
-                                            </div>
+                                            ) : null}
                                         </div>
                                         <div className="row gutters-xs">
                                             <div className="col-lg-6 col-md-12">

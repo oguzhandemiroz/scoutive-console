@@ -54,7 +54,11 @@ export class TrainingGroupList extends Component {
     }
 
     listGroups = () => {
-        TrainingGroups().then(response => this.setState({ trainings: response.data }));
+        TrainingGroups().then(response => {
+            if (response) {
+                this.setState({ trainings: response.data });
+            }
+        });
     };
 
     timer = end_time => {
