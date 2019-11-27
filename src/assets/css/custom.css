@@ -542,6 +542,10 @@ SOCIAL COLORS
     align-items: center;
 }
 
+.installment-detail.monthly-detail .tag {
+    cursor: pointer;
+}
+
 .card.card-hover {
     transition: all 0.25s ease-in;
 }

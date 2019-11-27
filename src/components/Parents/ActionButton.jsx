@@ -12,7 +12,7 @@ export class ActionButton extends Component {
     }
 
     renderActionButton = () => {
-        const { data, renderButton, history, dropdown, hide } = this.props;
+        const { data, renderButton, dropdown, hide } = this.props;
         const { to, name } = data;
         const fullname = name;
 
@@ -123,7 +123,7 @@ export class ActionButton extends Component {
                     className="dropdown-menu dropdown-menu-right"
                     aria-labelledby="parent-action"
                     x-placement="top-end">
-                    <a className="dropdown-item disabled text-azure" >
+                    <a className="dropdown-item disabled text-azure">
                         <i className="dropdown-icon fa fa-user text-azure" />
                         {fullname}
                     </a>

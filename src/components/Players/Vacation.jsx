@@ -1,14 +1,9 @@
 import React, { Component } from "react";
-import { DetailPlayer, ListPlayerFees } from "../../services/Player";
-import { fullnameGenerator, formatDate, formatMoney, nullCheck } from "../../services/Others";
-import { UpdatePaymentFee, ListVacations, DeleteVacation } from "../../services/PlayerAction";
-import { Link } from "react-router-dom";
-import Vacation from "../PlayerAction/Vacation";
-import GroupChange from "../PlayerAction/GroupChange";
+import { DetailPlayer } from "../../services/Player";
+import { fullnameGenerator } from "../../services/Others";
+import { ListVacations, DeleteVacation } from "../../services/PlayerAction";
 import Tabs from "../../components/Players/Tabs";
 import PersonCard from "./PersonCard";
-import moment from "moment";
-import "moment/locale/tr";
 import { Toast, showSwal } from "../Alert";
 
 const noRow = loading => (

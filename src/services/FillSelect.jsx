@@ -110,7 +110,6 @@ const Areas = () => {
             .then(response => {
                 const data = response.data;
                 const status = response.status;
-                const selectData = [];
 
                 if (status.code !== 1020) {
                     Toast.fire({
@@ -118,15 +117,14 @@ const Areas = () => {
                         title: '"Sahalar" yüklenemedi'
                     });
                 } else {
-                    data.map(el => {
+                    return data.map(el => {
                         const value = el.area_id;
                         const label = el.name;
-                        selectData.push({
+                        return {
                             value: value,
                             label: label
-                        });
+                        };
                     });
-                    return selectData;
                 }
             })
             .catch(e => fatalSwal(true));

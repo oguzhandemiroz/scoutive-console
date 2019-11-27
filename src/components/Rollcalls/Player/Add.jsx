@@ -129,7 +129,7 @@ export class Add extends Component {
                     renderer: function(api, rowIdx, columns) {
                         var tbl = $('<table class="w-100"/>');
                         var found = false;
-                        var data = $.map(columns, function(col, i) {
+                        $.map(columns, function(col, i) {
                             if (col.hidden) {
                                 $(`<tr data-dt-row="${col.rowIndex}" data-dt-column="${col.columnIndex}">
                                 <th class="w-1">${col.title}</th> 

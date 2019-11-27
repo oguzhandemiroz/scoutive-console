@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { formValid, selectCustomStyles, emailRegEx } from "../../assets/js/core";
+import { formValid, selectCustomStyles, emailRegEx, selectCustomStylesError } from "../../assets/js/core";
 import { Toast } from "../../components/Alert";
 import { CreateParent } from "../../services/Parent";
 import { GetParents } from "../../services/FillSelect";
@@ -58,7 +58,8 @@ export class ParentModal extends Component {
                 name: "",
                 surname: "",
                 phone: "",
-                email: ""
+                email: "",
+                parent: ""
             },
             select: {
                 kinships: [
@@ -186,22 +187,35 @@ export class ParentModal extends Component {
     };
 
     getParent = () => {
-        const { kinship, parent } = this.state;
-        this.setState(prevState => ({
-            ...initialState,
-            parents: [
-                ...prevState.parents,
-                {
-                    uid: parent.uid,
-                    parent_id: parent.value,
-                    kinship: kinship.value,
-                    name: parent.name,
-                    surname: parent.surname,
-                    phone: parent.phone,
-                    email: parent.email
+        const { kinship, parent, parents } = this.state;
+        if (parent && parents.filter(x => x.uid === parent.uid).length === 0) {
+            this.setState(prevState => ({
+                ...initialState,
+                parents: [
+                    ...prevState.parents,
+                    {
+                        uid: parent.uid,
+                        parent_id: parent.value,
+                        kinship: kinship.value,
+                        name: parent.name,
+                        surname: parent.surname,
+                        phone: parent.phone,
+                        email: parent.email
+                    }
+                ],
+                formErrors: {
+                    ...prevState.formErrors,
+                    parent: false
                 }
-            ]
-        }));
+            }));
+        } else {
+            this.setState(prevState => ({
+                formErrors: {
+                    ...prevState.formErrors,
+                    parent: true
+                }
+            }));
+        }
     };
 
     assignParents = () => {
@@ -289,7 +303,7 @@ export class ParentModal extends Component {
                                     options={select.parents}
                                     name="parent"
                                     placeholder="Ara..."
-                                    styles={selectCustomStyles}
+                                    styles={formErrors.parent ? selectCustomStylesError : selectCustomStyles}
                                     isSearchable={true}
                                     isDisabled={select.parents ? false : true}
                                     isLoading={select.parents ? false : true}

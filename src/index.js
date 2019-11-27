@@ -10,7 +10,6 @@ import ReactDOM from "react-dom";
 import * as Sentry from "@sentry/browser";
 import * as serviceWorker from "./serviceWorker";
 import Core from "./layouts/Core.jsx";
-import Maintenance from "./components/Maintenance";
 import ep from "./assets/js/urls";
 const $ = require("jquery");
 

@@ -9,7 +9,7 @@ import {
 } from "../../assets/js/core";
 import { Bloods, Branchs, Days, Months, Years, EmployeePositions, Kinship } from "../../services/FillSelect";
 import { DetailEmployee, UpdateEmployee } from "../../services/Employee";
-import { SplitBirthday, UploadFile, getSelectValue, AttributeDataChecker, clearMoney } from "../../services/Others";
+import { SplitBirthday, UploadFile, getSelectValue, clearMoney } from "../../services/Others";
 import { showSwal } from "../../components/Alert";
 import Select from "react-select";
 import { Link } from "react-router-dom";
@@ -18,7 +18,6 @@ import DatePicker, { registerLocale } from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import tr from "date-fns/locale/tr";
 import moment from "moment";
-import { GetSettings } from "../../services/School";
 const $ = require("jquery");
 
 registerLocale("tr", tr);
