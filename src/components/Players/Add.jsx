@@ -251,7 +251,7 @@ export class Add extends Component {
                     foot_no: foot_no,
                     point: point,
                     branch: branch.value,
-                    body: body.label
+                    body: body ? body.label : null
                 }),
                 parents: parents
             }).then(response => {

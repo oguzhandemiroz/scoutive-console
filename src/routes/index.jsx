@@ -26,6 +26,7 @@ import ActivateTrial from "../components/Players/ActivateTrial";
 import DetailPlayer from "../components/Players/Detail";
 import EditPlayer from "../components/Players/Edit";
 import PaymentPlayer from "../components/Players/Payment";
+import PaymentNew from "../components/Players/PaymentNew";
 import FeeDetailPlayer from "../components/Players/FeeDetail";
 import VacationPlayer from "../components/Players/Vacation";
 import RollcallPlayer from "../components/Players/Rollcall";
@@ -244,6 +245,12 @@ var indexRoutes = [
         path: "/players/payment/fee/:uid?",
         name: "Receive Payment",
         component: PaymentPlayer,
+        layout: "/app"
+    },
+    {
+        path: "/players/payment/fee-new/:uid?",
+        name: "Receive Payment",
+        component: PaymentNew,
         layout: "/app"
     },
     {

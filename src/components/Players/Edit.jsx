@@ -194,7 +194,7 @@ export class Edit extends Component {
                             point: point,
                             image: image,
                             branch: branch.value,
-                            body: body.label
+                            body: body ? body.label : null
                         },
                         {
                             start_date: response_data.start_date,
@@ -512,7 +512,7 @@ export class Edit extends Component {
                         body_weight: data.attributes.body_weight,
                         point: data.attributes.point,
                         foot_no: data.attributes.foot_no,
-                        body: { value: "1", label: data.attributes.body },
+                        body: data.attributes.body ? { value: "1", label: data.attributes.body } : null,
                         loading: ""
                     }));
                 }

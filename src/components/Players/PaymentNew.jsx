@@ -78,6 +78,8 @@ const initialState = {
     periodToggle: 0,
     year: parseInt(moment().format("YYYY")),
     yearMin: parseInt(moment().format("YYYY")),
+    required_payment: moment().toDate(),
+    payment_end_date: moment().toDate(),
     loadingButton: ""
 };
 
@@ -171,6 +173,7 @@ export class Payment extends Component {
                 budget,
                 value,
                 required_payment_date,
+                payment_end_date,
                 amount
             } = this.state;
 
@@ -1122,8 +1125,8 @@ export class Payment extends Component {
             paid_date,
             month,
             period,
-            year,
-            yearMin,
+            required_payment,
+            payment_end_date,
             select,
             formErrors,
             amount,
@@ -1131,85 +1134,40 @@ export class Payment extends Component {
         } = this.state;
         return (
             <fieldset className="form-fieldset">
-                <div className="row gutters-xs">
-                    <div className="col-sm-12 col-md-4 col-lg-4">
-                        <div className="form-group">
-                            <label className="form-label">
-                                Ödeme Yapılacak Ay
-                                <span className="form-required">*</span>
-                            </label>
-                            {/* <DatePicker
-                                selected={startDate}
-                                onChange={date => setStartDate(date)}
+                <div className="form-group">
+                    <label className="form-label">
+                        Ödeme Yapılacak Ay Aralığı
+                        <span className="form-required">*</span>
+                    </label>
+                    <div className="row gutters-xs">
+                        <div className="col-6">
+                            <DatePicker
                                 dateFormat="MM/yyyy"
                                 showMonthYearPicker
-                                
                                 autoComplete="off"
-                                selected={paid_date}
+                                endDate={payment_end_date}
+                                startDate={required_payment}
+                                selected={required_payment}
                                 selectsStart
-                                startDate={paid_date}
-                                name="paid_date"
+                                name="required_payment"
                                 locale="tr"
-                                dateFormat="dd/MM/yyyy"
-                                onChange={date => this.handleDate(date, "paid_date")}
-                                className={`form-control ${formErrors.paid_date}`}
-                            /> */}
-                            {/* <Select
-                                value={month}
-                                onChange={val => this.handleSelect(val, "month")}
-                                options={select.months}
-                                name="month"
-                                placeholder="Ay Seç..."
-                                styles={selectCustomStyles}
-                                isSearchable={true}
-                                autoSize
-                                isDisabled={select.months ? false : true}
-                                noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
-                            /> */}
-                        </div>
-                    </div>
-
-                    <div className="col-sm-12 col-md-4 col-lg-4">
-                        <div className="form-group">
-                            <label className="form-label">Yıl</label>
-                            <input
-                                name="year"
-                                className="form-control"
-                                type="number"
-                                min={parseInt(yearMin) - 10}
-                                max={parseInt(yearMin) + 2}
-                                value={year}
-                                onChange={this.handleChange}
+                                onChange={date => this.handleDate(date, "required_payment")}
+                                className={`form-control ${formErrors.required_payment}`}
                             />
                         </div>
-                    </div>
-
-                    <div className="col-sm-12 col-md-4 col-lg-4">
-                        <div className="form-group">
-                            <label className="form-label">
-                                {periodToggle ? "Gün" : "Dönem"}
-                                <span className="form-label-small" data-toggle="tooltip" title="Aylık/Günlük">
-                                    <label className="custom-switch pl-0">
-                                        <input
-                                            type="checkbox"
-                                            className="custom-switch-input"
-                                            name="periodToggle"
-                                            value="1"
-                                            checked={periodToggle}
-                                            onChange={this.handleCheck}
-                                        />
-                                        <span className="custom-switch-indicator"></span>
-                                    </label>
-                                </span>
-                            </label>
-                            <input
-                                name="period"
-                                className="form-control"
-                                type="number"
-                                min="1"
-                                max="90"
-                                value={period || ""}
-                                onChange={this.handleChange}
+                        <div className="col-6">
+                            <DatePicker
+                                dateFormat="MM/yyyy"
+                                showMonthYearPicker
+                                autoComplete="off"
+                                minDate={required_payment}
+                                startDate={payment_end_date}
+                                selected={payment_end_date}
+                                selectsStart
+                                name="payment_end_date"
+                                locale="tr"
+                                onChange={date => this.handleDate(date, "payment_end_date")}
+                                className={`form-control ${formErrors.payment_end_date}`}
                             />
                         </div>
                     </div>
