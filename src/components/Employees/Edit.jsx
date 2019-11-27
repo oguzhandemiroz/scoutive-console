@@ -835,7 +835,7 @@ export class Edit extends Component {
 											</div>
 											<div className="col-lg-6 col-md-12">
 												<div className="form-group">
-													<label className="form-label">Vücut Metrikleri (Boy & Kilo)</label>
+													<label className="form-label">Boy ve Kilo</label>
 													<div className="row gutters-xs">
 														<div className="col-6">
 															<input

@@ -117,7 +117,7 @@ export class Detail extends Component {
                                             </div>
                                             <div className="col-lg-6 col-md-12">
                                                 <div className="form-group">
-                                                    <label className="form-label">Vücut Metrikleri (Boy & Kilo)</label>
+                                                    <label className="form-label">Boy ve Kilo</label>
                                                     <div className="row gutters-xs">
                                                         <div className="col-6">
                                                             <div className="form-control-plaintext" id="body_height">
@@ -140,9 +140,19 @@ export class Detail extends Component {
                                                     </div>
                                                 </div>
                                                 <div className="form-group">
-                                                    <label className="form-label">Kan Grubu</label>
-                                                    <div className="form-control-plaintext">
-                                                        {blood ? blood.label : "—"}
+                                                    <div className="row gutters-xs">
+                                                        <div className="col-6">
+                                                            <label className="form-label">Kan Grubu</label>
+                                                            <div className="form-control-plaintext">
+                                                                {blood ? blood.label : "—"}
+                                                            </div>
+                                                        </div>
+                                                        <div className="col-6">
+                                                            <label className="form-label">Beden</label>
+                                                            <div className="form-control-plaintext">
+                                                                {nullCheck(attributes.body)}
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <div className="form-group">

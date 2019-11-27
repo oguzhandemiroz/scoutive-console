@@ -131,6 +131,37 @@ const Areas = () => {
     } catch (e) {}
 };
 
+const Bodies = () => {
+    try {
+        return [
+            {
+                value: "1",
+                label: "XXS (5-6 Yaş)"
+            },
+            {
+                value: "2",
+                label: "XS (7-8 Yaş)"
+            },
+            {
+                value: "3",
+                label: "S (9-10 Yaş)"
+            },
+            {
+                value: "4",
+                label: "M (11-12 Yaş)"
+            },
+            {
+                value: "5",
+                label: "L (13-14 Yaş)"
+            },
+            {
+                value: "6",
+                label: "XL (15-16 Yaş)"
+            }
+        ];
+    } catch (e) {}
+};
+
 const EmployeePositions = () => {
     try {
         return fetch(ep.EMPLOYEE_POSITION_TYPE, {
@@ -686,5 +717,6 @@ export {
     GetBudgets,
     Areas,
     GetServices,
-    GetParents
+    GetParents,
+    Bodies
 };

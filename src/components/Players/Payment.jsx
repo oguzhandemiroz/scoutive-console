@@ -69,16 +69,6 @@ const IconOption = props => (
     </Option>
 );
 
-const noRow = loading =>
-    loading ? (
-        <div className={`dimmer active p-3`}>
-            <div className="loader" />
-            <div className="dimmer-content" />
-        </div>
-    ) : (
-        <div className="text-center text-muted font-italic">Kayıt bulunamadı...</div>
-    );
-
 const initialState = {
     fee_date: new Date(),
     paid_date: new Date(),
@@ -1148,7 +1138,23 @@ export class Payment extends Component {
                                 Ödeme Yapılacak Ay
                                 <span className="form-required">*</span>
                             </label>
-                            <Select
+                            {/* <DatePicker
+                                selected={startDate}
+                                onChange={date => setStartDate(date)}
+                                dateFormat="MM/yyyy"
+                                showMonthYearPicker
+                                
+                                autoComplete="off"
+                                selected={paid_date}
+                                selectsStart
+                                startDate={paid_date}
+                                name="paid_date"
+                                locale="tr"
+                                dateFormat="dd/MM/yyyy"
+                                onChange={date => this.handleDate(date, "paid_date")}
+                                className={`form-control ${formErrors.paid_date}`}
+                            /> */}
+                            {/* <Select
                                 value={month}
                                 onChange={val => this.handleSelect(val, "month")}
                                 options={select.months}
@@ -1159,7 +1165,7 @@ export class Payment extends Component {
                                 autoSize
                                 isDisabled={select.months ? false : true}
                                 noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
-                            />
+                            /> */}
                         </div>
                     </div>
 
@@ -1290,7 +1296,7 @@ export class Payment extends Component {
         return (
             <div className="col-12">
                 <div className="form-group">
-                    <label className="form-label">Geçmiş Aidat Çizelgesi</label>
+                    <label className="form-label">Geçmiş Aidat Çizelgesi (Son 12 Ay)</label>
                     <div className="installment-detail monthly-detail d-flex flex-row">
                         {pastData && pastData.length > 0 ? (
                             pastData.slice(-12).map(el => {

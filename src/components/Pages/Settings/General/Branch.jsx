@@ -59,7 +59,7 @@ export class Branch extends Component {
             }));
             GetSettings().then(resSettings =>
                 this.setState({
-                    branch: response.filter(x => x.value === resSettings.settings.branch_id),
+                    branch: response.filter(x => x.value === resSettings.settings.branch_id)[0],
                     show: true,
                     loadingButton: ""
                 })

@@ -6,7 +6,7 @@ import {
     emailRegEx,
     securityNoRegEx
 } from "../../assets/js/core";
-import { Bloods, Branchs, PlayerPositions, Groups } from "../../services/FillSelect";
+import { Bloods, Branchs, PlayerPositions, Groups, Bodies } from "../../services/FillSelect";
 import { GetSettings } from "../../services/School";
 import { UploadFile, clearMoney, formatDate, fullnameGenerator, formatPhone, formatMoney } from "../../services/Others";
 import { CreatePlayer } from "../../services/Player";
@@ -90,7 +90,8 @@ export class Add extends Component {
                 bloods: null,
                 branchs: null,
                 groups: null,
-                positions: null
+                positions: null,
+                bodies: null
             },
             formErrors: {
                 name: "",
@@ -158,6 +159,7 @@ export class Add extends Component {
             body_weight,
             foot,
             foot_no,
+            body,
             birthday,
             is_active,
             note,
@@ -248,7 +250,8 @@ export class Add extends Component {
                     body_weight: body_weight,
                     foot_no: foot_no,
                     point: point,
-                    branch: branch.value
+                    branch: branch.value,
+                    body: body.label
                 }),
                 parents: parents
             }).then(response => {
@@ -528,7 +531,7 @@ export class Add extends Component {
                                 },
                                 branch:
                                     response.filter(x => x.value === resSettings.settings.branch_id).length > 0
-                                        ? response.filter(x => x.value === resSettings.settings.branch_id)
+                                        ? response.filter(x => x.value === resSettings.settings.branch_id)[0]
                                         : null,
                                 payment_date:
                                     parseInt(resSettings.settings.payment_day) <= 0
@@ -560,6 +563,13 @@ export class Add extends Component {
                 }
             }));
         });
+
+        this.setState(prevState => ({
+            select: {
+                ...prevState.select,
+                bodies: Bodies()
+            }
+        }));
     };
 
     render() {
@@ -569,6 +579,7 @@ export class Add extends Component {
             fee,
             gender,
             blood,
+            body,
             point,
             groups,
             foot,
@@ -1256,7 +1267,7 @@ export class Add extends Component {
                                             </div>
                                         </div>
                                         <div className={`form-group ${show.measure ? "d-block" : "d-none"}`}>
-                                            <label className="form-label">Boy & Kilo</label>
+                                            <label className="form-label">Boy ve Kilo</label>
                                             <div className="row gutters-xs">
                                                 <div className="col-6">
                                                     <input
@@ -1295,6 +1306,22 @@ export class Add extends Component {
                                                 isSearchable={true}
                                                 isDisabled={select.bloods ? false : true}
                                                 isLoading={select.bloods ? false : true}
+                                                noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
+                                            />
+                                        </div>
+                                        <div className={`form-group ${show.body ? "d-block" : "d-none"}`}>
+                                            <label className="form-label">Beden</label>
+                                            <Select
+                                                value={body}
+                                                onChange={val => this.handleSelect(val, "body")}
+                                                options={select.bodies}
+                                                name="blood"
+                                                placeholder="Seç..."
+                                                styles={selectCustomStyles}
+                                                isClearable={true}
+                                                isSearchable={true}
+                                                isDisabled={select.bodies ? false : true}
+                                                isLoading={select.bodies ? false : true}
                                                 noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
                                             />
                                         </div>
@@ -1433,6 +1460,13 @@ export class Add extends Component {
                                             onClick={this.handleOtherInfo}
                                             className="btn btn-secondary btn-block">
                                             Kan Grubu
+                                        </button>
+                                        <button
+                                            name="body"
+                                            type="button"
+                                            onClick={this.handleOtherInfo}
+                                            className="btn btn-secondary btn-block">
+                                            Beden
                                         </button>
                                         <button
                                             name="foot"

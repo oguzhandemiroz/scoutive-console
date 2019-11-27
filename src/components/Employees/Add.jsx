@@ -360,7 +360,7 @@ export class Add extends Component {
                     this.setState({
                         branch:
                             response.filter(x => x.value === resSettings.settings.branch_id).length > 0
-                                ? response.filter(x => x.value === resSettings.settings.branch_id)
+                                ? response.filter(x => x.value === resSettings.settings.branch_id)[0]
                                 : null
                     })
                 );
@@ -702,7 +702,7 @@ export class Add extends Component {
                                     </div>
                                     <div className="col-lg-6 col-md-12">
                                         <div className="form-group">
-                                            <label className="form-label">Vücut Metrikleri (Boy & Kilo)</label>
+                                            <label className="form-label">Boy ve Kilo</label>
                                             <div className="row gutters-xs">
                                                 <div className="col-6">
                                                     <input

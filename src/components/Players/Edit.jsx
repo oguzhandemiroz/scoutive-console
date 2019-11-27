@@ -8,7 +8,7 @@ import {
     difference,
     securityNoRegEx
 } from "../../assets/js/core";
-import { Branchs, PlayerPositions, Bloods } from "../../services/FillSelect";
+import { Branchs, PlayerPositions, Bloods, Bodies } from "../../services/FillSelect";
 import { DetailPlayer, UpdatePlayer } from "../../services/Player";
 import { UploadFile, nullCheck, formatDate, formatMoney, fullnameGenerator, formatPhone } from "../../services/Others";
 import { showSwal } from "../../components/Alert";
@@ -72,11 +72,10 @@ export class Edit extends Component {
                 bloods: null,
                 positions: null,
                 branchs: null,
-                kinships: null
+                kinships: null,
+                bodies: null
             },
-            show: {
-                body_metrics: false
-            },
+            show: {},
             formErrors: {
                 name: "",
                 surname: "",
@@ -135,6 +134,7 @@ export class Edit extends Component {
                 blood,
                 foot,
                 foot_no,
+                body,
                 body_weight,
                 body_height,
                 point,
@@ -193,7 +193,8 @@ export class Edit extends Component {
                             foot_no: foot_no,
                             point: point,
                             image: image,
-                            branch: branch.value
+                            branch: branch.value,
+                            body: body.label
                         },
                         {
                             start_date: response_data.start_date,
@@ -205,7 +206,8 @@ export class Edit extends Component {
                             foot_no: response_data.foot_no,
                             point: response_data.point,
                             image: response_data.image,
-                            branch: response_data.branch.value
+                            branch: response_data.branch.value,
+                            body: response_data.attributes.body
                         }
                     ),
                     parents: parents
@@ -236,7 +238,9 @@ export class Edit extends Component {
                     parentError: parents.length === 0 ? true : false
                 }));
             }
-        } catch (e) {}
+        } catch (e) {
+            console.log(e);
+        }
     };
 
     handleChange = e => {
@@ -436,7 +440,6 @@ export class Edit extends Component {
 
     getFillSelect = () => {
         var sBranch = localStorage.getItem("sBranch");
-
         Branchs().then(response => {
             if (response) {
                 this.setState(prevState => ({
@@ -457,6 +460,13 @@ export class Edit extends Component {
                 }
             }));
         });
+
+        this.setState(prevState => ({
+            select: {
+                ...prevState.select,
+                bodies: Bodies()
+            }
+        }));
 
         PlayerPositions(sBranch ? sBranch : 1).then(response => {
             this.setState(prevState => ({
@@ -494,8 +504,6 @@ export class Edit extends Component {
                         end_date: data.end_date ? moment(data.end_date, "YYYY-MM-DD").toDate() : null
                     };
 
-                    if (data.branch === null) delete edited_data.branch;
-
                     this.setState(prevState => ({
                         ...prevState,
                         ...edited_data,
@@ -504,6 +512,7 @@ export class Edit extends Component {
                         body_weight: data.attributes.body_weight,
                         point: data.attributes.point,
                         foot_no: data.attributes.foot_no,
+                        body: { value: "1", label: data.attributes.body },
                         loading: ""
                     }));
                 }
@@ -525,6 +534,7 @@ export class Edit extends Component {
             position,
             branch,
             blood,
+            body,
             foot,
             birthday,
             foot_no,
@@ -679,7 +689,7 @@ export class Edit extends Component {
                                                             name="payment_type"
                                                             value="2"
                                                             className="selectgroup-input"
-                                                            checked
+                                                            defaultChecked={true}
                                                         />
                                                         <span className="selectgroup-button selectgroup-button-icon">
                                                             <i className="fa fa-money-bill-alt"></i>
@@ -694,7 +704,7 @@ export class Edit extends Component {
                                                             name="payment_type"
                                                             value="0"
                                                             className="selectgroup-input"
-                                                            checked
+                                                            defaultChecked={true}
                                                         />
                                                         <span className="selectgroup-button selectgroup-button-icon">
                                                             <i className="fa fa-calendar-alt"></i>
@@ -709,7 +719,7 @@ export class Edit extends Component {
                                                             name="payment_type"
                                                             value="1"
                                                             className="selectgroup-input"
-                                                            checked
+                                                            defaultChecked={true}
                                                         />
                                                         <span className="selectgroup-button selectgroup-button-icon">
                                                             <i className="fa fa-graduation-cap"></i>
@@ -1117,7 +1127,7 @@ export class Edit extends Component {
                                                     </div>
                                                 </div>
                                                 <div className={`form-group ${show.measure ? "d-block" : "d-none"}`}>
-                                                    <label className="form-label">Boy & Kilo</label>
+                                                    <label className="form-label">Boy ve Kilo</label>
                                                     <div className="row gutters-xs">
                                                         <div className="col-6">
                                                             <input
@@ -1158,6 +1168,22 @@ export class Edit extends Component {
                                                         isSearchable={true}
                                                         isDisabled={select.bloods ? false : true}
                                                         isLoading={select.bloods ? false : true}
+                                                        noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
+                                                    />
+                                                </div>
+                                                <div className={`form-group ${show.body ? "d-block" : "d-none"}`}>
+                                                    <label className="form-label">Beden</label>
+                                                    <Select
+                                                        value={body}
+                                                        onChange={val => this.handleSelect(val, "body")}
+                                                        options={select.bodies}
+                                                        name="blood"
+                                                        placeholder="Seç..."
+                                                        styles={selectCustomStyles}
+                                                        isClearable={true}
+                                                        isSearchable={true}
+                                                        isDisabled={select.bodies ? false : true}
+                                                        isLoading={select.bodies ? false : true}
                                                         noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
                                                     />
                                                 </div>
@@ -1300,6 +1326,13 @@ export class Edit extends Component {
                                             onClick={this.handleOtherInfo}
                                             className="btn btn-secondary btn-block">
                                             Kan Grubu
+                                        </button>
+                                        <button
+                                            name="body"
+                                            type="button"
+                                            onClick={this.handleOtherInfo}
+                                            className="btn btn-secondary btn-block">
+                                            Beden
                                         </button>
                                         <button
                                             name="foot"

@@ -176,7 +176,7 @@ export class GeneralChart extends Component {
             <div className="col-12">
                 <div className="card">
                     <div className="card-header">
-                        <h3 className="card-title">Detaylı Gelir/Gider Grafiği</h3>
+                        <h3 className="card-title">Bu Ayın Detaylı Gelir/Gider Grafiği</h3>
                     </div>
                     <div className="card-body p-0">
                         <Chart options={chartOptions} series={chartOptions.series} type="area" height="320" />
