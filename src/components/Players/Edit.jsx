@@ -19,6 +19,7 @@ import ParentModal from "./ParentModal";
 import "react-datepicker/dist/react-datepicker.css";
 import tr from "date-fns/locale/tr";
 import moment from "moment";
+import { GetSettings } from "../../services/School";
 const $ = require("jquery");
 
 registerLocale("tr", tr);
@@ -439,18 +440,38 @@ export class Edit extends Component {
     };
 
     getFillSelect = () => {
-        var sBranch = localStorage.getItem("sBranch");
-        Branchs().then(response => {
-            if (response) {
-                this.setState(prevState => ({
-                    select: {
-                        ...prevState.select,
-                        branchs: response
-                    },
-                    branch: response.filter(x => x.value === localStorage.getItem("sBranch"))
-                }));
-            }
-        });
+        GetSettings().then(resSettings =>
+            this.setState(
+                {
+                    settings: resSettings.settings
+                },
+                () => {
+                    PlayerPositions(
+                        parseInt(resSettings.settings.branch_id).length > 0
+                            ? parseInt(resSettings.settings.branch_id)
+                            : 1
+                    ).then(response => {
+                        this.setState(prevState => ({
+                            select: {
+                                ...prevState.select,
+                                positions: response
+                            }
+                        }));
+                    });
+
+                    Branchs().then(response => {
+                        if (response) {
+                            this.setState(prevState => ({
+                                select: {
+                                    ...prevState.select,
+                                    branchs: response
+                                }
+                            }));
+                        }
+                    });
+                }
+            )
+        );
 
         Bloods().then(response => {
             this.setState(prevState => ({
@@ -467,15 +488,6 @@ export class Edit extends Component {
                 bodies: Bodies()
             }
         }));
-
-        PlayerPositions(sBranch ? sBranch : 1).then(response => {
-            this.setState(prevState => ({
-                select: {
-                    ...prevState.select,
-                    positions: response
-                }
-            }));
-        });
     };
 
     detailPlayer = () => {
