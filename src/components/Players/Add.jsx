@@ -838,7 +838,7 @@ export class Add extends Component {
                                                 <div className="col-lg-6 col-md-12">
                                                     <div className="form-group">
                                                         <label className="form-label">
-                                                            Ödeme Tarihi<span className="form-required">*</span>
+                                                            Peşinat Tarihi<span className="form-required">*</span>
                                                         </label>
                                                         <DatePicker
                                                             autoComplete="off"
