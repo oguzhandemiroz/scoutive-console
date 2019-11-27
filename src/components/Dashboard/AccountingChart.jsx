@@ -1,186 +1,187 @@
 import React, { Component } from "react";
 import { ListAccountingRecords } from "../../services/Accounting";
-import "jquery";
-import c3 from "c3";
-import * as d3 from "d3";
-import "../../assets/css/c3.min.css";
+import Chart from "react-apexcharts";
+import "../../assets/css/apex.css";
 import sc from "../../assets/js/sc";
 import _ from "lodash";
 import moment from "moment";
 import "moment/locale/tr";
-
-const chartOptions = {
-	padding: {
-		top: 15,
-		bottom: -1,
-		right: -1,
-		left: -1
-	},
-	legend: {
-		position: "inset",
-		padding: 0,
-		inset: {
-			anchor: "top-left",
-			x: 10,
-			y: 3,
-			step: 10
-		}
-	},
-	tooltip: {
-		format: {
-			value: function(value, ratio, id, index) {
-				return value.format() + " ₺";
-			}
-		},
-		horizontal: true
-	},
-	axis: {
-		x: {
-			type: "category"
-		},
-		y: {
-			tick: {
-				format: d3.format(".2s")
-			}
-		}
-	},
-	grid: {
-		y: {
-			show: true
-		}
-	}
-};
+import { formatMoney } from "../../services/Others";
 
 export class AccountingChart extends Component {
-	constructor(props) {
-		super(props);
+    constructor(props) {
+        super(props);
 
-		this.state = {
-			uid: localStorage.getItem("UID"),
-			list: null
-		};
-	}
+        this.state = {
+            uid: localStorage.getItem("UID"),
+            chartOptions: {
+                chart: {
+                    id: "accounting-line-chart",
+                    toolbar: {
+                        show: false
+                    },
+                    stacked: false,
+                    animations: {
+                        enabled: true
+                    },
+                    height: 320
+                },
+                stroke: {
+                    width: 2
+                },
+                colors: [sc.colors["green"], sc.colors["red"]],
+                grid: {
+                    strokeDashArray: 5,
+                    borderColor: "#f0f0f0",
+                    position: "back"
+                },
+                markers: {
+                    size: 4,
+                    strokeWidth: 2,
+                    fillOpacity: 0,
+                    strokeOpacity: 0,
+                    hover: {
+                        size: 6
+                    }
+                },
+                yaxis: {
+                    show: false
+                },
+                xaxis: {
+                    type: "category",
+                    labels: {
+                        hideOverlappingLabels: true,
+                        style: {
+                            colors: "#9aa0ac"
+                        }
+                    },
+                    axisBorder: {
+                        color: "#9aa0ac",
+                        height: 0.4
+                    },
+                    tickPlacement: "on",
+                    tooltip: {
+                        enabled: false
+                    }
+                },
+                tooltip: {
+                    y: {
+                        formatter: function(value) {
+                            return formatMoney(value);
+                        }
+                    }
+                },
+                dataLabels: {
+                    enabled: false
+                },
+                legend: {
+                    position: "top",
+                    horizontalAlign: "left",
+                    floating: true,
+                    offsetX: -2,
+                    offsetY: 7
+                },
+                noData: {
+                    text: "Veri yükleniyor veya bulunamadı...",
+                    style: {
+                        color: "#aab0b6"
+                    }
+                },
+                series: []
+            }
+        };
+    }
 
-	shouldComponentUpdate() {
-		return false;
-	}
+    componentDidMount() {
+        this.listAccountingRecord();
+    }
 
-	componentDidMount() {
-		this.listAccountingRecord();
-	}
+    listAccountingRecord = () => {
+        const { uid } = this.state;
+        ListAccountingRecords({
+            uid: uid,
+            filter: {
+                payment_date__gte: moment()
+                    .startOf("week")
+                    .format("YYYY-MM-DD"),
+                payment_date__lte: moment()
+                    .endOf("week")
+                    .format("YYYY-MM-DD"),
+                accounting_type_id__gt: 2
+            }
+        }).then(response => {
+            if (response) {
+                const status = response.status;
+                if (status.code === 1020) {
+                    const data = response.data.reverse();
+                    const generated_data = [
+                        {
+                            name: "Gelir",
+                            data: [
+                                ..._(data)
+                                    .groupBy("payment_date")
+                                    .map((objs, key) => {
+                                        return {
+                                            x: moment(key).format("DD MMMM, ddd"),
+                                            y: _.sumBy(
+                                                _(objs)
+                                                    .filter(x => x.type === 1)
+                                                    .value(),
+                                                "amount"
+                                            )
+                                        };
+                                    })
+                                    .value()
+                            ]
+                        },
+                        {
+                            name: "Gider",
+                            data: [
+                                ..._(data)
+                                    .groupBy("payment_date")
+                                    .map((objs, key) => {
+                                        return {
+                                            x: moment(key).format("DD MMMM, ddd"),
+                                            y:
+                                                _.sumBy(
+                                                    _(objs)
+                                                        .filter(x => x.type === 0)
+                                                        .value(),
+                                                    "amount"
+                                                ) * 1
+                                        };
+                                    })
+                                    .value()
+                            ]
+                        }
+                    ];
 
-	componentDidUpdate() {
-		const { list } = this.state;
-		this.renderChart(list);
-	}
+                    this.setState(prevState => ({
+                        chartOptions: {
+                            ...prevState.chartOptions,
+                            series: generated_data
+                        }
+                    }));
+                }
+            }
+        });
+    };
 
-	getDays = () => {
-		const fullDay = [];
-		const weekDate = moment().startOf("week");
-		_.times(weekDate.isoWeekday(), function(n) {
-			fullDay.push({ payment_date: weekDate.format("DD MMMM, ddd"), incomeAmount: 0, expenseAmount: 0 }); // your format
-			weekDate.add(1, "day");
-		});
-
-		return fullDay;
-	};
-
-	renderChart = data => {
-		c3.generate({
-			bindto: "#general-stacked-report", // id of chart wrapper
-			data: {
-				json: data,
-				keys: {
-					x: "payment_date",
-					value: ["incomeAmount", "expenseAmount"]
-				},
-				type: "line", // default type of chart
-				//groups: [["incomeAmount", "expenseAmount"]],
-				colors: {
-					incomeAmount: sc.colors["green"],
-					expenseAmount: sc.colors["red"]
-				},
-				names: {
-					x: "İşlem Tarihi",
-					incomeAmount: "Gelir",
-					expenseAmount: "Gider"
-				}
-			},
-			...chartOptions
-		});
-	};
-
-	listAccountingRecord = () => {
-		const { uid } = this.state;
-		ListAccountingRecords({
-			uid: uid,
-			filter: {
-				payment_date__gte: moment()
-					.startOf("week")
-					.format("YYYY-MM-DD"),
-				payment_date__lte: moment()
-					.endOf("week")
-					.format("YYYY-MM-DD"),
-				accounting_type_id__gt: 2
-			}
-		}).then(response => {
-			if (response) {
-				const status = response.status;
-				if (status.code === 1020) {
-					const data = response.data;
-					const grouped = _(data)
-						.groupBy("payment_date")
-						.map((objs, key) => {
-							console.log(key);
-							return {
-								payment_date: moment(key).format("DD MMMM, ddd"),
-								incomeAmount: _.sumBy(
-									_(objs)
-										.filter(x => x.type === 1)
-										.value(),
-									"amount"
-								),
-								expenseAmount:
-									_.sumBy(
-										_(objs)
-											.filter(x => x.type === 0)
-											.value(),
-										"amount"
-									) * -1
-							};
-						})
-						.value();
-
-					this.getDays();
-					this.setState({ list: grouped });
-
-					this.renderChart(
-						_.sortBy(
-							_.values(
-								_.merge(_.keyBy(this.getDays(), "payment_date"), _.keyBy(grouped, "payment_date"))
-							),
-							"payment_date"
-						)
-					);
-				}
-			}
-		});
-	};
-
-	render() {
-		return (
-			<div className="col-12">
-				<div className="card">
-					<div className="card-header">
-						<h3 className="card-title">Bu Haftanın Gelir/Gider Grafiği</h3>
-					</div>
-					<div className="card-body p-0">
-						<div id="general-stacked-report"></div>
-					</div>
-				</div>
-			</div>
-		);
-	}
+    render() {
+        const { chartOptions } = this.state;
+        return (
+            <div className="col-12">
+                <div className="card">
+                    <div className="card-header">
+                        <h3 className="card-title">Bu Haftanın Gelir/Gider Grafiği</h3>
+                    </div>
+                    <div className="card-body p-0">
+                        <Chart options={chartOptions} series={chartOptions.series} type="area" height="320" />
+                    </div>
+                </div>
+            </div>
+        );
+    }
 }
 
 export default AccountingChart;

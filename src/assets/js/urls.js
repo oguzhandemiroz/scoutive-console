@@ -27,6 +27,7 @@ var ep = {
     SCHOOL_UPDATE: host + api_version + "update/school",
     SCHOOL_LIST_PERMISSION: host + api_version + "list/permissions",
     SCHOOL_UPDATE_PERMISSION: host + api_version + "update/permissions",
+    SCHOOL_SET_SETTINGS: host + api_version + "set/school/settings",
     PASSWORD_FORGOT: host + api_version + "password/forgot",
     PASSWORD_RESET: host + api_version + "password/reset",
     PASSWORD_CHANGE: host + api_version + "password/change",
@@ -56,6 +57,7 @@ var ep = {
     UPDATE_GROUP: host + api_version + "update/group",
     GROUP_DELETE: host + api_version + "delete/group",
     GET_GROUP: host + api_version + "get/group",
+    CHANGE_GROUP: host + api_version + "change/group",
     CHECK_PERMISSION: host + api_version + "check/permission",
     COMPLETE_ROLLCALL: host + api_version + "complete/rollcall",
     CREATE_ROLLCALL: host + api_version + "create/rollcall",
@@ -85,6 +87,7 @@ var ep = {
     SALARY_LIST: host + api_version + "list/employee/salaries",
     FEE_CREATE: host + api_version + "pay/player/fee",
     FEE_UPDATE: host + api_version + "update/player/fee",
+    FEE_DELETE: host + api_version + "delete/player/fee",
     FEE_LIST: host + api_version + "list/player/fees",
     ACCOUNTING_CREATE: host + api_version + "create/accounting/record",
     ACCOUNTING_LIST: host + api_version + "list/accounting/records",
@@ -97,7 +100,9 @@ var ep = {
     PARENT_CREATE: host + api_version + "create/parent",
     PARENT_LIST: host + api_version + "list/parents",
     PARENT_GET: host + api_version + "get/parent",
-    PARENT_PLAYERS: host + api_version + "get/parent/players"
+    PARENT_PLAYERS: host + api_version + "get/parent/players",
+    PARENT_PLAYERS: host + api_version + "get/parent/players",
+    START: host + api_version + "start"
 };
 
 export default ep;

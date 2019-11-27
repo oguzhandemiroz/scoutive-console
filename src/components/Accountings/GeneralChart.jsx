@@ -1,193 +1,190 @@
 import React, { Component } from "react";
 import { ListAccountingRecords } from "../../services/Accounting";
-import "jquery";
-import c3 from "c3";
-import * as d3 from "d3";
-import "../../assets/css/c3.min.css";
+import Chart from "react-apexcharts";
+import "../../assets/css/apex.css";
 import sc from "../../assets/js/sc";
 import _ from "lodash";
 import moment from "moment";
 import "moment/locale/tr";
-
-const chartOptions = {
-	padding: {
-		top: 15,
-		bottom: -1,
-		right: -1
-	},
-	legend: {
-		position: "inset",
-		padding: 0,
-		inset: {
-			anchor: "top-left",
-			x: 10,
-			y: 3,
-			step: 10
-		}
-	},
-	tooltip: {
-		format: {
-			value: function(value, ratio, id, index) {
-				return value.format() + " ₺";
-			}
-		},
-		horizontal: true
-	},
-	axis: {
-		x: {
-			type: "timeseries",
-			localtime: true,
-			tick: {
-				fit: true,
-				format: "%d-%m",
-				rotate: -50,
-				culling: false
-			},
-			show: true
-		},
-		y: {
-			tick: {
-				format: d3.format(".2s")
-			}
-		}
-	},
-	bar: {
-		width: 35
-	},
-	grid: {
-		x: {
-			show: true
-		},
-		y: {
-			show: true,
-			lines: [{ value: 0 }]
-		}
-	}
-};
+import { formatMoney } from "../../services/Others";
 
 export class GeneralChart extends Component {
-	constructor(props) {
-		super(props);
+    constructor(props) {
+        super(props);
 
-		this.state = {
-			uid: localStorage.getItem("UID"),
-			list: null
-		};
-	}
+        this.state = {
+            uid: localStorage.getItem("UID"),
+            chartOptions: {
+                chart: {
+                    id: "general-accounting",
+                    toolbar: {
+                        show: false
+                    },
+                    stacked: false,
+                    animations: {
+                        enabled: true
+                    },
+                    height: 320
+                },
+                stroke: {
+                    width: 2
+                },
+                colors: [sc.colors["green"], sc.colors["red"]],
+                grid: {
+                    strokeDashArray: 5,
+                    borderColor: "#f0f0f0",
+                    position: "back"
+                },
+                markers: {
+                    size: 4,
+                    strokeWidth: 2,
+                    fillOpacity: 0,
+                    strokeOpacity: 0,
+                    hover: {
+                        size: 6
+                    }
+                },
+                yaxis: {
+                    show: false
+                },
+                xaxis: {
+                    type: "category",
+                    labels: {
+                        hideOverlappingLabels: true,
+                        style: {
+                            colors: "#9aa0ac"
+                        },
+                        rotate: -45,
+                        rotateAlways: true
+                    },
+                    axisBorder: {
+                        color: "#9aa0ac",
+                        height: 0.4
+                    },
+                    tickPlacement: "on",
+                    tooltip: {
+                        enabled: false
+                    }
+                },
+                tooltip: {
+                    y: {
+                        formatter: function(value) {
+                            return formatMoney(value);
+                        }
+                    }
+                },
+                dataLabels: {
+                    enabled: false
+                },
+                legend: {
+                    position: "top",
+                    horizontalAlign: "left",
+                    floating: true,
+                    offsetX: -2,
+                    offsetY: 7
+                },
+                noData: {
+                    text: "Veri yükleniyor veya bulunamadı...",
+                    style: {
+                        color: "#aab0b6"
+                    }
+                },
+                series: []
+            }
+        };
+    }
 
-	shouldComponentUpdate() {
-		return false;
-	}
+    componentDidMount() {
+        this.listAccountingRecord();
+    }
 
-	componentDidMount() {
-		this.listAccountingRecord();
-	}
+    getDays = () => {
+        const data = [];
+        const monthDate = moment().startOf("month");
+        _.times(monthDate.daysInMonth(), function(n) {
+            data.push({ x: monthDate.format("DD MMM"), y: 0 }); // your format
+            monthDate.add(1, "day");
+        });
 
-	componentDidUpdate() {
-		const { list } = this.state;
-		this.renderChart(list);
-	}
+        return data;
+    };
 
-	getDays = () => {
-		const fullDay = [];
-		const monthDate = moment().startOf("month");
-		_.times(monthDate.daysInMonth(), function(n) {
-			fullDay.push({ payment_date: monthDate.format("YYYY-MM-DD"), incomeAmount: 0, expenseAmount: 0 }); // your format
-			monthDate.add(1, "day");
-		});
+    generateData = (data, type) => {
+        return _(data)
+            .groupBy("payment_date")
+            .map((objs, key) => {
+                return {
+                    x: moment(key).format("DD MMM"),
+                    y: _.sumBy(
+                        _(objs)
+                            .filter(x => x.type === type)
+                            .value(),
+                        "amount"
+                    )
+                };
+            })
+            .value();
+    };
 
-		return fullDay;
-	};
+    listAccountingRecord = () => {
+        const { uid } = this.state;
+        ListAccountingRecords({
+            uid: uid,
+            filter: {
+                payment_date__gte: moment()
+                    .startOf("month")
+                    .format("YYYY-MM-DD"),
+                payment_date__lte: moment()
+                    .endOf("month")
+                    .format("YYYY-MM-DD"),
+                accounting_type_id__gt: 2
+            }
+        }).then(response => {
+            if (response) {
+                const status = response.status;
+                if (status.code === 1020) {
+                    const data = response.data;
+                    const gen_data = [
+                        {
+                            name: "Gelir",
+                            data: _.values(
+                                _.merge(_.keyBy(this.getDays(), "x"), _.keyBy(this.generateData(data, 1), "x"))
+                            )
+                        },
+                        {
+                            name: "Gider",
+                            data: _.values(
+                                _.merge(_.keyBy(this.getDays(), "x"), _.keyBy(this.generateData(data, 0), "x"))
+                            )
+                        }
+                    ];
 
-	renderChart = data => {
-		c3.generate({
-			bindto: "#general-stacked-report", // id of chart wrapper
-			data: {
-				json: data,
-				keys: {
-					x: "payment_date",
-					value: ["incomeAmount", "expenseAmount"]
-				},
-				type: "line", // default type of chart
-				groups: [["incomeAmount", "expenseAmount"]],
-				colors: {
-					incomeAmount: sc.colors["green"],
-					expenseAmount: sc.colors["red"]
-				},
-				names: {
-					x: "İşlem Tarihi",
-					incomeAmount: "Gelir",
-					expenseAmount: "Gider"
-				}
-			},
-			...chartOptions
-		});
-	};
+                    this.setState(prevState => ({
+                        chartOptions: {
+                            ...prevState.chartOptions,
+                            series: gen_data
+                        }
+                    }));
+                }
+            }
+        });
+    };
 
-	listAccountingRecord = () => {
-		const { uid } = this.state;
-		ListAccountingRecords({
-			uid: uid,
-			filter: {
-				payment_date__gte: moment()
-					.startOf("month")
-					.format("YYYY-MM-DD"),
-				payment_date__lte: moment()
-					.endOf("month")
-					.format("YYYY-MM-DD"),
-				accounting_type_id__gt: 2
-			}
-		}).then(response => {
-			if (response) {
-				const status = response.status;
-				if (status.code === 1020) {
-					const data = response.data;
-					const grouped = _(data)
-						.groupBy("payment_date")
-						.map((objs, key) => {
-							return {
-								payment_date: key,
-								incomeAmount: _.sumBy(
-									_(objs)
-										.filter(x => x.type === 1)
-										.value(),
-									"amount"
-								),
-								expenseAmount:
-									_.sumBy(
-										_(objs)
-											.filter(x => x.type === 0)
-											.value(),
-										"amount"
-									) * -1
-							};
-						})
-						.value();
-
-					this.getDays();
-					this.setState({ list: grouped });
-					this.renderChart(
-						_.values(_.merge(_.keyBy(this.getDays(), "payment_date"), _.keyBy(grouped, "payment_date")))
-					);
-				}
-			}
-		});
-	};
-
-	render() {
-		return (
-			<div className="col-12">
-				<div className="card">
-					<div className="card-header">
-						<h3 className="card-title">Detaylı Gelir/Gider Grafiği</h3>
-					</div>
-					<div className="card-body p-0">
-						<div id="general-stacked-report"></div>
-					</div>
-				</div>
-			</div>
-		);
-	}
+    render() {
+        const { chartOptions } = this.state;
+        return (
+            <div className="col-12">
+                <div className="card">
+                    <div className="card-header">
+                        <h3 className="card-title">Detaylı Gelir/Gider Grafiği</h3>
+                    </div>
+                    <div className="card-body p-0">
+                        <Chart options={chartOptions} series={chartOptions.series} type="area" height="320" />
+                    </div>
+                </div>
+            </div>
+        );
+    }
 }
 
 export default GeneralChart;

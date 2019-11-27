@@ -81,7 +81,7 @@ export class Income extends Component {
                                         (<i className="fe fe-lock mr-0" />)
                                     </span>
                                 </Link>
-                                <Link to="/app/players/payment" className="dropdown-item">
+                                <Link to="/app/players/payment/fee" className="dropdown-item">
                                     <i className="dropdown-icon fa fa-hand-holding-usd"></i> Aidat Ödemesi
                                 </Link>
                             </div>
@@ -112,7 +112,7 @@ export class Income extends Component {
                                                       {el.accounting_type}
                                                       <div className="small text-muted text-break">{el.note}</div>
                                                   </td>
-                                                  <td>{el.amount.format() + " ₺"}</td>
+                                                  <td>{el.amount ? el.amount.format() + " ₺" : "0,00 ₺"}</td>
                                                   <td className="text-nowrap">
                                                       {moment(el.payment_date).format("LL")}
                                                   </td>

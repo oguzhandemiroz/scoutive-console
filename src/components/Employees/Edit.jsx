@@ -18,6 +18,7 @@ import DatePicker, { registerLocale } from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import tr from "date-fns/locale/tr";
 import moment from "moment";
+import { GetSettings } from "../../services/School";
 const $ = require("jquery");
 
 registerLocale("tr", tr);
@@ -406,13 +407,14 @@ export class Edit extends Component {
 		});
 
 		Branchs().then(response => {
+            if (response) {
 			this.setState(prevState => ({
 				select: {
 					...prevState.select,
 					branchs: response
-				},
-				branch: response.filter(x => x.value === localStorage.getItem("sBranch"))
+				}
 			}));
+		}
 		});
 
 		Bloods().then(response => {
@@ -1112,7 +1114,7 @@ export class Edit extends Component {
 							<div className="card-footer text-right">
 								<div className="d-flex" style={{ justifyContent: "space-between" }}>
 									<a
-										href="javascript:void(0)"
+										
 										onClick={() => {
 											showSwal({
 												type: "info",

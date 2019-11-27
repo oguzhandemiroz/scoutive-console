@@ -1,6 +1,11 @@
 import React, { Component } from "react";
 
 export class Maintenance extends Component {
+    componentDidMount() {
+        const localeStorageList = ["sImage", "sName", "UID", "sID", "sType", "sPosition", "sBranch"];
+        localeStorageList.map(el => localStorage.removeItem(el));
+    }
+
     render() {
         return (
             <div className="page">

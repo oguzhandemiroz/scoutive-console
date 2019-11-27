@@ -71,7 +71,7 @@ export class FastMenu extends Component {
                 tag: "Link",
                 elementAttr: {
                     className: "dropdown-item",
-                    to: `/app/players/payment`
+                    to: `/app/players/payment/fee`
                 },
                 childText: "Ödeme Al",
                 child: {

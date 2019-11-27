@@ -1,6 +1,5 @@
 import "./assets/css/dashboard.css";
-import "./assets/css/maintenance.css";
-//import "./assets/css/custom.css";
+import "./assets/css/custom.css";
 import { registerLocale } from "react-datepicker";
 import tr from "date-fns/locale/tr";
 import "jquery";
@@ -61,7 +60,7 @@ if (process.env.NODE_ENV !== "development") {
 
 const rootElement = document.getElementById("root");
 
-ReactDOM.render(<Maintenance />, rootElement);
+ReactDOM.render(<Core />, rootElement);
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

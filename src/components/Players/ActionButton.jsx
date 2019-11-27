@@ -34,8 +34,8 @@ export class ActionButton extends Component {
                 tag: "Link",
                 elementAttr: {
                     className: "dropdown-item",
-                    to: `/app/players/payment/${to}`,
-                    onClick: () => history.push(`/app/players/payment/${to}`)
+                    to: `/app/players/payment/fee/${to}`,
+                    onClick: () => history.push(`/app/players/payment/fee/${to}`)
                 },
                 childText: "Ödeme Al",
                 child: {
@@ -215,7 +215,7 @@ export class ActionButton extends Component {
                 name: "group",
                 tag: "button",
                 elementAttr: {
-                    className: "dropdown-item",
+                    className: "dropdown-item cursor-not-allowed disabled",
                     onClick: () =>
                         this.props.groupChangeButton({
                             name: fullname,
@@ -230,7 +230,7 @@ export class ActionButton extends Component {
                 child: {
                     className: "dropdown-icon fa fa-user-cog"
                 },
-                lock: false,
+                lock: lock,
                 condition: !is_trial && status !== 0
             },
             {
@@ -317,7 +317,7 @@ export class ActionButton extends Component {
                     className="dropdown-menu dropdown-menu-right"
                     aria-labelledby="player-action"
                     x-placement="top-end">
-                    <a className="dropdown-item disabled text-azure" href="javascript:void(0)">
+                    <a className="dropdown-item disabled text-azure">
                         <i className="dropdown-icon fa fa-user text-azure" />
                         {fullname}
                     </a>

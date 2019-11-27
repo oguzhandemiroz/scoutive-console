@@ -1,0 +1,31 @@
+.apexcharts-title-text {
+    font-weight: 600 !important;
+}
+
+.apexcharts-tooltip-title {
+    font-weight: 600 !important;
+    padding-bottom: 0.25rem !important;
+}
+
+.apexcharts-tooltip {
+    line-height: 1;
+    color: #fff;
+    background: #354052 !important;
+    border: 0 !important;
+    border-radius: 3px !important;
+}
+
+.apexcharts-tooltip-title {
+    margin: 0 !important;
+    background: 0 0 !important;
+    border: 0 !important;
+}
+
+.apexcharts-tooltip-series-group {
+    padding: 0 8px !important;
+}
+
+.apexcharts-tooltip-marker {
+    width: 0.5rem;
+    height: 0.5rem;
+}

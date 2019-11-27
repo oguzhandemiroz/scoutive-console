@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
+import { Link, withRouter } from "react-router-dom";
 import { UnpaidPlayers } from "../../services/Report";
 import { fullnameGenerator, avatarPlaceholder } from "../../services/Others";
 import moment from "moment";
@@ -41,15 +41,17 @@ export class UnpaidPlayer extends Component {
 
     getUnpaidPlayers = () => {
         UnpaidPlayers().then(response => {
-            const data = response.data;
-            const status = response.status;
-            if (status.code === 1020) {
-                this.setState({
-                    list: data.sort((a, b) => {
-                        return a.required_payment_date < b.required_payment_date ? -1 : 1;
-                    }),
-                    count: data.length
-                });
+            if (response) {
+                const data = response.data;
+                const status = response.status;
+                if (status.code === 1020) {
+                    this.setState({
+                        list: data.sort((a, b) => {
+                            return a.required_payment_date < b.required_payment_date ? -1 : 1;
+                        }),
+                        count: data.length
+                    });
+                }
             }
         });
     };
@@ -121,7 +123,7 @@ export class UnpaidPlayer extends Component {
                                               </span>
                                               <div className="small text-muted mt-1">
                                                   Tutar: <strong>{el.fee.format() + " ₺"}</strong>, Ödenen:{" "}
-                                                  <strong>{el.amount.format() + " ₺"}</strong>
+                                                  <strong>{el.amount ? el.amount.format() + " ₺" : "0,00 ₺"}</strong>
                                               </div>
 
                                               <div className="small text-muted">
@@ -148,16 +150,16 @@ export class UnpaidPlayer extends Component {
                                                       name: fullnameGenerator(el.name, el.surname),
                                                       is_trial: 0
                                                   }}
+                                                  history={this.props.history}
                                                   dropdown={true}
                                                   renderButton={() => (
-                                                      <a
-                                                          href="javascript:void(0)"
-                                                          className="icon"
+                                                      <span
+                                                          className="icon cursor-pointer"
                                                           data-toggle="dropdown"
                                                           aria-haspopup="true"
                                                           aria-expanded="false">
                                                           <i className="fe fe-more-vertical"></i>
-                                                      </a>
+                                                      </span>
                                                   )}
                                               />
                                           </div>
@@ -181,4 +183,4 @@ export class UnpaidPlayer extends Component {
     }
 }
 
-export default UnpaidPlayer;
+export default withRouter(UnpaidPlayer);

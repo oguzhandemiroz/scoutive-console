@@ -44,7 +44,7 @@ export class FABs extends Component {
                         <Link to="/app/players/add" className="dropdown-item">
                             <i className="fa fa-user-plus mr-1"></i> Öğrenci Ekle
                         </Link>
-                        <Link to="/app/players/payment" className="dropdown-item">
+                        <Link to="/app/players/payment/fee" className="dropdown-item">
                             <i className="fa fa-hand-holding-usd mr-1"></i> Ödeme Al
                         </Link>
                     </div>

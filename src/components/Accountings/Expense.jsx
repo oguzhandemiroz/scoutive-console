@@ -81,7 +81,7 @@ export class Expense extends Component {
 										(<i className="fe fe-lock mr-0" />)
 									</span>
 								</Link>
-								<Link to="/app/players/payment" className="dropdown-item">
+								<Link to="/app/players/payment/fee" className="dropdown-item">
 									<i className="dropdown-icon fa fa-money-bill-wave"></i> Maaş Ödemesi
 								</Link>
 							</div>

@@ -118,28 +118,30 @@ export class DailyCreatedPlayer extends Component {
                 .endOf("day")
                 .format("YYYY-MM-DD H:mm:ss")
         }).then(response => {
-            const data = response.data;
-            const status = response.status;
-            if (status.code === 1020) {
-                let today = data.find(x => x.created_date === moment().format("YYYY-MM-DD"));
-                let yesterday = data.find(
-                    x =>
-                        x.created_date ===
-                        moment()
-                            .subtract(1, "days")
-                            .format("YYYY-MM-DD")
-                );
+            if (response) {
+                const data = response.data;
+                const status = response.status;
+                if (status.code === 1020) {
+                    let today = data.find(x => x.created_date === moment().format("YYYY-MM-DD"));
+                    let yesterday = data.find(
+                        x =>
+                            x.created_date ===
+                            moment()
+                                .subtract(1, "days")
+                                .format("YYYY-MM-DD")
+                    );
 
-                let todayCount = today ? today.count : 0;
-                let yesterdayCount = yesterday ? yesterday.count : 0;
+                    let todayCount = today ? today.count : 0;
+                    let yesterdayCount = yesterday ? yesterday.count : 0;
 
-                this.setState({
-                    list: data,
-                    todayCount: todayCount,
-                    yesterdayCount: yesterdayCount
-                });
+                    this.setState({
+                        list: data,
+                        todayCount: todayCount,
+                        yesterdayCount: yesterdayCount
+                    });
 
-                this.renderChart(data);
+                    this.renderChart(data);
+                }
             }
         });
     };

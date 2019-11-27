@@ -41,7 +41,8 @@ const initialState = {
     surname: null,
     phone: null,
     email: null,
-    kinship: { value: "Anne", label: "Anne" }
+    kinship: { value: "Anne", label: "Anne" },
+    parent: null
 };
 
 export class ParentModal extends Component {
@@ -109,6 +110,7 @@ export class ParentModal extends Component {
         let require = { ...this.state };
         delete require.email;
         delete require.parents;
+        delete require.parent;
         delete require.search;
         delete require.loadingButton;
 
@@ -183,6 +185,25 @@ export class ParentModal extends Component {
         this.setState({ [name]: value });
     };
 
+    getParent = () => {
+        const { kinship, parent } = this.state;
+        this.setState(prevState => ({
+            ...initialState,
+            parents: [
+                ...prevState.parents,
+                {
+                    uid: parent.uid,
+                    parent_id: parent.value,
+                    kinship: kinship.value,
+                    name: parent.name,
+                    surname: parent.surname,
+                    phone: parent.phone,
+                    email: parent.email
+                }
+            ]
+        }));
+    };
+
     assignParents = () => {
         const { parents } = this.state;
         const { assignParents } = this.props;
@@ -237,41 +258,44 @@ export class ParentModal extends Component {
                                 <i className={`mr-2 fa fa-user text-cyan`} />
                                 Veli Oluştur ve Ata
                             </h5>
-                            {/* <button
-								type="button"
-								onClick={this.toggleSearch}
-								className={`btn btn-${search ? "success" : "primary"} btn-sm ml-auto`}>
-								{search ? "Veli Oluştur" : "Veli Ara"}
-							</button> */}
+                            <button
+                                type="button"
+                                onClick={this.toggleSearch}
+                                className={`btn btn-${search ? "success" : "primary"} btn-sm ml-auto`}>
+                                {search ? "Veli Oluştur" : "Veli Ara"}
+                            </button>
                             <button type="button" className="close ml-0" data-dismiss="modal" aria-label="Close" />
                         </div>
-                        {search ? (
-                            <div className="modal-body">
-                                <div className="form-group">
-                                    <label className="form-label">Veli Ara</label>
-                                    <Select
-                                        value={parent}
-                                        onChange={val => this.handleSelect(val, "parent")}
-                                        options={select.parents}
-                                        name="parent"
-                                        placeholder="Ara..."
-                                        styles={selectCustomStyles}
-                                    />
-                                </div>
+
+                        <div className="modal-body">
+                            <div className="form-group">
+                                <label className="form-label">Yakınlık Durumu</label>
+                                <Select
+                                    value={kinship}
+                                    onChange={val => this.handleSelect(val, "kinship")}
+                                    options={select.kinships}
+                                    name="kinship"
+                                    placeholder="Seç..."
+                                    styles={selectCustomStyles}
+                                />
                             </div>
-                        ) : (
-                            <div className="modal-body">
-                                <div className="form-group">
-                                    <label className="form-label">Yakınlık Durumu</label>
-                                    <Select
-                                        value={kinship}
-                                        onChange={val => this.handleSelect(val, "kinship")}
-                                        options={select.kinships}
-                                        name="kinship"
-                                        placeholder="Seç..."
-                                        styles={selectCustomStyles}
-                                    />
-                                </div>
+                            <div className={`form-group ${search ? "d-block" : "d-none"}`}>
+                                <label className="form-label">
+                                    Veli Ara<span className="form-required">*</span>
+                                </label>
+                                <Select
+                                    value={parent}
+                                    onChange={val => this.handleSelect(val, "parent")}
+                                    options={select.parents}
+                                    name="parent"
+                                    placeholder="Ara..."
+                                    styles={selectCustomStyles}
+                                    isSearchable={true}
+                                    isDisabled={select.parents ? false : true}
+                                    isLoading={select.parents ? false : true}
+                                />
+                            </div>
+                            <div className={search ? "d-none" : "d-block"}>
                                 <div className="form-group">
                                     <div className="row gutters-xs">
                                         <div className="col-6">
@@ -327,34 +351,33 @@ export class ParentModal extends Component {
                                         </div>
                                     </div>
                                 </div>
+                            </div>
 
-                                {parents.length > 0 ? (
-                                    <>
-                                        <hr className="my-4" />
-                                        <div className="row gutters-xs">
-                                            {parents.map(el => (
-                                                <div className="col-6" key={el.parent_id.toString()}>
-                                                    <div className="card">
-                                                        <div className="card-body">
-                                                            <div className="text-dark font-weight-600">
-                                                                {el.kinship}
-                                                            </div>
-                                                            <Link to={`/app/parents/detail/${el.uid}`} target="_blank">
-                                                                {fullnameGenerator(el.name, el.surname)}
-                                                            </Link>
-                                                            <div className="text-muted">
-                                                                Telefon: {formatPhone(el.phone)}
-                                                            </div>
-                                                            <div className="text-muted">Email: {el.email}</div>
+                            {parents.length > 0 ? (
+                                <>
+                                    <hr className="my-4" />
+                                    <div className="row gutters-xs">
+                                        {parents.map(el => (
+                                            <div className="col-6" key={el.parent_id.toString()}>
+                                                <div className="card">
+                                                    <div className="card-body">
+                                                        <div className="text-dark font-weight-600">{el.kinship}</div>
+                                                        <Link to={`/app/parents/detail/${el.uid}`} target="_blank">
+                                                            {fullnameGenerator(el.name, el.surname)}
+                                                        </Link>
+                                                        <div className="text-muted">
+                                                            Telefon: {formatPhone(el.phone)}
                                                         </div>
+                                                        <div className="text-muted">Email: {el.email}</div>
                                                     </div>
                                                 </div>
-                                            ))}
-                                        </div>
-                                    </>
-                                ) : null}
-                            </div>
-                        )}
+                                            </div>
+                                        ))}
+                                    </div>
+                                </>
+                            ) : null}
+                        </div>
+
                         <div className="modal-footer">
                             {parents.length > 0 ? (
                                 <button
@@ -367,12 +390,12 @@ export class ParentModal extends Component {
                             ) : null}
                             <button
                                 type="button"
-                                onClick={this.handleSubmit}
+                                onClick={search ? this.getParent : this.handleSubmit}
                                 disabled={parents.length >= 2 ? "disabled" : ""}
                                 className={`btn btn-success ml-auto ${
                                     parents.length >= 2 ? "disabled" : ""
                                 } ${loadingButton}`}>
-                                {search ? "Veli Ata" : "Veli Oluştur"}
+                                {search ? "Bilgileri Getir" : "Veli Oluştur"}
                             </button>
                         </div>
                     </div>

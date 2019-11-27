@@ -15,7 +15,6 @@ const Bloods = () => {
                 const data = response.data;
                 const status = response.status;
                 const selectData = [];
-                console.log("Bloods: ", response);
 
                 if (status.code !== 1020) {
                     Toast.fire({
@@ -46,7 +45,6 @@ const Clubs = () => {
                 const data = response.data;
                 const status = response.status;
                 const selectData = [];
-                console.log("Club: ", response);
 
                 if (status.code !== 1020) {
                     Toast.fire({
@@ -77,7 +75,6 @@ const Branchs = () => {
                 const data = response.data;
                 const status = response.status;
                 const selectData = [];
-                console.log("Branchs: ", response);
 
                 if (status.code !== 1020) {
                     Toast.fire({
@@ -150,7 +147,6 @@ const EmployeePositions = () => {
                 const data = response.data;
                 const status = response.status;
                 const selectData = [];
-                console.log("Employee: ", response);
 
                 if (status.code !== 1020) {
                     Toast.fire({
@@ -181,7 +177,6 @@ const PlayerPositions = type => {
                 const data = response.data;
                 const status = response.status;
                 const selectData = [];
-                console.log("Mevkii: ", response);
 
                 if (status.code !== 1020) {
                     Toast.fire({
@@ -218,7 +213,6 @@ const Groups = () => {
                 const data = response.data;
                 const status = response.status;
                 const selectData = [];
-                console.log("Employee: ", response);
 
                 if (status.code !== 1020) {
                     Toast.fire({
@@ -249,7 +243,6 @@ const Banks = () => {
                 const data = response.data;
                 const status = response.status;
                 const selectData = [];
-                console.log("Banks: ", response);
 
                 if (status.code !== 1020) {
                     Toast.fire({
@@ -647,11 +640,17 @@ const GetParents = () => {
                             const label = fullnameGenerator(el.name, el.surname);
                             const uid = el.uid;
                             const phone = el.phone;
+                            const email = el.email;
+                            const name = el.name;
+                            const surname = el.surname;
                             selectData.push({
                                 value: value,
                                 label: label,
                                 uid: uid,
-                                phone: phone
+                                phone: phone,
+                                email: email,
+                                name: name,
+                                surname: surname
                             });
                         });
                         return selectData.sort((a, b) => {
