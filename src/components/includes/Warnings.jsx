@@ -14,6 +14,7 @@ export class Warnings extends Component {
     }
 
     componentDidMount() {
+        console.log("buraya geldi")
         GetSettings().then(resSettings =>
             this.setState({
                 uid: localStorage.getItem("UID"),

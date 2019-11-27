@@ -30,7 +30,7 @@ const RequestLogin = (data, remember) => {
 
 const Logout = () => {
 	try {
-		const localeStorageList = ["sImage", "sName", "UID", "sID", "sType", "sPosition", "sBranch"];
+		const localeStorageList = ["sImage", "sName", "UID", "sID", "sType", "sPosition", "sBranch", "sSettings"];
 		localeStorageList.map(el => localStorage.removeItem(el));
 		setTimeout(() => {
 			window.location.pathname = "/auth/login";

@@ -21,6 +21,14 @@ const settingsMenu = [
         lock: false
     },
     {
+        title: "SMS Şablonları",
+        pathname: "/sms-templates",
+        active: "sms-templates",
+        icon: "fa fa-sms",
+        class: "cursor-not-allowed disabled",
+        lock: lock
+    },
+    {
         title: "Bildirimler",
         pathname: "/notifications",
         active: "notifications",
