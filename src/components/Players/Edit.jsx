@@ -310,20 +310,10 @@ export class Edit extends Component {
         } catch (e) {}
     };
 
-    handleSelect = (value, name, extraData, arr) => {
-        if (arr) {
-            this.setState(prevState => {
-                return (prevState[name][extraData].kinship = value.label);
-            });
-        } else {
-            if (name === "branch") {
-                this.setState(prevState => ({
-                    select: {
-                        ...prevState.select,
-                        positions: null
-                    },
-                    position: null
-                }));
+    handleSelect = (value, name) => {
+        switch (name) {
+            case "branch":
+                this.setState({ [name]: value });
                 PlayerPositions(value.value).then(response => {
                     this.setState(prevState => ({
                         select: {
@@ -332,14 +322,16 @@ export class Edit extends Component {
                         }
                     }));
                 });
-            }
-            this.setState(prevState => ({
-                formErrors: {
-                    ...prevState.formErrors,
-                    [name]: value ? false : true
-                },
-                [name]: extraData ? value[extraData] : value
-            }));
+                break;
+            default:
+                this.setState(prevState => ({
+                    formErrors: {
+                        ...prevState.formErrors,
+                        [name]: value ? false : true
+                    },
+                    [name]: value
+                }));
+                break;
         }
     };
 
@@ -440,38 +432,16 @@ export class Edit extends Component {
     };
 
     getFillSelect = () => {
-        GetSettings().then(resSettings =>
-            this.setState(
-                {
-                    settings: resSettings.settings
-                },
-                () => {
-                    PlayerPositions(
-                        parseInt(resSettings.settings.branch_id).length > 0
-                            ? parseInt(resSettings.settings.branch_id)
-                            : 1
-                    ).then(response => {
-                        this.setState(prevState => ({
-                            select: {
-                                ...prevState.select,
-                                positions: response
-                            }
-                        }));
-                    });
-
-                    Branchs().then(response => {
-                        if (response) {
-                            this.setState(prevState => ({
-                                select: {
-                                    ...prevState.select,
-                                    branchs: response
-                                }
-                            }));
-                        }
-                    });
-                }
-            )
-        );
+        Branchs().then(response => {
+            if (response) {
+                this.setState(prevState => ({
+                    select: {
+                        ...prevState.select,
+                        branchs: response
+                    }
+                }));
+            }
+        });
 
         Bloods().then(response => {
             this.setState(prevState => ({
@@ -527,6 +497,23 @@ export class Edit extends Component {
                         body: data.attributes.body ? { value: "1", label: data.attributes.body } : null,
                         loading: ""
                     }));
+
+                    GetSettings().then(resSettings => {
+                        this.setState({ settings: resSettings.settings });
+                        const getBranch_id =
+                            parseInt(resSettings.settings.branch_id).length > 0
+                                ? parseInt(resSettings.settings.branch_id)
+                                : 1;
+
+                        PlayerPositions(data.branch ? data.branch.value : getBranch_id).then(response => {
+                            this.setState(prevState => ({
+                                select: {
+                                    ...prevState.select,
+                                    positions: response
+                                }
+                            }));
+                        });
+                    });
                 }
             } catch (e) {}
         });
