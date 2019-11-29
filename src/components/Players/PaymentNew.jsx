@@ -79,7 +79,9 @@ const initialState = {
     year: parseInt(moment().format("YYYY")),
     yearMin: parseInt(moment().format("YYYY")),
     required_payment: moment().toDate(),
-    payment_end_date: moment().toDate(),
+    payment_end_date: moment()
+        .add(1, "month")
+        .toDate(),
     loadingButton: ""
 };
 
@@ -254,6 +256,15 @@ export class Payment extends Component {
     handleDate = (date, name) => {
         let formErrors = { ...this.state.formErrors };
         switch (name) {
+            case "required_payment":
+                formErrors[name] = date ? "" : "is-invalid";
+                this.setState({
+                    [name]: date,
+                    payment_end_date: moment(date)
+                        .add("month", 1)
+                        .toDate()
+                });
+                break;
             case "paid_date":
                 formErrors[name] = date ? "" : "is-invalid";
                 break;
@@ -1120,18 +1131,7 @@ export class Payment extends Component {
 
     // Aylık Ödeme - Yeni Ödeme
     renderNewPayment = () => {
-        const {
-            budget,
-            paid_date,
-            month,
-            period,
-            required_payment,
-            payment_end_date,
-            select,
-            formErrors,
-            amount,
-            periodToggle
-        } = this.state;
+        const { budget, paid_date, required_payment, payment_end_date, select, formErrors, amount } = this.state;
         return (
             <fieldset className="form-fieldset">
                 <div className="form-group">
@@ -1160,7 +1160,9 @@ export class Payment extends Component {
                                 dateFormat="MM/yyyy"
                                 showMonthYearPicker
                                 autoComplete="off"
-                                minDate={required_payment}
+                                minDate={moment(required_payment)
+                                    .add(1, "month")
+                                    .toDate()}
                                 startDate={payment_end_date}
                                 selected={payment_end_date}
                                 selectsStart
