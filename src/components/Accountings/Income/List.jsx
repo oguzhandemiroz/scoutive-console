@@ -103,6 +103,15 @@ export class List extends Component {
 					}
 				},
 				{
+					data: "created_date",
+					render: function(data, type, row) {
+						if (type === "sort" || type === "type") {
+							return moment(data, "YYYY-MM-DD").unix();
+						}
+						return `<td class="text-nowrap">${moment(data).format("LL")}</td>`;
+					}
+				},
+				{
 					data: null
 				},
 				{
@@ -175,7 +184,8 @@ export class List extends Component {
 								<th className="accounting_id">#</th>
 								<th className="accounting_type">İşlem</th>
 								<th className="amount">Tutar</th>
-								<th className="payment_date">Tarih</th>
+								<th className="payment_date">Ödeme Tarihi</th>
+								<th className="created_date">İşlem Tarihi</th>
 								<th className="budget no-sort">Kasa/Banka</th>
 								<th className="detail no-sort w-1"></th>
 							</tr>

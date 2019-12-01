@@ -19,6 +19,13 @@ const settingsMenu = [
         icon: "fa fa-cog",
         class: "",
         lock: false
+    },{
+        title: "Güvenlik",
+        pathname: "/security",
+        active: "security",
+        icon: "fa fa-shield-alt",
+        class: "cursor-not-allowed disabled",
+        lock: lock
     },
     {
         title: "SMS Şablonları",
