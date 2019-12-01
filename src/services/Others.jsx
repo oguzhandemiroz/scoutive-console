@@ -2,6 +2,7 @@ import ep from "../assets/js/urls";
 import { fatalSwal, errorSwal, showSwal, Toast } from "../components/Alert";
 import { ActivationSchool } from "./School";
 import { RequestLogin, SetSchoolInfoToLocalStorage } from "./Login";
+import { SetSession, GenerateSessionData } from "./Session";
 import Inputmask from "inputmask";
 import moment from "moment";
 import "moment/locale/tr";
@@ -245,11 +246,20 @@ const ActivateSchool = (title, loginInfo, data) => {
                                                     const data = response.data;
                                                     const status = response.status;
                                                     if (status.code === 1020) {
-                                                        Toast.fire({
-                                                            type: "success",
-                                                            title: "Giriş yapılıyor..."
-                                                        });
-                                                        SetSchoolInfoToLocalStorage(data);
+                                                        GenerateSessionData().then(r =>
+                                                            SetSession({
+                                                                uid: data.uid,
+                                                                school_id: data.sid,
+                                                                type: 1,
+                                                                ...r
+                                                            }).then(res => {
+                                                                Toast.fire({
+                                                                    type: "success",
+                                                                    title: "Giriş yapılıyor..."
+                                                                });
+                                                                SetSchoolInfoToLocalStorage(data);
+                                                            })
+                                                        );
                                                     } else if (status.code === 1082) {
                                                         errorSwal(status);
                                                     }

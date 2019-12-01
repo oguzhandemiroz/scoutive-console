@@ -1,4 +1,5 @@
-import { fatalSwal, errorSwal } from "../components/Alert.jsx";
+import { fatalSwal, errorSwal, showSwal } from "../components/Alert.jsx";
+import { Logout } from "./Login";
 import ep from "../assets/js/urls";
 
 const h = new Headers();
@@ -11,7 +12,8 @@ const Start = () => {
         return fetch(ep.START, {
             method: "POST",
             body: JSON.stringify({
-                uid: localStorage.getItem("UID")
+                uid: localStorage.getItem("UID"),
+                token: localStorage.getItem("t")
             }),
             headers: h
         })
@@ -20,7 +22,16 @@ const Start = () => {
                 if (response) {
                     console.log("Settings Request");
                     const status = response.status;
-                    if (status.code !== 1020) errorSwal(status);
+                    if (status.code === 1090) {
+                        showSwal({
+                            allowOutsideClick: false,
+                            type: "error",
+                            title: "Hata Kodu: " + status.code,
+                            text: status.description
+                        }).then(re => {
+                            if (re.value) Logout();
+                        });
+                    } else if (status.code !== 1020) errorSwal(status);
                     else {
                         localStorage.setItem("sSettings", JSON.stringify(response.data));
                     }

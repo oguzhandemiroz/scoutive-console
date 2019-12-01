@@ -10,6 +10,7 @@ import ReactDOM from "react-dom";
 import * as Sentry from "@sentry/browser";
 import * as serviceWorker from "./serviceWorker";
 import Core from "./layouts/Core.jsx";
+import { GeoRequest, GenerateSessionData } from "./services/Session";
 import ep from "./assets/js/urls";
 const $ = require("jquery");
 
@@ -33,13 +34,7 @@ Array.prototype.diff = function(a) {
     });
 };
 
-if (sessionStorage.getItem("IPADDR") === null) {
-    fetch(ep.GET_IP)
-        .then(res => res.json())
-        .then(response => {
-            sessionStorage.setItem("IPADDR", response.ip);
-        });
-}
+GeoRequest();
 
 if (process.env.NODE_ENV !== "development") {
     Sentry.init({
