@@ -9,27 +9,27 @@ h.append("XIP", sessionStorage.getItem("IPADDR"));
 h.append("Authorization", localStorage.getItem("UID"));
 
 const RequestRegister = data => {
-	try {
-		return fetch(ep.SCHOOL_CREATE, {
-			method: "POST",
-			body: JSON.stringify(data),
-			headers: h
-		})
-			.then(res => {
-				return res.json();
-			})
-			.then(response => {
-				const status = response.status;
-				if (status.code !== 1020) errorSwal(status);
+    try {
+        return fetch(ep.SCHOOL_CREATE, {
+            method: "POST",
+            body: JSON.stringify(data),
+            headers: h
+        })
+            .then(res => {
+                return res.json();
+            })
+            .then(response => {
+                const status = response.status;
+                if (status.code !== 1020) errorSwal(status);
 
-				return response;
-			})
-			.catch(err => {
-				fatalSwal(true);
-			});
-	} catch (e) {
-		fatalSwal();
-	}
+                return response;
+            })
+            .catch(err => {
+                fatalSwal(true);
+            });
+    } catch (e) {
+        fatalSwal();
+    }
 };
 
 export { RequestRegister };

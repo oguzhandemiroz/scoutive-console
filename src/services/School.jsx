@@ -1,6 +1,5 @@
 import { fatalSwal, errorSwal, Toast, showSwal } from "../components/Alert";
 import ep from "../assets/js/urls";
-import { RequestLogin } from "./Login";
 import { Start } from "./Starts";
 
 const h = new Headers();
@@ -20,7 +19,6 @@ const GetSchool = data => {
                 if (response) {
                     const status = response.status;
                     if (status.code !== 1020) errorSwal(status);
-
                     return response;
                 }
             })

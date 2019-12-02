@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { ListAccountingRecords } from "../../../services/Accounting";
+import { formatMoney, formatDate } from "../../../services/Others";
 import moment from "moment";
 import "moment/locale/tr";
 const $ = require("jquery");
@@ -68,7 +69,8 @@ export class List extends Component {
                             <tr>
                                 <th>İşlem</th>
                                 <th>Tutar</th>
-                                <th>Tarih</th>
+                                <th>Ödeme Tarihi</th>
+                                <th>İşlem Tarihi</th>
                                 <th>Kasa/Banka</th>
                                 <th></th>
                             </tr>
@@ -82,8 +84,9 @@ export class List extends Component {
                                                   {el.accounting_type}
                                                   <div className="small text-muted text-break">{el.note}</div>
                                               </td>
-                                              <td>{el.amount ? el.amount.format() + " ₺" : "0,00 ₺"}</td>
-                                              <td className="text-nowrap">{moment(el.payment_date).format("LL")}</td>
+                                              <td>{el.amount ? formatMoney(el.amount) : "0,00 ₺"}</td>
+                                              <td className="w-1 text-nowrap">{formatDate(el.payment_date, "LL")}</td>
+                                              <td className="w-1 text-nowrap">{formatDate(el.created_date, "LL")}</td>
                                               <td className="text-break">{el.budget.budget_name}</td>
                                               <td className="w-1">
                                                   <Link

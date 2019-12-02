@@ -1,7 +1,7 @@
-//var host = "https://7c9a2694.ngrok.io/";
 import { getCookie } from "./core";
 
 var host = "https://scoutive.online/";
+var ipdata_key = "d3d0e4b1a996cdcb4c06738e28a998aa3bd95bfc18b2e21362a52be5";
 
 if (getCookie("sc_debug")) {
     host = getCookie("sc_debug");
@@ -10,7 +10,7 @@ if (getCookie("sc_debug")) {
 var api_version = "api/v1/";
 
 var ep = {
-    GET_IP: "https://api.ipify.org?format=json",
+    GET_GEOLOCATION: "https://api.ipdata.co/?api-key=" + ipdata_key,
     BLOOD_TYPE: host + api_version + "get/bloods",
     PLAYER_POSITION_TYPE: host + api_version + "get/positions/players/",
     EMPLOYEE_POSITION_TYPE: host + api_version + "get/positions/employee",
@@ -101,7 +101,8 @@ var ep = {
     PARENT_LIST: host + api_version + "list/parents",
     PARENT_GET: host + api_version + "get/parent",
     PARENT_PLAYERS: host + api_version + "get/parent/players",
-    START: host + api_version + "start"
+    START: host + api_version + "start",
+    SESSION: host + api_version + "session"
 };
 
 export default ep;

@@ -14,15 +14,16 @@ export class Warnings extends Component {
     }
 
     componentDidMount() {
-        console.log("buraya geldi")
-        GetSettings().then(resSettings =>
-            this.setState({
-                uid: localStorage.getItem("UID"),
-                settings: resSettings.settings,
-                isdesktop: !isMobile(),
-                ischrome: isChrome()
-            })
-        );
+        GetSettings().then(resSettings => {
+            if (resSettings) {
+                this.setState({
+                    uid: localStorage.getItem("UID"),
+                    settings: resSettings.settings,
+                    isdesktop: !isMobile(),
+                    ischrome: isChrome()
+                });
+            }
+        });
     }
 
     renderWarning = () => {
