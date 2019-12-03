@@ -7,6 +7,7 @@ import Dashboard from "../views/Dashboard/Dashboard";
 import Employees from "../views/Employees/Employees";
 import Players from "../views/Players/Players";
 import Parents from "../views/Parents/Parents";
+import Messages from "../views/Messages/Messages";
 import _404 from "../views/Pages/404";
 import Empty from "../components/Pages/Empty";
 
@@ -444,6 +445,13 @@ var indexRoutes = [
         path: "/reports/unpaid/players",
         name: "Ödeme Yapmayanlar",
         component: UnpaidPlayerList,
+        layout: "/app",
+        prop: { exact: true }
+    },
+    {
+        path: "/messages",
+        name: "Mesaj Gönderim Merkezi",
+        component: Messages,
         layout: "/app",
         prop: { exact: true }
     },
