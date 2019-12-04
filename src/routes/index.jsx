@@ -31,6 +31,7 @@ import PaymentNew from "../components/Players/PaymentNew";
 import FeeDetailPlayer from "../components/Players/FeeDetail";
 import VacationPlayer from "../components/Players/Vacation";
 import RollcallPlayer from "../components/Players/Rollcall";
+import MessagesPlayer from "../components/Players/Messages";
 
 import DetailParent from "../components/Parents/Detail";
 
@@ -232,6 +233,13 @@ var indexRoutes = [
         path: "/players/rollcall/:uid",
         name: "Rollcall Player",
         component: RollcallPlayer,
+        layout: "/app",
+        prop: { exact: true }
+    },
+    {
+        path: "/players/messages/:uid",
+        name: "Messages Player",
+        component: MessagesPlayer,
         layout: "/app",
         prop: { exact: true }
     },

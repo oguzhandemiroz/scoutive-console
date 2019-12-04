@@ -102,7 +102,8 @@ var ep = {
     PARENT_GET: host + api_version + "get/parent",
     PARENT_PLAYERS: host + api_version + "get/parent/players",
     START: host + api_version + "start",
-    SESSION: host + api_version + "session"
+    SESSION: host + api_version + "session",
+    RECIPIENT_CREATE: host + api_version + "create/recipient"
 };
 
 export default ep;

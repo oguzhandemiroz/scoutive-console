@@ -187,6 +187,7 @@ export class Add extends Component {
         }
 
         delete require.show;
+        delete require.position;
         delete require.downpayment;
         delete require.loadingButton;
         delete require.loadingImage;
