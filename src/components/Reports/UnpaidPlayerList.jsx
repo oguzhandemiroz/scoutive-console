@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
+import { Link, withRouter } from "react-router-dom";
 import { UnpaidPlayers } from "../../services/Report";
 import { fullnameGenerator, avatarPlaceholder } from "../../services/Others";
 import ActionButton from "../Players/ActionButton";
@@ -155,6 +155,7 @@ export class UnpaidPlayerList extends Component {
                                                                   is_trial: 0
                                                               }}
                                                               dropdown={true}
+                                                              history={this.props.history}
                                                               renderButton={() => (
                                                                   <button
                                                                       type="button"
@@ -182,4 +183,4 @@ export class UnpaidPlayerList extends Component {
     }
 }
 
-export default UnpaidPlayerList;
+export default withRouter(UnpaidPlayerList);
