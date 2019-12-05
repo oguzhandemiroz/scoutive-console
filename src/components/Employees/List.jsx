@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import "jquery";
-import { datatable_turkish } from "../../assets/js/core";
+import { datatable_turkish, getCookie } from "../../assets/js/core";
 import ep from "../../assets/js/urls";
 import { fatalSwal, errorSwal } from "../Alert.jsx";
 import { BrowserRouter, Link } from "react-router-dom";
@@ -167,7 +167,7 @@ class Table extends Component {
                     type: "POST",
                     beforeSend: function(request) {
                         request.setRequestHeader("Content-Type", "application/json");
-                        request.setRequestHeader("XIP", sessionStorage.getItem("IPADDR"));
+                        request.setRequestHeader("XIP", getCookie("IPADDR"));
                         request.setRequestHeader("Authorization", localStorage.getItem("UID"));
                     },
                     datatype: "json",

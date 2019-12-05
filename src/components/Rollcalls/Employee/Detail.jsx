@@ -5,7 +5,7 @@ import Inputmask from "inputmask";
 import moment from "moment";
 import "moment/locale/tr";
 import { WarningModal as Modal } from "../WarningModal";
-import { datatable_turkish } from "../../../assets/js/core";
+import { datatable_turkish, getCookie } from "../../../assets/js/core";
 import ep from "../../../assets/js/urls";
 import { fatalSwal, errorSwal } from "../../Alert.jsx";
 import { fullnameGenerator } from "../../../services/Others";
@@ -69,7 +69,10 @@ export class Detail extends Component {
             dom: '<"top"f>rt<"bottom"ilp><"clear">',
             responsive: false,
             order: [3, "asc"],
-            aLengthMenu: [[30, 50, 100, -1], [30, 50, 100, "Tümü"]],
+            aLengthMenu: [
+                [30, 50, 100, -1],
+                [30, 50, 100, "Tümü"]
+            ],
             stateSave: false, // change true
             language: {
                 ...datatable_turkish,
@@ -82,7 +85,7 @@ export class Detail extends Component {
                 datatype: "json",
                 beforeSend: function(request) {
                     request.setRequestHeader("Content-Type", "application/json");
-                    request.setRequestHeader("XIP", sessionStorage.getItem("IPADDR"));
+                    request.setRequestHeader("XIP", getCookie("IPADDR"));
                     request.setRequestHeader("Authorization", localStorage.getItem("UID"));
                 },
                 data: function(d) {
@@ -178,7 +181,9 @@ export class Detail extends Component {
                                                 moment(el.rollcall_date).format("LL")
                                             }
                                             data-toggle="tooltip"
-                                            className={`d-inline-flex justify-content-center align-items-center mr-1 badge ${status_type[el.status].badge}`}>
+                                            className={`d-inline-flex justify-content-center align-items-center mr-1 badge ${
+                                                status_type[el.status].badge
+                                            }`}>
                                             <i className={`fe ${status_type[el.status].icon}`} />
                                         </span>
                                     );

@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import ReactDOM from "react-dom";
 import { BrowserRouter, Link } from "react-router-dom";
-import { datatable_turkish } from "../../../assets/js/core";
+import { datatable_turkish, getCookie } from "../../../assets/js/core";
 import { fullnameGenerator, formatPhone, nullCheck } from "../../../services/Others";
 import { GetPlayerParents } from "../../../services/Player";
 import { fatalSwal, errorSwal } from "../../Alert.jsx";
@@ -114,7 +114,7 @@ export class Detail extends Component {
                 datatype: "json",
                 beforeSend: function(request) {
                     request.setRequestHeader("Content-Type", "application/json");
-                    request.setRequestHeader("XIP", sessionStorage.getItem("IPADDR"));
+                    request.setRequestHeader("XIP", getCookie("IPADDR"));
                     request.setRequestHeader("Authorization", localStorage.getItem("UID"));
                 },
                 data: function(d) {

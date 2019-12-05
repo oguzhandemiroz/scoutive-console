@@ -1,11 +1,11 @@
 import ep from "../assets/js/urls";
-import { errorSwal, fatalSwal, Toast, showSwal } from "../components/Alert.jsx";
-
-import { SetSession, GenerateSessionData } from "./Session";
+import { getCookie } from "../assets/js/core.js";
+import { errorSwal, fatalSwal } from "../components/Alert.jsx";
+import { SetSession } from "./Session";
 
 const h = new Headers();
 h.append("Content-Type", "application/json");
-h.append("XIP", sessionStorage.getItem("IPADDR"));
+h.append("XIP", getCookie("IPADDR"));
 h.append("Authorization", localStorage.getItem("UID"));
 
 const RequestLogin = (data, remember) => {

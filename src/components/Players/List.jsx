@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { datatable_turkish } from "../../assets/js/core";
+import { datatable_turkish, getCookie } from "../../assets/js/core";
 import ep from "../../assets/js/urls";
 import { fatalSwal, errorSwal } from "../Alert.jsx";
 import ReactDOM from "react-dom";
@@ -187,7 +187,7 @@ class Table extends Component {
                     datatype: "json",
                     beforeSend: function(request) {
                         request.setRequestHeader("Content-Type", "application/json");
-                        request.setRequestHeader("XIP", sessionStorage.getItem("IPADDR"));
+                        request.setRequestHeader("XIP", getCookie("IPADDR"));
                         request.setRequestHeader("Authorization", localStorage.getItem("UID"));
                     },
                     data: function(d) {

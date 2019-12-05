@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import ReactDOM from "react-dom";
-import { datatable_turkish } from "../../../assets/js/core";
+import { datatable_turkish, getCookie } from "../../../assets/js/core";
 import ep from "../../../assets/js/urls";
 import { nullCheck } from "../../../services/Others";
 import "../../../assets/css/datatables.responsive.css";
@@ -42,7 +42,7 @@ export class List extends Component {
                 datatype: "json",
                 beforeSend: function(request) {
                     request.setRequestHeader("Content-Type", "application/json");
-                    request.setRequestHeader("XIP", sessionStorage.getItem("IPADDR"));
+                    request.setRequestHeader("XIP", getCookie("IPADDR"));
                     request.setRequestHeader("Authorization", localStorage.getItem("UID"));
                 },
                 data: function(d) {
@@ -105,15 +105,15 @@ export class List extends Component {
                         return `<td class="text-nowrap">${moment(data).format("LL")}</td>`;
                     }
                 },
-				{
-					data: "created_date",
-					render: function(data, type, row) {
-						if (type === "sort" || type === "type") {
-							return moment(data, "YYYY-MM-DD").unix();
-						}
-						return `<td class="text-nowrap">${moment(data).format("LL")}</td>`;
-					}
-				},
+                {
+                    data: "created_date",
+                    render: function(data, type, row) {
+                        if (type === "sort" || type === "type") {
+                            return moment(data, "YYYY-MM-DD").unix();
+                        }
+                        return `<td class="text-nowrap">${moment(data).format("LL")}</td>`;
+                    }
+                },
                 {
                     data: null
                 },

@@ -44,7 +44,7 @@ export class Messages extends Component {
             CreateRecipient({
                 uid: uid,
                 recipients: [{ ...recipient }]
-            }).then(response => this.setState({ loadingButton: "" }));
+            }).then(response => this.reload());
         }
     };
 
@@ -94,8 +94,11 @@ export class Messages extends Component {
                             data.recipient_parent_id === -1
                                 ? null
                                 : data.recipient_parent_id === 0
-                                ? recipients.filter(x => x.player_id === data.player_id)[0]
-                                : recipients.filter(x => x.parent_id === data.recipient_parent_id)[0],
+                                ? { ...recipients.filter(x => x.player_id === data.player_id)[0], isRegister: true }
+                                : {
+                                      ...recipients.filter(x => x.parent_id === data.recipient_parent_id)[0],
+                                      isRegister: true
+                                  },
                         loading: "",
                         select: {
                             ...prevState.select,
@@ -105,6 +108,16 @@ export class Messages extends Component {
                 }
             }
         });
+    };
+
+    reload = () => {
+        setTimeout(() => {
+            const current = this.props.history.location.pathname;
+            this.props.history.replace("/app/reload");
+            setTimeout(() => {
+                this.props.history.replace(current);
+            });
+        }, 500);
     };
 
     render() {
@@ -153,28 +166,25 @@ export class Messages extends Component {
                                                                 {recipient.kinship}
                                                             </div>
                                                         </div>
-                                                        <div className="col-auto leading-none align-self-start">
-                                                            <button
-                                                                type="button"
-                                                                className="btn btn-secondary btn-sm mr-1 mb-1">
-                                                                Bilgilendirme Mesajı Gönder
-                                                            </button>
-                                                            <button
-                                                                type="button"
-                                                                onClick={() => this.setState({ recipient: null })}
-                                                                className="btn btn-danger btn-sm mb-1">
-                                                                Kaldır
-                                                            </button>
-                                                        </div>
+                                                        {recipient.isRegister ? (
+                                                            <div className="col-auto leading-none align-self-start">
+                                                                <span className="badge badge-success">KAYITLI</span>
+                                                            </div>
+                                                        ) : null}
                                                     </div>
                                                     <div className="row row-sm align-items-center mt-3">
-                                                        <div className="col-sm-6 col-lg-3">
+                                                        <div className="col-sm-6 col-lg-3 mb-2">
                                                             <label className="form-label">Telefon</label>
                                                             {formatPhone(recipient.phone)}
                                                         </div>
                                                         <div className="col-sm-6 col-lg-3">
                                                             <label className="form-label">Email</label>
                                                             {nullCheck(recipient.email)}
+                                                        </div>
+                                                        <div className="col text-right">
+                                                            <button type="button" className="btn btn-secondary btn-sm">
+                                                                Bilgilendirme Mesajı Gönder
+                                                            </button>
                                                         </div>
                                                     </div>
                                                 </div>

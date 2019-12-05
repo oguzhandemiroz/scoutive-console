@@ -1,11 +1,10 @@
 import ep from "../assets/js/urls";
-import { showSwal, errorSwal, fatalSwal } from "../components/Alert.jsx";
-import { ActivationSchool } from "./School";
-import { RequestLogin } from "./Login";
+import { errorSwal, fatalSwal } from "../components/Alert.jsx";
+import { getCookie } from "../assets/js/core.js";
 
 const h = new Headers();
 h.append("Content-Type", "application/json");
-h.append("XIP", sessionStorage.getItem("IPADDR"));
+h.append("XIP", getCookie("IPADDR"));
 h.append("Authorization", localStorage.getItem("UID"));
 
 const RequestRegister = data => {

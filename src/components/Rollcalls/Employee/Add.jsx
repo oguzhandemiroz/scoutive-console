@@ -7,7 +7,7 @@ import "moment/locale/tr";
 import { MakeRollcall, SetNoteRollcall, DeleteRollcall } from "../../../services/Rollcalls";
 import { CreateVacation, UpdateVacation } from "../../../services/EmployeeAction";
 import { WarningModal as Modal } from "../WarningModal";
-import { datatable_turkish } from "../../../assets/js/core";
+import { datatable_turkish, getCookie } from "../../../assets/js/core";
 import ep from "../../../assets/js/urls";
 import AdvancePayment from "../../EmployeeAction/AdvancePayment";
 import { fatalSwal, errorSwal, Toast, showSwal } from "../../Alert.jsx";
@@ -84,7 +84,7 @@ export class Add extends Component {
 				datatype: "json",
 				beforeSend: function(request) {
 					request.setRequestHeader("Content-Type", "application/json");
-					request.setRequestHeader("XIP", sessionStorage.getItem("IPADDR"));
+					request.setRequestHeader("XIP", getCookie("IPADDR"));
 					request.setRequestHeader("Authorization", localStorage.getItem("UID"));
 				},
 				data: function(d) {

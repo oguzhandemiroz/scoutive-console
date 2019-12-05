@@ -1,9 +1,10 @@
 import { fatalSwal, errorSwal, Toast } from "../components/Alert.jsx";
 import ep from "../assets/js/urls";
+import { getCookie } from "../assets/js/core.js";
 
 const h = new Headers();
 h.append("Content-Type", "application/json");
-h.append("XIP", sessionStorage.getItem("IPADDR"));
+h.append("XIP", getCookie("IPADDR"));
 h.append("Authorization", localStorage.getItem("UID"));
 
 const CreatePlayer = data => {

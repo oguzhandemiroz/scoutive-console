@@ -1,22 +1,23 @@
 import { fatalSwal, errorSwal, Toast } from "../components/Alert.jsx";
 import ep from "../assets/js/urls";
+import { setCookie, getCookie } from "../assets/js/core";
 import "clientjs";
 const CryptoJS = require("crypto-js");
 const client = require("clientjs");
 
 const h = new Headers();
 h.append("Content-Type", "application/json");
-h.append("XIP", sessionStorage.getItem("IPADDR"));
+h.append("XIP", getCookie("IPADDR"));
 h.append("Authorization", localStorage.getItem("UID"));
 
 const GeoRequest = () => {
     return new Promise((resolve, reject) => {
         try {
-            if (!sessionStorage.getItem("IPADDR") || !localStorage.getItem("S:G")) {
+            if (!getCookie("IPADDR") || !localStorage.getItem("S:G")) {
                 fetch(ep.GET_GEOLOCATION)
                     .then(res => res.json())
                     .then(response => {
-                        sessionStorage.setItem("IPADDR", response.ip);
+                        setCookie("IPADDR", response.ip, 15, "M");
                         const ciphertext = CryptoJS.AES.encrypt(JSON.stringify(response), "sc_geo");
                         localStorage.setItem("S:G", ciphertext);
                         resolve(ciphertext);

@@ -6,7 +6,7 @@ import { CreateVacation, UpdateVacation } from "../../../services/PlayerAction";
 import { GetPlayerParents } from "../../../services/Player";
 import { fullnameGenerator, nullCheck, formatPhone } from "../../../services/Others";
 import { WarningModal as Modal } from "../WarningModal";
-import { datatable_turkish } from "../../../assets/js/core";
+import { datatable_turkish, getCookie } from "../../../assets/js/core";
 import { fatalSwal, errorSwal, Toast, showSwal } from "../../Alert.jsx";
 import GroupChange from "../../PlayerAction/GroupChange";
 import Vacation from "../../PlayerAction/Vacation";
@@ -161,7 +161,7 @@ export class Add extends Component {
                 datatype: "json",
                 beforeSend: function(request) {
                     request.setRequestHeader("Content-Type", "application/json");
-                    request.setRequestHeader("XIP", sessionStorage.getItem("IPADDR"));
+                    request.setRequestHeader("XIP", getCookie("IPADDR"));
                     request.setRequestHeader("Authorization", localStorage.getItem("UID"));
                 },
                 data: function(d) {
