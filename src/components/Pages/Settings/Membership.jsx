@@ -5,7 +5,7 @@ export class Membership extends Component {
         return (
             <div className="card">
                 <div className="card-header">
-                    <h3 className="card-title">Membership</h3>
+                    <h3 className="card-title">Kullanım Detayı</h3>
                 </div>
                 <div className="card-body"></div>
             </div>

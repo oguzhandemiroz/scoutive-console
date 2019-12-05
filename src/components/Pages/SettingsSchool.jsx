@@ -19,7 +19,8 @@ const settingsMenu = [
         icon: "fa fa-cog",
         class: "",
         lock: false
-    },{
+    },
+    {
         title: "Güvenlik",
         pathname: "/security",
         active: "security",
@@ -56,8 +57,8 @@ const settingsMenu = [
         pathname: "/membership",
         active: "membership",
         icon: "fa fa-money-bill",
-        class: "cursor-not-allowed disabled",
-        lock: lock
+        class: "",
+        lock: false
     }
 ];
 
