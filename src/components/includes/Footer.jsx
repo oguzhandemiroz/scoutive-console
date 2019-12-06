@@ -13,6 +13,9 @@ class Footer extends Component {
                                     <div className="col-auto">
                                         <ul className="list-inline list-inline-dots mb-0">
                                             <li className="list-inline-item">
+                                                v1.0.0 <span className="badge badge-secondary ml-1">Beta</span>
+                                            </li>
+                                            <li className="list-inline-item">
                                                 <a
                                                     target="_blank"
                                                     rel="noopener noreferrer"
@@ -21,7 +24,10 @@ class Footer extends Component {
                                                 </a>
                                             </li>
                                             <li className="list-inline-item">
-                                                <a target="_blank" rel="noopener noreferrer" href="https://scoutive.net/#faq">
+                                                <a
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    href="https://scoutive.net/#faq">
                                                     S.S.S
                                                 </a>
                                             </li>
