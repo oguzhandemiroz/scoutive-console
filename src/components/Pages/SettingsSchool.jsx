@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import General from "../../components/Pages/Settings/General";
 import Notifications from "../../components/Pages/Settings/Notifications";
 import Permission from "../../components/Pages/Settings/Permission";
-import Membership from "../../components/Pages/Settings/Membership";
+import UsageDetail from "../../components/Pages/Settings/UsageDetail";
 
 const lock = (
     <span className="ml-1">
@@ -33,8 +33,8 @@ const settingsMenu = [
         pathname: "/sms-templates",
         active: "sms-templates",
         icon: "fa fa-sms",
-        class: "cursor-not-allowed disabled",
-        lock: lock
+        class: "",
+        lock: false
     },
     {
         title: "Bildirimler",
@@ -53,6 +53,14 @@ const settingsMenu = [
         lock: false
     },
     {
+        title: "Ödeme",
+        pathname: "/billing",
+        active: "billing",
+        icon: "fa fa-credit-card",
+        class: "cursor-not-allowed disabled",
+        lock: lock
+    },
+    {
         title: "Kullanım Detayı",
         pathname: "/membership",
         active: "membership",
@@ -66,7 +74,7 @@ const settingsComponentRender = {
     general: <General />,
     notifications: <Notifications />,
     permission: <Permission />,
-    membership: <Membership />
+    membership: <UsageDetail />
 };
 
 export class SettingsSchool extends Component {

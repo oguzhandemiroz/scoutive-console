@@ -8,41 +8,25 @@ class Footer extends Component {
                 <footer className="footer">
                     <div className="container">
                         <div className="row align-items-center flex-row-reverse">
-                            <div className="col-auto ml-lg-auto">
-                                <div className="row align-items-center">
-                                    <div className="col-auto">
-                                        <ul className="list-inline list-inline-dots mb-0">
-                                            <li className="list-inline-item">
-                                                v1.0.0 <span className="badge badge-secondary ml-1">Beta</span>
-                                            </li>
-                                            <li className="list-inline-item">
-                                                <a
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    href="https://scoutive.net/ScoutivePrivacyPolicy.pdf">
-                                                    Gizlilik Sözleşmesi
-                                                </a>
-                                            </li>
-                                            <li className="list-inline-item">
-                                                <a
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    href="https://scoutive.net/#faq">
-                                                    S.S.S
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                    <div className="col-auto">
+                            <div className="col-lg-auto col-sm-12 ml-lg-auto text-center">
+                                <ul className="list-inline list-inline-dots mb-0">
+                                    <li className="list-inline-item">
+                                        v1.0.0 <span className="badge badge-secondary ml-1">Beta</span>
+                                    </li>
+                                    <li className="list-inline-item">
                                         <a
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            href="https://scoutive.net/#footer"
-                                            className="btn btn-outline-primary btn-sm">
-                                            İletişime Geç
+                                            href="https://scoutive.net/ScoutivePrivacyPolicy.pdf">
+                                            Gizlilik Sözleşmesi
                                         </a>
-                                    </div>
-                                </div>
+                                    </li>
+                                    <li className="list-inline-item">
+                                        <a target="_blank" rel="noopener noreferrer" href="https://scoutive.net/#faq">
+                                            S.S.S
+                                        </a>
+                                    </li>
+                                </ul>
                             </div>
                             <div className="col-12 col-lg-auto mt-3 mt-lg-0 text-center">
                                 Copyright © 2019{" "}
