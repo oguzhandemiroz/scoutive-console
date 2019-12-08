@@ -5,6 +5,7 @@ import HeaderMenu from "../components/includes/HeaderMenu.jsx";
 import Warnings from "../components/includes/Warnings.jsx";
 import Footer from "../components/includes/Footer.jsx";
 import indexRoutes from "../routes/index.jsx";
+import { Start } from "../services/Starts.jsx";
 const $ = require("jquery");
 class App extends Component {
     componentDidUpdate() {
@@ -16,6 +17,10 @@ class App extends Component {
             trigger: "hover"
         });
         $('[data-toggle="tooltip"]').tooltip();
+    }
+
+    componentDidMount() {
+        Start();
     }
 
     render() {

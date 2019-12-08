@@ -97,4 +97,27 @@ const TrainingGroups = () => {
     }
 };
 
-export { CreatedPlayers, ListBirthdays, UnpaidPlayers, TrainingGroups };
+const MessagesAllTime = () => {
+    try {
+        return fetch(ep.REPORT_MESSAGES_ALLTIME, {
+            method: "POST",
+            body: JSON.stringify({
+                uid: localStorage.getItem("UID")
+            }),
+            headers: h
+        })
+            .then(res => res.json())
+            .then(response => {
+                if (response) {
+                    const status = response.status;
+                    if (status.code !== 1020) errorSwal(status);
+                    return response;
+                }
+            })
+            .catch(e => fatalSwal(true));
+    } catch (e) {
+        fatalSwal(true);
+    }
+};
+
+export { CreatedPlayers, ListBirthdays, UnpaidPlayers, TrainingGroups, MessagesAllTime };

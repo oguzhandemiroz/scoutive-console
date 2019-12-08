@@ -4,6 +4,7 @@ import General from "../../components/Pages/Settings/General";
 import Notifications from "../../components/Pages/Settings/Notifications";
 import Permission from "../../components/Pages/Settings/Permission";
 import UsageDetail from "../../components/Pages/Settings/UsageDetail";
+import SmsTemplates from "./Settings/SmsTemplates";
 
 const lock = (
     <span className="ml-1">
@@ -74,7 +75,8 @@ const settingsComponentRender = {
     general: <General />,
     notifications: <Notifications />,
     permission: <Permission />,
-    membership: <UsageDetail />
+    membership: <UsageDetail />,
+    "sms-templates": <SmsTemplates />
 };
 
 export class SettingsSchool extends Component {

@@ -991,3 +991,16 @@ a.badge {
 .start-warning + #header-menu {
     margin-top: 48px;
 }
+
+.icon-placeholder {
+    display: inline-flex;
+    justify-content: center;
+    background: #ced4da;
+    width: 4.5rem;
+    height: 4.5rem;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    color: #868e96;
+    border-radius: 50%;
+}

@@ -222,6 +222,29 @@ const SetSettings = data => {
         .catch(e => fatalSwal(true));
 };
 
+const GetSchoolFees = () => {
+    try {
+        return fetch(ep.SCHOOL_GET_FEES, {
+            method: "POST",
+            body: JSON.stringify({
+                uid: localStorage.getItem("UID")
+            }),
+            headers: h
+        })
+            .then(res => res.json())
+            .then(response => {
+                if (response) {
+                    const status = response.status;
+                    if (status.code !== 1020) errorSwal(status);
+                    return response;
+                }
+            })
+            .catch(e => fatalSwal(true));
+    } catch (e) {
+        fatalSwal(true);
+    }
+};
+
 export {
     GetSchool,
     UpdateSchool,
@@ -231,5 +254,6 @@ export {
     UpdateAreas,
     ActivationSchool,
     GetSettings,
-    SetSettings
+    SetSettings,
+    GetSchoolFees
 };

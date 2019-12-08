@@ -1,7 +1,42 @@
 import React, { Component } from "react";
+import _ from "lodash";
 
 export class SmsUsage extends Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            extra_sms_balance: 0
+        };
+    }
+
+    componentDidMount() {
+        const { fees } = this.props;
+        this.getExtraSMS(fees);
+    }
+
+    componentWillReceiveProps(nextProps) {
+        const { fees } = this.props;
+        if (fees !== nextProps.fees) {
+            this.getExtraSMS(nextProps.fees);
+        }
+    }
+
+    getExtraSMS = fees => {
+        this.setState({
+            extra_sms_balance: _.sumBy(
+                _(fees)
+                    .flatMap("package")
+                    .groupBy("type")
+                    .value().SMS,
+                "count"
+            )
+        });
+    };
+
     render() {
+        const { balance, all_time } = this.props;
+        const { extra_sms_balance } = this.state;
         return (
             <>
                 <div className="row">
@@ -14,7 +49,7 @@ export class SmsUsage extends Component {
                                 <div>
                                     <h4 className="m-0">
                                         <a href="#">
-                                            132 <small>SMS</small>
+                                            {all_time["2"]} <small>SMS</small>
                                         </a>
                                     </h4>
                                     <small className="text-muted">Tüm zamanlar</small>
@@ -31,7 +66,7 @@ export class SmsUsage extends Component {
                                 <div>
                                     <h4 className="m-0">
                                         <a href="#">
-                                            89 <small>Eposta</small>
+                                            {all_time["1"] || 0} <small>Eposta</small>
                                         </a>
                                     </h4>
                                     <small className="text-muted">Tüm zamanlar</small>
@@ -54,7 +89,7 @@ export class SmsUsage extends Component {
                         </div>
                         <div className="mt-5">
                             <div className="d-flex justify-content-between mb-1">
-                                <strong>213</strong>
+                                <strong>{balance.sms_free_balance}</strong>
                                 <div>Hediye SMS</div>
                                 <small className="text-muted">500</small>
                             </div>
@@ -62,26 +97,22 @@ export class SmsUsage extends Component {
                                 <div
                                     className="progress-bar bg-info"
                                     role="progressbar"
-                                    style={{ width: "42%" }}
-                                    aria-valuenow="42"
-                                    aria-valuemin="0"
-                                    aria-valuemax="100"></div>
+                                    style={{ width: (balance.sms_free_balance / 500) * 100 + "%" }}></div>
                             </div>
                         </div>
                         <div className="mt-5">
                             <div className="d-flex justify-content-between mb-1">
-                                <strong>82</strong>
+                                <strong>{balance.sms_extra_balance}</strong>
                                 <div>SMS Paketi</div>
-                                <small className="text-muted">100</small>
+                                <small className="text-muted">{extra_sms_balance}</small>
                             </div>
                             <div className="progress progress-sm">
                                 <div
                                     className="progress-bar bg-yellow"
                                     role="progressbar"
-                                    style={{ width: "82%" }}
-                                    aria-valuenow="82"
-                                    aria-valuemin="0"
-                                    aria-valuemax="100"></div>
+                                    style={{
+                                        width: (balance.sms_extra_balance / extra_sms_balance) * 100 + "%"
+                                    }}></div>
                             </div>
                         </div>
                     </div>

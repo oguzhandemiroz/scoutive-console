@@ -1,7 +1,67 @@
 import React, { Component } from "react";
+import { formatMoney } from "../../../../services/Others";
+import _ from "lodash";
 
 export class Monthly extends Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            monthly: "0,00 ₺",
+            sms: 0,
+            total: 0
+        };
+    }
+
+    componentDidMount() {
+        const { fees } = this.props;
+        this.getMontlyValue(fees);
+        this.getSMSValue(fees);
+    }
+
+    componentWillReceiveProps(nextProps) {
+        const { fees } = this.props;
+        if (fees !== nextProps.fees) {
+            this.getMontlyValue(nextProps.fees);
+            this.getSMSValue(nextProps.fees);
+        }
+    }
+
+    getMontlyValue = fees => {
+        const getAmount = fees.filter(x => x.package.type === "MONTHLY")[0];
+        if (getAmount) {
+            this.setState(prevState => ({
+                monthly: getAmount.package.fee === 0 ? "ÜCRETSİZ" : formatMoney(getAmount),
+                total: prevState.total + getAmount.package.fee
+            }));
+        }
+    };
+
+    getSMSValue = fees => {
+        const getAmount = fees.filter(x => x.package.type === "SMS");
+        if (getAmount) {
+            const smsAmount =
+                _.sumBy(
+                    _(fees)
+                        .filter(x => x.package.type === "SMS")
+                        .value(),
+                    "fee"
+                ) -
+                _.sumBy(
+                    _(fees)
+                        .filter(x => x.package.type === "SMS")
+                        .value(),
+                    "amount"
+                );
+            this.setState(prevState => ({
+                sms: smsAmount,
+                total: prevState.total + smsAmount
+            }));
+        }
+    };
+
     render() {
+        const { monthly, sms, total } = this.state;
         return (
             <div className="card">
                 <div className="card-body">
@@ -12,7 +72,7 @@ export class Monthly extends Component {
                             Ödeme Yap
                         </button>
                     </div>
-                    <div className="h1 text-dark">150,00 ₺</div>
+                    <div className="h1 text-dark">{formatMoney(total)}</div>
                 </div>
                 <table className="table card-table">
                     <tbody>
@@ -22,7 +82,7 @@ export class Monthly extends Component {
                             </td>
                             <td>Aylık Kullanım</td>
                             <td className="text-right">
-                                <span className="h4">100,00 ₺</span>
+                                <span className="h4">{monthly}</span>
                             </td>
                         </tr>
                         <tr>
@@ -31,7 +91,7 @@ export class Monthly extends Component {
                             </td>
                             <td>SMS Paketi</td>
                             <td className="text-right">
-                                <span className="h4">50,00 ₺</span>
+                                <span className="h4">{formatMoney(sms)}</span>
                             </td>
                         </tr>
                     </tbody>
