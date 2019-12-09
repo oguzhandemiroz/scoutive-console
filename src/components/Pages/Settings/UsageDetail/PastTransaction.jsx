@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import { formatDate, formatMoney } from "../../../../services/Others";
 
+const $ = require("jquery");
+
 const noRow = () => (
     <tr>
         <td colSpan="4" className="text-center text-muted font-italic">
@@ -19,6 +21,9 @@ const item = {
 };
 
 export class PastTransaction extends Component {
+    componentDidUpdate() {
+        $('[data-toggle="tooltip"]').tooltip();
+    }
     render() {
         const { fees } = this.props;
         return (
@@ -51,11 +56,15 @@ export class PastTransaction extends Component {
                                           </td>
                                           <td>
                                               {el.package.type !== "MONTHLY" ? (
-                                                  <a href="#" className="icon mr-2">
+                                                  <a
+                                                      href="#"
+                                                      className="icon mr-2"
+                                                      data-toggle="tooltip"
+                                                      title="Tekrarla">
                                                       <i className="fa fa-undo"></i>
                                                   </a>
                                               ) : null}
-                                              <a href="#" className="icon">
+                                              <a href="#" className="icon" data-toggle="tooltip" title="İncele">
                                                   <i className="fa fa-search"></i>
                                               </a>
                                           </td>

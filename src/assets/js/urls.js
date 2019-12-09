@@ -105,7 +105,9 @@ var ep = {
     PARENT_PLAYERS: host + api_version + "get/parent/players",
     START: host + api_version + "start",
     SESSION: host + api_version + "session",
-    RECIPIENT_CREATE: host + api_version + "create/recipient"
+    RECIPIENT_CREATE: host + api_version + "create/recipient",
+    MESSAGES_TEMPLATES_LIST: host + api_version + "list/message/templates",
+    MESSAGES_TEMPLATES_DETAIL: host + api_version + "get/message/template"
 };
 
 export default ep;

@@ -312,7 +312,7 @@ var indexRoutes = [
         prop: { exact: true }
     },
     {
-        path: "/settings",
+        path: "/settings/:branch?/:uid",
         name: "Settings",
         component: Settings,
         layout: "/account",

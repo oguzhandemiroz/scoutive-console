@@ -4,7 +4,8 @@ import General from "../../components/Pages/Settings/General";
 import Notifications from "../../components/Pages/Settings/Notifications";
 import Permission from "../../components/Pages/Settings/Permission";
 import UsageDetail from "../../components/Pages/Settings/UsageDetail";
-import SmsTemplates from "./Settings/SmsTemplates";
+import SmsTemplates from "./Settings/SmsTemplates/SmsTemplates";
+import SmsTemplatesEdit from "./Settings/SmsTemplates/SmsTemplatesEdit";
 
 const lock = (
     <span className="ml-1">
@@ -36,6 +37,15 @@ const settingsMenu = [
         icon: "fa fa-sms",
         class: "",
         lock: false
+    },
+    {
+        title: "SMS Şablonları — Düzenle",
+        pathname: "/sms-templates-edit",
+        active: "sms-templates-edit",
+        icon: "fa fa-sms",
+        class: "",
+        lock: false,
+        hide: true
     },
     {
         title: "Bildirimler",
@@ -76,7 +86,8 @@ const settingsComponentRender = {
     notifications: <Notifications />,
     permission: <Permission />,
     membership: <UsageDetail />,
-    "sms-templates": <SmsTemplates />
+    "sms-templates": <SmsTemplates />,
+    "sms-templates-edit": <SmsTemplatesEdit />
 };
 
 export class SettingsSchool extends Component {
@@ -87,36 +98,34 @@ export class SettingsSchool extends Component {
     }
 
     renderComponent = path => {
-        return settingsComponentRender[path ? path : "general"];
+        return settingsComponentRender[path ? path.params.branch : "general"];
     };
 
     renderTitle = path => {
-        const item = settingsMenu.find(x => x.active === path);
+        const item = settingsMenu.find(x => x.active === path.params.branch);
         return item.title;
     };
 
     render() {
-        const { location, match } = this.props.props;
+        const { match } = this.props.props;
         const { uid } = this.state;
-        const path = match.path + "/" + uid;
         return (
             <div className="container">
                 <div className="page-header">
-                    <h1 className="page-title">Ayarlar &mdash; {this.renderTitle(location.pathname.split("/")[4])}</h1>
+                    <h1 className="page-title">Ayarlar &mdash; {this.renderTitle(match)}</h1>
                 </div>
                 <div className="row">
-                    <div className="col-lg-9 col-md-12 col-sm-12 order-1 order-lg-0">
-                        {this.renderComponent(location.pathname.split("/")[4])}
-                    </div>
+                    <div className="col-lg-9 col-md-12 col-sm-12 order-1 order-lg-0">{this.renderComponent(match)}</div>
                     <div className="col-lg-3 col-md-12 col-sm-12 order-0 order-lg-1">
                         <div className={`dimmer`}>
                             <div className="loader" />
                             <div className="dimmer-content">
                                 <div className="list-group list-group-transparent mb-0">
                                     {settingsMenu.map((el, key) => {
+                                        if (el.hide) return null;
                                         return (
                                             <Link
-                                                to={el.lock ? "" : path + el.pathname}
+                                                to={el.lock ? "" : `/account/settings${el.pathname}/${uid}`}
                                                 key={key.toString()}
                                                 className={`list-group-item list-group-item-action d-flex ${el.class} ${
                                                     this.props.props.location.pathname.indexOf(el.active) > -1

@@ -80,7 +80,7 @@ class HeaderMenu extends Component {
                                         </button>
                                         <button
                                             className="dropdown-item"
-                                            onClick={() => this.props.history.push(`/account/settings/${uid}/general`)}>
+                                            onClick={() => this.props.history.push(`/account/settings/general/${uid}`)}>
                                             <i className="dropdown-icon fe fe-settings" /> Ayarlar
                                         </button>
                                         <button className="dropdown-item cursor-not-allowed disabled">
