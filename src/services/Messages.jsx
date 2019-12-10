@@ -73,4 +73,30 @@ const GetMessageTemplate = data => {
     } catch (e) {}
 };
 
-export { CreateRecipient, ListMessageTemplates, GetMessageTemplate };
+const UpdateRecipient = data => {
+    try {
+        return fetch(ep.RECIPIENT_UPDATE, {
+            method: "POST",
+            body: JSON.stringify(data),
+            headers: h
+        })
+            .then(res => res.json())
+            .then(response => {
+                if (response) {
+                    const status = response.status;
+                    if (status.code !== 1020) errorSwal(status);
+                    else {
+                        Toast.fire({
+                            type: "success",
+                            title: status.description,
+                            timer: 2500
+                        });
+                    }
+                    return response;
+                }
+            })
+            .catch(e => fatalSwal(true));
+    } catch (e) {}
+};
+
+export { CreateRecipient, ListMessageTemplates, GetMessageTemplate, UpdateRecipient };

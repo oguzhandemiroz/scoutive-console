@@ -107,7 +107,8 @@ var ep = {
     SESSION: host + api_version + "session",
     RECIPIENT_CREATE: host + api_version + "create/recipient",
     MESSAGES_TEMPLATES_LIST: host + api_version + "list/message/templates",
-    MESSAGES_TEMPLATES_DETAIL: host + api_version + "get/message/template"
+    MESSAGES_TEMPLATES_DETAIL: host + api_version + "get/message/template",
+    MESSAGES_TEMPLATES_UPDATE: host + api_version + "update/message/template"
 };
 
 export default ep;

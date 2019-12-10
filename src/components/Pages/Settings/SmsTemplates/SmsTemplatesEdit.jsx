@@ -16,7 +16,9 @@ export class SmsTemplatesEdit extends Component {
             },
             formErrors: {
                 content: ""
-            }
+            },
+            contentLength: "",
+            cost: 1
         };
     }
 
@@ -34,11 +36,34 @@ export class SmsTemplatesEdit extends Component {
                 trigger: "hover"
             });
         });
+        $('[data-toggle="tooltip"]').tooltip();
     }
+
+    handleSubmit = () => {
+        const { uid, detail } = this.state;
+    };
 
     handleChange = e => {
         const { value, name } = e.target;
-        console.log(name, value);
+        const { contentLength } = this.state;
+        if (name === "content") {
+            const contentCheck = value
+                .replace(/\u00c2/g, "Â|")
+                .replace(/\u00e2/g, "â|")
+                .replace(/\u00fb/g, "û|")
+                .replace(/\u0131/g, "ı|")
+                .replace(/\u00e7/g, "ç|")
+                .replace(/\u011e/g, "Ğ|")
+                .replace(/\u011f/g, "ğ|")
+                .replace(/\u0130/g, "İ|")
+                .replace(/\u015e/g, "Ş|")
+                .replace(/\u015f/g, "ş|")
+                .replace(/\r?\n/g, " |");
+            this.setState({
+                contentLength: contentCheck,
+                cost: this.checkMessageCost(contentCheck)
+            });
+        }
         this.setState(prevState => ({
             detail: {
                 ...prevState.detail,
@@ -47,8 +72,7 @@ export class SmsTemplatesEdit extends Component {
             formErrors: {
                 ...prevState.formErrors,
                 [name]: value ? "" : "is-invalid"
-            },
-            loadingButton: ""
+            }
         }));
     };
 
@@ -60,14 +84,39 @@ export class SmsTemplatesEdit extends Component {
         }).then(response => {
             if (response) {
                 if (response.status.code === 1020) {
-                    this.setState({ detail: response.data });
+                    const contentCheck = response.data.content
+                        .replace(/\u00c2/g, "Â|")
+                        .replace(/\u00e2/g, "â|")
+                        .replace(/\u00fb/g, "û|")
+                        .replace(/\u0131/g, "ı|")
+                        .replace(/\u00e7/g, "ç|")
+                        .replace(/\u011e/g, "Ğ|")
+                        .replace(/\u011f/g, "ğ|")
+                        .replace(/\u0130/g, "İ|")
+                        .replace(/\u015e/g, "Ş|")
+                        .replace(/\u015f/g, "ş|")
+                        .replace(/\r?\n/g, " |");
+                    this.setState({
+                        detail: response.data,
+                        contentLength: contentCheck,
+                        cost: this.checkMessageCost(contentCheck)
+                    });
                 }
             }
         });
     };
 
+    checkMessageCost = content => {
+        if (content.length >= 736) return 6;
+        if (content.length >= 588) return 5;
+        if (content.length >= 440) return 4;
+        if (content.length >= 292) return 3;
+        if (content.length >= 151) return 2;
+        if (content.length >= 0) return 1;
+    };
+
     render() {
-        const { uid, detail, formErrors, loadingButton } = this.state;
+        const { uid, detail, contentLength, cost, formErrors, loadingButton } = this.state;
         return (
             <div className="card">
                 <div className="card-header">
@@ -95,7 +144,7 @@ export class SmsTemplatesEdit extends Component {
                                     Mesaj İçeriği <span className="form-required">*</span>
                                     <span className="float-right text-muted">
                                         <span
-                                            class="form-help mr-2"
+                                            className="form-help mr-2 bg-dark"
                                             data-toggle="popover"
                                             data-placement="top"
                                             data-content='
@@ -135,7 +184,9 @@ export class SmsTemplatesEdit extends Component {
                                             title="">
                                             ?
                                         </span>
-                                        {detail.content.length}/150
+                                        <span data-toggle="tooltip" title="Mesaj Karakteri ve Maliyeti">
+                                            {contentLength.length} ({cost})
+                                        </span>
                                     </span>
                                 </label>
                                 <textarea
@@ -147,7 +198,23 @@ export class SmsTemplatesEdit extends Component {
                                     value={nullCheck(detail.content, "")}
                                 />
                             </div>
-                            <button className={`btn btn-success ${loadingButton}`}>Kaydet</button>
+                            <div className="alert alert-info alert-dismissible">
+                                {" "}
+                                <button type="button" class="close" data-dismiss="alert"></button>
+                                <p>
+                                    Mesaj içeriğinde Türkçe karakter içeren harf bulunuyorsa karakter hesaplamada
+                                    <strong> 2 karakter</strong> harcar.
+                                    <br /> Sistemdeki Türkçe karakterler:<strong> ç, ğ, ı, ş, Ğ, İ, Ş</strong>
+                                </p>
+                                Mesaj karakterlerini ve Maliyeti, <span className="form-help mx-1 bg-dark">?</span>{" "}
+                                kısmından görüntüleyebilirsiniz.
+                            </div>
+                            <button
+                                type="button"
+                                onClick={this.handleSubmit}
+                                className={`btn btn-success ${loadingButton}`}>
+                                Kaydet
+                            </button>
                         </div>
                     </div>
                 </div>
