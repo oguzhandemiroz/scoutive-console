@@ -7,6 +7,7 @@ import Footer from "../components/includes/Footer.jsx";
 import FABs from "../components/Others/FABs";
 import indexRoutes from "../routes/index.jsx";
 import { Start } from "../services/Starts.jsx";
+import CommunicationService from "../components/CommunicationService/CommunicationService.jsx";
 const $ = require("jquery");
 
 class App extends Component {
@@ -37,6 +38,7 @@ class App extends Component {
                     <Warnings />
                     <HeaderMenu />
                     <Menu layout={this.props.match.url} />
+                    <CommunicationService />
                     <div className="my-3 my-md-5">
                         <Switch>
                             <Redirect exact from="/app" to="/app/dashboard" />

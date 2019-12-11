@@ -32,7 +32,7 @@ export class Warnings extends Component {
             {
                 title: "Ayarlarını Tamamla!",
                 text: () => (
-                    <Link to={"/account/settings/" + uid + "/general"} className="text-inherit">
+                    <Link to={"/account/settings/general/" + uid} className="text-inherit">
                         Sistemin sağlıklı ve sorunsuz çalışabilmesi için ayarlarınızı tamamlamanız gerekiyor.
                     </Link>
                 ),

@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import { Link, withRouter } from "react-router-dom";
-import { GetMessageTemplate } from "../../../../services/Messages";
+import { GetMessageTemplate, UpdateMessageTemplate } from "../../../../services/Messages";
 import { nullCheck } from "../../../../services/Others";
+import { formValid } from "../../../../assets/js/core";
 
 const $ = require("jquery");
 
@@ -15,11 +16,21 @@ export class SmsTemplatesEdit extends Component {
                 content: ""
             },
             formErrors: {
-                content: ""
+                content: "",
+                template_name: ""
             },
             contentLength: "",
-            cost: 1
+            cost: 1,
+            loadingButton: ""
         };
+    }
+
+    componentDidUpdate() {
+        $('[data-toggle="popover"]').popover({
+            html: true,
+            trigger: "hover"
+        });
+        $('[data-toggle="tooltip"]').tooltip();
     }
 
     componentDidMount() {
@@ -28,19 +39,33 @@ export class SmsTemplatesEdit extends Component {
             const template_id = this.props.history.location.pathname.split("/").slice(-1)[0];
             this.getMessageTemplate(template_id);
         } else this.props.history.push(`/account/settings/sms-templates/${uid}`);
+    }
 
-        /** Initialize popovers */
-        $(function() {
-            $('[data-toggle="popover"]').popover({
-                html: true,
-                trigger: "hover"
-            });
-        });
-        $('[data-toggle="tooltip"]').tooltip();
+    componentWillUnmount() {
+        this.setState({ loadingButton: "" });
     }
 
     handleSubmit = () => {
-        const { uid, detail } = this.state;
+        const { uid, detail, formErrors } = this.state;
+        if (formValid(this.state)) {
+            this.setState({ loadingButton: "btn-loading" });
+            UpdateMessageTemplate({
+                uid: uid,
+                ...detail
+            }).then(response => {
+                if (response) {
+                    if (response.status.code === 1020) this.reload();
+                }
+            });
+        } else {
+            this.setState(prevState => ({
+                formErrors: {
+                    ...prevState.formErrors,
+                    content: detail.content ? "" : "is-invalid",
+                    template_name: detail.template_name ? "" : "is-invalid"
+                }
+            }));
+        }
     };
 
     handleChange = e => {
@@ -115,6 +140,14 @@ export class SmsTemplatesEdit extends Component {
         if (content.length >= 0) return 1;
     };
 
+    reload = () => {
+        const current = this.props.history.location.pathname;
+        this.props.history.replace("/account/reload");
+        setTimeout(() => {
+            this.props.history.replace(current);
+        });
+    };
+
     render() {
         const { uid, detail, contentLength, cost, formErrors, loadingButton } = this.state;
         return (
@@ -137,7 +170,24 @@ export class SmsTemplatesEdit extends Component {
                         <div className="col">
                             <div className="form-group">
                                 <label className="form-label">Şablon Adı</label>
-                                {nullCheck(detail.template_name)}
+                                {detail.default ? (
+                                    <>
+                                        {nullCheck(detail.template_name)}
+                                        <i
+                                            className="fa fa-star text-info ml-1"
+                                            data-toggle="tooltip"
+                                            title="Varsayılan Şablon"></i>
+                                    </>
+                                ) : (
+                                    <input
+                                        name="template_name"
+                                        onChange={this.handleChange}
+                                        maxLength="100"
+                                        type="text"
+                                        className={`form-control ${formErrors.template_name}`}
+                                        value={nullCheck(detail.template_name, "")}
+                                    />
+                                )}
                             </div>
                             <div className="form-group">
                                 <label className="form-label">
@@ -200,7 +250,7 @@ export class SmsTemplatesEdit extends Component {
                             </div>
                             <div className="alert alert-info alert-dismissible">
                                 {" "}
-                                <button type="button" class="close" data-dismiss="alert"></button>
+                                <button type="button" className="close" data-dismiss="alert"></button>
                                 <p>
                                     Mesaj içeriğinde Türkçe karakter içeren harf bulunuyorsa karakter hesaplamada
                                     <strong> 2 karakter</strong> harcar.

@@ -1,5 +1,5 @@
-import React, {Component} from "react";
-import {BrowserRouter as Router, Route, Switch, Redirect} from "react-router-dom";
+import React, { Component } from "react";
+import { BrowserRouter as Router, Route, Switch, Redirect } from "react-router-dom";
 import Auth from "./Auth";
 import App from "./App";
 import Account from "./Account";
@@ -9,21 +9,17 @@ const auth = {
     isAuthenticated: localStorage.getItem("UID") ? true : false
 };
 
-const PrivateRoute = ({component: Component, ...rest}) => (
+const PrivateRoute = ({ component: Component, ...rest }) => (
     <Route
         {...rest}
-        render={props =>
-            auth.isAuthenticated === true ? <Component {...props} /> : <Redirect to="/" />
-        }
+        render={props => (auth.isAuthenticated === true ? <Component {...props} /> : <Redirect to="/" />)}
     />
 );
 
-const PublicRoute = ({component: Component, ...rest}) => (
+const PublicRoute = ({ component: Component, ...rest }) => (
     <Route
         {...rest}
-        render={props =>
-            auth.isAuthenticated === false ? <Component {...props} /> : <Redirect to="/" />
-        }
+        render={props => (auth.isAuthenticated === false ? <Component {...props} /> : <Redirect to="/" />)}
     />
 );
 

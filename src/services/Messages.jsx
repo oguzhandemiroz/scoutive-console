@@ -73,9 +73,9 @@ const GetMessageTemplate = data => {
     } catch (e) {}
 };
 
-const UpdateRecipient = data => {
+const UpdateMessageTemplate = data => {
     try {
-        return fetch(ep.RECIPIENT_UPDATE, {
+        return fetch(ep.MESSAGES_TEMPLATES_UPDATE, {
             method: "POST",
             body: JSON.stringify(data),
             headers: h
@@ -99,4 +99,32 @@ const UpdateRecipient = data => {
     } catch (e) {}
 };
 
-export { CreateRecipient, ListMessageTemplates, GetMessageTemplate, UpdateRecipient };
+const ActivateMessageTemplate = () => {
+    try {
+        return fetch(ep.MESSAGES_TEMPLATES_ACTIVATE, {
+            method: "POST",
+            body: JSON.stringify({
+                uid: localStorage.getItem("UID")
+            }),
+            headers: h
+        })
+            .then(res => res.json())
+            .then(response => {
+                if (response) {
+                    const status = response.status;
+                    if (status.code !== 1020) errorSwal(status);
+                    else {
+                        Toast.fire({
+                            type: "success",
+                            title: status.description,
+                            timer: 2500
+                        });
+                    }
+                    return response;
+                }
+            })
+            .catch(e => fatalSwal(true));
+    } catch (e) {}
+};
+
+export { CreateRecipient, ListMessageTemplates, GetMessageTemplate, UpdateMessageTemplate, ActivateMessageTemplate };

@@ -5,6 +5,7 @@ import { Logout } from "../../services/Login.jsx";
 import { systemClock } from "../../services/Others";
 
 class HeaderMenu extends Component {
+    _isMounted = false;
     constructor(props) {
         super(props);
 
@@ -18,9 +19,16 @@ class HeaderMenu extends Component {
     }
 
     componentDidMount() {
+        this._isMounted = true;
         setInterval(() => {
-            this.setState({ systemClock: systemClock() });
+            if (this._isMounted) {
+                this.setState({ systemClock: systemClock() });
+            }
         }, 1000);
+    }
+
+    componentWillUnmount() {
+        this._isMounted = false;
     }
 
     render() {

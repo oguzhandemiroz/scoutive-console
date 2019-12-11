@@ -465,9 +465,16 @@ var indexRoutes = [
     },
     {
         path: "/reload",
-        name: "Reload Page",
+        name: "Reload App Page",
         component: Empty,
         layout: "/app",
+        prop: { exact: true }
+    },
+    {
+        path: "/reload",
+        name: "Reload Account Page",
+        component: Empty,
+        layout: "/account",
         prop: { exact: true }
     },
     {

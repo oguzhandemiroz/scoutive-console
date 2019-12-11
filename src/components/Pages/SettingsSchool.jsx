@@ -31,7 +31,7 @@ const settingsMenu = [
         lock: lock
     },
     {
-        title: "SMS Şablonları",
+        title: "SMS Şablonları (Beta)",
         pathname: "/sms-templates",
         active: "sms-templates",
         icon: "fa fa-sms",
