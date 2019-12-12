@@ -1004,6 +1004,11 @@ a.badge {
     color: #868e96;
     border-radius: 50%;
 }
+.icon-placeholder.icon-placeholder-sm {
+    width: 2.5rem;
+    height: 2.5rem;
+    font-size: 1rem;
+}
 
 #communication-service {
     position: fixed;

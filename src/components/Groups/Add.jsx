@@ -212,7 +212,6 @@ export class Add extends Component {
     };
 
     handleCard = player_id => {
-        console.log(player_id);
         const { players } = this.state;
         if (players.indexOf(player_id) > -1) {
             this.setState({ players: players.filter(x => x !== player_id) });

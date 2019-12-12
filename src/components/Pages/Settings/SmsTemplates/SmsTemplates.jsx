@@ -17,6 +17,7 @@ export class SmsTemplates extends Component {
             loadingButton: ""
         };
     }
+    
     componentDidUpdate() {
         $('[data-toggle="tooltip"]').tooltip();
     }
