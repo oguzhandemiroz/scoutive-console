@@ -5,9 +5,9 @@ export class CommunicationService extends Component {
         return (
             <div id="communication-service" className="bg-orange">
                 <div className="communication-icon">
-                    <i className="fa fa-comments"></i>
+                    <i className="fa fa-satellite"></i>
                 </div>
-                <div className="communication-text">İletişim Servisi</div>
+                <div className="communication-text">İletişim Merkezi</div>
             </div>
         );
     }

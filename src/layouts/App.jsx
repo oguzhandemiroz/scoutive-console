@@ -38,7 +38,7 @@ class App extends Component {
                     <Warnings />
                     <HeaderMenu />
                     <Menu layout={this.props.match.url} />
-                    <CommunicationService />
+                    {/*  <CommunicationService /> */}
                     <div className="my-3 my-md-5">
                         <Switch>
                             <Redirect exact from="/app" to="/app/dashboard" />

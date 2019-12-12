@@ -68,7 +68,7 @@ export class SmsTemplates extends Component {
                         list.length > 0 ? (
                             _.orderBy(list, ["default"], ["desc"]).map((el, key) => {
                                 return (
-                                    <div className="col-6" key={key.toString()}>
+                                    <div className="col-lg-6 col-md-6" key={key.toString()}>
                                         <div className="card">
                                             <div className="card-body text-center">
                                                 <div className={`icon-placeholder bg-${el.color}-lightest`}>

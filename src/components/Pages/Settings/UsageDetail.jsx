@@ -3,8 +3,8 @@ import Monthly from "./UsageDetail/Monthly";
 import SmsUsage from "./UsageDetail/SmsUsage";
 import PastTransaction from "./UsageDetail/PastTransaction";
 import { GetSettings, GetSchoolFees } from "../../../services/School";
-import { formatDate } from "../../../services/Others";
 import { MessagesAllTime } from "../../../services/Report";
+import { formatDate } from "../../../services/Others";
 
 const $ = require("jquery");
 

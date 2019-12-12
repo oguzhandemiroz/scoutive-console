@@ -67,6 +67,14 @@ const menu = [
         condition: true
     },
     {
+        li: "nav-item",
+        navlink: { to: "/app/messages", exact: false, activeClassName: "active", className: "nav-link" },
+        icon: "fa fa-satellite",
+        text: "İletişim Merkezi",
+        item: null,
+        condition: true
+    },
+    {
         li: "nav-item cursor-not-allowed",
         navlink: {
             to: "/app/reports",
