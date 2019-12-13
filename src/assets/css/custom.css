@@ -1044,3 +1044,285 @@ a.badge {
     color: #fff;
     padding-right: 5px;
 }
+
+.steps {
+    display: flex;
+    flex-wrap: nowrap;
+    width: 100%;
+    padding: 0;
+    margin: 2rem 0;
+    list-style: none;
+}
+.steps .step-item {
+    padding-top: calc(0.5rem + 4px);
+}
+.steps .step-item::after {
+    top: calc(0.25rem + 2px);
+    height: 2px;
+}
+.steps .step-item::before {
+    width: 0.5rem;
+    height: 0.5rem;
+}
+.steps .step-item::after,
+.steps .step-item::before {
+    color: #ffffff;
+    background: #206bc4;
+}
+.steps .step-item.active::before {
+    color: inherit;
+    border-color: #206bc4;
+}
+
+.steps-blue .step-item::after,
+.steps-blue .step-item::before {
+    color: #ffffff;
+    background: #206bc4;
+}
+
+.steps-blue .step-item.active::before {
+    color: inherit;
+    border-color: #206bc4;
+}
+
+.steps-indigo .step-item::after,
+.steps-indigo .step-item::before {
+    color: #ffffff;
+    background: #6574cd;
+}
+
+.steps-indigo .step-item.active::before {
+    color: inherit;
+    border-color: #6574cd;
+}
+
+.steps-purple .step-item::after,
+.steps-purple .step-item::before {
+    color: #ffffff;
+    background: #a55eea;
+}
+
+.steps-purple .step-item.active::before {
+    color: inherit;
+    border-color: #a55eea;
+}
+
+.steps-pink .step-item::after,
+.steps-pink .step-item::before {
+    color: #ffffff;
+    background: #f66d9b;
+}
+
+.steps-pink .step-item.active::before {
+    color: inherit;
+    border-color: #f66d9b;
+}
+
+.steps-red .step-item::after,
+.steps-red .step-item::before {
+    color: #ffffff;
+    background: #fa4654;
+}
+
+.steps-red .step-item.active::before {
+    color: inherit;
+    border-color: #fa4654;
+}
+
+.steps-orange .step-item::after,
+.steps-orange .step-item::before {
+    color: #ffffff;
+    background: #ff922b;
+}
+
+.steps-orange .step-item.active::before {
+    color: inherit;
+    border-color: #ff922b;
+}
+
+.steps-yellow .step-item::after,
+.steps-yellow .step-item::before {
+    color: #ffffff;
+    background: #fab005;
+}
+
+.steps-yellow .step-item.active::before {
+    color: inherit;
+    border-color: #fab005;
+}
+
+.steps-green .step-item::after,
+.steps-green .step-item::before {
+    color: #ffffff;
+    background: #5eba00;
+}
+
+.steps-green .step-item.active::before {
+    color: inherit;
+    border-color: #5eba00;
+}
+
+.steps-teal .step-item::after,
+.steps-teal .step-item::before {
+    color: #ffffff;
+    background: #2bcbba;
+}
+
+.steps-teal .step-item.active::before {
+    color: inherit;
+    border-color: #2bcbba;
+}
+
+.steps-cyan .step-item::after,
+.steps-cyan .step-item::before {
+    color: #ffffff;
+    background: #17a2b8;
+}
+
+.steps-cyan .step-item.active::before {
+    color: inherit;
+    border-color: #17a2b8;
+}
+
+.steps-white .step-item::after,
+.steps-white .step-item::before {
+    color: #ffffff;
+    background: #ffffff;
+}
+
+.steps-white .step-item.active::before {
+    color: inherit;
+    border-color: #ffffff;
+}
+
+.steps-gray .step-item::after,
+.steps-gray .step-item::before {
+    color: #ffffff;
+    background: #868e96;
+}
+
+.steps-gray .step-item.active::before {
+    color: inherit;
+    border-color: #868e96;
+}
+
+.steps-gray-dark .step-item::after,
+.steps-gray-dark .step-item::before {
+    color: #ffffff;
+    background: #343a40;
+}
+
+.steps-gray-dark .step-item.active::before {
+    color: inherit;
+    border-color: #343a40;
+}
+
+.steps-azure .step-item::after,
+.steps-azure .step-item::before {
+    color: #ffffff;
+    background: #45aaf2;
+}
+
+.steps-azure .step-item.active::before {
+    color: inherit;
+    border-color: #45aaf2;
+}
+
+.steps-lime .step-item::after,
+.steps-lime .step-item::before {
+    color: #ffffff;
+    background: #7bd235;
+}
+
+.steps-lime .step-item.active::before {
+    color: inherit;
+    border-color: #7bd235;
+}
+
+.steps-dark .step-item::after,
+.steps-dark .step-item::before {
+    color: #ffffff;
+    background: #354052;
+}
+
+.steps-dark .step-item.active::before {
+    color: inherit;
+    border-color: #354052;
+}
+
+.step-item {
+    position: relative;
+    flex: 1 1 0;
+    min-height: 1rem;
+    margin-top: 0;
+    color: inherit;
+    text-align: center;
+    cursor: default;
+}
+a.step-item {
+    cursor: pointer;
+}
+a.step-item:hover {
+    color: inherit;
+}
+.step-item:not(:first-child)::after {
+    position: absolute;
+    left: -50%;
+    width: 100%;
+    content: "";
+    transform: translateY(-50%);
+}
+.step-item::before {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    z-index: 1;
+    box-sizing: content-box;
+    display: block;
+    content: "";
+    border: 2px solid #fff;
+    border-radius: 50%;
+    transform: translateX(-50%);
+}
+.step-item.active {
+    font-weight: 600;
+}
+.step-item.active::before {
+    background: #fff;
+}
+.step-item.active ~ .step-item {
+    color: #8a91a5;
+}
+.step-item.active ~ .step-item::after,
+.step-item.active ~ .step-item::before {
+    background: #cfd2d5;
+}
+.step-item.active ~ .step-item::before {
+    color: #8a91a5 !important;
+}
+
+.steps-counter {
+    counter-reset: steps;
+}
+.steps-counter .step-item {
+    padding-top: calc(1.5rem + 4px);
+}
+.steps-counter .step-item::after {
+    top: calc(0.75rem + 2px);
+    height: 2px;
+}
+.steps-counter .step-item::before {
+    width: 1.5rem;
+    height: 1.5rem;
+}
+.steps-counter .step-item {
+    counter-increment: steps;
+}
+.steps-counter .step-item::before {
+    font-size: 1rem;
+    line-height: 1.5rem;
+    content: counter(steps);
+}
+.steps-counter .step-item.active ~ .step-item::before {
+    background: #fff;
+}

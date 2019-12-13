@@ -42,47 +42,49 @@ export class SmsUsage extends Component {
     };
 
     render() {
-        const { balance, all_time } = this.props;
+        const { balance, all_time, allTimeHide } = this.props;
         const { extra_sms_balance, sms_active } = this.state;
         if (sms_active) {
             return (
                 <>
-                    <div className="row">
-                        <div className="col-lg-6">
-                            <div className="card p-3">
-                                <div className="d-flex align-items-center">
-                                    <span className="stamp stamp-md bg-warning mr-3">
-                                        <i className="fa fa-sms"></i>
-                                    </span>
-                                    <div>
-                                        <h4 className="m-0">
-                                            <a href="#">
-                                                {all_time["2"] || 0} <small>SMS</small>
-                                            </a>
-                                        </h4>
-                                        <small className="text-muted">Tüm zamanlar</small>
+                    {allTimeHide ? null : (
+                        <div className="row">
+                            <div className="col-lg-6">
+                                <div className="card p-3">
+                                    <div className="d-flex align-items-center">
+                                        <span className="stamp stamp-md bg-warning mr-3">
+                                            <i className="fa fa-sms"></i>
+                                        </span>
+                                        <div>
+                                            <h4 className="m-0">
+                                                <a href="#">
+                                                    {all_time["2"] || 0} <small>SMS</small>
+                                                </a>
+                                            </h4>
+                                            <small className="text-muted">Tüm zamanlar</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="col-lg-6">
+                                <div className="card p-3">
+                                    <div className="d-flex align-items-center">
+                                        <span className="stamp stamp-md bg-success mr-3">
+                                            <i className="fa fa-envelope"></i>
+                                        </span>
+                                        <div>
+                                            <h4 className="m-0">
+                                                <a href="#">
+                                                    {all_time["1"] || 0} <small>Eposta</small>
+                                                </a>
+                                            </h4>
+                                            <small className="text-muted">Tüm zamanlar</small>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div className="col-lg-6">
-                            <div className="card p-3">
-                                <div className="d-flex align-items-center">
-                                    <span className="stamp stamp-md bg-success mr-3">
-                                        <i className="fa fa-envelope"></i>
-                                    </span>
-                                    <div>
-                                        <h4 className="m-0">
-                                            <a href="#">
-                                                {all_time["1"] || 0} <small>Eposta</small>
-                                            </a>
-                                        </h4>
-                                        <small className="text-muted">Tüm zamanlar</small>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    )}
                     <div className="card">
                         <div className="card-body">
                             <div className="d-flex align-items-center">

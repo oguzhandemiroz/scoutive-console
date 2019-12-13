@@ -29,7 +29,7 @@ export class Messages extends Component {
                         <div className="input-group ml-auto w-auto">
                             <div className="input-group-append">
                                 <Link to="/app/messages/add" className="btn btn-icon btn-sm btn-success">
-                                    Yeni Kampanya Oluştur
+                                    Yeni Mesaj Oluştur
                                 </Link>
                                 <button
                                     data-toggle="dropdown"
