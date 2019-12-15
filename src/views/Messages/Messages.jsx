@@ -47,10 +47,10 @@ export class Messages extends Component {
                         <div className="col">
                             <div className="card">
                                 <div className="card-header">
-                                    <h3 className="card-title">Geçmiş Kampanyalar</h3>
+                                    <h3 className="card-title">Geçmiş Mesajlar</h3>
                                 </div>
                                 <div className="table-responsive messages-list">
-                                    {/* <List history={this.props.history} /> */}
+                                    <List history={this.props.history} />
                                 </div>
                             </div>
                         </div>

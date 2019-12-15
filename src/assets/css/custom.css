@@ -582,6 +582,14 @@ SOCIAL COLORS
     border-radius: inherit;
 }
 
+.card-inactive {
+    pointer-events: none;
+    box-shadow: none;
+}
+.card-inactive .card-body {
+    opacity: 0.64;
+}
+
 .ribbon {
     position: absolute;
     top: 0.75rem;

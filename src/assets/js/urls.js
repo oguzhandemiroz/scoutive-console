@@ -110,7 +110,8 @@ var ep = {
     MESSAGES_TEMPLATES_DETAIL: host + api_version + "get/message/template",
     MESSAGES_TEMPLATES_UPDATE: host + api_version + "update/message/template",
     MESSAGES_TEMPLATES_ACTIVATE: host + api_version + "set/active/message/templates",
-    CAMPAIGN_CREATE: host + api_version + "create/campaign"
+    CAMPAIGN_CREATE: host + api_version + "create/campaign",
+    CAMPAIGN_LIST: host + api_version + "list/campaigns"
 };
 
 export default ep;
