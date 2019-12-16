@@ -1012,10 +1012,20 @@ a.badge {
     color: #868e96;
     border-radius: 50%;
 }
+.icon-placeholder.icon-placeholder-md {
+    width: 3.5rem;
+    height: 3.5rem;
+    font-size: 1.5rem;
+}
 .icon-placeholder.icon-placeholder-sm {
     width: 2.5rem;
     height: 2.5rem;
     font-size: 1rem;
+}
+.icon-placeholder.icon-placeholder-xxs {
+    width: 1.75rem;
+    height: 1.75rem;
+    font-size: 0.875rem;
 }
 
 #communication-service {

@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Link, withRouter } from "react-router-dom";
 import SmsUsage from "../Pages/Settings/UsageDetail/SmsUsage";
 import { GetSettings, GetSchoolFees } from "../../services/School";
-import { MessagesAllTime } from "../../services/Report";
+import { MessagesAllTime, UnpaidPlayers, ListBirthdays } from "../../services/Report";
 import DatePicker, { registerLocale } from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import tr from "date-fns/locale/tr";
@@ -15,6 +15,14 @@ import _ from "lodash";
 const $ = require("jquery");
 
 registerLocale("tr", tr);
+
+const dailyType = {
+    "-1": ["Tanımsız", "secondary"],
+    "0": ["Gelmedi", "danger"],
+    "1": ["Geldi", "success"],
+    "2": ["T. Gün İzinli", "warning"],
+    "3": ["Y. Gün İzinli", "warning"]
+};
 
 export class Add extends Component {
     constructor(props) {
@@ -49,7 +57,7 @@ export class Add extends Component {
                     name: "Onayla ve Gönder",
                     title: "Onayla ve Gönder",
                     active: false,
-                    components: () => this.sendStep()
+                    components: () => this.sendPreviewStep()
                 }
             ],
             players: [],
@@ -60,7 +68,8 @@ export class Add extends Component {
             loadingButton: "",
             select: {
                 players: null,
-                initialPlayers: null
+                initialPlayers: null,
+                unpaidList: null
             },
             formErrors: {
                 when: "",
@@ -76,7 +85,8 @@ export class Add extends Component {
             all_time_messages: {
                 2: 0,
                 1: 0
-            }
+            },
+            undefined_contact_toggle: true
         };
     }
 
@@ -189,9 +199,133 @@ export class Add extends Component {
         }));
     };
 
+    handleUndefinedContact = e => {
+        const { select } = this.state;
+        const { checked, name } = e.target;
+        const result = checked ? select.players.filter(x => x.recipient_parent_id !== -1) : select.players;
+        this.setState(prevState => ({
+            select: {
+                ...prevState.select,
+                initialPlayers: result
+            },
+            players: [],
+            [name]: checked,
+            filter: null
+        }));
+    };
+
     handleFilterRollcall = e => {
+        const { select } = this.state;
         const { value, name, checked } = e.target;
-        console.log(value, name, checked);
+        const result = checked ? select.players.filter(x => x.daily === 0) : select.players;
+        this.setState(prevState => ({
+            select: {
+                ...prevState.select,
+                initialPlayers: result
+            },
+            players: [],
+            undefined_contact_toggle: false,
+            [name]: checked ? parseInt(value) : null
+        }));
+    };
+
+    handleFilterUnpaid = e => {
+        const { select } = this.state;
+        const { value, name, checked } = e.target;
+
+        if (!select.unpaidList) {
+            this.setState(prevState => ({
+                select: {
+                    ...prevState.select,
+                    initialPlayers: null
+                }
+            }));
+
+            UnpaidPlayers().then(response => {
+                if (response) {
+                    if (response.status.code === 1020) {
+                        this.setState(prevState => ({
+                            select: {
+                                ...prevState.select,
+                                initialPlayers: _.map(response.data, (x, key) =>
+                                    select.players.find(y => y.uid === x.uid)
+                                ),
+                                unpaidList: response.data
+                            }
+                        }));
+                    } else {
+                        this.setState(prevState => ({
+                            select: {
+                                ...prevState.select,
+                                initialPlayers: select.players
+                            }
+                        }));
+                    }
+                }
+            });
+        } else {
+            this.setState(prevState => ({
+                select: {
+                    ...prevState.select,
+                    initialPlayers: _.map(select.unpaidList, x => select.players.find(y => y.uid === x.uid))
+                }
+            }));
+        }
+
+        this.setState({
+            players: [],
+            undefined_contact_toggle: false,
+            [name]: checked ? parseInt(value) : null
+        });
+    };
+
+    handleFilterBirthday = e => {
+        const { select } = this.state;
+        const { value, name, checked } = e.target;
+
+        if (!select.birthdayList) {
+            this.setState(prevState => ({
+                select: {
+                    ...prevState.select,
+                    initialPlayers: null
+                }
+            }));
+            ListBirthdays().then(response => {
+                if (response) {
+                    if (response.status.code === 1020) {
+                        this.setState(prevState => ({
+                            select: {
+                                ...prevState.select,
+                                initialPlayers: _.map(response.data.players, (x, key) =>
+                                    select.players.find(y => y.uid === x.uid)
+                                ),
+                                birthdayList: response.data.players
+                            }
+                        }));
+                    } else {
+                        this.setState(prevState => ({
+                            select: {
+                                ...prevState.select,
+                                initialPlayers: select.players
+                            }
+                        }));
+                    }
+                }
+            });
+        } else {
+            this.setState(prevState => ({
+                select: {
+                    ...prevState.select,
+                    initialPlayers: _.map(select.birthdayList, x => select.players.find(y => y.uid === x.uid))
+                }
+            }));
+        }
+
+        this.setState({
+            players: [],
+            undefined_contact_toggle: false,
+            [name]: checked ? parseInt(value) : null
+        });
     };
 
     handleNextStep = step => {
@@ -240,6 +374,12 @@ export class Add extends Component {
         if (players.length > 0) {
             this.handleNextStep(2);
         }
+    };
+
+    selectAllPlayers = () => {
+        const { select } = this.state;
+        const result = select.initialPlayers.filter(x => x.recipient_parent_id !== -1).map(x => x.player_id);
+        this.setState({ players: result });
     };
 
     messagesStep = () => {
@@ -328,6 +468,18 @@ export class Add extends Component {
                         {templates ? (
                             templates.length > 0 ? (
                                 templates.map((el, key) => {
+                                    const contentLength = el.content
+                                        .replace(/\u00c2/g, "Â|")
+                                        .replace(/\u00e2/g, "â|")
+                                        .replace(/\u00fb/g, "û|")
+                                        .replace(/\u0131/g, "ı|")
+                                        .replace(/\u00e7/g, "ç|")
+                                        .replace(/\u011e/g, "Ğ|")
+                                        .replace(/\u011f/g, "ğ|")
+                                        .replace(/\u0130/g, "İ|")
+                                        .replace(/\u015e/g, "Ş|")
+                                        .replace(/\u015f/g, "ş|")
+                                        .replace(/\r?\n/g, " |").length;
                                     return (
                                         <div className="col-6 col-lg-3 col-sm-6" key={key.toString()}>
                                             <div
@@ -336,12 +488,6 @@ export class Add extends Component {
                                                 }`}
                                                 onClick={() => this.handleTemplateCard(el.template_id)}>
                                                 <div className="card-body text-center p-4">
-                                                    <div
-                                                        className={`icon-placeholder icon-placeholder-sm bg-${el.color}-lightest`}>
-                                                        <i className={el.icon + " text-" + el.color} />
-                                                    </div>
-
-                                                    <div className="small font-weight-600 mt-3">{el.template_name}</div>
                                                     {el.default ? (
                                                         <div
                                                             data-toggle="tooltip"
@@ -356,6 +502,18 @@ export class Add extends Component {
                                                             <i className="fa fa-star text-info small font-weight-600" />
                                                         </div>
                                                     ) : null}
+                                                    <div
+                                                        className={`icon-placeholder icon-placeholder-sm bg-${el.color}-lightest`}>
+                                                        <i className={el.icon + " text-" + el.color} />
+                                                    </div>
+
+                                                    <div className="small font-weight-600 mt-3">{el.template_name}</div>
+                                                    <div className="small text-muted">
+                                                        Karakter Sayısı: {contentLength}
+                                                    </div>
+                                                    <div className="small text-muted">
+                                                        Maliyet: {this.checkMessageCost(contentLength)}
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -405,11 +563,11 @@ export class Add extends Component {
     };
 
     recipientsStep = () => {
-        const { select, players } = this.state;
+        const { select, players, undefined_contact_toggle, filter } = this.state;
         return (
             <>
-                <div className="card-body">
-                    <div className="row">
+                <div className="card-body pb-0">
+                    <div className="row mb-5">
                         <div className="col-auto">
                             <div className="form-group">
                                 <label className="form-label">Arama</label>
@@ -421,38 +579,53 @@ export class Add extends Component {
                                     onChange={this.handleSearch}
                                 />
                             </div>
+                            <span>
+                                <label className="custom-control custom-checkbox custom-control-inline">
+                                    <input
+                                        type="checkbox"
+                                        className="custom-control-input"
+                                        name="undefined_contact_toggle"
+                                        onChange={this.handleUndefinedContact}
+                                        checked={undefined_contact_toggle}
+                                    />
+                                    <span className="custom-control-label">Tanımsız İletişim Bilgisi Gizle</span>
+                                </label>
+                            </span>
                         </div>
                         <div className="col">
-                            <div className="form-group">
+                            <div className="form-group mb-0">
                                 <label className="form-label">Filtre</label>
                                 <div className="selectgroup selectgroup-pills">
                                     <label className="selectgroup-item">
                                         <input
-                                            type="radio"
+                                            type="checkbox"
                                             name="filter"
                                             value="0"
                                             className="selectgroup-input"
                                             onChange={this.handleFilterRollcall}
+                                            checked={filter === 0}
                                         />
                                         <span className="selectgroup-button">Bugün Gelmeyenler</span>
                                     </label>
                                     <label className="selectgroup-item">
                                         <input
                                             type="checkbox"
-                                            name="work_days"
+                                            name="filter"
                                             value="1"
                                             className="selectgroup-input"
-                                            onChange={this.handleWorkDays}
+                                            onChange={this.handleFilterUnpaid}
+                                            checked={filter === 1}
                                         />
                                         <span className="selectgroup-button">Ödeme Yapmayanlar</span>
                                     </label>
                                     <label className="selectgroup-item">
                                         <input
                                             type="checkbox"
-                                            name="work_days"
-                                            value="1"
+                                            name="filter"
+                                            value="2"
                                             className="selectgroup-input"
-                                            onChange={this.handleWorkDays}
+                                            onChange={this.handleFilterBirthday}
+                                            checked={filter === 2}
                                         />
                                         <span className="selectgroup-button">Bu hafta içindeki doğum günleri</span>
                                     </label>
@@ -462,8 +635,25 @@ export class Add extends Component {
                     </div>
                     <div className="row">
                         <div className="col-lg-12">
-                            <div className="form-group">
-                                <label className="form-label">Öğrenciler</label>
+                            <div className="form-group mb-0">
+                                <label className="form-label mb-3">
+                                    Öğrenciler
+                                    <span className="float-right">
+                                        {players.length > 0 ? (
+                                            <span
+                                                className="text-primary cursor-pointer btn-link"
+                                                onClick={() => this.setState({ players: [] })}>
+                                                Tüm Seçimleri Kaldır ({players.length} Seçili)
+                                            </span>
+                                        ) : (
+                                            <span
+                                                className="text-primary cursor-pointer btn-link"
+                                                onClick={this.selectAllPlayers}>
+                                                Listenen Tüm Kişileri Seç
+                                            </span>
+                                        )}
+                                    </span>
+                                </label>
                                 <div className="row row-cards row-deck">
                                     {select.initialPlayers ? (
                                         select.initialPlayers.length > 0 ? (
@@ -503,10 +693,12 @@ export class Add extends Component {
                                                                     </div>
                                                                     <div className="col-auto align-self-start d-flex">
                                                                         <span
-                                                                            className="badge badge-success"
+                                                                            className={`badge badge-${
+                                                                                dailyType[el.daily][1]
+                                                                            }`}
                                                                             data-toggle="tooltip"
                                                                             title="Yoklama Durumu (Bugün)">
-                                                                            Geldi
+                                                                            {dailyType[el.daily][0]}
                                                                         </span>
                                                                     </div>
                                                                 </div>
@@ -553,8 +745,8 @@ export class Add extends Component {
                                                 )
                                             )
                                         ) : (
-                                            <div className="text-center w-100 text-muted font-italic">
-                                                Sistemde kayıtlı öğrenci bulunamadı...
+                                            <div className="text-center w-100 text-muted font-italic pb-7">
+                                                Kayıt bulunamadı...
                                             </div>
                                         )
                                     ) : (
@@ -582,13 +774,103 @@ export class Add extends Component {
         );
     };
 
-    sendStep = () => {
+    sendPreviewStep = () => {
+        const { start, school_fees, all_time_messages, players } = this.state;
         return (
-            <div className="card-footer text-right">
-                <button type="button" onClick={this.handleSubmit} className="btn btn-success btn-icon">
-                    Onayla ve Gönder<i className="fa fa-check ml-2"></i>
-                </button>
-            </div>
+            <>
+                <div className="card-body">
+                    <div className="row">
+                        <div className="col-lg-8">
+                            <div className="h2 text-body">Genel Özet</div>
+                            <div className="row">
+                                <div className="col-lg-6">
+                                    <div className="form-group">
+                                        <label className="form-label">Seçili Şablon</label>
+                                        <div className="card">
+                                            <div className="card-body p-125">
+                                                <div
+                                                    className={`icon-placeholder icon-placeholder-sm bg-${"gray"}-lightest`}>
+                                                    <i className={"fa fa-sms" + " text-" + "gray"} />
+                                                </div>
+
+                                                <div className="font-weight-600 mt-3">{"el.template_name"}</div>
+                                                <div className="mb-2">{"el.template_name te_name te_name"}</div>
+                                                <div className="small text-muted">
+                                                    Karakter Sayısı: {"contentLength"}
+                                                </div>
+                                                <div className="small text-muted">
+                                                    Maliyet: {this.checkMessageCost("contentLength")}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="col-lg-6">
+                                    <div className="form-group">
+                                        <label className="form-label">
+                                            Gönderim Yapılacak Kişiler ({players.length} Kişi)
+                                        </label>
+                                        <div className="tags">
+                                            <span class="tag">Second tag</span>
+                                            <span class="tag">Second tag</span>
+                                            <span class="tag">Second tag</span>
+                                            <span class="tag">Second tag</span>
+                                            <span class="tag">Second tag</span>
+                                            <span class="tag">Second tag</span>
+                                            <span class="tag">Second tag</span>
+                                            <span class="tag">Second tag</span>
+                                            <span class="tag">Second tag</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="form-group">
+                                <label className="form-label">Özet Rapor</label>
+                                <div className="alert alert-primary alert-icon">
+                                    <i className="fe fe-align-left mr-2"></i>
+                                    <p>Top Mücahit</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="col-lg-4">
+                            <div className="h2 text-body">Önizleme</div>
+                            <div className="card">
+                                <div className="card-body p-125">
+                                    <div className="row gutters-sm">
+                                        <div className="col-auto">
+                                            <div
+                                                className={`icon-placeholder icon-placeholder-md bg-${"gray"}-lightest`}>
+                                                <i className={"fa fa-sms" + " text-" + "gray"} />
+                                            </div>
+                                        </div>
+                                        <div className="col">
+                                            <span className="text-body float-right">12:30</span>
+                                            <div className="text-h3 font-weight-600">08508051234</div>
+                                            <div className="text-muted">08508051234</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="h2 text-body">Bakiye Detayları</div>
+                            <SmsUsage
+                                balance={start.settings}
+                                fees={school_fees}
+                                all_time={all_time_messages}
+                                allTimeHide
+                            />
+                        </div>
+                    </div>
+                </div>
+                <div className="card-footer d-flex justify-content-between align-items-center">
+                    <button type="button" onClick={() => this.handlePrevStep(3)} className="btn btn-secondary btn-icon">
+                        <i className="fa fa-arrow-left mr-2"></i>Geri Dön
+                    </button>
+                    <button type="button" onClick={this.handleSubmit} className="btn btn-success btn-icon">
+                        Onayla ve Gönder<i className="fa fa-check ml-2"></i>
+                    </button>
+                </div>
+            </>
         );
     };
 
@@ -607,15 +889,26 @@ export class Add extends Component {
                     select: {
                         ...prevState.select,
                         players: response.data.filter(x => x.status !== 0),
-                        initialPlayers: response.data.filter(x => x.status !== 0)
+                        initialPlayers: response.data
+                            .filter(x => x.status !== 0)
+                            .filter(y => y.recipient_parent_id !== -1)
                     }
                 }));
             }
         });
     };
 
+    checkMessageCost = content_length => {
+        if (content_length >= 736) return 6;
+        if (content_length >= 588) return 5;
+        if (content_length >= 440) return 4;
+        if (content_length >= 292) return 3;
+        if (content_length >= 151) return 2;
+        if (content_length >= 0) return 1;
+    };
+
     render() {
-        const { steps, start, school_fees, all_time_messages } = this.state;
+        const { steps } = this.state;
         return (
             <div className="container">
                 <div className="page-header">
@@ -642,14 +935,7 @@ export class Add extends Component {
                             {steps.find(x => x.active).components()}
                         </div>
                     </div>
-                    <div className="col-lg-4">
-                        <SmsUsage
-                            balance={start.settings}
-                            fees={school_fees}
-                            all_time={all_time_messages}
-                            allTimeHide
-                        />
-                    </div>
+                    <div className="col-lg-4"></div>
                 </div>
             </div>
         );

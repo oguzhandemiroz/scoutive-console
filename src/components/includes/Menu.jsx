@@ -69,7 +69,7 @@ const menu = [
     {
         li: "nav-item",
         navlink: { to: "/app/messages", exact: false, activeClassName: "active", className: "nav-link" },
-        icon: "fa fa-satellite",
+        icon: "fa fa-satellite-dish",
         text: "İletişim Merkezi",
         item: null,
         condition: true
