@@ -70,7 +70,6 @@ export class SmsTemplatesEdit extends Component {
 
     handleChange = e => {
         const { value, name } = e.target;
-        const { contentLength } = this.state;
         if (name === "content") {
             const contentCheck = value
                 .replace(/\u00c2/g, "Â|")
@@ -92,7 +91,7 @@ export class SmsTemplatesEdit extends Component {
         this.setState(prevState => ({
             detail: {
                 ...prevState.detail,
-                [name]: value
+                [name]: name === "content" ? value.slice(0, 883) : value
             },
             formErrors: {
                 ...prevState.formErrors,

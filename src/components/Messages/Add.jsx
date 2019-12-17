@@ -106,6 +106,7 @@ export class Add extends Component {
                 this.setState({ all_time_messages: response.data });
             }
         });
+        this.developLoad();
     }
 
     handleSubmit = () => {
@@ -267,7 +268,9 @@ export class Add extends Component {
             this.setState(prevState => ({
                 select: {
                     ...prevState.select,
-                    initialPlayers: _.map(select.unpaidList, x => select.players.find(y => y.uid === x.uid))
+                    initialPlayers: checked
+                        ? _.map(select.unpaidList, x => select.players.find(y => y.uid === x.uid))
+                        : select.players
                 }
             }));
         }
@@ -316,7 +319,9 @@ export class Add extends Component {
             this.setState(prevState => ({
                 select: {
                     ...prevState.select,
-                    initialPlayers: _.map(select.birthdayList, x => select.players.find(y => y.uid === x.uid))
+                    initialPlayers: checked
+                        ? _.map(select.birthdayList, x => select.players.find(y => y.uid === x.uid))
+                        : select.players
                 }
             }));
         }
@@ -392,7 +397,7 @@ export class Add extends Component {
                             <div className="form-group">
                                 <label className="form-label">Mesaj Başlığı (Gönderici Adı)</label>
                                 <div className="form-control-plaintext">
-                                    8503055215
+                                    +90 (850) 305 52 15
                                     <i
                                         className="ml-1 fa fa-info-circle text-info"
                                         data-toggle="tooltip"
@@ -468,18 +473,6 @@ export class Add extends Component {
                         {templates ? (
                             templates.length > 0 ? (
                                 templates.map((el, key) => {
-                                    const contentLength = el.content
-                                        .replace(/\u00c2/g, "Â|")
-                                        .replace(/\u00e2/g, "â|")
-                                        .replace(/\u00fb/g, "û|")
-                                        .replace(/\u0131/g, "ı|")
-                                        .replace(/\u00e7/g, "ç|")
-                                        .replace(/\u011e/g, "Ğ|")
-                                        .replace(/\u011f/g, "ğ|")
-                                        .replace(/\u0130/g, "İ|")
-                                        .replace(/\u015e/g, "Ş|")
-                                        .replace(/\u015f/g, "ş|")
-                                        .replace(/\r?\n/g, " |").length;
                                     return (
                                         <div className="col-6 col-lg-3 col-sm-6" key={key.toString()}>
                                             <div
@@ -509,10 +502,10 @@ export class Add extends Component {
 
                                                     <div className="small font-weight-600 mt-3">{el.template_name}</div>
                                                     <div className="small text-muted">
-                                                        Karakter Sayısı: {contentLength}
+                                                        Karakter Sayısı: {this.getMessageLength(el.content)}
                                                     </div>
                                                     <div className="small text-muted">
-                                                        Maliyet: {this.checkMessageCost(contentLength)}
+                                                        Maliyet: {this.checkMessageCost(el.content)}
                                                     </div>
                                                 </div>
                                             </div>
@@ -783,75 +776,18 @@ export class Add extends Component {
                         <div className="col-lg-8">
                             <div className="h2 text-body">Genel Özet</div>
                             <div className="row">
+                                <div className="col-lg-6">{this.selectedTemplate()}</div>
                                 <div className="col-lg-6">
-                                    <div className="form-group">
-                                        <label className="form-label">Seçili Şablon</label>
-                                        <div className="card">
-                                            <div className="card-body p-125">
-                                                <div
-                                                    className={`icon-placeholder icon-placeholder-sm bg-${"gray"}-lightest`}>
-                                                    <i className={"fa fa-sms" + " text-" + "gray"} />
-                                                </div>
-
-                                                <div className="font-weight-600 mt-3">{"el.template_name"}</div>
-                                                <div className="mb-2">{"el.template_name te_name te_name"}</div>
-                                                <div className="small text-muted">
-                                                    Karakter Sayısı: {"contentLength"}
-                                                </div>
-                                                <div className="small text-muted">
-                                                    Maliyet: {this.checkMessageCost("contentLength")}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="col-lg-6">
-                                    <div className="form-group">
-                                        <label className="form-label">
-                                            Gönderim Yapılacak Kişiler ({players.length} Kişi)
-                                        </label>
-                                        <div className="tags">
-                                            <span class="tag">Second tag</span>
-                                            <span class="tag">Second tag</span>
-                                            <span class="tag">Second tag</span>
-                                            <span class="tag">Second tag</span>
-                                            <span class="tag">Second tag</span>
-                                            <span class="tag">Second tag</span>
-                                            <span class="tag">Second tag</span>
-                                            <span class="tag">Second tag</span>
-                                            <span class="tag">Second tag</span>
-                                        </div>
-                                    </div>
+                                    {this.deliveryCost()}
+                                    {this.deliveryRecipient()}
                                 </div>
                             </div>
 
-                            <div className="form-group">
-                                <label className="form-label">Özet Rapor</label>
-                                <div className="alert alert-primary alert-icon">
-                                    <i className="fe fe-align-left mr-2"></i>
-                                    <p>Top Mücahit</p>
-                                </div>
-                            </div>
+                            {this.summaryReport()}
                         </div>
                         <div className="col-lg-4">
                             <div className="h2 text-body">Önizleme</div>
-                            <div className="card">
-                                <div className="card-body p-125">
-                                    <div className="row gutters-sm">
-                                        <div className="col-auto">
-                                            <div
-                                                className={`icon-placeholder icon-placeholder-md bg-${"gray"}-lightest`}>
-                                                <i className={"fa fa-sms" + " text-" + "gray"} />
-                                            </div>
-                                        </div>
-                                        <div className="col">
-                                            <span className="text-body float-right">12:30</span>
-                                            <div className="text-h3 font-weight-600">08508051234</div>
-                                            <div className="text-muted">08508051234</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            {this.previewMessage()}
                             <div className="h2 text-body">Bakiye Detayları</div>
                             <SmsUsage
                                 balance={start.settings}
@@ -871,6 +807,156 @@ export class Add extends Component {
                     </button>
                 </div>
             </>
+        );
+    };
+
+    selectedTemplate = () => {
+        const { select_template, templates } = this.state;
+        if (templates) {
+            let template = templates.find(x => x.template_id === select_template);
+            return (
+                <div className="form-group">
+                    <label className="form-label">Seçili Şablon</label>
+                    <div className="card">
+                        <div className="card-body p-125">
+                            <div className={`icon-placeholder icon-placeholder-sm bg-${template.color}-lightest`}>
+                                <i className={template.icon + " text-" + template.color} />
+                            </div>
+
+                            <div className="font-weight-600 mt-3">{template.template_name}</div>
+                            <div className="mb-2 mt-1">{template.content}</div>
+                            <div className="small text-muted">
+                                Karakter Sayısı: {this.getMessageLength(template.content)}
+                            </div>
+                            <div className="small text-muted">Maliyet: {this.checkMessageCost(template.content)}</div>
+                        </div>
+                    </div>
+                </div>
+            );
+        } else {
+            return <div className="loader m-auto" />;
+        }
+    };
+
+    deliveryCost = () => {
+        const { players, select_template, templates } = this.state;
+        return (
+            <div className="form-group">
+                <label className="form-label">Gönderim Maliyeti</label>
+                {templates
+                    ? this.checkMessageCost(templates.find(x => x.template_id === select_template).content) *
+                      players.length
+                    : "0"}
+            </div>
+        );
+    };
+
+    deliveryRecipient = () => {
+        const { players, select } = this.state;
+        if (select.players) {
+            let getPlayers = players.map(el => select.players.find(x => x.player_id === el));
+            return (
+                <div className="form-group">
+                    <label className="form-label">Gönderim Yapılacak Kişiler ({players.length} Kişi)</label>
+                    <div className="tags">
+                        {getPlayers.map(el => (
+                            <Link
+                                to={"/app/players/messages/" + el.uid}
+                                target="_blank"
+                                className="tag"
+                                key={el.player_id.toString()}>
+                                {fullnameGenerator(el.name, el.surname)}
+                            </Link>
+                        ))}
+                    </div>
+                </div>
+            );
+        } else {
+            return <div className="loader m-auto" />;
+        }
+    };
+
+    previewMessage = () => {
+        const { select_template, templates, start, when } = this.state;
+        if (templates) {
+            let template = templates.find(x => x.template_id === select_template);
+            return (
+                <div className="card">
+                    <div className="card-body p-125">
+                        <div className="row gutters-sm">
+                            <div className="col-auto">
+                                <div className={`icon-placeholder icon-placeholder-md bg-${template.color}-lightest`}>
+                                    <i className={template.icon + " text-" + template.color} />
+                                </div>
+                            </div>
+                            <div className="col">
+                                <span className="text-body float-right">{formatDate(when, "HH:mm")}</span>
+                                <div className="text-h3 font-weight-600">+90 (850) 305 52 15</div>
+                                <div className="text-muted">{start.settings.sender_name},</div>
+                                <div className="text-muted mt-4">{template.content}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        } else {
+            return <div className="loader m-auto mb-4" />;
+        }
+    };
+
+    summaryReport = () => {
+        const { when, players, select_template, school_fees, templates, start } = this.state;
+        if (templates) {
+            let template = templates.find(x => x.template_id === select_template);
+            let cost = this.checkMessageCost(templates.find(x => x.template_id === select_template).content);
+            return (
+                <div className="form-group">
+                    <label className="form-label">Özet Rapor</label>
+                    <div className="alert alert-info alert-icon">
+                        <i className="fe fe-align-left mr-2"></i>
+                        <p>
+                            <strong> {formatDate(when, "DD MMMM YYYY, HH:mm")} </strong>tarihinde
+                            <strong> {template.template_name} </strong> adlı şablon ile
+                            <strong> {players.length} </strong>kişiye mesaj (SMS) gönderimi yapılacaktır.
+                            <br />
+                            Mesajın birim maliyeti
+                            <strong> {cost} </strong>
+                            olup, bakiyenizden
+                            <strong> {cost * players.length} </strong>
+                            hak düşürülecektir.
+                        </p>
+                        {/* [Bakiyeniz eksiye (-24) düşecektir, bir sonraki gönderimi yapabilmeniz için bakiyenizi
+                        sıfırlamanız gerekir!] */}
+                    </div>
+                    <div className="alert alert-warning alert-icon">
+                        <i className="fe fe-pie-chart mr-2"></i>
+                        <p>
+                            Şu anki Ücretsiz SMS Bakiyesi: <strong>{start.settings.sms_free_balance}</strong>
+                            <br />
+                            Şu anki SMS Paketi Bakiyesi: <strong>{this.getExtraSMS(school_fees)}</strong>
+                            <br />
+                            &mdash;
+                            <br />
+                            Gönderim Sonrası Ücretsiz SMS Bakiyesi:{" "}
+                            <strong>{start.settings.sms_free_balance - cost * players.length}</strong>
+                            <br />
+                            Gönderim Sonrası SMS Paketi Bakiyesi: <strong>{this.getExtraSMS(school_fees)}</strong>
+                        </p>
+                    </div>
+                </div>
+            );
+        } else {
+            return <div className="loader m-auto" />;
+        }
+    };
+
+    getExtraSMS = fees => {
+        return _.sumBy(
+            _(fees)
+                .flatMap("package")
+                .groupBy("type")
+                .value().SMS,
+            "count"
         );
     };
 
@@ -898,13 +984,45 @@ export class Add extends Component {
         });
     };
 
-    checkMessageCost = content_length => {
-        if (content_length >= 736) return 6;
-        if (content_length >= 588) return 5;
-        if (content_length >= 440) return 4;
-        if (content_length >= 292) return 3;
-        if (content_length >= 151) return 2;
-        if (content_length >= 0) return 1;
+    checkMessageCost = content => {
+        const contentLength = content
+            .replace(/\u00c2/g, "Â|")
+            .replace(/\u00e2/g, "â|")
+            .replace(/\u00fb/g, "û|")
+            .replace(/\u0131/g, "ı|")
+            .replace(/\u00e7/g, "ç|")
+            .replace(/\u011e/g, "Ğ|")
+            .replace(/\u011f/g, "ğ|")
+            .replace(/\u0130/g, "İ|")
+            .replace(/\u015e/g, "Ş|")
+            .replace(/\u015f/g, "ş|")
+            .replace(/\r?\n/g, " |").length;
+        if (content.length >= 736) return 6;
+        if (content.length >= 588) return 5;
+        if (content.length >= 440) return 4;
+        if (content.length >= 292) return 3;
+        if (content.length >= 151) return 2;
+        if (content.length >= 0) return 1;
+    };
+
+    getMessageLength = content => {
+        return content
+            .replace(/\u00c2/g, "Â|")
+            .replace(/\u00e2/g, "â|")
+            .replace(/\u00fb/g, "û|")
+            .replace(/\u0131/g, "ı|")
+            .replace(/\u00e7/g, "ç|")
+            .replace(/\u011e/g, "Ğ|")
+            .replace(/\u011f/g, "ğ|")
+            .replace(/\u0130/g, "İ|")
+            .replace(/\u015e/g, "Ş|")
+            .replace(/\u015f/g, "ş|")
+            .replace(/\r?\n/g, " |").length;
+    };
+
+    developLoad = () => {
+        this.listMessageTemplates();
+        this.listPlayers();
     };
 
     render() {
@@ -935,7 +1053,6 @@ export class Add extends Component {
                             {steps.find(x => x.active).components()}
                         </div>
                     </div>
-                    <div className="col-lg-4"></div>
                 </div>
             </div>
         );
