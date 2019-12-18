@@ -68,7 +68,7 @@ import Income from "../components/Accountings/Income/Income";
 import Expense from "../components/Accountings/Expense/Expense";
 
 import MessagesAdd from "../components/Messages/Add";
-import MessagesAddOld from "../components/Messages/OldAdd";
+import MessagesDetail from "../components/Messages/Detail";
 
 import UnpaidPlayerList from "../components/Reports/UnpaidPlayerList";
 
@@ -474,9 +474,9 @@ var indexRoutes = [
         prop: { exact: true }
     },
     {
-        path: "/messages/old-add",
-        name: "Mesaj Gönderim Merkezi - Ekle",
-        component: MessagesAddOld,
+        path: "/messages/detail/:cid",
+        name: "Mesaj Gönderim Merkezi - Görüntüle",
+        component: MessagesDetail,
         layout: "/app",
         prop: { exact: true }
     },

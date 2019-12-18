@@ -798,13 +798,21 @@ export class Add extends Component {
                         </div>
                     </div>
                 </div>
-                <div className="card-footer d-flex justify-content-between align-items-center">
-                    <button type="button" onClick={() => this.handlePrevStep(3)} className="btn btn-secondary btn-icon">
+                <div className="card-footer">
+                    <button
+                        type="button"
+                        onClick={() => this.handlePrevStep(3)}
+                        className="btn btn-secondary btn-icon mr-auto">
                         <i className="fa fa-arrow-left mr-2"></i>Geri Dön
                     </button>
-                    <button type="button" onClick={this.handleSubmit} className="btn btn-success btn-icon">
-                        Onayla ve Gönder<i className="fa fa-check ml-2"></i>
-                    </button>
+                    <div className="float-right">
+                        <button type="button" onClick={this.handleSubmit} className="btn btn-info btn-icon mr-2">
+                            Test Mesajı Gönder<i className="fa fa-flask ml-2"></i>
+                        </button>
+                        <button type="button" onClick={this.handleSubmit} className="btn btn-success btn-icon">
+                            Onayla ve Gönder<i className="fa fa-check ml-2"></i>
+                        </button>
+                    </div>
                 </div>
             </>
         );
@@ -881,19 +889,14 @@ export class Add extends Component {
         if (templates) {
             let template = templates.find(x => x.template_id === select_template);
             return (
-                <div className="card">
-                    <div className="card-body p-125">
+                <div className="card bg-indigo-lighter">
+                    <div className="card-body text-indigo p-125">
                         <div className="row gutters-sm">
-                            <div className="col-auto">
-                                <div className={`icon-placeholder icon-placeholder-md bg-${template.color}-lightest`}>
-                                    <i className={template.icon + " text-" + template.color} />
-                                </div>
-                            </div>
                             <div className="col">
-                                <span className="text-body float-right">{formatDate(when, "HH:mm")}</span>
+                                <span className="float-right">{formatDate(when, "HH:mm")}</span>
                                 <div className="text-h3 font-weight-600">+90 (850) 305 52 15</div>
-                                <div className="text-muted">{start.settings.sender_name},</div>
-                                <div className="text-muted mt-4">{template.content}</div>
+                                <div>{start.settings.sender_name},</div>
+                                <div className="mt-3">{template.content}</div>
                             </div>
                         </div>
                     </div>
@@ -1021,8 +1024,8 @@ export class Add extends Component {
     };
 
     developLoad = () => {
-        this.listMessageTemplates();
-        this.listPlayers();
+        /* this.listMessageTemplates();
+        this.listPlayers(); */
     };
 
     render() {

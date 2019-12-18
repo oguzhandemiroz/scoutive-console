@@ -178,7 +178,6 @@ export class List extends Component {
                     },
                     {
                         targets: "action",
-                        className: "text-center",
                         responsivePriority: 5,
                         createdCell: (td, cellData, rowData) => {
                             const { campaign_id, status, title } = rowData;
@@ -187,18 +186,8 @@ export class List extends Component {
                                     <Link
                                         to={"/app/messages/detail/" + campaign_id}
                                         className="btn btn-icon btn-sm btn-secondary mx-1"
-                                        data-toggle="tooltip"
-                                        onClick={() => this.props.history.push(`/app/messages/detail/${campaign_id}`)}
-                                        title="Mesajı Görüntüle">
-                                        <i className="fe fe-eye" />
-                                    </Link>
-                                    <Link
-                                        to={"/app/messages/detail/" + campaign_id}
-                                        className="btn btn-icon btn-sm btn-secondary mx-1"
-                                        data-toggle="tooltip"
-                                        onClick={() => this.props.history.push(`/app/messages/detail/${campaign_id}`)}
-                                        title="Mesajı Tekrarla">
-                                        <i className="fe fe-refresh-ccw" />
+                                        onClick={() => this.props.history.push(`/app/messages/detail/${campaign_id}`)}>
+                                        Görüntüle
                                     </Link>
                                     {status === 1 ? (
                                         <button
@@ -315,7 +304,7 @@ export class List extends Component {
                             <th className="person_count">KİŞİ SAYISI</th>
                             <th className="when">GÖNDERİM TARİHİ</th>
                             <th className="status">DURUM</th>
-                            <th className="no-sort action w-1 text-center">İşlem</th>
+                            <th className="no-sort action w-1">İşlem</th>
                         </tr>
                     </thead>
                 </table>

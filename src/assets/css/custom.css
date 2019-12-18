@@ -1344,3 +1344,51 @@ a.step-item:hover {
 .steps-counter .step-item.active ~ .step-item::before {
     background: #fff;
 }
+/** Horizontal rules */
+/** Hr text */
+.hr-text {
+    display: flex;
+    align-items: center;
+    margin: 1rem 0;
+    font-size: 0.7333333em;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #8a91a5;
+}
+.hr-text::after,
+.hr-text::before {
+    flex: 1 1 auto;
+    height: 1px;
+    background-color: currentColor;
+    opacity: 0.1;
+}
+.hr-text::before {
+    margin-right: 0.5rem;
+}
+.hr-text::after {
+    content: "";
+    margin-left: 0.5rem;
+}
+.hr-text > *:first-child {
+    padding-right: 0.5rem;
+    padding-left: 0;
+    color: #8a91a5;
+}
+.hr-text.hr-text-center::before {
+    content: "";
+}
+.hr-text.hr-text-center > *:first-child {
+    padding-right: 0.5rem;
+    padding-left: 0.5rem;
+}
+.hr-text.hr-text-right::before {
+    content: "";
+}
+.hr-text.hr-text-right::after {
+    content: none;
+}
+.hr-text.hr-text-right > *:first-child {
+    padding-right: 0;
+    padding-left: 0.5rem;
+}

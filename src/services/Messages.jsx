@@ -179,6 +179,25 @@ const CancelCampaign = data => {
     } catch (e) {}
 };
 
+const DetailCampaign = data => {
+    try {
+        return fetch(ep.CAMPAIGN_DETAIL, {
+            method: "POST",
+            body: JSON.stringify(data),
+            headers: h
+        })
+            .then(res => res.json())
+            .then(response => {
+                if (response) {
+                    const status = response.status;
+                    if (status.code !== 1020) errorSwal(status);
+                    return response;
+                }
+            })
+            .catch(e => fatalSwal(true));
+    } catch (e) {}
+};
+
 export {
     CreateRecipient,
     ListMessageTemplates,
@@ -186,5 +205,6 @@ export {
     UpdateMessageTemplate,
     ActivateMessageTemplate,
     CreateCampaign,
-    CancelCampaign
+    CancelCampaign,
+    DetailCampaign
 };
