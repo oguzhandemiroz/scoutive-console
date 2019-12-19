@@ -112,7 +112,6 @@ export class List extends Component {
                         }
                     },
                     dataSrc: function(d) {
-                        console.log(d);
                         $.fn.dataTable.ext.search = [];
                         if (d.status.code !== 1020) {
                             errorSwal(d.status);

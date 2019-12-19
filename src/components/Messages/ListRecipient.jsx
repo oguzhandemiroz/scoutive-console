@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import ReactDOM from "react-dom";
 import { BrowserRouter, Link, withRouter } from "react-router-dom";
 import { datatable_turkish } from "../../assets/js/core";
-import { formatDate, fullnameGenerator, nullCheck } from "../../services/Others.jsx";
+import { formatDate, fullnameGenerator, nullCheck, avatarPlaceholder } from "../../services/Others.jsx";
 import "../../assets/css/datatables.responsive.css";
 const $ = require("jquery");
 $.DataTable = require("datatables.net-responsive");
@@ -53,6 +53,13 @@ export class ListRecipient extends Component {
             .find("table")
             .DataTable()
             .destroy(true);
+    }
+
+    componentDidUpdate() {
+        $('[data-toggle="popover"]').popover({
+            html: true,
+            trigger: "hover"
+        });
     }
 
     renderList = data => {
@@ -146,10 +153,9 @@ export class ListRecipient extends Component {
                         data: "image",
                         class: "text-center",
                         render: function(data, type, row) {
-                            console.log(data);
                             const { name, surname } = row;
                             return `<div class="avatar text-uppercase" style="background-image: url(${data || ""})">
-                                    ${data ? "" : name.slice(0, 1) + surname.slice(0, 1)}
+                                    ${avatarPlaceholder(name, surname)}
                                 </div>`;
                         }
                     },
@@ -176,7 +182,17 @@ export class ListRecipient extends Component {
                     {
                         data: "message.status",
                         render: function(data, type, row) {
-                            return nullCheck(data);
+                            if (Object.keys(row.message).length > 0) {
+                                const badgeColor =
+                                    data.code === "0" ? "warning" : data.code === "1" ? "success" : "danger";
+                                const messageText =
+                                    data.code === "0" ? "kuyrukta" : data.code === "1" ? "iletildi" : "iletilemedi";
+                                return `<span class="badge badge-${badgeColor}" data-toggle="popover" data-content="
+                                    <p><strong>Durum Açıklaması:</strong></p><span class='text-${badgeColor}'>${data.description}</span>
+                                ">${messageText}</span>`;
+                            } else {
+                                return `<span class="badge badge-info" data-toggle="popover" data-content="<span class='text-info'>İşleniyor</span>">işleniyor...</span>`;
+                            }
                         }
                     }
                 ]
@@ -186,12 +202,8 @@ export class ListRecipient extends Component {
             table.on("error.dt", function(e, settings, techNote, message) {
                 console.log("An error has been reported by DataTables: ", message, techNote);
             });
-
-            table.on("draw.dt", function() {
-                $('[data-toggle="tooltip"]').tooltip();
-            });
         } catch (e) {
-            console.log("e", e);
+            console.log("Table [ERROR] ", e);
         }
     };
 

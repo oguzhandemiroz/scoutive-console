@@ -24,7 +24,7 @@ export class AccountingChart extends Component {
                     animations: {
                         enabled: true
                     },
-                    height: 320
+                    height: 280
                 },
                 stroke: {
                     width: 2
@@ -176,7 +176,7 @@ export class AccountingChart extends Component {
                         <h3 className="card-title">Bu Haftanın Gelir/Gider Grafiği</h3>
                     </div>
                     <div className="card-body p-0">
-                        <Chart options={chartOptions} series={chartOptions.series} type="area" height="320" />
+                        <Chart options={chartOptions} series={chartOptions.series} type="area" height="280" />
                     </div>
                 </div>
             </div>

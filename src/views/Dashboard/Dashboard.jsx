@@ -12,35 +12,35 @@ import Accounting from "../../components/Dashboard/Accounting";
 import AccountingChart from "../../components/Dashboard/AccountingChart";
 
 class Dashboard extends Component {
-	render() {
-		return (
-			<div className="container">
-				<div className="page-header">
-					<h1 className="page-title">Genel Durum</h1>
-				</div>
-				<PlayerRollcall />
-				<div className="row row-cards">
-					<DailyPlayer />
-					<Accounting />
-				</div>
-				<div className="row row-cards">
-					<AccountingChart />
-				</div>
-				<div className="row row-cards">
-					<div className="col-sm-12 col-lg-4 order-1">
-						<UnpaidPlayers />
-					</div>
-					<div className="col-sm-12 col-lg-4 order-1">
-						<Birthdays />
-					</div>
-					<div className="col-sm-12 col-lg-4 order-1">
-						<TrainingGroups />
-						<FastMenu />
-					</div>
-				</div>
-			</div>
-		);
-	}
+    render() {
+        return (
+            <div className="container">
+                <div className="page-header">
+                    <h1 className="page-title">Genel Durum</h1>
+                </div>
+                <PlayerRollcall />
+                <div className="row row-cards">
+                    <DailyPlayer />
+                    <Accounting />
+                </div>
+                <div className="row row-cards">
+                    <AccountingChart />
+                </div>
+                <div className="row row-cards">
+                    <div className="col-sm-12 col-lg-4 order-1">
+                        <UnpaidPlayers />
+                    </div>
+                    <div className="col-sm-12 col-lg-4 order-1">
+                        <Birthdays />
+                    </div>
+                    <div className="col-sm-12 col-lg-4 order-1">
+                        <TrainingGroups />
+                        {/* <FastMenu /> */}
+                    </div>
+                </div>
+            </div>
+        );
+    }
 }
 
 export default Dashboard;
