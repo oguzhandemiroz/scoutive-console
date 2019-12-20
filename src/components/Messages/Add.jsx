@@ -1,16 +1,17 @@
 import React, { Component } from "react";
 import { Link, withRouter } from "react-router-dom";
+import Select, { components } from "react-select";
 import SmsUsage from "../Pages/Settings/UsageDetail/SmsUsage";
 import { GetSettings, GetSchoolFees } from "../../services/School";
 import { MessagesAllTime, UnpaidPlayers, ListBirthdays } from "../../services/Report";
 import DatePicker, { registerLocale } from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import tr from "date-fns/locale/tr";
-import { formValid } from "../../assets/js/core";
-import sms_activate from "../../assets/images/illustrations/sms_activate.svg";
-import { ListMessageTemplates, CreateCampaign } from "../../services/Messages";
+import { formValid, selectCustomStyles, selectCustomStylesError } from "../../assets/js/core";
+import { ListMessageTemplates, CreateCampaign, SendTestMessages } from "../../services/Messages";
+import { ListEmployees } from "../../services/Employee";
 import { ListPlayers } from "../../services/Player";
-import { formatDate, fullnameGenerator, avatarPlaceholder } from "../../services/Others";
+import { formatDate, fullnameGenerator, avatarPlaceholder, formatPhone } from "../../services/Others";
 import _ from "lodash";
 const $ = require("jquery");
 
@@ -23,6 +24,17 @@ const dailyType = {
     "2": ["T. Gün İzinli", "warning"],
     "3": ["Y. Gün İzinli", "warning"]
 };
+
+const { Option } = components;
+const ImageOptionEmployee = props => (
+    <Option {...props}>
+        <span className="avatar avatar-sm mr-2" style={{ backgroundImage: `url(${props.data.image})` }} />
+        {props.data.label}
+        <div className="small text-muted mt-1">
+            Telefon: <b className="text-dark font-weight-600">{formatPhone(props.data.phone)}</b>
+        </div>
+    </Option>
+);
 
 export class Add extends Component {
     constructor(props) {
@@ -66,19 +78,26 @@ export class Add extends Component {
             templates: null,
             select_template: null,
             loadingButton: "",
+            loadingTestButton: "",
+            employee: null,
             select: {
                 players: null,
                 initialPlayers: null,
-                unpaidList: null
+                unpaidList: null,
+                employees: null
             },
             formErrors: {
                 when: "",
-                title: ""
+                title: "",
+                employee: ""
             },
             start: {
                 settings: {
                     sms_free_balance: 500,
                     sms_extra_balance: 0
+                },
+                employee: {
+                    detail: {}
                 }
             },
             school_fees: [],
@@ -86,7 +105,8 @@ export class Add extends Component {
                 2: 0,
                 1: 0
             },
-            undefined_contact_toggle: true
+            undefined_contact_toggle: true,
+            selectSender: 0
         };
     }
 
@@ -125,6 +145,38 @@ export class Add extends Component {
         });
     };
 
+    handleSendTestMessage = () => {
+        const { uid, employee, selectSender, select_template } = this.state;
+        if (selectSender === 0) {
+            this.setState({ loadingTestButton: "btn-loading" });
+            SendTestMessages({
+                uid: uid,
+                to: uid,
+                template_id: select_template
+            }).then(response => {
+                this.setState({ loadingTestButton: "" });
+                $("#sendTestMessageModal").modal("hide");
+            });
+        } else if (selectSender === 1 && employee) {
+            this.setState({ loadingTestButton: "btn-loading" });
+            SendTestMessages({
+                uid: uid,
+                to: employee.value,
+                template_id: select_template
+            }).then(response => {
+                this.setState({ loadingTestButton: "" });
+                $("#sendTestMessageModal").modal("hide");
+            });
+        } else {
+            this.setState(prevState => ({
+                formErrors: {
+                    ...prevState.formErrors,
+                    employee: employee ? false : true
+                }
+            }));
+        }
+    };
+
     handleChange = e => {
         try {
             e.preventDefault();
@@ -147,6 +199,36 @@ export class Add extends Component {
             },
             [name]: value
         }));
+    };
+
+    handleRadio = e => {
+        const { name, value } = e.target;
+        const { select, uid } = this.state;
+        if (name === "selectSender" && parseInt(value) === 1) {
+            if (!select.employees) {
+                ListEmployees(uid).then(response => {
+                    if (response) {
+                        this.setState(prevState => ({
+                            select: {
+                                ...prevState.select,
+                                employees: response.data.map(el => {
+                                    return {
+                                        value: el.uid,
+                                        label: fullnameGenerator(el.name, el.surname),
+                                        image: el.image,
+                                        phone: el.phone,
+                                        email: el.email
+                                    };
+                                })
+                            }
+                        }));
+                    }
+                });
+            }
+        } else if (name === "selectSender" && parseInt(value) === 0) {
+            this.setState({ employee: null });
+        }
+        this.setState({ [name]: parseInt(value) });
     };
 
     handleDate = (date, name) => {
@@ -768,7 +850,7 @@ export class Add extends Component {
     };
 
     sendPreviewStep = () => {
-        const { start, school_fees, all_time_messages, players } = this.state;
+        const { start, school_fees, all_time_messages } = this.state;
         return (
             <>
                 <div className="card-body">
@@ -798,6 +880,7 @@ export class Add extends Component {
                         </div>
                     </div>
                 </div>
+                {this.sendTestMessageModal()}
                 <div className="card-footer">
                     <button
                         type="button"
@@ -806,7 +889,12 @@ export class Add extends Component {
                         <i className="fa fa-arrow-left mr-2"></i>Geri Dön
                     </button>
                     <div className="float-right">
-                        <button type="button" onClick={this.handleSubmit} className="btn btn-info btn-icon mr-2">
+                        <button
+                            onClick={this.openTestModal}
+                            type="button"
+                            data-toggle="modal"
+                            data-target="#sendTestMessageModal"
+                            className="btn btn-info btn-icon mr-2">
                             Test Mesajı Gönder<i className="fa fa-flask ml-2"></i>
                         </button>
                         <button type="button" onClick={this.handleSubmit} className="btn btn-success btn-icon">
@@ -884,12 +972,12 @@ export class Add extends Component {
         }
     };
 
-    previewMessage = () => {
+    previewMessage = margin => {
         const { select_template, templates, start, when } = this.state;
         if (templates) {
             let template = templates.find(x => x.template_id === select_template);
             return (
-                <div className="card bg-indigo-lighter">
+                <div className={"card bg-indigo-lighter " + (margin ? "mb-0" : "")}>
                     <div className="card-body text-indigo p-125">
                         <div className="row gutters-sm">
                             <div className="col">
@@ -903,7 +991,7 @@ export class Add extends Component {
                 </div>
             );
         } else {
-            return <div className="loader m-auto mb-4" />;
+            return <div className="loader mb-4 mx-auto" />;
         }
     };
 
@@ -960,6 +1048,113 @@ export class Add extends Component {
                 .groupBy("type")
                 .value().SMS,
             "count"
+        );
+    };
+
+    sendTestMessageModal = () => {
+        const { select, selectSender, start, employee, formErrors, loadingTestButton } = this.state;
+        return (
+            <div
+                className="modal fade"
+                id="sendTestMessageModal"
+                tabIndex="-1"
+                role="dialog"
+                aria-labelledby="sendTestMessageModalLabel"
+                aria-hidden="true">
+                <div className="modal-dialog" role="document">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h5 className="modal-title" id="sendTestMessageModalLabel">
+                                <i className="fa fa-flask mr-1 text-info"></i> Test Mesajı Gönderimi
+                            </h5>
+                            <button type="button" className="close" data-dismiss="modal" aria-label="Close" />
+                        </div>
+                        <div className="modal-body">
+                            <div className="form-group">
+                                <label className="form-label">Kime Gönderilecek?</label>
+                                <div className="selectgroup w-100">
+                                    <label className="selectgroup-item">
+                                        <input
+                                            type="radio"
+                                            name="selectSender"
+                                            value="0"
+                                            className="selectgroup-input"
+                                            checked={selectSender === 0}
+                                            onChange={this.handleRadio}
+                                        />
+                                        <span className="selectgroup-button">Hesap Sahibine</span>
+                                    </label>
+                                    <label className="selectgroup-item">
+                                        <input
+                                            type="radio"
+                                            name="selectSender"
+                                            value="1"
+                                            className="selectgroup-input"
+                                            checked={selectSender === 1}
+                                            onChange={this.handleRadio}
+                                        />
+                                        <span className="selectgroup-button">Personele</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div className="form-group">
+                                <label className="form-label">
+                                    Gönderilecek Kişi
+                                    {selectSender === 1 ? <span className="form-required">*</span> : null}
+                                </label>
+                                {selectSender === 0 ? (
+                                    <fieldset className="form-fieldset">
+                                        <div className="font-weight-600">
+                                            {`${start.employee.detail.name} — ${formatPhone(
+                                                start.employee.detail.phone,
+                                                ""
+                                            )}`}
+                                        </div>
+                                    </fieldset>
+                                ) : (
+                                    <>
+                                        <Select
+                                            value={employee}
+                                            isSearchable={true}
+                                            isDisabled={select.employees ? false : true}
+                                            isLoading={select.employees ? false : true}
+                                            placeholder="Seç..."
+                                            onChange={val => this.handleSelect(val, "employee")}
+                                            name="employee"
+                                            autosize
+                                            styles={
+                                                formErrors.employee === true
+                                                    ? selectCustomStylesError
+                                                    : selectCustomStyles
+                                            }
+                                            options={select.employees}
+                                            noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
+                                            //components={{ Option: ImageOptionEmployee }}
+                                        />
+                                        <fieldset className="form-fieldset mt-2">
+                                            <div className="font-weight-600">
+                                                {employee
+                                                    ? `${employee.label} — ${formatPhone(employee.phone, "")}`
+                                                    : ""}
+                                            </div>
+                                        </fieldset>
+                                    </>
+                                )}
+                            </div>
+                            <div className="hr-text hr-text-center">Mesajın İçeriği</div>
+                            {this.previewMessage(true)}
+                        </div>
+                        <div className="modal-footer">
+                            <button
+                                type="button"
+                                onClick={this.handleSendTestMessage}
+                                className={`btn btn-info ${loadingTestButton}`}>
+                                Test Mesajı Gönder
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         );
     };
 
@@ -1024,7 +1219,7 @@ export class Add extends Component {
     };
 
     developLoad = () => {
-        /* this.listMessageTemplates();
+        /*  this.listMessageTemplates();
         this.listPlayers(); */
     };
 
