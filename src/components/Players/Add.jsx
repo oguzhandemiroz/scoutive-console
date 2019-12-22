@@ -71,7 +71,7 @@ export class Add extends Component {
             branch: null,
             groups: [],
             fee: null,
-            is_cash: true,
+            is_cash: false,
             downpayment: null,
             downpayment_date: new Date(),
             installment: 1,
@@ -104,12 +104,16 @@ export class Add extends Component {
                 point: ""
             },
             show: {},
-            payment_type: false,
+            payment_type: 2,
             loadingButton: "",
             loadingImage: "",
             addContinuously: true,
             parentError: false,
-            paymentError: false
+            paymentError: false,
+            installment_list: [{
+                id: "installment",
+                amount: 0
+            }]
         };
     }
 
@@ -454,6 +458,27 @@ export class Add extends Component {
         }));
     };
 
+    handleInstallment = () => {
+        const { installment, downpayment, fee, formErrors } = this.state;
+        const intInstallment = parseInt(installment);
+        const installmentAmount = (clearMoney(fee || 0) - clearMoney(downpayment || 0)) / intInstallment;
+        console.log(parseInt(installmentAmount));
+        const installmentArr = _.range(0, intInstallment);
+
+        let installment_list = installmentArr.map(el => {
+            return {
+                id: "installment",
+                amount: installmentAmount
+            };
+        });
+
+        this.setState({ installment_list: installment_list });
+    };
+
+    handleInstallmentAmount = e => {
+        const { name, value } = this.state;
+    };
+
     renderFeeWarning = type => {
         switch (type) {
             case 2:
@@ -604,7 +629,8 @@ export class Add extends Component {
             downpayment_date,
             installment,
             installment_date,
-            payment_date
+            payment_date,
+            installment_list
         } = this.state;
         return (
             <div className="container">
@@ -709,6 +735,45 @@ export class Add extends Component {
                                         showMonthDropdown
                                         showYearDropdown
                                         dropdownMode="select"
+                                    />
+                                </div>
+
+                                <div className="form-group">
+                                    <label className="form-label">
+                                        Okula Başlama Tarihi
+                                        <span className="form-required">*</span>
+                                    </label>
+                                    <DatePicker
+                                        autoComplete="off"
+                                        selected={start_date}
+                                        selectsEnd
+                                        startDate={start_date}
+                                        name="start_date"
+                                        locale="tr"
+                                        dateFormat="dd/MM/yyyy"
+                                        onChange={date => this.handleDate(date, "start_date")}
+                                        className={`form-control ${formErrors.start_date}`}
+                                    />
+                                </div>
+
+                                <div className="form-group">
+                                    <label className="form-label">
+                                        Branşı
+                                        <span className="form-required">*</span>
+                                    </label>
+                                    <Select
+                                        value={branch}
+                                        onChange={val => this.handleSelect(val, "branch")}
+                                        options={select.branchs}
+                                        name="branch"
+                                        placeholder="Seç..."
+                                        styles={
+                                            formErrors.branch === true ? selectCustomStylesError : selectCustomStyles
+                                        }
+                                        isSearchable={true}
+                                        isDisabled={select.branchs ? false : true}
+                                        isLoading={select.branchs ? false : true}
+                                        noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
                                     />
                                 </div>
 
@@ -904,6 +969,30 @@ export class Add extends Component {
                                                 </div>
                                             </div>
                                         </div>
+
+                                        <div className="hr-text mt-1">Taksit Tutarları</div>
+                                        <div className="row gutters-xs">
+                                            {installment_list.map((el, key) => (
+                                                <div className="col-lg-6 col-md-12" key={el.id + key}>
+                                                    <div className="form-group">
+                                                        <label className="form-label">{key + 1}. Taksit</label>
+                                                        <input
+                                                            type="text"
+                                                            className={`form-control ${formErrors.installment}`}
+                                                            placeholder={key + 1 + ". Taksit"}
+                                                            name={el.id + key}
+                                                            value={el.amount.toFixed(2)}
+                                                        />
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                        {installment_list.find(x => x.amount <= 0) ? (
+                                            <div className="ml-2 text-center text-red font-italic">
+                                                <i className="fe fe-alert-circle mr-1" />
+                                                Hatalı Taksit Tutarı
+                                            </div>
+                                        ) : null}
                                     </div>
                                     {fee ? (
                                         <div className="alert alert-icon alert-success" role="alert">
@@ -944,45 +1033,6 @@ export class Add extends Component {
                                 </fieldset>
 
                                 {this.renderFeeWarning(payment_type)}
-
-                                <div className="form-group">
-                                    <label className="form-label">
-                                        Okula Başlama Tarihi
-                                        <span className="form-required">*</span>
-                                    </label>
-                                    <DatePicker
-                                        autoComplete="off"
-                                        selected={start_date}
-                                        selectsEnd
-                                        startDate={start_date}
-                                        name="start_date"
-                                        locale="tr"
-                                        dateFormat="dd/MM/yyyy"
-                                        onChange={date => this.handleDate(date, "start_date")}
-                                        className={`form-control ${formErrors.start_date}`}
-                                    />
-                                </div>
-
-                                <div className="form-group">
-                                    <label className="form-label">
-                                        Branşı
-                                        <span className="form-required">*</span>
-                                    </label>
-                                    <Select
-                                        value={branch}
-                                        onChange={val => this.handleSelect(val, "branch")}
-                                        options={select.branchs}
-                                        name="branch"
-                                        placeholder="Seç..."
-                                        styles={
-                                            formErrors.branch === true ? selectCustomStylesError : selectCustomStyles
-                                        }
-                                        isSearchable={true}
-                                        isDisabled={select.branchs ? false : true}
-                                        isLoading={select.branchs ? false : true}
-                                        noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
-                                    />
-                                </div>
 
                                 <div className="form-group">
                                     <label className="form-label">Kayıt Durumu</label>
@@ -1162,7 +1212,6 @@ export class Add extends Component {
                                                 placeholder="Adres"
                                             />
                                         </div>
-
                                         <label className="form-label">
                                             Veli Bilgileri
                                             <span className="form-required">*</span>

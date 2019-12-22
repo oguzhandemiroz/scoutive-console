@@ -27,10 +27,10 @@ export class Messages extends Component {
                     <div className="page-header">
                         <h1 className="page-title">İletişim Merkezi</h1>
                         <div className="input-group ml-auto w-auto">
-                            <div className="input-group-append">
-                                <Link to="/app/messages/add" className="btn btn-icon btn-sm btn-success">
-                                    Yeni Mesaj Oluştur
-                                </Link>
+                            <Link to="/app/messages/add" className="btn btn-icon btn-sm btn-success">
+                                Yeni Mesaj Oluştur
+                            </Link>
+                            {/* <div className="input-group-append">
                                 <button
                                     data-toggle="dropdown"
                                     type="button"
@@ -40,7 +40,7 @@ export class Messages extends Component {
                                         <i className="dropdown-icon fa fa-clipboard-check"></i> Hızlı Test Gönderimi
                                     </Link>
                                 </div>
-                            </div>
+                            </div> */}
                         </div>
                     </div>
                     <div className="row row-cards">
