@@ -110,10 +110,7 @@ export class Add extends Component {
             addContinuously: true,
             parentError: false,
             paymentError: false,
-            installment_list: [{
-                id: "installment",
-                amount: 0
-            }]
+            installment_amounts: null
         };
     }
 
@@ -179,7 +176,8 @@ export class Add extends Component {
             downpayment,
             downpayment_date,
             installment,
-            installment_date
+            installment_date,
+            installment_amounts
         } = this.state;
 
         let require = { ...this.state };
@@ -191,6 +189,7 @@ export class Add extends Component {
         }
 
         delete require.show;
+        delete require.installment_amounts;
         delete require.position;
         delete require.downpayment;
         delete require.loadingButton;
@@ -202,6 +201,7 @@ export class Add extends Component {
             downpayment: is_cash ? clearMoney(fee) : clearMoney(downpayment || "0,00"), //aylık seçildiğinde sil
             downpayment_date: formatDate(downpayment_date, "YYYY-MM-DD"), //aylık seçildiğinde sil
             installment: parseInt(installment), //aylık seçildiğinde sil
+            installment_amounts: installment_amounts,
             installment_date: formatDate(installment_date, "YYYY-MM-DD"), //aylık seçildiğinde sil
             is_cash: is_cash //aylık seçildiğinde sil
         };
@@ -209,6 +209,7 @@ export class Add extends Component {
         if (payment_type === 0) {
             delete feeJSON.downpayment;
             delete feeJSON.installment;
+            delete feeJSON.installment_amounts;
             delete feeJSON.downpayment_date;
             delete feeJSON.installment_date;
             delete feeJSON.is_cash;
@@ -218,8 +219,11 @@ export class Add extends Component {
             delete feeJSON.payment_date;
         }
 
+        const sumInstallmentAmount = _.sumBy(installment_amounts);
+
         this.setState({ parentError: false, paymentError: false });
-        if (parents.length > 0 && formValid(require)) {
+
+        if (sumInstallmentAmount === clearMoney(fee) && parents.length > 0 && formValid(require)) {
             this.setState({ loadingButton: "btn-loading" });
             CreatePlayer({
                 uid: uid,
@@ -329,12 +333,15 @@ export class Add extends Component {
                 break;
             case "fee":
                 formErrors.fee = value ? "" : "is-invalid";
+                this.setState({ installment_amounts: null });
                 break;
             case "downpayment":
                 formErrors.downpayment = value && clearMoney(value) <= clearMoney(fee) ? "" : "is-invalid";
+                this.setState({ installment_amounts: null });
                 break;
             case "installment":
                 formErrors.installment = value ? "" : "is-invalid";
+                this.setState({ installment_amounts: null });
                 break;
             case "installment_date":
                 formErrors.installment_date = value ? "" : "is-invalid";
@@ -459,24 +466,103 @@ export class Add extends Component {
     };
 
     handleInstallment = () => {
-        const { installment, downpayment, fee, formErrors } = this.state;
+        const { installment, downpayment, fee } = this.state;
         const intInstallment = parseInt(installment);
         const installmentAmount = (clearMoney(fee || 0) - clearMoney(downpayment || 0)) / intInstallment;
-        console.log(parseInt(installmentAmount));
+        console.log(installmentAmount);
         const installmentArr = _.range(0, intInstallment);
 
-        let installment_list = installmentArr.map(el => {
-            return {
-                id: "installment",
-                amount: installmentAmount
-            };
-        });
+        let installment_amounts = installmentArr.map(el => parseFloat(installmentAmount.toFixed(2)));
 
-        this.setState({ installment_list: installment_list });
+        this.setState({ installment_amounts: installment_amounts });
     };
 
-    handleInstallmentAmount = e => {
-        const { name, value } = this.state;
+    handleInstallmentAmount = (e, idx) => {
+        const { name, value } = e.target;
+        console.log(value);
+        let installment_amounts = [...this.state.installment_amounts];
+        installment_amounts[idx] = clearMoney(value || 0);
+        this.setState({ installment_amounts: installment_amounts });
+    };
+
+    installmentError = () => {
+        const { installment_amounts, fee, downpayment } = this.state;
+        const sumInstallmentAmount = _.sumBy(installment_amounts);
+        const clearFee = (clearMoney(fee) || 0) - clearMoney(downpayment);
+
+        if (clearMoney(fee) > 0 && installment_amounts && Math.round(sumInstallmentAmount) !== clearFee) {
+            return (
+                <div className="ml-2 mb-3 text-center text-red font-italic">
+                    <i className="fe fe-alert-circle mr-1" />
+                    Hatalı Taksit Tutarı
+                </div>
+            );
+        }
+        return null;
+    };
+
+    installmentWarning = () => {
+        const { installment_amounts, fee, downpayment } = this.state;
+        const sumInstallmentAmount = _.sumBy(installment_amounts);
+        const clearFee = (clearMoney(fee) || 0) - clearMoney(downpayment);
+        console.log(sumInstallmentAmount, clearFee);
+
+        return (
+            <div
+                className={`alert alert-${sumInstallmentAmount > clearFee ? "danger" : "warning"} w-100 alert-icon`}
+                id="installment-warning">
+                <i className="fa fa-layer-group mr-2" aria-hidden="true"></i>
+                <p>
+                    <strong>{formatMoney(clearFee)}</strong> ödeme tutarının,
+                    <br />
+                    <strong> {formatMoney(sumInstallmentAmount)}</strong>'sini taksitlendirdiniz.
+                </p>
+                {sumInstallmentAmount === clearFee ? (
+                    "Tebrikler! Taksitlendirme tamamlandı."
+                ) : sumInstallmentAmount > clearFee ? (
+                    "Hatalı taksit dağılımı!"
+                ) : (
+                    <span>
+                        Geriye kalan <strong>{formatMoney(clearFee - sumInstallmentAmount)}</strong>'yi dağıtmanız
+                        gerekmektedir.
+                    </span>
+                )}
+            </div>
+        );
+    };
+
+    renderFeeInfo = () => {
+        const { fee, installment, downpayment, installment_date, is_cash } = this.state;
+        if (fee)
+            return (
+                <div className="alert alert-icon alert-success" role="alert">
+                    <i className="fa fa-align-left mr-2" aria-hidden="true"></i>
+                    <p>
+                        <b>Ödeme Özeti</b>
+                    </p>
+                    <p>
+                        <b>{formatMoney(parseFloat(fee))}</b> ödeme tutarının,
+                        <br />
+                        <b>{is_cash ? formatMoney(parseFloat(fee)) : formatMoney(parseFloat(downpayment || 0))}</b>
+                        'si peşin olarak ödendi.
+                    </p>
+                    {is_cash ? null : (
+                        <>
+                            Geriye kalan&nbsp;
+                            <b>{formatMoney(parseFloat(fee) - parseFloat(downpayment || 0))}</b>
+                            ,<br />
+                            <b>{formatDate(installment_date)}</b> tarihinden itibaren&nbsp;
+                            <b>{installment}</b>
+                            &nbsp;taksit olarak ayda
+                            <br />
+                            <b>
+                                {formatMoney((parseFloat(fee) - parseFloat(downpayment || 0)) / parseInt(installment))}
+                            </b>
+                            &nbsp; ödenecektir.
+                        </>
+                    )}
+                </div>
+            );
     };
 
     renderFeeWarning = type => {
@@ -630,7 +716,7 @@ export class Add extends Component {
             installment,
             installment_date,
             payment_date,
-            installment_list
+            installment_amounts
         } = this.state;
         return (
             <div className="container">
@@ -833,7 +919,7 @@ export class Add extends Component {
                                     </div>
                                 </div>
 
-                                <fieldset className={`form-fieldset ${payment_type === 0 ? "d-block" : "d-none"}`}>
+                                <fieldset className={`form-fieldset pb-0 ${payment_type === 0 ? "d-block" : "d-none"}`}>
                                     <div className="form-group">
                                         <label className="form-label">
                                             Aidat<span className="form-required">*</span>
@@ -857,7 +943,7 @@ export class Add extends Component {
                                     </div>
                                 </fieldset>
 
-                                <fieldset className={`form-fieldset ${payment_type === 2 ? "d-block" : "d-none"}`}>
+                                <fieldset className={`form-fieldset pb-0 ${payment_type === 2 ? "d-block" : "d-none"}`}>
                                     <div className="form-group">
                                         <label className="form-label">
                                             Ödeme Tutarı<span className="form-required">*</span>
@@ -972,66 +1058,45 @@ export class Add extends Component {
 
                                         <div className="hr-text mt-1">Taksit Tutarları</div>
                                         <div className="row gutters-xs">
-                                            {installment_list.map((el, key) => (
-                                                <div className="col-lg-6 col-md-12" key={el.id + key}>
-                                                    <div className="form-group">
-                                                        <label className="form-label">{key + 1}. Taksit</label>
-                                                        <input
-                                                            type="text"
-                                                            className={`form-control ${formErrors.installment}`}
-                                                            placeholder={key + 1 + ". Taksit"}
-                                                            name={el.id + key}
-                                                            value={el.amount.toFixed(2)}
-                                                        />
-                                                    </div>
-                                                </div>
-                                            ))}
-                                        </div>
-                                        {installment_list.find(x => x.amount <= 0) ? (
-                                            <div className="ml-2 text-center text-red font-italic">
-                                                <i className="fe fe-alert-circle mr-1" />
-                                                Hatalı Taksit Tutarı
-                                            </div>
-                                        ) : null}
-                                    </div>
-                                    {fee ? (
-                                        <div className="alert alert-icon alert-success" role="alert">
-                                            <i className="fa fa-align-left mr-2" aria-hidden="true"></i>
-                                            <p>
-                                                <b>Ödeme Özeti</b>
-                                            </p>
-                                            <p>
-                                                <b>{formatMoney(parseFloat(fee))}</b> ödemenin,
-                                                <br />
-                                                <b>
-                                                    {is_cash
-                                                        ? formatMoney(parseFloat(fee))
-                                                        : formatMoney(parseFloat(downpayment || 0))}
-                                                </b>
-                                                'sı peşin olarak ödendi.
-                                            </p>
-                                            {is_cash ? null : (
+                                            {installment_amounts ? (
                                                 <>
-                                                    Geriye kalan&nbsp;
-                                                    <b>{formatMoney(parseFloat(fee) - parseFloat(downpayment || 0))}</b>
-                                                    ,<br />
-                                                    <b>{formatDate(installment_date)}</b> tarihinden itibaren&nbsp;
-                                                    <b>{installment}</b>
-                                                    &nbsp;taksit olarak ayda
-                                                    <br />
-                                                    <b>
-                                                        {formatMoney(
-                                                            (parseFloat(fee) - parseFloat(downpayment || 0)) /
-                                                                parseInt(installment)
-                                                        )}
-                                                    </b>
-                                                    &nbsp; ödenecektir.
+                                                    {installment_amounts.map((el, key) => (
+                                                        <div
+                                                            className="col-lg-6 col-md-12"
+                                                            key={"installment_amount-" + key}>
+                                                            <div className="form-group">
+                                                                <label className="form-label">{key + 1}. Taksit</label>
+                                                                <input
+                                                                    type="number"
+                                                                    step="0.01"
+                                                                    min="0"
+                                                                    className={`form-control ${el ? "" : "is-invalid"}`}
+                                                                    placeholder={key + 1 + ". Taksit"}
+                                                                    name={"installment_amount-" + key}
+                                                                    value={el === null ? "" : el}
+                                                                    onChange={e => this.handleInstallmentAmount(e, key)}
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                    {this.installmentWarning()}
                                                 </>
+                                            ) : (
+                                                <div className="col-lg-12 mb-4">
+                                                    <button
+                                                        type="button"
+                                                        className="btn btn-gray btn-sm"
+                                                        onClick={this.handleInstallment}>
+                                                        Taksit Tutarlarını Düzenle
+                                                    </button>
+                                                </div>
                                             )}
                                         </div>
-                                    ) : null}
+                                        {this.installmentError()}
+                                    </div>
                                 </fieldset>
 
+                                {this.renderFeeInfo()}
                                 {this.renderFeeWarning(payment_type)}
 
                                 <div className="form-group">

@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import ReactDOM from "react-dom";
 import { BrowserRouter, Link, withRouter } from "react-router-dom";
 import { datatable_turkish } from "../../assets/js/core";
-import { formatDate, fullnameGenerator, nullCheck, avatarPlaceholder } from "../../services/Others.jsx";
+import { formatDate, fullnameGenerator, nullCheck, avatarPlaceholder, formatPhone } from "../../services/Others.jsx";
 import "../../assets/css/datatables.responsive.css";
 const $ = require("jquery");
 $.DataTable = require("datatables.net-responsive");
@@ -151,6 +151,7 @@ export class ListRecipient extends Component {
                     },
                     {
                         data: "image",
+                        responsivePriority: 6,
                         class: "text-center",
                         render: function(data, type, row) {
                             const { name, surname } = row;
@@ -168,15 +169,32 @@ export class ListRecipient extends Component {
                         }
                     },
                     {
+                        data: "to",
+                        responsivePriority: 2,
+                        render: function(data, type, row) {
+                            return formatPhone(data);
+                        }
+                    },
+                    {
                         data: "message.operator",
+                        responsivePriority: 10011,
                         render: function(data, type, row) {
                             return nullCheck(data);
                         }
                     },
                     {
                         data: "message.sent_date",
+                        responsivePriority: 4,
                         render: function(data, type, row) {
                             return formatDate(data, "DD MMMM YYYY, HH:mm");
+                        }
+                    },
+                    {
+                        data: "content",
+                        responsivePriority: 10012,
+                        className: "none",
+                        render: function(data, type, row) {
+                            return data;
                         }
                     },
                     {
@@ -209,22 +227,25 @@ export class ListRecipient extends Component {
 
     render() {
         return (
-            <table
-                id="message-recipient-list"
-                className="table card-table w-100 table-vcenter table-striped text-nowrap datatable dataTable">
-                <thead>
-                    <tr>
-                        <th className="uid">UID</th>
-                        <th className="w-1 no-sort control" />
-                        <th className="w-1 text-center no-sort">#</th>
-                        <th className="name">AD SOYAD</th>
-                        {/* <th className="phone">TELEFON</th> */}
-                        <th className="operator">OPERATOR</th>
-                        <th className="sent_date">GÖNDERİM TARİHİ</th>
-                        <th className="code_message">DURUM</th>
-                    </tr>
-                </thead>
-            </table>
+            <div className="table-responsive">
+                <table
+                    id="message-recipient-list"
+                    className="table card-table w-100 table-vcenter table-striped text-nowrap datatable dataTable">
+                    <thead>
+                        <tr>
+                            <th className="uid">UID</th>
+                            <th className="w-1 no-sort control" />
+                            <th className="w-1 text-center no-sort">#</th>
+                            <th className="name">AD SOYAD</th>
+                            <th className="to">TELEFON</th>
+                            <th className="operator">OPERATOR</th>
+                            <th className="sent_date">GÖNDERİM TARİHİ</th>
+                            <th className="content">İLETİLEN MESAJ</th>
+                            <th className="code_message">DURUM</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
         );
     }
 }
