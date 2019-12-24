@@ -71,7 +71,7 @@ export class Add extends Component {
             branch: null,
             groups: [],
             fee: null,
-            is_cash: false,
+            is_cash: true,
             downpayment: null,
             downpayment_date: new Date(),
             installment: 1,
@@ -104,7 +104,7 @@ export class Add extends Component {
                 point: ""
             },
             show: {},
-            payment_type: 2,
+            payment_type: null,
             loadingButton: "",
             loadingImage: "",
             addContinuously: true,
@@ -220,10 +220,14 @@ export class Add extends Component {
         }
 
         const sumInstallmentAmount = _.sumBy(installment_amounts);
-
         this.setState({ parentError: false, paymentError: false });
 
-        if (sumInstallmentAmount === clearMoney(fee) && parents.length > 0 && formValid(require)) {
+        if (
+            (installment_amounts === null ||
+                sumInstallmentAmount === clearMoney(fee) - (clearMoney(downpayment) || 0)) &&
+            parents.length > 0 &&
+            formValid(require)
+        ) {
             this.setState({ loadingButton: "btn-loading" });
             CreatePlayer({
                 uid: uid,
@@ -383,7 +387,6 @@ export class Add extends Component {
     };
 
     handleSelect = (value, name) => {
-        console.log(value, name);
         if (name === "branch") {
             this.setState(prevState => ({
                 select: {
@@ -469,7 +472,6 @@ export class Add extends Component {
         const { installment, downpayment, fee } = this.state;
         const intInstallment = parseInt(installment);
         const installmentAmount = (clearMoney(fee || 0) - clearMoney(downpayment || 0)) / intInstallment;
-        console.log(installmentAmount);
         const installmentArr = _.range(0, intInstallment);
 
         let installment_amounts = installmentArr.map(el => parseFloat(installmentAmount.toFixed(2)));
@@ -478,8 +480,7 @@ export class Add extends Component {
     };
 
     handleInstallmentAmount = (e, idx) => {
-        const { name, value } = e.target;
-        console.log(value);
+        const { value } = e.target;
         let installment_amounts = [...this.state.installment_amounts];
         installment_amounts[idx] = clearMoney(value || 0);
         this.setState({ installment_amounts: installment_amounts });
@@ -505,7 +506,7 @@ export class Add extends Component {
         const { installment_amounts, fee, downpayment } = this.state;
         const sumInstallmentAmount = _.sumBy(installment_amounts);
         const clearFee = (clearMoney(fee) || 0) - clearMoney(downpayment);
-        console.log(sumInstallmentAmount, clearFee);
+        const diffInstallment = clearFee - sumInstallmentAmount;
 
         return (
             <div
@@ -513,18 +514,21 @@ export class Add extends Component {
                 id="installment-warning">
                 <i className="fa fa-layer-group mr-2" aria-hidden="true"></i>
                 <p>
-                    <strong>{formatMoney(clearFee)}</strong> ödeme tutarının,
+                    <strong>{formatMoney(clearFee)}</strong> ödeme tutarını,
                     <br />
-                    <strong> {formatMoney(sumInstallmentAmount)}</strong>'sini taksitlendirdiniz.
+                    <strong> {formatMoney(sumInstallmentAmount)}</strong> olarak taksitlendirdiniz.
                 </p>
                 {sumInstallmentAmount === clearFee ? (
                     "Tebrikler! Taksitlendirme tamamlandı."
                 ) : sumInstallmentAmount > clearFee ? (
-                    "Hatalı taksit dağılımı!"
+                    <span>
+                        Hatalı taksit dağılımı!
+                        <br />
+                        <strong>{formatMoney(diffInstallment * -1)}</strong> düşürmeniz gerekmektedir.
+                    </span>
                 ) : (
                     <span>
-                        Geriye kalan <strong>{formatMoney(clearFee - sumInstallmentAmount)}</strong>'yi dağıtmanız
-                        gerekmektedir.
+                        Geriye kalan <strong>{formatMoney(diffInstallment)}</strong>'yi dağıtmanız gerekmektedir.
                     </span>
                 )}
             </div>
@@ -1065,7 +1069,9 @@ export class Add extends Component {
                                                             className="col-lg-6 col-md-12"
                                                             key={"installment_amount-" + key}>
                                                             <div className="form-group">
-                                                                <label className="form-label">{key + 1}. Taksit</label>
+                                                                <label className="form-label">
+                                                                    {key + 1}. Taksit (₺)
+                                                                </label>
                                                                 <input
                                                                     type="number"
                                                                     step="0.01"
