@@ -22,6 +22,9 @@ import moment from "moment";
 import _ from "lodash";
 import Inputmask from "inputmask";
 import { GetSettings } from "../../services/School";
+import Scholarship from "./Payment/Scholarship";
+import UnSelected from "./Payment/UnSelected";
+import Monthly from "./Payment/Monthly";
 const $ = require("jquery");
 
 registerLocale("tr", tr);
@@ -74,16 +77,6 @@ const IconOption = props => (
         </span>
     </Option>
 );
-
-const noRow = loading =>
-    loading ? (
-        <div className={`dimmer active p-3`}>
-            <div className="loader" />
-            <div className="dimmer-content" />
-        </div>
-    ) : (
-        <div className="text-center text-muted font-italic">Kayıt bulunamadı...</div>
-    );
 
 const initialState = {
     fee_date: new Date(),
@@ -602,340 +595,6 @@ export class Payment extends Component {
         });
     };
 
-    // Aylık Ödeme Tipi
-    renderMonthly = () => {
-        const {
-            fee,
-            budget,
-            paid_date,
-            player,
-            month,
-            period,
-            select,
-            formErrors,
-            loadingButton,
-            editfee,
-            tab,
-            amount,
-            image,
-            name,
-            surname,
-            start_date,
-            required_payment_date
-        } = this.state;
-        return (
-            <>
-                <div className="col-lg-7 col-sm-12 col-md-12">
-                    <div className="card">
-                        <div className="card-header">
-                            <h3 className="card-title">
-                                <i className={`fa ${tab.icon} mr-2`} /> {tab.title}
-                            </h3>
-                        </div>
-                        <div className="card-body">
-                            <div className="row mb-4">
-                                <div className="col-auto">
-                                    <span
-                                        className="avatar avatar-xxl"
-                                        style={{
-                                            backgroundImage: `url(${image})`
-                                        }}>
-                                        {avatarPlaceholder(name, surname)}
-                                    </span>
-                                </div>
-                                <div className="col">
-                                    <div className="form-group">
-                                        <label className="form-label">
-                                            Öğrenci
-                                            <span className="form-required">*</span>
-                                        </label>
-                                        <Select
-                                            value={player}
-                                            onChange={val => this.handleSelect(val, "player")}
-                                            options={select.players}
-                                            name="player"
-                                            placeholder="Öğrenci Seç..."
-                                            styles={selectCustomStyles}
-                                            isSearchable={true}
-                                            autoSize
-                                            isDisabled={select.players ? false : true}
-                                            isLoading={select.players ? false : true}
-                                            noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
-                                            components={{ Option: ImageOption }}
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="row">
-                                <div className="col-sm-12 col-md-12 col-lg-4">
-                                    <div className="form-group">
-                                        <label className="form-label">Aidat Bilgisi</label>
-                                        <div className={`input-group ${editfee ? "d-flex" : "d-none"}`}>
-                                            <input
-                                                name="fee"
-                                                className="form-control"
-                                                type="text"
-                                                value={fee || ""}
-                                                onChange={this.handleChange}
-                                            />
-                                            <span className="input-group-append">
-                                                <button
-                                                    className="btn btn-primary"
-                                                    type="button"
-                                                    disabled={clearMoney(fee) === 0 ? "disabled" : false}
-                                                    onClick={() => {
-                                                        this.setState({
-                                                            editfee: false,
-                                                            amount: clearMoney(fee) * parseInt(period)
-                                                        });
-                                                    }}>
-                                                    Kaydet
-                                                </button>
-                                            </span>
-                                        </div>
-                                        <div className={`form-control-plaintext ${editfee ? "d-none" : "d-block"}`}>
-                                            {formatMoney(fee) + " — " + paymentTypeText[0]}
-                                            <span
-                                                onClick={() => {
-                                                    this.setState({ editfee: true });
-                                                    $("#editfee").tooltip("hide");
-                                                }}
-                                                id="editfee"
-                                                className="icon ml-1 cursor-pointer"
-                                                title="Bu ay için aidat tutarını değiştir"
-                                                data-toggle="tooltip">
-                                                <i className="fa fa-pen-square" />
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="col-sm-12 col-md-12 col-lg-4">
-                                    <div className="form-group">
-                                        <label className="form-label">Okula Başlama Tarihi</label>
-                                        <div className="form-control-plaintext">{formatDate(start_date, "LL")}</div>
-                                    </div>
-                                </div>
-
-                                <div className="col-sm-12 col-md-12 col-lg-4">
-                                    <div className="form-group">
-                                        <label className="form-label">Aidat Ödeme Günü</label>
-
-                                        <div className="form-control-plaintext">
-                                            {"Her ayın " + moment(required_payment_date).format("D") + ". günü"}
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {editfee ? (
-                                    <div className="col-12">
-                                        <div className="alert alert-info alert-icon alert-dismissible">
-                                            <button type="button" className="close" data-dismiss="alert"></button>
-                                            <i className="fe fe-alert-triangle mr-2" aria-hidden="true" />
-                                            <p>
-                                                <strong>Uyarı!</strong>
-                                            </p>
-                                            Öğrenciniz ayın ortasında katıldıysa ve siz ayın başında veya sonunda ödeme
-                                            alıyorsanız, ne kadar ödemesi gerektiğini buraya girmelisiniz.
-                                        </div>
-                                    </div>
-                                ) : null}
-
-                                <div className="col-10">
-                                    <div className="form-group">
-                                        <label className="form-label">
-                                            Ödeme Yapılacak Ay
-                                            <span className="form-required">*</span>
-                                        </label>
-                                        <Select
-                                            value={month}
-                                            onChange={val => this.handleSelect(val, "month")}
-                                            options={select.months}
-                                            name="month"
-                                            placeholder="Ay Seç..."
-                                            styles={selectCustomStyles}
-                                            isSearchable={true}
-                                            autoSize
-                                            isDisabled={select.months ? false : true}
-                                            noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
-                                        />
-                                    </div>
-                                </div>
-
-                                <div className="col-2">
-                                    <div className="form-group">
-                                        <label className="form-label">Dönem</label>
-                                        <input
-                                            name="period"
-                                            className="form-control"
-                                            type="number"
-                                            min="1"
-                                            max="24"
-                                            value={period || ""}
-                                            onChange={this.handleChange}
-                                        />
-                                    </div>
-                                </div>
-
-                                <div className="col-12">
-                                    <div className="alert alert-warning p-3">
-                                        <strong className="mr-1">Ödemesi Gereken Tutar:</strong>
-                                        {period + " ay için, "}
-                                        <strong>{formatMoney(clearMoney(fee) * parseInt(period))}</strong>
-                                    </div>
-                                </div>
-
-                                <div className="col-sm-12 col-md-12 col-lg-6">
-                                    <div className="form-group">
-                                        <label className="form-label">
-                                            Ödenen Tutar
-                                            <span className="form-required">*</span>
-                                        </label>
-                                        <input
-                                            name="amount"
-                                            className="form-control"
-                                            type="text"
-                                            value={formatMoney(amount) || ""}
-                                            onChange={this.handleChange}
-                                        />
-                                    </div>
-                                </div>
-
-                                <div className="col-sm-12 col-md-12 col-lg-6">
-                                    <div className="form-group">
-                                        <label className="form-label">
-                                            Ödenen Tarih
-                                            <span className="form-required">*</span>
-                                        </label>
-                                        <DatePicker
-                                            autoComplete="off"
-                                            selected={paid_date}
-                                            selectsStart
-                                            startDate={paid_date}
-                                            name="paid_date"
-                                            locale="tr"
-                                            dateFormat="dd/MM/yyyy"
-                                            onChange={date => this.handleDate(date, "paid_date")}
-                                            className={`form-control ${formErrors.paid_date}`}
-                                        />
-                                    </div>
-                                </div>
-
-                                <div className="col-sm-12 col-md-12 col-lg-6">
-                                    <div className="form-group">
-                                        <label className="form-label">
-                                            Kasa Hesabı
-                                            <span className="form-required">*</span>
-                                        </label>
-                                        <Select
-                                            value={budget}
-                                            onChange={val => this.handleSelect(val, "budget")}
-                                            options={select.budgets}
-                                            name="budget"
-                                            placeholder="Kasa Seç..."
-                                            styles={
-                                                formErrors.budget === true
-                                                    ? selectCustomStylesError
-                                                    : selectCustomStyles
-                                            }
-                                            isSearchable={true}
-                                            autoSize
-                                            isDisabled={select.budgets ? false : true}
-                                            isLoading={select.budgets ? false : true}
-                                            noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
-                                            components={{ Option: IconOption }}
-                                        />
-                                    </div>
-                                </div>
-
-                                <div className="col-12">
-                                    <label className="form-label">Not</label>
-                                    <textarea
-                                        className="form-control resize-none"
-                                        placeholder="Not..."
-                                        name="note"
-                                        onChange={this.handleChange}
-                                        maxLength="100"></textarea>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="card-footer d-flex justify-content-between">
-                            <button className="btn btn-success btn-icon disabled disable-overlay" disabled>
-                                <i className="fe fe-lock mr-2"></i>
-                                Kredi Kartı ile Ödeme Al <sup>(Yakında)</sup>
-                            </button>
-                            <button
-                                className={`btn btn-primary ${loadingButton}`}
-                                disabled={editfee ? "disabled" : false}>
-                                Aidat Ödemesi Al
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                {this.renderMonthlyPast()}
-            </>
-        );
-    };
-
-    // Burslu Öğrenci
-    renderScholarship = () => {
-        const { player, select, tab, image, name, surname } = this.state;
-        return (
-            <div className="col-12">
-                <div className="card">
-                    <div className="card-header">
-                        <h3 className="card-title">
-                            <i className={`fa ${tab.icon} mr-2`} /> {tab.title}
-                        </h3>
-                    </div>
-                    <div className="card-body">
-                        <div className="row mb-4">
-                            <div className="col-auto">
-                                <span
-                                    className="avatar avatar-xxl"
-                                    style={{
-                                        backgroundImage: `url(${image})`
-                                    }}>
-                                    {avatarPlaceholder(name, surname)}
-                                </span>
-                            </div>
-                            <div className="col">
-                                <div className="form-group">
-                                    <label className="form-label">
-                                        Öğrenci
-                                        <span className="form-required">*</span>
-                                    </label>
-                                    <Select
-                                        value={player}
-                                        onChange={val => this.handleSelect(val, "player")}
-                                        options={select.players}
-                                        name="player"
-                                        placeholder="Öğrenci Seç..."
-                                        styles={selectCustomStyles}
-                                        isSearchable={true}
-                                        autoSize
-                                        isDisabled={select.players ? false : true}
-                                        noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
-                                        components={{ Option: ImageOption }}
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                        <div className="row">
-                            <div className="col-12">
-                                <div className="alert alert-icon alert-warning mb-0" role="alert">
-                                    <i className="fa fa-graduation-cap mr-2" aria-hidden="true"></i>
-                                    <strong className="d-block">Burslu öğrenci seçtiniz!</strong>
-                                    Burslu öğrenciler aidat ödemelerinden muaf tutulur.
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        );
-    };
-
     // Tek Ödeme Ödeme Tipi
     renderOnetime = () => {
         const { player, select, tab, image, name, surname, fee } = this.state;
@@ -996,59 +655,11 @@ export class Payment extends Component {
         );
     };
 
-    // Öğrenci Seç Ekranı
-    renderSelectPlayer = () => {
-        const { player, select, tab } = this.state;
-        return (
-            <div className="col-12">
-                <div className="card">
-                    <div className="card-header">
-                        <h3 className="card-title">
-                            <i className={`fa ${tab.icon} mr-2`} /> {tab.title}
-                        </h3>
-                    </div>
-                    <div className="card-body">
-                        <div className="row mb-4">
-                            <div className="col">
-                                <div className="form-group">
-                                    <label className="form-label">
-                                        Öğrenci
-                                        <span className="form-required">*</span>
-                                    </label>
-                                    <Select
-                                        value={player}
-                                        onChange={val => this.handleSelect(val, "player")}
-                                        options={select.players}
-                                        name="player"
-                                        placeholder="Öğrenci Seç..."
-                                        styles={selectCustomStyles}
-                                        isSearchable={true}
-                                        autoSize
-                                        isDisabled={select.players ? false : true}
-                                        isLoading={select.players ? false : true}
-                                        noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
-                                        components={{ Option: ImageOption }}
-                                    />
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="alert alert-icon alert-danger mb-0" role="alert">
-                            <i className="fa fa-user-check mr-2" aria-hidden="true"></i>
-                            <strong className="d-block">Öğrenci Seç!</strong>
-                            İşlem yapabilmek için bir öğrenci seç...
-                        </div>
-                    </div>
-                </div>
-            </div>
-        );
-    };
-
     // Yüklenme Ekranı
     renderLoading = () => {
         const { tab } = this.state;
         const { match } = this.props;
-        if (!match.params.uid) return this.renderSelectPlayer();
+        if (!match.params.uid) return <UnSelected state={this.state} handleSelect={this.handleSelect} />;
         return (
             <div className="col-12">
                 <div className="card">
@@ -1075,104 +686,26 @@ export class Payment extends Component {
         if (match.params.uid) {
             switch (payment_type) {
                 case 0:
-                    return this.renderMonthly();
+                    return (
+                        <Monthly
+                            state={this.state}
+                            handleSelect={this.handleSelect}
+                            handleChange={this.handleChange}
+                            handleDate={this.handleDate}
+                            handleSelect={this.handleSelect}
+                            setState={value => this.setState(value)}
+                        />
+                    );
                 case 1:
-                    return this.renderScholarship();
+                    return <Scholarship state={this.state} handleSelect={this.handleSelect} />;
                 case 2:
                     return this.renderOnetime();
                 default:
                     break;
             }
         } else {
-            return this.renderSelectPlayer();
+            return <UnSelected state={this.state} handleSelect={this.handleSelect} />;
         }
-    };
-
-    // Aylık Ödeme Tipi Geçmiş İşlemler
-    renderMonthlyPast = () => {
-        const { pastData } = this.state;
-        return (
-            <div className="col-lg-5 col-sm-12 col-md-12">
-                <div className="card">
-                    <div className="card-header pr-3">
-                        <h3 className="card-title">
-                            <i className="fa fa-history mr-2" /> Geçmiş İşlemler
-                        </h3>
-                    </div>
-                    <div className="card-body">
-                        {pastData ? (
-                            pastData.length > 0 ? (
-                                <ul className="timeline mb-0">
-                                    {pastData.map(el => {
-                                        if (el.fee > el.amount) {
-                                            return (
-                                                <li className="timeline-item" key={el.fee_id.toString()}>
-                                                    <div className="timeline-badge bg-warning" />
-                                                    <div>
-                                                        <strong>{formatMoney(el.fee)}</strong>
-                                                        &nbsp;ödemenin, <br />
-                                                        <strong className="text-blue">{formatMoney(el.amount)}</strong>
-                                                        &nbsp;ödemesi yapıldı.
-                                                        <br />
-                                                        <strong className="text-red">
-                                                            {formatMoney(el.fee - el.amount)}
-                                                        </strong>
-                                                        &nbsp;borcu kaldı.
-                                                        <div className="small text-muted">
-                                                            {this.formatPaidDate(el.month, true)}
-                                                        </div>
-                                                    </div>
-                                                    <div className="timeline-time">
-                                                        <i
-                                                            onClick={() => this.completeFee(el)}
-                                                            data-toggle="tooltip"
-                                                            data-title="Ödemeyi Tamamla"
-                                                            className="fa fa-plus-circle text-primary cursor-pointer product-price"></i>
-                                                        <i
-                                                            onClick={() => this.deleteFee(el)}
-                                                            data-toggle="tooltip"
-                                                            data-title="Ödemeyi İptal Et"
-                                                            className="fa fa-times-circle text-danger ml-1 cursor-pointer product-price"></i>
-                                                    </div>
-                                                </li>
-                                            );
-                                        } else {
-                                            return (
-                                                <li className="timeline-item" key={el.fee_id.toString()}>
-                                                    <div className="timeline-badge bg-success" />
-                                                    <div>
-                                                        <strong>{formatMoney(el.amount)}</strong>
-                                                        &nbsp;ödendi
-                                                        <div className="small text-muted">
-                                                            {this.formatPaidDate(el.month, true)}
-                                                        </div>
-                                                    </div>
-                                                    <div className="timeline-time">
-                                                        <i
-                                                            data-toggle="tooltip"
-                                                            data-title="Ödeme Başarılı"
-                                                            className="fa fa-check-circle text-success product-price"></i>
-                                                        <i
-                                                            onClick={() => this.deleteFee(el)}
-                                                            data-toggle="tooltip"
-                                                            data-title="Ödemeyi İptal Et"
-                                                            className="fa fa-times-circle text-danger ml-1 cursor-pointer product-price"></i>
-                                                    </div>
-                                                </li>
-                                            );
-                                        }
-                                    })}
-                                </ul>
-                            ) : (
-                                noRow()
-                            )
-                        ) : (
-                            noRow(true)
-                        )}
-                    </div>
-                </div>
-            </div>
-        );
     };
 
     // Tek Ödeme ve Özet Taksit Ödeme Durumu
