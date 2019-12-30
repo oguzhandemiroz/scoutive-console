@@ -7,6 +7,7 @@ import _ from "lodash";
 import { avatarPlaceholder, clearMoney, formatMoney, formatDate, nullCheck } from "../../../services/Others";
 import { selectCustomStyles, selectCustomStylesError } from "../../../assets/js/core";
 import { ListPlayerFeesNew } from "../../../services/Player";
+import { GetBudgets } from "../../../services/FillSelect";
 const $ = require("jquery");
 
 registerLocale("tr", tr);
@@ -40,13 +41,39 @@ export class Monthly extends Component {
 
         this.state = {
             fees: null,
-            fees_keys: []
+            fees_keys: [],
+            select_fee: null,
+            selected_month: null,
+            paid_date: new Date(),
+            budget: null,
+            select: {
+                budgets: null
+            },
+            formErrors: {
+                paid_date: ""
+            }
         };
     }
 
     componentDidMount() {
         this.listPlayerFees();
+        this.listBudgets();
     }
+
+    componentDidUpdate() {
+        $('[data-toggle="tooltip"]').tooltip();
+    }
+
+    handleChange = e => {
+        console.log(e);
+        const { value, name } = e.target;
+        this.setState(prevState => ({
+            select_fee: {
+                ...prevState.select_fee,
+                [name]: value
+            }
+        }));
+    };
 
     renderAvatar = () => {
         const { image, name, surname } = this.props.state;
@@ -99,59 +126,6 @@ export class Monthly extends Component {
         } catch (e) {}
     };
 
-    // Aylık Ödeme - Geçmiş Aidat Çizelgesi
-    renderMonthlyPastNew = () => {
-        const { fees, fees_keys } = this.state;
-        return (
-            <div className="col-12">
-                <div className="form-group">
-                    <label className="form-label">Geçmiş Aidat Çizelgesi (2019)</label>
-                    <div className="installment-detail monthly-detail d-flex flex-lg-row flex-md-row flex-column">
-                        {fees && fees_keys.length > 0 ? (
-                            fees_keys.map((el, key) => {
-                                console.log(fees[el], el);
-                                /* const fee = fees[el].fee;
-                                const fee_id = fees[el].fee_id;
-                                const amount = fees[el].amount;
-                                const status = fees[el].status;
-                                const required_payment_date = fees[el].required_payment_date;
-                                const type_text = formatDate(required_payment_date, "MMMM YYYY");
-                                
-
-                                const tooltip =
-                                    status !== 0
-                                        ? amount >= fee
-                                            ? "Tamamlandı"
-                                            : amount > 0
-                                            ? "Eksik"
-                                            : "Yapılmadı"
-                                        : "İptal"; */
-
-                                const tag_color = moment().format("YYYY-MM") === el ? "tag-info" : "";
-
-                                console.log(tag_color);
-
-                                return (
-                                    <span
-                                        key={key.toString()}
-                                        className={"tag " + tag_color}
-                                        data-toggle="tooltip"
-                                        title={"tooltip"}>
-                                        <div className="d-none d-lg-block">{moment(el).format("MMMM")}</div>
-                                        <div className="d-block d-lg-none">{moment(el).format("MMM")}</div>
-                                    </span>
-                                );
-                            })
-                        ) : (
-                            <span className="tag" style={{ width: "100%" }} />
-                        )}
-                    </div>
-                    {/* {this.renderMonthlyFinalSituation()} */}
-                </div>
-            </div>
-        );
-    };
-
     // Aylık Ödeme - Bugüne kadar
     renderMonthlyFinalSituation = () => {
         const { pastData } = this.props.state;
@@ -172,6 +146,248 @@ export class Monthly extends Component {
         );
     };
 
+    // Aylık Ödeme - Geçmiş Aidat Çizelgesi
+    renderMonthlyPastNew = () => {
+        const { fees, select_fee, fees_keys } = this.state;
+        return (
+            <div className="col-12">
+                <div className="form-group">
+                    <label className="form-label">Geçmiş Aidat Çizelgesi (2019)</label>
+                    <div className="installment-detail monthly-detail d-flex flex-lg-row flex-md-row flex-column">
+                        {fees && fees_keys.length > 0 ? (
+                            fees_keys.map((el, key) => {
+                                const fee = fees[el].fee;
+                                const fee_id = fees[el].fee_id;
+                                const amount = fees[el].amount;
+
+                                const tooltip =
+                                    Object.keys(fees[el]).length > 0
+                                        ? amount >= fee
+                                            ? "Tamamlandı"
+                                            : "Eksik"
+                                        : "Yapılmadı";
+
+                                const tag_color =
+                                    Object.keys(fees[el]).length > 0
+                                        ? amount >= fee
+                                            ? "tag-success"
+                                            : "tag-warning"
+                                        : "";
+
+                                return (
+                                    <span
+                                        onClick={() => {
+                                            console.log("lick");
+                                            this.setState({ select_fee: { ...fees[el] }, selected_month: el });
+                                        }}
+                                        key={key.toString()}
+                                        className={"tag " + tag_color}
+                                        data-toggle="tooltip"
+                                        title={tooltip}>
+                                        <div className="d-none d-lg-block">{moment(el).format("MMMM")}</div>
+                                        <div className="d-block d-lg-none">{moment(el).format("MMM")}</div>
+                                    </span>
+                                );
+                            })
+                        ) : (
+                            <span className="tag" style={{ width: "100%" }} />
+                        )}
+                    </div>
+                    {this.renderMonthlyFinalSituation()}
+                </div>
+            </div>
+        );
+    };
+
+    // Aylık Ödeme - Yeni Ödeme
+    renderNewPayment = () => {
+        const { select_fee, selected_month, select, formErrors, paid_date, budget } = this.state;
+        const { fee } = this.props.state;
+        if (!select_fee) return null;
+
+        if (select_fee && Object.keys(select_fee).length === 0) {
+            return (
+                <div className="form-fieldset mt-2">
+                    <h3 className="text-uppercase">{moment(selected_month).format("MMMM YYYY")}</h3>
+                    <div className="row gutters-xs">
+                        <div className="col-sm-12 col-md-6 col-lg-6">
+                            <div className="form-group">
+                                <label className="form-label">
+                                    Aidat Tutarı
+                                    <span className="form-required">*</span>
+                                </label>
+                                <input
+                                    name="fee"
+                                    className="form-control"
+                                    type="text"
+                                    value={formatMoney(fee || 0)}
+                                    onChange={this.handleChange}
+                                />
+                            </div>
+                        </div>
+                        <div className="col-sm-12 col-md-6 col-lg-6">
+                            <div className="form-group">
+                                <label className="form-label">
+                                    Ödenen Tutar
+                                    <span className="form-required">*</span>
+                                </label>
+                                <input
+                                    name="amount"
+                                    className="form-control"
+                                    type="text"
+                                    value={formatMoney(0)}
+                                    onChange={this.props.handleChange}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="col-sm-12 col-md-6 col-lg-6">
+                            <div className="form-group">
+                                <label className="form-label">
+                                    Ödenen Tarih
+                                    <span className="form-required">*</span>
+                                </label>
+                                <DatePicker
+                                    autoComplete="off"
+                                    selected={paid_date}
+                                    selectsStart
+                                    startDate={paid_date}
+                                    name="paid_date"
+                                    locale="tr"
+                                    dateFormat="dd/MM/yyyy"
+                                    onChange={date => this.handleDate(date, "paid_date")}
+                                    className={`form-control ${formErrors.paid_date}`}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="col-sm-12 col-md-6 col-lg-6">
+                            <div className="form-group">
+                                <label className="form-label">
+                                    Kasa Hesabı
+                                    <span className="form-required">*</span>
+                                </label>
+                                <Select
+                                    value={budget}
+                                    onChange={val => this.handleSelect(val, "budget")}
+                                    options={select.budgets}
+                                    name="budget"
+                                    placeholder="Kasa Seç..."
+                                    styles={formErrors.budget === true ? selectCustomStylesError : selectCustomStyles}
+                                    isSearchable={true}
+                                    autoSize
+                                    isDisabled={select.budgets ? false : true}
+                                    isLoading={select.budgets ? false : true}
+                                    noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
+                                    components={{ Option: IconOption }}
+                                />
+                            </div>
+                        </div>
+                        <div className="col-12">
+                            <label className="form-label">Not</label>
+                            <textarea
+                                className="form-control resize-none"
+                                placeholder="Not..."
+                                name="note"
+                                onChange={this.handleChange}
+                                maxLength="100"></textarea>
+                        </div>
+                    </div>
+                </div>
+            );
+        } else {
+            return (
+                <fieldset className="form-fieldset mt-2">
+                    <h3 className="text-uppercase">{moment(selected_month).format("MMMM YYYY")}</h3>
+                    <div className="row gutters-xs">
+                        <div className="col-sm-12 col-md-6 col-lg-6">
+                            <div className="form-group">
+                                <label className="form-label">
+                                    Aidat Tutarı
+                                    <span className="form-required">*</span>
+                                </label>
+                                <input
+                                    name="fee"
+                                    className="form-control"
+                                    type="text"
+                                    value={formatMoney(select_fee.fee || 0)}
+                                    onChange={this.handleChange}
+                                />
+                            </div>
+                        </div>
+                        <div className="col-sm-12 col-md-6 col-lg-6">
+                            <div className="form-group">
+                                <label className="form-label">
+                                    Ödenen Tutar
+                                    <span className="form-required">*</span>
+                                </label>
+                                <input
+                                    name="amount"
+                                    className="form-control"
+                                    type="text"
+                                    value={formatMoney(select_fee.amount || 0)}
+                                    onChange={this.handleChange}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="col-sm-12 col-md-6 col-lg-6">
+                            <div className="form-group">
+                                <label className="form-label">
+                                    Ödenen Tarih
+                                    <span className="form-required">*</span>
+                                </label>
+                                <DatePicker
+                                    autoComplete="off"
+                                    selected={paid_date}
+                                    selectsStart
+                                    startDate={paid_date}
+                                    name="paid_date"
+                                    locale="tr"
+                                    dateFormat="dd/MM/yyyy"
+                                    onChange={date => this.handleDate(date, "paid_date")}
+                                    className={`form-control ${formErrors.paid_date}`}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="col-sm-12 col-md-6 col-lg-6">
+                            <div className="form-group">
+                                <label className="form-label">
+                                    Kasa Hesabı
+                                    <span className="form-required">*</span>
+                                </label>
+                                <Select
+                                    value={select.budgets.find(x => x.value === select_fee.budget_id)}
+                                    onChange={val => this.handleSelect(val, "budget")}
+                                    options={select.budgets}
+                                    name="budget"
+                                    placeholder="Kasa Seç..."
+                                    styles={formErrors.budget === true ? selectCustomStylesError : selectCustomStyles}
+                                    isSearchable={true}
+                                    autoSize
+                                    isDisabled={select.budgets ? false : true}
+                                    isLoading={select.budgets ? false : true}
+                                    noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
+                                    components={{ Option: IconOption }}
+                                />
+                            </div>
+                        </div>
+                        <div className="col-12">
+                            <label className="form-label">Not</label>
+                            <textarea
+                                className="form-control resize-none"
+                                placeholder="Not..."
+                                name="note"
+                                onChange={this.handleChange}
+                                maxLength="100"></textarea>
+                        </div>
+                    </div>
+                </fieldset>
+            );
+        }
+    };
+
     listPlayerFees = () => {
         const { uid, to } = this.props.state;
         this.setState({ loading: "active" });
@@ -188,6 +404,22 @@ export class Monthly extends Component {
                 }
             }
         });
+    };
+
+    listBudgets = () => {
+        try {
+            GetBudgets().then(response => {
+                if (response) {
+                    this.setState(prevState => ({
+                        select: {
+                            ...prevState.select,
+                            budgets: response
+                        },
+                        budget: response.find(x => x.default === 1) || null
+                    }));
+                }
+            });
+        } catch (e) {}
     };
 
     render() {
@@ -227,7 +459,7 @@ export class Monthly extends Component {
                                                 className="form-control"
                                                 type="text"
                                                 value={nullCheck(fee, "")}
-                                                onChange={this.handleChange}
+                                                onChange={this.props.handleChange}
                                             />
                                             <span className="input-group-append">
                                                 <button
@@ -247,7 +479,7 @@ export class Monthly extends Component {
                                             </span>
                                         </div>
                                         <div className={editfee ? "d-none" : "d-block"}>
-                                            {formatMoney(fee) + " — AYLIK"}
+                                            {formatMoney(fee || 0) + " — AYLIK"}
                                             <span
                                                 onClick={() => {
                                                     this.props.setState({ editfee: true });
@@ -279,9 +511,9 @@ export class Monthly extends Component {
                                 <div className="col"></div>
                                 <div className="col-lg-2 text-right col-md-4">
                                     <div className="form-group">
-                                        <label className="form-label">Yıl (Geçmiş Aidat Çizelgesi)</label>
+                                        <label className="form-label">Yıl</label>
 
-                                        <input type="number" className="form-control" value="2019" />
+                                        <input type="number" className="form-control form-control-sm" value="2019" />
                                     </div>
                                 </div>
 
@@ -301,7 +533,7 @@ export class Monthly extends Component {
                             </div>
 
                             <div className="row mt-2">{this.renderMonthlyPastNew()}</div>
-                            {/* {this.renderNewPayment()} */}
+                            {this.renderNewPayment()}
                         </div>
                         <div className="card-footer d-flex justify-content-between">
                             <button className="btn btn-success btn-icon disabled disable-overlay" disabled>
