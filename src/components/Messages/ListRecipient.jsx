@@ -169,7 +169,7 @@ export class ListRecipient extends Component {
                         }
                     },
                     {
-                        data: "to",
+                        data: "message.to",
                         responsivePriority: 2,
                         render: function(data, type, row) {
                             return formatPhone(data);
@@ -190,11 +190,11 @@ export class ListRecipient extends Component {
                         }
                     },
                     {
-                        data: "content",
+                        data: "message.content",
                         responsivePriority: 10012,
                         className: "none",
                         render: function(data, type, row) {
-                            return data;
+                            return nullCheck(data);
                         }
                     },
                     {

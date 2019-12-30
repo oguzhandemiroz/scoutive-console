@@ -182,22 +182,21 @@ export class List extends Component {
                             const { campaign_id, status, title } = rowData;
                             ReactDOM.render(
                                 <BrowserRouter>
+                                    <Link
+                                        to={"/app/messages/detail/" + campaign_id}
+                                        className="btn btn-icon btn-sm btn-secondary mx-1"
+                                        onClick={() => this.props.history.push(`/app/messages/detail/${campaign_id}`)}>
+                                        Görüntüle
+                                    </Link>
                                     {status === 1 ? (
                                         <button
                                             className="btn btn-icon btn-sm btn-gray mx-1"
+                                            data-toggle="tooltip"
+                                            title="Gönderimi İptal Et"
                                             onClick={() => this.cancelCampaign(campaign_id, title)}>
-                                            İptal Et
+                                            <i className="fe fe-x" />
                                         </button>
-                                    ) : (
-                                        <Link
-                                            to={"/app/messages/detail/" + campaign_id}
-                                            className="btn btn-icon btn-sm btn-secondary mx-1"
-                                            onClick={() =>
-                                                this.props.history.push(`/app/messages/detail/${campaign_id}`)
-                                            }>
-                                            Görüntüle
-                                        </Link>
-                                    )}
+                                    ) : null}
                                 </BrowserRouter>,
                                 td
                             );

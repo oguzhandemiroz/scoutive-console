@@ -312,7 +312,7 @@ export class Add extends Component {
                         );
                     }
                 },
-                {
+                /* {
                     targets: "fees",
                     responsivePriority: 10001,
                     createdCell: (td, cellData, rowData) => {
@@ -363,7 +363,7 @@ export class Add extends Component {
                             );
                         }
                     }
-                },
+                }, */
                 {
                     targets: "status",
                     responsivePriority: 2,
@@ -569,7 +569,6 @@ export class Add extends Component {
                         return JSON.stringify(data);
                     }
                 },
-                { data: null },
                 { data: null },
                 { data: null },
                 { data: null },
@@ -982,7 +981,7 @@ export class Add extends Component {
                                                 <th className="birthday">DOĞUM YILI</th>
                                                 <th className="groups">GRUP</th>
                                                 <th className="no-sort rollcalls">SON 3 YOKLAMA</th>
-                                                <th className="no-sort fees">SON 3 ÖDEME</th>
+                                                {/* <th className="no-sort fees">SON 3 ÖDEME</th> */}
                                                 <th className="w-1 pr-0 no-sort status">DURUM</th>
                                                 <th className="pr-2 no-sort note"></th>
                                                 <th className="pr-0 w-1 no-sort action"></th>

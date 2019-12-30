@@ -32,7 +32,7 @@ export class Branch extends Component {
         this.setState({ loadingButton: "btn-loading" });
         SetSettings({
             uid: uid,
-            branch_id: branch.value
+            branch_id: branch ? branch.value : null
         }).then(response => {
             if (response) {
                 const status = response.status;
