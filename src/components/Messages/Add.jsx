@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Link, withRouter } from "react-router-dom";
 import Select, { components } from "react-select";
+import sms_activate_image from "../../assets/images/illustrations/sms_activate.svg";
 import SmsUsage from "../Pages/Settings/UsageDetail/SmsUsage";
 import { GetSettings, GetSchoolFees } from "../../services/School";
 import { MessagesAllTime, UnpaidPlayers, ListBirthdays } from "../../services/Report";
@@ -8,7 +9,12 @@ import DatePicker, { registerLocale } from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import tr from "date-fns/locale/tr";
 import { formValid, selectCustomStyles, selectCustomStylesError } from "../../assets/js/core";
-import { ListMessageTemplates, CreateCampaign, SendTestMessages } from "../../services/Messages";
+import {
+    ListMessageTemplates,
+    CreateCampaign,
+    SendTestMessages,
+    ActivateMessageTemplate
+} from "../../services/Messages";
 import { ListEmployees } from "../../services/Employee";
 import { ListPlayers } from "../../services/Player";
 import { formatDate, fullnameGenerator, avatarPlaceholder, formatPhone } from "../../services/Others";
@@ -598,7 +604,11 @@ export class Add extends Component {
                                 <div className="col">
                                     <div className="card">
                                         <div className="card-body text-center">
-                                            <img src={sms_activate} alt="SMS Aktif Et" style={{ width: "170px" }} />
+                                            <img
+                                                src={sms_activate_image}
+                                                alt="SMS Aktif Et"
+                                                style={{ width: "170px" }}
+                                            />
                                             <h5 className="mt-5">Mesaj Şablonu Bulunamadı!</h5>
                                             <p className="text-muted text-center">
                                                 Kampanya oluşturmak için ve mesaj gönderimi yapabilmek için şablon
@@ -1221,6 +1231,15 @@ export class Add extends Component {
     developLoad = () => {
         /*  this.listMessageTemplates();
         this.listPlayers(); */
+    };
+
+    activateTemplates = () => {
+        this.setState({ loadingButton: "btn-loading" });
+        ActivateMessageTemplate().then(response => {
+            if (response) {
+                if (response.status.code === 1020) this.listMessageTemplates();
+            }
+        });
     };
 
     render() {
