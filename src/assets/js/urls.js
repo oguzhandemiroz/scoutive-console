@@ -90,6 +90,7 @@ var ep = {
     FEE_UPDATE: host + api_version + "update/player/fee",
     FEE_DELETE: host + api_version + "delete/player/fee",
     FEE_LIST: host + api_version + "list/player/fees",
+    FEE_LIST_NEW: host + api_version + "list/player/fees/new",
     ACCOUNTING_CREATE: host + api_version + "create/accounting/record",
     ACCOUNTING_LIST: host + api_version + "list/accounting/records",
     ACCOUNTING_DETAIL: host + api_version + "get/accounting/record",

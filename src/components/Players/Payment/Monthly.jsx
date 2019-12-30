@@ -4,8 +4,9 @@ import DatePicker, { registerLocale } from "react-datepicker";
 import tr from "date-fns/locale/tr";
 import moment from "moment";
 import _ from "lodash";
-import { avatarPlaceholder, clearMoney, formatMoney, formatDate } from "../../../services/Others";
+import { avatarPlaceholder, clearMoney, formatMoney, formatDate, nullCheck } from "../../../services/Others";
 import { selectCustomStyles, selectCustomStylesError } from "../../../assets/js/core";
+import { ListPlayerFeesNew } from "../../../services/Player";
 const $ = require("jquery");
 
 registerLocale("tr", tr);
@@ -33,17 +34,20 @@ const ImageOption = props => (
     </Option>
 );
 
-const noRow = loading =>
-    loading ? (
-        <div className={`dimmer active p-3`}>
-            <div className="loader" />
-            <div className="dimmer-content" />
-        </div>
-    ) : (
-        <div className="text-center text-muted font-italic">Kayıt bulunamadı...</div>
-    );
-
 export class Monthly extends Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            fees: null,
+            fees_keys: []
+        };
+    }
+
+    componentDidMount() {
+        this.listPlayerFees();
+    }
+
     renderAvatar = () => {
         const { image, name, surname } = this.props.state;
         return (
@@ -97,28 +101,22 @@ export class Monthly extends Component {
 
     // Aylık Ödeme - Geçmiş Aidat Çizelgesi
     renderMonthlyPastNew = () => {
-        const { pastData } = this.props.state;
+        const { fees, fees_keys } = this.state;
         return (
             <div className="col-12">
                 <div className="form-group">
-                    <label className="form-label">Geçmiş Aidat Çizelgesi (Son 12 Ay)</label>
-                    <div className="installment-detail monthly-detail d-flex flex-row">
-                        {pastData && pastData.length > 0 ? (
-                            pastData.slice(-12).map(el => {
-                                const fee = el.fee;
-                                const fee_id = el.fee_id;
-                                const amount = el.amount;
-                                const status = el.status;
-                                const required_payment_date = el.required_payment_date;
+                    <label className="form-label">Geçmiş Aidat Çizelgesi (2019)</label>
+                    <div className="installment-detail monthly-detail d-flex flex-lg-row flex-md-row flex-column">
+                        {fees && fees_keys.length > 0 ? (
+                            fees_keys.map((el, key) => {
+                                console.log(fees[el], el);
+                                /* const fee = fees[el].fee;
+                                const fee_id = fees[el].fee_id;
+                                const amount = fees[el].amount;
+                                const status = fees[el].status;
+                                const required_payment_date = fees[el].required_payment_date;
                                 const type_text = formatDate(required_payment_date, "MMMM YYYY");
-                                const tag_color =
-                                    status !== 0
-                                        ? amount >= fee
-                                            ? "tag-success"
-                                            : amount > 0
-                                            ? "tag-warning"
-                                            : ""
-                                        : "tag-danger text-line-through";
+                                
 
                                 const tooltip =
                                     status !== 0
@@ -127,15 +125,20 @@ export class Monthly extends Component {
                                             : amount > 0
                                             ? "Eksik"
                                             : "Yapılmadı"
-                                        : "İptal";
+                                        : "İptal"; */
+
+                                const tag_color = moment().format("YYYY-MM") === el ? "tag-info" : "";
+
+                                console.log(tag_color);
 
                                 return (
                                     <span
-                                        key={fee_id.toString()}
+                                        key={key.toString()}
                                         className={"tag " + tag_color}
                                         data-toggle="tooltip"
-                                        title={tooltip}>
-                                        <div className="d-none d-lg-block">{type_text}</div>
+                                        title={"tooltip"}>
+                                        <div className="d-none d-lg-block">{moment(el).format("MMMM")}</div>
+                                        <div className="d-block d-lg-none">{moment(el).format("MMM")}</div>
                                     </span>
                                 );
                             })
@@ -143,7 +146,7 @@ export class Monthly extends Component {
                             <span className="tag" style={{ width: "100%" }} />
                         )}
                     </div>
-                    {this.renderMonthlyFinalSituation()}
+                    {/* {this.renderMonthlyFinalSituation()} */}
                 </div>
             </div>
         );
@@ -167,6 +170,24 @@ export class Monthly extends Component {
                 )}
             </div>
         );
+    };
+
+    listPlayerFees = () => {
+        const { uid, to } = this.props.state;
+        this.setState({ loading: "active" });
+        ListPlayerFeesNew({
+            uid: uid,
+            to: to,
+            year: 2019
+        }).then(response => {
+            if (response) {
+                const status = response.status;
+                const data = response.data;
+                if (status.code === 1020) {
+                    this.setState({ fees: data, fees_keys: Object.keys(data) });
+                }
+            }
+        });
     };
 
     render() {
@@ -197,7 +218,7 @@ export class Monthly extends Component {
                             </div>
 
                             <div className="row">
-                                <div className="col-lg-2">
+                                <div className="col-lg-2 col-md-4">
                                     <div className="form-group">
                                         <label className="form-label">Aidat Bilgisi</label>
                                         <div className={`input-group ${editfee ? "d-flex" : "d-none"}`}>
@@ -205,7 +226,7 @@ export class Monthly extends Component {
                                                 name="fee"
                                                 className="form-control"
                                                 type="text"
-                                                value={fee || ""}
+                                                value={nullCheck(fee, "")}
                                                 onChange={this.handleChange}
                                             />
                                             <span className="input-group-append">
@@ -241,13 +262,13 @@ export class Monthly extends Component {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="col-lg-2">
+                                <div className="col-lg-2 col-md-4">
                                     <div className="form-group">
                                         <label className="form-label">Okula Başlama Tarihi</label>
                                         {formatDate(start_date, "LL")}
                                     </div>
                                 </div>
-                                <div className="col-lg-2">
+                                <div className="col-lg-2 col-md-4">
                                     <div className="form-group">
                                         <label className="form-label">Aidat Ödeme Günü</label>
                                         {settings.payment_day === "0"
@@ -255,12 +276,12 @@ export class Monthly extends Component {
                                             : "Her ayın " + formatDate(required_payment_date, "D") + ". günü"}
                                     </div>
                                 </div>
-
-                                <div className="col-lg-6">
+                                <div className="col"></div>
+                                <div className="col-lg-2 text-right col-md-4">
                                     <div className="form-group">
-                                        <button className="btn btn-outline-secondary btn-sm">
-                                            Yeni Aidat Ödemesi Oluştur
-                                        </button>
+                                        <label className="form-label">Yıl (Geçmiş Aidat Çizelgesi)</label>
+
+                                        <input type="number" className="form-control" value="2019" />
                                     </div>
                                 </div>
 
@@ -279,7 +300,7 @@ export class Monthly extends Component {
                                 ) : null}
                             </div>
 
-                            <div className="row">{this.renderMonthlyPastNew()}</div>
+                            <div className="row mt-2">{this.renderMonthlyPastNew()}</div>
                             {/* {this.renderNewPayment()} */}
                         </div>
                         <div className="card-footer d-flex justify-content-between">
