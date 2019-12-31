@@ -688,6 +688,7 @@ export class Payment extends Component {
                 case 0:
                     return (
                         <Monthly
+                            history={this.props.history}
                             state={this.state}
                             handleSelect={this.handleSelect}
                             handleChange={this.handleChange}
