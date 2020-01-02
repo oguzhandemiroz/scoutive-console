@@ -11,7 +11,7 @@ import { selectCustomStyles, selectCustomStylesError, formValid } from "../../..
 import { ListPlayerFeesNew } from "../../../services/Player";
 import { GetBudgets } from "../../../services/FillSelect";
 import { Toast, showSwal } from "../../Alert";
-import { CreatePaymentFee } from "../../../services/PlayerAction";
+import { CreatePaymentFee, UpdatePaymentFee } from "../../../services/PlayerAction";
 const $ = require("jquery");
 
 registerLocale("tr", tr);
@@ -134,7 +134,7 @@ export class Monthly extends Component {
                 title: "Uyarı",
                 html: `<b>${player.label}</b> adlı öğrencinin <b>${formatMoney(
                     select_fee.amount
-                )}</b> ödemesi alınacaktır.`,
+                )}</b> ödemesi alınacaktır.<br>Onaylıyor musunuz?`,
                 confirmButtonText: "Devam et",
                 cancelButtonText: "İptal",
                 confirmButtonColor: "#cd201f",
@@ -156,49 +156,33 @@ export class Monthly extends Component {
 
             let required = {
                 fee: fee,
-                amount: amount,
+                amount: amount || null,
                 budget_id: budget_id,
                 paid_date: paid_date
             };
+
+            this.setState(prevState => ({
+                selectError: selected_month ? false : true,
+                formErrors: {
+                    ...prevState.formErrors,
+                    fee: "",
+                    amount: "",
+                    paid_date: "",
+                    budget_id: ""
+                }
+            }));
 
             if (selected_month && formValid(required)) {
                 this.feePaymentAlert().then(re => {
                     if (re.value) {
                         this.setState({ loadingButton: "btn-loading" });
-                        CreatePaymentFee({
-                            uid: uid,
-                            to: to,
-                            fee: clearMoney(fee),
-                            amount: clearMoney(amount),
-                            required_payment_date: moment(selected_month, "YYYY-MM")
-                                .date(settings.payment_day === "0" ? player.start_date : settings.payment_day)
-                                .format("YYYY-MM-DD"),
-                            payment_end_date: moment(selected_month, "YYYY-MM")
-                                .date(settings.payment_day === "0" ? player.start_date : settings.payment_day)
-                                .add(1, "month")
-                                .format("YYYY-MM-DD"),
-                            paid_date: moment(paid_date).format("YYYY-MM-DD"),
-                            payment_type: 0,
-                            budget_id: budget_id,
-                            note: note
-                        }).then(response => {
-                            if (response) {
-                                const status = response.status;
-                                if (status.code === 1020) {
-                                    Toast.fire({
-                                        type: "success",
-                                        title: "İşlem başarılı..."
-                                    });
-                                }
-                            }
-                            this.reload();
-                        });
+                        select_fee.fee_id ? this.updateSubmit() : this.createSubmit();
                     }
                 });
             } else {
                 console.error("ERROR FORM");
                 this.setState(prevState => ({
-                    selectError: true,
+                    selectError: selected_month ? false : true,
                     formErrors: {
                         ...prevState.formErrors,
                         fee: fee ? "" : "is-invalid",
@@ -211,9 +195,81 @@ export class Monthly extends Component {
         } catch (e) {}
     };
 
+    createSubmit = () => {
+        const { uid, selected_month, select_fee } = this.state;
+        const { to, settings, player } = this.props.state;
+        const { fee, amount, paid_date, budget_id, note } = select_fee;
+        CreatePaymentFee({
+            uid: uid,
+            to: to,
+            fee: clearMoney(fee),
+            amount: clearMoney(amount),
+            required_payment_date: moment(selected_month, "YYYY-MM")
+                .date(settings.payment_day === "0" ? player.start_date : settings.payment_day)
+                .format("YYYY-MM-DD"),
+            payment_end_date: moment(selected_month, "YYYY-MM")
+                .date(settings.payment_day === "0" ? player.start_date : settings.payment_day)
+                .add(1, "month")
+                .format("YYYY-MM-DD"),
+            paid_date: moment(paid_date).format("YYYY-MM-DD"),
+            payment_type: 0,
+            budget_id: budget_id,
+            note: note
+        }).then(response => {
+            if (response) {
+                const status = response.status;
+                if (status.code === 1020) {
+                    Toast.fire({
+                        type: "success",
+                        title: "İşlem başarılı..."
+                    });
+                }
+            }
+            this.reload();
+        });
+    };
+    updateSubmit = e => {
+        const { uid, selected_month, select_fee } = this.state;
+        const { to, settings, player } = this.props.state;
+        const { fee, amount, paid_date, budget_id, note } = select_fee;
+        UpdatePaymentFee({
+            uid: uid,
+            to: to,
+            fee_id: select_fee.fee_id,
+            fee: clearMoney(fee),
+            amount: clearMoney(amount),
+            required_payment_date: moment(selected_month, "YYYY-MM")
+                .date(settings.payment_day === "0" ? player.start_date : settings.payment_day)
+                .format("YYYY-MM-DD"),
+            payment_end_date: moment(selected_month, "YYYY-MM")
+                .date(settings.payment_day === "0" ? player.start_date : settings.payment_day)
+                .add(1, "month")
+                .format("YYYY-MM-DD"),
+            paid_date: moment(paid_date).format("YYYY-MM-DD"),
+            payment_type: 0,
+            budget_id: budget_id,
+            note: note
+        }).then(response => {
+            if (response) {
+                const status = response.status;
+                if (status.code === 1020) {
+                    Toast.fire({
+                        type: "success",
+                        title: "İşlem başarılı..."
+                    });
+                }
+            }
+            this.reload();
+        });
+    };
+
     handleChange = e => {
         const { value, name } = e.target;
         this.setState(prevState => ({
+            formErrors: {
+                ...prevState.formErrors,
+                [name]: value ? "" : "is-invalid"
+            },
             select_fee: {
                 ...prevState.select_fee,
                 [name]: value
@@ -336,12 +392,19 @@ export class Monthly extends Component {
     };
 
     selectFee = el => {
-        const { fees, select_fee } = this.state;
+        const { fees } = this.state;
         const { fee } = this.props.state;
         this.setState(prevState => ({
-            select_fee: { ...prevState.select_fee, fee: fee, amount: 0, fee_id: null, ...fees[el] },
+            select_fee: { ...prevState.select_fee, fee: fee, amount: 0, fee_id: null, status: 1, ...fees[el] },
             selected_month: el,
-            selectError: false
+            selectError: el ? false : true,
+            formErrors: {
+                ...prevState.formErrors,
+                fee: "",
+                amount: "",
+                paid_date: "",
+                budget_id: ""
+            }
         }));
     };
 
@@ -355,17 +418,17 @@ export class Monthly extends Component {
 
     // Aylık Ödeme - Bugüne kadar
     renderMonthlyFinalSituation = () => {
-        const { fees } = this.props.state;
+        const { fees } = this.state;
         return (
             <div className="d-flex justify-content-between align-items-center mt-2">
                 {fees && Object.keys(fees).length > 0 ? (
                     <div className="text-body font-italic">
                         <span className="status-icon bg-success" />
-                        Bugüne kadar <strong>{formatMoney(_.sumBy(_.values(fees), "amount"))}</strong> ödeme
+                        Bugüne kadar <strong>{formatMoney(_.sumBy(_.values(fees), "amount") || 0)}</strong> ödeme
                         yapılmıştır.
                     </div>
                 ) : (
-                    <div className="text-body">
+                    <div className="text-body font-italic">
                         <span className="status-icon bg-success" />
                         Bugüne kadar <strong>0,00 ₺</strong> ödeme yapılmıştır.
                     </div>
@@ -386,19 +449,20 @@ export class Monthly extends Component {
                             fees_keys.map((el, key) => {
                                 const fee = fees[el].fee;
                                 const amount = fees[el].amount;
+                                const status = fees[el].status;
 
                                 const tooltip =
                                     Object.keys(fees[el]).length > 0
-                                        ? amount >= fee
+                                        ? status === 2
                                             ? "Tamamlandı"
                                             : "Eksik"
-                                        : "Yapılmadı";
+                                        : "Ödeme Yok";
 
                                 const tag_color =
                                     selected_month === el
                                         ? "tag-info"
                                         : Object.keys(fees[el]).length > 0
-                                        ? amount >= fee
+                                        ? status === 2
                                             ? "tag-success"
                                             : "tag-warning"
                                         : "";
@@ -429,10 +493,66 @@ export class Monthly extends Component {
     renderNewPayment = () => {
         const { select_fee, selected_month, select, formErrors, paid_date, budget } = this.state;
         const { fee } = this.props.state;
-        if (selected_month) {
+        if (!selected_month) return null;
+
+        if (select_fee.status === 1 && select_fee.amount > 0 && select_fee.amount < select_fee.fee) {
             return (
-                <div className="form-fieldset mt-2">
-                    <h3 className="text-uppercase">{moment(selected_month).format("MMMM YYYY")}</h3>
+                <div className="mt-2">
+                    <div class="hr-text hr-text-center mt-0">{moment(selected_month).format("MMMM YYYY")}</div>
+                    <div className="text-right mb-3">
+                        <span className="badge badge-warning">Ödeme Güncelleme</span>
+                    </div>
+                    <div className="row gutters-xs">
+                        <div className="col-sm-12 col-md-6 col-lg-6">
+                            <div className="form-group">
+                                <label className="form-label">
+                                    Aidat Tutarı
+                                    <span className="form-required">*</span>
+                                </label>
+                                {formatMoney(select_fee.fee)}
+                            </div>
+                        </div>
+                        <div className="col-sm-12 col-md-6 col-lg-6">
+                            <div className="form-group">
+                                <label className="form-label">
+                                    Ödenen Tutar
+                                    <span className="form-required">*</span>
+                                </label>
+                                {formatMoney(select_fee.amount)}
+                            </div>
+                        </div>
+                        <div className="col-sm-12 col-md-6 col-lg-6">
+                            <div className="form-group">
+                                <label className="form-label">
+                                    Ödenen Tarih
+                                    <span className="form-required">*</span>
+                                </label>
+                                {formatDate(select_fee.paid_date, "LL")}
+                            </div>
+                        </div>
+
+                        <div className="col-sm-12 col-md-6 col-lg-6">
+                            <div className="form-group">
+                                <label className="form-label">Kasa Hesabı</label>
+
+                                {select.budgets.find(x => x.value === select_fee.budget_id).label}
+                            </div>
+                        </div>
+                        <div className="col-12">
+                            <label className="form-label">Not</label>
+                            {nullCheck(select_fee.note, "")}
+                        </div>
+                    </div>
+                </div>
+            );
+        } else if (select_fee.status === 1) {
+            return (
+                <div className="mt-2">
+                    <div class="hr-text hr-text-center mt-0">{moment(selected_month).format("MMMM YYYY")}</div>
+                    <div className="text-right mb-3">
+                        <span className="badge badge-info">Yeni Ödeme</span>
+                    </div>
+
                     <div className="row gutters-xs">
                         <div className="col-sm-12 col-md-6 col-lg-6">
                             <div className="form-group">
@@ -519,18 +639,68 @@ export class Monthly extends Component {
                                 className="form-control resize-none"
                                 placeholder="Not..."
                                 name="note"
-                                value={select_fee.note}
+                                value={nullCheck(select_fee.note, "")}
                                 onChange={this.handleChange}
                                 maxLength="100"></textarea>
                         </div>
                     </div>
                 </div>
             );
-        } else return null;
+        } else if (select_fee.status === 2) {
+            return (
+                <div className="mt-2">
+                    <div class="hr-text hr-text-center mt-0">{moment(selected_month).format("MMMM YYYY")}</div>
+                    <div className="text-right mb-3">
+                        <span className="badge badge-success">Tamamlanmış Ödeme</span>
+                    </div>
+                    <div className="row gutters-xs">
+                        <div className="col-sm-12 col-md-6 col-lg-6">
+                            <div className="form-group">
+                                <label className="form-label">
+                                    Aidat Tutarı
+                                    <span className="form-required">*</span>
+                                </label>
+                                {formatMoney(select_fee.fee)}
+                            </div>
+                        </div>
+                        <div className="col-sm-12 col-md-6 col-lg-6">
+                            <div className="form-group">
+                                <label className="form-label">
+                                    Ödenen Tutar
+                                    <span className="form-required">*</span>
+                                </label>
+                                {formatMoney(select_fee.amount)}
+                            </div>
+                        </div>
+                        <div className="col-sm-12 col-md-6 col-lg-6">
+                            <div className="form-group">
+                                <label className="form-label">
+                                    Ödenen Tarih
+                                    <span className="form-required">*</span>
+                                </label>
+                                {formatDate(select_fee.paid_date, "LL")}
+                            </div>
+                        </div>
+
+                        <div className="col-sm-12 col-md-6 col-lg-6">
+                            <div className="form-group">
+                                <label className="form-label">Kasa Hesabı</label>
+
+                                {select.budgets.find(x => x.value === select_fee.budget_id).label}
+                            </div>
+                        </div>
+                        <div className="col-12">
+                            <label className="form-label">Not</label>
+                            {nullCheck(select_fee.note, "")}
+                        </div>
+                    </div>
+                </div>
+            );
+        }
     };
 
     render() {
-        const { selectError } = this.state;
+        const { selectError, select_fee } = this.state;
         const { uid, player, loadingButton, tab, settings } = this.props.state;
         return (
             <>
@@ -586,7 +756,6 @@ export class Monthly extends Component {
                                         <div className="col-lg-2 text-right col-md-4">
                                             <div className="form-group">
                                                 <label className="form-label">Yıl</label>
-
                                                 <input
                                                     type="number"
                                                     className="form-control form-control-sm"
@@ -609,21 +778,23 @@ export class Monthly extends Component {
                                 </>
                             )}
                         </div>
-                        <div className="card-footer d-flex justify-content-between">
-                            <button className="btn btn-success btn-icon disabled disable-overlay" disabled>
-                                <i className="fe fe-lock mr-2"></i>
-                                Kredi Kartı ile Ödeme Al <sup>(Yakında)</sup>
-                            </button>
-                            <button
-                                onClick={this.handleSubmit}
-                                type="button"
-                                className={`btn btn-primary ${loadingButton} ${
-                                    settings.payment_day === "-1" ? "disabled" : ""
-                                }`}
-                                disabled={settings.payment_day === "-1"}>
-                                Aidat Ödemesi Al
-                            </button>
-                        </div>
+                        {select_fee.status === 2 ? null : (
+                            <div className="card-footer d-flex justify-content-between">
+                                <button className="btn btn-success btn-icon disabled disable-overlay" disabled>
+                                    <i className="fe fe-lock mr-2"></i>
+                                    Kredi Kartı ile Ödeme Al <sup>(Yakında)</sup>
+                                </button>
+                                <button
+                                    onClick={this.handleSubmit}
+                                    type="button"
+                                    className={`btn btn-primary ${loadingButton} ${
+                                        settings.payment_day === "-1" ? "disabled" : ""
+                                    }`}
+                                    disabled={settings.payment_day === "-1"}>
+                                    Aidat Ödemesi Al
+                                </button>
+                            </div>
+                        )}
                     </div>
                 </div>
             </>
