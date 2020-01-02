@@ -9,9 +9,9 @@ import Inputmask from "inputmask";
 import { avatarPlaceholder, clearMoney, formatMoney, formatDate, nullCheck } from "../../../services/Others";
 import { selectCustomStyles, selectCustomStylesError, formValid } from "../../../assets/js/core";
 import { ListPlayerFeesNew } from "../../../services/Player";
-import { GetBudgets } from "../../../services/FillSelect";
+import { GetBudgets, Years } from "../../../services/FillSelect";
 import { Toast, showSwal } from "../../Alert";
-import { CreatePaymentFee, UpdatePaymentFee } from "../../../services/PlayerAction";
+import { CreatePaymentFee, UpdatePaymentFee, DeletePaymentFee } from "../../../services/PlayerAction";
 const $ = require("jquery");
 
 registerLocale("tr", tr);
@@ -82,8 +82,10 @@ export class Monthly extends Component {
             },
             selected_month: null,
             budget: null,
+            year: { value: moment().format("YYYY"), label: moment().format("YYYY") },
             select: {
-                budgets: null
+                budgets: null,
+                year: null
             },
             formErrors: {
                 paid_date: "",
@@ -113,8 +115,14 @@ export class Monthly extends Component {
     };
 
     componentDidMount() {
-        this.listPlayerFees();
+        this.listPlayerFees(moment().format("YYYY"));
         this.listBudgets();
+        this.setState(prevState => ({
+            select: {
+                ...prevState.select,
+                years: Years(true, parseInt(moment().format("YYYY")) - 5, moment().format("YYYY"))
+            }
+        }));
     }
 
     componentDidUpdate() {
@@ -150,9 +158,8 @@ export class Monthly extends Component {
     handleSubmit = e => {
         try {
             e.preventDefault();
-            const { uid, selected_month, select_fee } = this.state;
-            const { to, settings, player } = this.props.state;
-            const { fee, amount, paid_date, budget_id, note } = select_fee;
+            const { selected_month, select_fee } = this.state;
+            const { fee, amount, paid_date, budget_id } = select_fee;
 
             let required = {
                 fee: fee,
@@ -228,6 +235,7 @@ export class Monthly extends Component {
             this.reload();
         });
     };
+
     updateSubmit = e => {
         const { uid, selected_month, select_fee } = this.state;
         const { to, settings, player } = this.props.state;
@@ -291,16 +299,21 @@ export class Monthly extends Component {
     };
 
     handleSelect = (value, name) => {
-        this.setState(prevState => ({
-            formErrors: {
-                ...prevState.formErrors,
-                [name]: value ? "" : "is-invalid"
-            },
-            select_fee: {
-                ...prevState.select_fee,
-                budget_id: value.value
-            }
-        }));
+        if (name === "year") {
+            this.setState({ [name]: value });
+            this.listPlayerFees(value.value);
+        } else {
+            this.setState(prevState => ({
+                formErrors: {
+                    ...prevState.formErrors,
+                    [name]: value ? "" : "is-invalid"
+                },
+                select_fee: {
+                    ...prevState.select_fee,
+                    budget_id: value.value
+                }
+            }));
+        }
     };
 
     renderAvatar = () => {
@@ -341,26 +354,13 @@ export class Monthly extends Component {
         );
     };
 
-    formatPaidDate = (date, show_day) => {
-        try {
-            const splitDate = date.split(",");
-            const firstDate = moment(splitDate[0]);
-            const secondDate = moment(splitDate[1]);
-            const diff = Math.ceil(moment(secondDate).diff(moment(firstDate), "days", true));
-
-            return `${firstDate.format("MMMM")} ${firstDate.format("YYYY")} - ${secondDate.format(
-                "MMMM"
-            )} ${secondDate.format("YYYY")} ${show_day ? "(" + diff + " günlük)" : ""}`;
-        } catch (e) {}
-    };
-
-    listPlayerFees = () => {
+    listPlayerFees = year => {
         const { uid, to } = this.props.state;
         this.setState({ loading: "active" });
         ListPlayerFeesNew({
             uid: uid,
             to: to,
-            year: 2019
+            year: parseInt(year)
         }).then(response => {
             if (response) {
                 const status = response.status;
@@ -395,7 +395,7 @@ export class Monthly extends Component {
         const { fees } = this.state;
         const { fee } = this.props.state;
         this.setState(prevState => ({
-            select_fee: { ...prevState.select_fee, fee: fee, amount: 0, fee_id: null, status: 1, ...fees[el] },
+            select_fee: { ...prevState.select_fee, fee: fee, amount: 0, fee_id: null, status: -1, ...fees[el] },
             selected_month: el,
             selectError: el ? false : true,
             formErrors: {
@@ -406,6 +406,118 @@ export class Monthly extends Component {
                 budget_id: ""
             }
         }));
+    };
+
+    completeFee = () => {
+        const { uid, select_fee, select } = this.state;
+        const { fee, amount, budget_id, fee_id, paid_date, note } = select_fee;
+        const { to, player } = this.props.state;
+        const { label } = player;
+
+        if (fee === null) {
+            Toast.fire({
+                type: "error",
+                title: "Tanımsız ödeme bilgisi..."
+            });
+            return null;
+        }
+        const totalDept = fee - amount;
+        showSwal({
+            type: "question",
+            title: "Ödeme Tutarı",
+            html: `<strong>${label}</strong> adlı öğrenci, <strong>${formatDate(
+                paid_date,
+                "LL"
+            )}</strong> tarihinde <strong>${formatMoney(amount)}</strong> ödeme yapmıştır. <strong>${formatMoney(
+                totalDept
+            )} </strong> tutarında borcu bulunmaktadır.<hr>Ne kadarını ödemek istiyorsunuz?`,
+            input: "number",
+            inputValue: totalDept,
+            inputAttributes: {
+                min: 0,
+                max: totalDept
+            },
+            inputValidator: value => {
+                return new Promise(resolve => {
+                    if (value > 0 && value <= totalDept) {
+                        showSwal({
+                            type: "info",
+                            title: "Bilgi",
+                            html: `<b>${label}</b> adlı öğrencinin, <strong>${formatMoney(
+                                totalDept
+                            )} </strong> tutarındaki borcu için toplamda <strong>${formatMoney(
+                                parseFloat(value)
+                            )} </strong> ödeme yapılacaktır.<br><strong>${moment().format(
+                                "LL"
+                            )}</strong> tarihinde <strong>${
+                                select.budgets.find(x => x.value === budget_id).label
+                            }</strong> adlı kasa hesabına yatırılacaktır.<br>Onaylıyor musunuz?`,
+                            confirmButtonText: "Onaylıyorum",
+                            cancelButtonText: "İptal",
+                            confirmButtonColor: "#467fcf",
+                            cancelButtonColor: "#868e96",
+                            showCancelButton: true,
+                            reverseButtons: true
+                        }).then(re => {
+                            if (re.value) {
+                                UpdatePaymentFee({
+                                    uid: uid,
+                                    to: to,
+                                    fee_id: fee_id,
+                                    amount: clearMoney(value),
+                                    paid_date: moment().format("YYYY-MM-DD"),
+                                    payment_type: 0,
+                                    budget_id: budget_id,
+                                    note: note
+                                }).then(response => {
+                                    if (response) this.reload();
+                                });
+                            }
+                        });
+                    } else {
+                        resolve("Hatalı değer!");
+                    }
+                });
+            }
+        });
+    };
+
+    deleteFee = () => {
+        const { uid, select_fee, selected_month } = this.state;
+        const { fee, fee_id } = select_fee;
+        const { to, player } = this.props.state;
+        const { label } = player;
+        if (fee === null) {
+            Toast.fire({
+                type: "error",
+                title: "Tanımsız ödeme bilgisi..."
+            });
+            return null;
+        }
+        showSwal({
+            type: "warning",
+            title: "Ödeme İptali",
+            html: `<strong>${label}</strong> adlı öğrencinin, <strong>${formatDate(
+                selected_month,
+                "MMMM YYYY"
+            )}</strong> tarihli ödemesi silinecektir.<br>Onaylıyor musunuz?`,
+            confirmButtonText: "Onaylıyorum",
+            cancelButtonText: "İptal",
+            confirmButtonColor: "#cd201f",
+            cancelButtonColor: "#868e96",
+            showCancelButton: true,
+            reverseButtons: true
+        }).then(re => {
+            if (re.value) {
+                DeletePaymentFee({
+                    uid: uid,
+                    to: to,
+                    fee_id: fee_id
+                }).then(response => {
+                    if (response) this.reload();
+                });
+            }
+        });
     };
 
     reload = () => {
@@ -439,11 +551,11 @@ export class Monthly extends Component {
 
     // Aylık Ödeme - Geçmiş Aidat Çizelgesi
     renderMonthlyPastNew = () => {
-        const { fees, selected_month, fees_keys } = this.state;
+        const { fees, selected_month, fees_keys, year } = this.state;
         return (
             <div className="col-12">
                 <div className="form-group">
-                    <label className="form-label">Geçmiş Aidat Çizelgesi (2019)</label>
+                    <label className="form-label">Geçmiş Aidat Çizelgesi ({year.value})</label>
                     <div className="installment-detail monthly-detail d-flex flex-lg-row flex-md-row flex-column">
                         {fees && fees_keys.length > 0 ? (
                             fees_keys.map((el, key) => {
@@ -495,61 +607,11 @@ export class Monthly extends Component {
         const { fee } = this.props.state;
         if (!selected_month) return null;
 
-        if (select_fee.status === 1 && select_fee.amount > 0 && select_fee.amount < select_fee.fee) {
+        if (select_fee.status === -1) {
             return (
                 <div className="mt-2">
                     <div class="hr-text hr-text-center mt-0">{moment(selected_month).format("MMMM YYYY")}</div>
-                    <div className="text-right mb-3">
-                        <span className="badge badge-warning">Ödeme Güncelleme</span>
-                    </div>
-                    <div className="row gutters-xs">
-                        <div className="col-sm-12 col-md-6 col-lg-6">
-                            <div className="form-group">
-                                <label className="form-label">
-                                    Aidat Tutarı
-                                    <span className="form-required">*</span>
-                                </label>
-                                {formatMoney(select_fee.fee)}
-                            </div>
-                        </div>
-                        <div className="col-sm-12 col-md-6 col-lg-6">
-                            <div className="form-group">
-                                <label className="form-label">
-                                    Ödenen Tutar
-                                    <span className="form-required">*</span>
-                                </label>
-                                {formatMoney(select_fee.amount)}
-                            </div>
-                        </div>
-                        <div className="col-sm-12 col-md-6 col-lg-6">
-                            <div className="form-group">
-                                <label className="form-label">
-                                    Ödenen Tarih
-                                    <span className="form-required">*</span>
-                                </label>
-                                {formatDate(select_fee.paid_date, "LL")}
-                            </div>
-                        </div>
-
-                        <div className="col-sm-12 col-md-6 col-lg-6">
-                            <div className="form-group">
-                                <label className="form-label">Kasa Hesabı</label>
-
-                                {select.budgets.find(x => x.value === select_fee.budget_id).label}
-                            </div>
-                        </div>
-                        <div className="col-12">
-                            <label className="form-label">Not</label>
-                            {nullCheck(select_fee.note, "")}
-                        </div>
-                    </div>
-                </div>
-            );
-        } else if (select_fee.status === 1) {
-            return (
-                <div className="mt-2">
-                    <div class="hr-text hr-text-center mt-0">{moment(selected_month).format("MMMM YYYY")}</div>
-                    <div className="text-right mb-3">
+                    <div className="mb-3">
                         <span className="badge badge-info">Yeni Ödeme</span>
                     </div>
 
@@ -646,38 +708,33 @@ export class Monthly extends Component {
                     </div>
                 </div>
             );
-        } else if (select_fee.status === 2) {
+        } else {
             return (
                 <div className="mt-2">
                     <div class="hr-text hr-text-center mt-0">{moment(selected_month).format("MMMM YYYY")}</div>
-                    <div className="text-right mb-3">
-                        <span className="badge badge-success">Tamamlanmış Ödeme</span>
+                    <div className="mb-3">
+                        {select_fee.status === 2 ? (
+                            <span className="badge badge-success">Tamamlanmış Ödeme</span>
+                        ) : (
+                            <span className="badge badge-warning">Eksik Ödeme</span>
+                        )}
                     </div>
                     <div className="row gutters-xs">
                         <div className="col-sm-12 col-md-6 col-lg-6">
                             <div className="form-group">
-                                <label className="form-label">
-                                    Aidat Tutarı
-                                    <span className="form-required">*</span>
-                                </label>
+                                <label className="form-label">Aidat Tutarı</label>
                                 {formatMoney(select_fee.fee)}
                             </div>
                         </div>
                         <div className="col-sm-12 col-md-6 col-lg-6">
                             <div className="form-group">
-                                <label className="form-label">
-                                    Ödenen Tutar
-                                    <span className="form-required">*</span>
-                                </label>
+                                <label className="form-label">Ödenen Tutar</label>
                                 {formatMoney(select_fee.amount)}
                             </div>
                         </div>
                         <div className="col-sm-12 col-md-6 col-lg-6">
                             <div className="form-group">
-                                <label className="form-label">
-                                    Ödenen Tarih
-                                    <span className="form-required">*</span>
-                                </label>
+                                <label className="form-label">Ödenen Tarih</label>
                                 {formatDate(select_fee.paid_date, "LL")}
                             </div>
                         </div>
@@ -700,7 +757,7 @@ export class Monthly extends Component {
     };
 
     render() {
-        const { selectError, select_fee } = this.state;
+        const { selectError, select_fee, select, year } = this.state;
         const { uid, player, loadingButton, tab, settings } = this.props.state;
         return (
             <>
@@ -756,10 +813,15 @@ export class Monthly extends Component {
                                         <div className="col-lg-2 text-right col-md-4">
                                             <div className="form-group">
                                                 <label className="form-label">Yıl</label>
-                                                <input
-                                                    type="number"
-                                                    className="form-control form-control-sm"
-                                                    value="2019"
+                                                <Select
+                                                    value={year}
+                                                    onChange={val => this.handleSelect(val, "year")}
+                                                    options={select.years}
+                                                    name="year"
+                                                    placeholder="Yıl"
+                                                    styles={selectCustomStyles}
+                                                    isDisabled={select.years ? false : true}
+                                                    noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
                                                 />
                                             </div>
                                         </div>
@@ -778,7 +840,19 @@ export class Monthly extends Component {
                                 </>
                             )}
                         </div>
-                        {select_fee.status === 2 ? null : (
+                        {select_fee.status === 1 ? (
+                            <div className="card-footer d-flex justify-content-between">
+                                <button className="btn btn-danger btn-icon" onClick={this.deleteFee} type="button">
+                                    Ödemeyi İptal Et
+                                </button>
+                                <button
+                                    onClick={this.completeFee}
+                                    type="button"
+                                    className={`btn btn-primary ${loadingButton}`}>
+                                    Aidat Ödemesi Ekle
+                                </button>
+                            </div>
+                        ) : select_fee.status === -1 ? (
                             <div className="card-footer d-flex justify-content-between">
                                 <button className="btn btn-success btn-icon disabled disable-overlay" disabled>
                                     <i className="fe fe-lock mr-2"></i>
@@ -794,7 +868,13 @@ export class Monthly extends Component {
                                     Aidat Ödemesi Al
                                 </button>
                             </div>
-                        )}
+                        ) : select_fee.status === 2 ? (
+                            <div className="card-footer">
+                                <button className="btn btn-danger btn-icon" onClick={this.deleteFee} type="button">
+                                    Ödemeyi İptal Et
+                                </button>
+                            </div>
+                        ) : null}
                     </div>
                 </div>
             </>
