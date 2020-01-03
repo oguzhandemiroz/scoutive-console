@@ -66,21 +66,26 @@ const ImageOption = props => (
     </Option>
 );
 
+const initialState = {
+    select_fee: {
+        fee: 0,
+        amount: 0,
+        note: null,
+        paid_date: moment().format("YYYY-MM-DD")
+    },
+    selected_month: null,
+    selectError: false
+};
+
 export class Monthly extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
             uid: localStorage.getItem("UID"),
+            ...initialState,
             fees: null,
             fees_keys: [],
-            select_fee: {
-                fee: 0,
-                amount: 0,
-                note: null,
-                paid_date: moment().format("YYYY-MM-DD")
-            },
-            selected_month: null,
             budget: null,
             year: { value: moment().format("YYYY"), label: moment().format("YYYY") },
             select: {
@@ -92,7 +97,6 @@ export class Monthly extends Component {
                 fee: "",
                 amount: ""
             },
-            selectError: false,
             loadingButton: ""
         };
     }
@@ -236,7 +240,7 @@ export class Monthly extends Component {
         });
     };
 
-    updateSubmit = e => {
+    updateSubmit = () => {
         const { uid, selected_month, select_fee } = this.state;
         const { to, settings, player } = this.props.state;
         const { fee, amount, paid_date, budget_id, note } = select_fee;
@@ -302,6 +306,7 @@ export class Monthly extends Component {
         if (name === "year") {
             this.setState({ [name]: value });
             this.listPlayerFees(value.value);
+            this.setState({ ...initialState });
         } else {
             this.setState(prevState => ({
                 formErrors: {
@@ -356,7 +361,7 @@ export class Monthly extends Component {
 
     listPlayerFees = year => {
         const { uid, to } = this.props.state;
-        this.setState({ loading: "active" });
+        this.setState({ fees: null, fees_keys: [], loading: "active" });
         ListPlayerFeesNew({
             uid: uid,
             to: to,
@@ -530,19 +535,19 @@ export class Monthly extends Component {
 
     // Aylık Ödeme - Bugüne kadar
     renderMonthlyFinalSituation = () => {
-        const { fees } = this.state;
+        const { fees,year } = this.state;
         return (
             <div className="d-flex justify-content-between align-items-center mt-2">
                 {fees && Object.keys(fees).length > 0 ? (
                     <div className="text-body font-italic">
                         <span className="status-icon bg-success" />
-                        Bugüne kadar <strong>{formatMoney(_.sumBy(_.values(fees), "amount") || 0)}</strong> ödeme
+                        {year.value} yılında <strong>{formatMoney(_.sumBy(_.values(fees), "amount") || 0)}</strong> ödeme
                         yapılmıştır.
                     </div>
                 ) : (
                     <div className="text-body font-italic">
                         <span className="status-icon bg-success" />
-                        Bugüne kadar <strong>0,00 ₺</strong> ödeme yapılmıştır.
+                        {year.value} yılında <strong>0,00 ₺</strong> ödeme yapılmıştır.
                     </div>
                 )}
             </div>
@@ -559,15 +564,13 @@ export class Monthly extends Component {
                     <div className="installment-detail monthly-detail d-flex flex-lg-row flex-md-row flex-column">
                         {fees && fees_keys.length > 0 ? (
                             fees_keys.map((el, key) => {
-                                const fee = fees[el].fee;
-                                const amount = fees[el].amount;
                                 const status = fees[el].status;
 
                                 const tooltip =
                                     Object.keys(fees[el]).length > 0
                                         ? status === 2
-                                            ? "Tamamlandı"
-                                            : "Eksik"
+                                            ? "Tamamlanmış Ödeme"
+                                            : "Eksik Ödeme"
                                         : "Ödeme Yok";
 
                                 const tag_color =
@@ -592,7 +595,7 @@ export class Monthly extends Component {
                                 );
                             })
                         ) : (
-                            <span className="tag" style={{ width: "100%" }} />
+                            <div className="loader mx-auto"></div>
                         )}
                     </div>
                     {this.renderMonthlyFinalSituation()}
