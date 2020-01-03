@@ -6,6 +6,7 @@ import Permission from "../../components/Pages/Settings/Permission";
 import UsageDetail from "../../components/Pages/Settings/UsageDetail";
 import SmsTemplates from "./Settings/SmsTemplates/SmsTemplates";
 import SmsTemplatesEdit from "./Settings/SmsTemplates/SmsTemplatesEdit";
+import SmsTemplatesAdd from "./Settings/SmsTemplates/SmsTemplatesAdd";
 
 const lock = (
     <span className="ml-1">
@@ -42,6 +43,15 @@ const settingsMenu = [
         title: "SMS Şablonları — Düzenle",
         pathname: "/sms-templates-edit",
         active: "sms-templates-edit",
+        icon: "fa fa-sms",
+        class: "",
+        lock: false,
+        hide: true
+    },
+    {
+        title: "SMS Şablonları — Yeni Oluştur",
+        pathname: "/sms-templates-add",
+        active: "sms-templates-add",
         icon: "fa fa-sms",
         class: "",
         lock: false,
@@ -87,7 +97,8 @@ const settingsComponentRender = {
     permission: <Permission />,
     membership: <UsageDetail />,
     "sms-templates": <SmsTemplates />,
-    "sms-templates-edit": <SmsTemplatesEdit />
+    "sms-templates-edit": <SmsTemplatesEdit />,
+    "sms-templates-add": <SmsTemplatesAdd />
 };
 
 export class SettingsSchool extends Component {

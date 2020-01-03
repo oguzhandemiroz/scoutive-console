@@ -17,7 +17,7 @@ export class SmsTemplates extends Component {
             loadingButton: ""
         };
     }
-    
+
     componentDidUpdate() {
         $('[data-toggle="tooltip"]').tooltip();
     }
@@ -65,11 +65,26 @@ export class SmsTemplates extends Component {
         if (sms_active) {
             return (
                 <div className="row row-deck">
+                    {list && list.length > 0 ? (
+                        <div className="col-lg-12">
+                            <Link
+                                className="card text-inherit text-decoration-none"
+                                to={`/account/settings/sms-templates-add/${uid}`}>
+                                <div className="card-status bg-green"></div>
+                                <div className="card-body p-125 text-center cursor-pointer">
+                                    <div className="icon-placeholder icon-placeholder-xxs bg-green-lighter">
+                                        <i className="fa fa-plus text-green"></i>
+                                    </div>
+                                    <h5 className="d-inline-block ml-2">Yeni Şablon Oluştur</h5>
+                                </div>
+                            </Link>
+                        </div>
+                    ) : null}
                     {list ? (
                         list.length > 0 ? (
                             _.orderBy(list, ["default"], ["desc"]).map((el, key) => {
                                 return (
-                                    <div className="col-lg-6 col-md-6" key={key.toString()}>
+                                    <div className="col-lg-4 col-md-6" key={key.toString()}>
                                         <div className="card">
                                             <div className="card-body text-center">
                                                 <div className={`icon-placeholder bg-${el.color}-lightest`}>
@@ -77,14 +92,11 @@ export class SmsTemplates extends Component {
                                                 </div>
                                                 <h5 className="mt-3">{el.template_name}</h5>
                                                 <p className="text-muted text-truncate">{el.content}</p>
-                                                <div>
-                                                    <button className="btn btn-sm btn-orange">Kullan</button>
-                                                    <Link
-                                                        to={`/account/settings/sms-templates-edit/${uid}/${el.template_id}`}
-                                                        className="btn btn-sm btn-secondary ml-2">
-                                                        Düzenle
-                                                    </Link>
-                                                </div>
+                                                <Link
+                                                    to={`/account/settings/sms-templates-edit/${uid}/${el.template_id}`}
+                                                    className="btn btn-sm btn-secondary ml-2">
+                                                    Düzenle
+                                                </Link>
                                             </div>
                                             {el.default ? (
                                                 <div

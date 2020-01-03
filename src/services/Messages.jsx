@@ -54,6 +54,25 @@ const ListMessageTemplates = () => {
     } catch (e) {}
 };
 
+const CreateMessageTemplate = data => {
+    try {
+        return fetch(ep.MESSAGES_TEMPLATES_CREATE, {
+            method: "POST",
+            body: JSON.stringify(data),
+            headers: h
+        })
+            .then(res => res.json())
+            .then(response => {
+                if (response) {
+                    const status = response.status;
+                    if (status.code !== 1020) errorSwal(status);
+                    return response;
+                }
+            })
+            .catch(e => fatalSwal(true));
+    } catch (e) {}
+};
+
 const GetMessageTemplate = data => {
     try {
         return fetch(ep.MESSAGES_TEMPLATES_DETAIL, {
@@ -233,5 +252,6 @@ export {
     CreateCampaign,
     CancelCampaign,
     DetailCampaign,
+    CreateMessageTemplate,
     SendTestMessages
 };

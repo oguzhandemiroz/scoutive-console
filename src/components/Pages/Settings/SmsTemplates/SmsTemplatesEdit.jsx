@@ -46,7 +46,7 @@ export class SmsTemplatesEdit extends Component {
     }
 
     handleSubmit = () => {
-        const { uid, detail, formErrors } = this.state;
+        const { uid, detail } = this.state;
         if (formValid(this.state)) {
             this.setState({ loadingButton: "btn-loading" });
             UpdateMessageTemplate({

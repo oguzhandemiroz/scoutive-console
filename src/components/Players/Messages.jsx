@@ -181,11 +181,6 @@ export class Messages extends Component {
                                                             <label className="form-label">Email</label>
                                                             {nullCheck(recipient.email)}
                                                         </div>
-                                                        <div className="col text-right">
-                                                            <button type="button" className="btn btn-secondary btn-sm">
-                                                                Bilgilendirme Mesajı Gönder
-                                                            </button>
-                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
