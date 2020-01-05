@@ -43,6 +43,14 @@ const InputmaskDefaultOptions = {
     autoUnmask: true
 };
 
+const feeStatus = {
+    "-1": { text: "Yeni Ödeme", color: "tag-info", badge: () => <span className="badge badge-info">Yeni Ödeme</span> },
+    0: { text: "İptal Ödeme", color: "tag-dark", badge: () => <span className="badge badge-dark">İptal Ödeme</span> },
+    1: { text: "Eksik Ödeme", color: "tag-warning", badge: () => <span className="badge badge-warning">Eksik Ödeme</span> },
+    2: { text: "Tamamlanmış Ödeme", color: "tag-success", badge: () => <span className="badge badge-success">Tamamlanmış Ödeme</span> },
+    3: { text: "Gecikmiş Ödeme", color: "tag-danger", badge: () => <span className="badge badge-danger">Gecikmiş Ödeme</span> }
+};
+
 const IconOption = props => (
     <Option {...props}>
         <span>
@@ -535,14 +543,14 @@ export class Monthly extends Component {
 
     // Aylık Ödeme - Bugüne kadar
     renderMonthlyFinalSituation = () => {
-        const { fees,year } = this.state;
+        const { fees, year } = this.state;
         return (
             <div className="d-flex justify-content-between align-items-center mt-2">
                 {fees && Object.keys(fees).length > 0 ? (
                     <div className="text-body font-italic">
                         <span className="status-icon bg-success" />
-                        {year.value} yılında <strong>{formatMoney(_.sumBy(_.values(fees), "amount") || 0)}</strong> ödeme
-                        yapılmıştır.
+                        {year.value} yılında <strong>{formatMoney(_.sumBy(_.values(fees), "amount") || 0)}</strong>{" "}
+                        ödeme yapılmıştır.
                     </div>
                 ) : (
                     <div className="text-body font-italic">
@@ -566,20 +574,13 @@ export class Monthly extends Component {
                             fees_keys.map((el, key) => {
                                 const status = fees[el].status;
 
-                                const tooltip =
-                                    Object.keys(fees[el]).length > 0
-                                        ? status === 2
-                                            ? "Tamamlanmış Ödeme"
-                                            : "Eksik Ödeme"
-                                        : "Ödeme Yok";
+                                const tooltip = Object.keys(fees[el]).length > 0 ? feeStatus[status].text : "Ödeme Yok";
 
                                 const tag_color =
                                     selected_month === el
                                         ? "tag-info"
                                         : Object.keys(fees[el]).length > 0
-                                        ? status === 2
-                                            ? "tag-success"
-                                            : "tag-warning"
+                                        ? feeStatus[status].color
                                         : "";
 
                                 return (
@@ -610,12 +611,12 @@ export class Monthly extends Component {
         const { fee } = this.props.state;
         if (!selected_month) return null;
 
-        if (select_fee.status === -1) {
+        if (select_fee.status === -1 || select_fee.status === 3) {
             return (
                 <div className="mt-2">
-                    <div class="hr-text hr-text-center mt-0">{moment(selected_month).format("MMMM YYYY")}</div>
+                    <div className="hr-text hr-text-center mt-0">{moment(selected_month).format("MMMM YYYY")}</div>
                     <div className="mb-3">
-                        <span className="badge badge-info">Yeni Ödeme</span>
+                        {feeStatus[select_fee.status].badge()}
                     </div>
 
                     <div className="row gutters-xs">
@@ -714,13 +715,9 @@ export class Monthly extends Component {
         } else {
             return (
                 <div className="mt-2">
-                    <div class="hr-text hr-text-center mt-0">{moment(selected_month).format("MMMM YYYY")}</div>
+                    <div className="hr-text hr-text-center mt-0">{moment(selected_month).format("MMMM YYYY")}</div>
                     <div className="mb-3">
-                        {select_fee.status === 2 ? (
-                            <span className="badge badge-success">Tamamlanmış Ödeme</span>
-                        ) : (
-                            <span className="badge badge-warning">Eksik Ödeme</span>
-                        )}
+                        {feeStatus[select_fee.status].badge()}
                     </div>
                     <div className="row gutters-xs">
                         <div className="col-sm-12 col-md-6 col-lg-6">
@@ -778,7 +775,7 @@ export class Monthly extends Component {
                             </div>
                             {settings.payment_day === "-1" ? (
                                 <div className="alert alert-danger alert-icon">
-                                    <i class="fe fe-alert-triangle mr-2" aria-hidden="true"></i>
+                                    <i className="fe fe-alert-triangle mr-2" aria-hidden="true"></i>
                                     <p className="mb-2">
                                         <strong>Ayarlarını Tamamla!</strong>
                                     </p>
@@ -855,7 +852,7 @@ export class Monthly extends Component {
                                     Aidat Ödemesi Ekle
                                 </button>
                             </div>
-                        ) : select_fee.status === -1 ? (
+                        ) : select_fee.status === -1 || select_fee.status === 3 ? (
                             <div className="card-footer d-flex justify-content-between">
                                 <button className="btn btn-success btn-icon disabled disable-overlay" disabled>
                                     <i className="fe fe-lock mr-2"></i>
