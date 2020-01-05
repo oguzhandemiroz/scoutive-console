@@ -26,21 +26,23 @@ export class Messages extends Component {
                 <div className="container">
                     <div className="page-header">
                         <h1 className="page-title">İletişim Merkezi</h1>
-                        <div className="input-group ml-auto w-auto">
-                            <Link to="/app/messages/add" className="btn btn-icon btn-sm btn-success">
-                                Yeni Mesaj Oluştur
+                        <Link
+                            to="/app/messages/add"
+                            className="btn btn-icon btn-sm btn-success ml-auto dropdown-toggle"
+                            data-toggle="dropdown">
+                            Yeni Mesaj Oluştur
+                        </Link>
+
+                        <div className="dropdown-menu">
+                            <Link to="/app/messages/add" className="dropdown-item">
+                                Manuel Mesaj Gönderimi
                             </Link>
-                            {/* <div className="input-group-append">
-                                <button
-                                    data-toggle="dropdown"
-                                    type="button"
-                                    className="btn btn-sm btn-success dropdown-toggle"></button>
-                                <div className="dropdown-menu dropdown-menu-right">
-                                    <Link className="dropdown-item" to="#">
-                                        <i className="dropdown-icon fa fa-clipboard-check"></i> Hızlı Test Gönderimi
-                                    </Link>
-                                </div>
-                            </div> */}
+                            <Link to="/app/messages/add" className="dropdown-item cursor-not-allowed disabled">
+                                Otomatik Mesaj Gönderimi
+                                <span className="ml-1">
+                                    (<i className="fe fe-lock mr-0" />)
+                                </span>
+                            </Link>
                         </div>
                     </div>
                     <div className="row row-cards">

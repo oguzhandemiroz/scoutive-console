@@ -46,9 +46,21 @@ const InputmaskDefaultOptions = {
 const feeStatus = {
     "-1": { text: "Yeni Ödeme", color: "tag-info", badge: () => <span className="badge badge-info">Yeni Ödeme</span> },
     0: { text: "İptal Ödeme", color: "tag-dark", badge: () => <span className="badge badge-dark">İptal Ödeme</span> },
-    1: { text: "Eksik Ödeme", color: "tag-warning", badge: () => <span className="badge badge-warning">Eksik Ödeme</span> },
-    2: { text: "Tamamlanmış Ödeme", color: "tag-success", badge: () => <span className="badge badge-success">Tamamlanmış Ödeme</span> },
-    3: { text: "Gecikmiş Ödeme", color: "tag-danger", badge: () => <span className="badge badge-danger">Gecikmiş Ödeme</span> }
+    1: {
+        text: "Eksik Ödeme",
+        color: "tag-warning",
+        badge: () => <span className="badge badge-warning">Eksik Ödeme</span>
+    },
+    2: {
+        text: "Tamamlanmış Ödeme",
+        color: "tag-success",
+        badge: () => <span className="badge badge-success">Tamamlanmış Ödeme</span>
+    },
+    3: {
+        text: "Gecikmiş Ödeme",
+        color: "tag-danger",
+        badge: () => <span className="badge badge-danger">Gecikmiş Ödeme</span>
+    }
 };
 
 const IconOption = props => (
@@ -611,13 +623,11 @@ export class Monthly extends Component {
         const { fee } = this.props.state;
         if (!selected_month) return null;
 
-        if (select_fee.status === -1 || select_fee.status === 3) {
+        if (select_fee.status === -1 || select_fee.status === 3) {
             return (
                 <div className="mt-2">
                     <div className="hr-text hr-text-center mt-0">{moment(selected_month).format("MMMM YYYY")}</div>
-                    <div className="mb-3">
-                        {feeStatus[select_fee.status].badge()}
-                    </div>
+                    <div className="mb-3">{feeStatus[select_fee.status].badge()}</div>
 
                     <div className="row gutters-xs">
                         <div className="col-sm-12 col-md-6 col-lg-6">
@@ -716,9 +726,7 @@ export class Monthly extends Component {
             return (
                 <div className="mt-2">
                     <div className="hr-text hr-text-center mt-0">{moment(selected_month).format("MMMM YYYY")}</div>
-                    <div className="mb-3">
-                        {feeStatus[select_fee.status].badge()}
-                    </div>
+                    <div className="mb-3">{feeStatus[select_fee.status].badge()}</div>
                     <div className="row gutters-xs">
                         <div className="col-sm-12 col-md-6 col-lg-6">
                             <div className="form-group">
@@ -852,7 +860,7 @@ export class Monthly extends Component {
                                     Aidat Ödemesi Ekle
                                 </button>
                             </div>
-                        ) : select_fee.status === -1 || select_fee.status === 3 ? (
+                        ) : select_fee.status === -1 || select_fee.status === 3 ? (
                             <div className="card-footer d-flex justify-content-between">
                                 <button className="btn btn-success btn-icon disabled disable-overlay" disabled>
                                     <i className="fe fe-lock mr-2"></i>
