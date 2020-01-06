@@ -143,7 +143,8 @@ export class Add extends Component {
             person_type: 1,
             persons: players.map(el => el),
             template_id: select_template,
-            when: formatDate(when, "YYYY-MM-DD HH:mm:00")
+            when: formatDate(when, "YYYY-MM-DD HH:mm:00"),
+            working_days: [0, 1, 2, 3, 4, 5, 6]
         }).then(response => {
             if (response) {
                 this.props.history.push("/app/messages");

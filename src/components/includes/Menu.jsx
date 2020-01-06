@@ -11,6 +11,35 @@ const menu = [
         condition: true
     },
     {
+        li: "nav-item dropdown",
+        navlink: { to: "/app/players", exact: false, activeClassName: "", className: "nav-link" },
+        dataToggle: "dropdown",
+        childDividerClass: "dropdown-menu dropdown-menu-arrow",
+        icon: "fa fa-user-alt",
+        text: " Kişiler",
+        item: [
+            {
+                to: "/app/players",
+                className: "dropdown-item",
+                childText: "Öğrenciler",
+                icon: "fa fa-user-graduate"
+            },
+            {
+                to: "/app/parents",
+                className: "dropdown-item",
+                childText: "Veliler",
+                icon: "fa fa-user"
+            },
+            {
+                to: "/app/employees",
+                className: "dropdown-item",
+                childText: "Personeller",
+                icon: "fa fa-user-tie"
+            }
+        ],
+        condition: true
+    },
+    {
         li: "nav-item",
         navlink: { to: "/app/employees", exact: false, activeClassName: "active", className: "nav-link" },
         icon: "fa fa-user-tie",
@@ -113,13 +142,13 @@ class Menu extends Component {
                                                     </NavLink>
                                                     {el.item ? (
                                                         <div className={el.childDividerClass}>
-                                                            {el.item.map((el, key) => {
+                                                            {el.item.map((xy, k) => {
                                                                 return (
                                                                     <NavLink
-                                                                        key={key.toString()}
-                                                                        to={el.to}
-                                                                        className={el.className}>
-                                                                        {el.childText}
+                                                                        key={k.toString()}
+                                                                        to={xy.to}
+                                                                        className={xy.className}>
+                                                                        <i className={xy.icon} /> {xy.childText}
                                                                     </NavLink>
                                                                 );
                                                             })}

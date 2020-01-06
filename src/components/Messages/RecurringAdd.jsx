@@ -27,8 +27,11 @@ registerLocale("tr", tr);
 const initialState = {
     title: null,
     when: new Date(),
+    end_date: moment()
+        .add("years", 1)
+        .toDate(),
     repeat: false,
-    status: 0,
+    status: "(0)",
     is_trial: false,
     is_active: {
         value: 1,
@@ -168,7 +171,7 @@ export class RecurringAdd extends Component {
     };
 
     handleSubmit = () => {
-        const { uid, title, select_template, when, segment_id, working_days } = this.state;
+        const { uid, title, select_template, when, end_date, segment_id, working_days } = this.state;
         CreateCampaign({
             uid: uid,
             title: title,
@@ -177,7 +180,8 @@ export class RecurringAdd extends Component {
             persons: null,
             template_id: select_template,
             working_days: working_days,
-            when: formatDate(when, "YYYY-MM-DD HH:mm:00")
+            when: formatDate(when, "YYYY-MM-DD HH:mm:00"),
+            end_date: formatDate(end_date, "YYYY-MM-DD ") + formatDate(when, "HH:mm:00")
         }).then(response => {
             if (response) {
                 this.props.history.push("/app/messages");
@@ -358,7 +362,7 @@ export class RecurringAdd extends Component {
     };
 
     segmentStep = () => {
-        const { segments, selected_segment, loadingButton, title, when, formErrors, repeat } = this.state;
+        const { segments, selected_segment, loadingButton, title, when, formErrors, end_date } = this.state;
         return (
             <>
                 <div className="card-body pb-0">
@@ -392,7 +396,7 @@ export class RecurringAdd extends Component {
                         <>
                             <div className="hr-text mt-0">Segment ve Mesaj Ayarları</div>
                             <div className="row gutters-xs">
-                                <div className="col-lg-4">
+                                <div className="col">
                                     <div className="form-group">
                                         <label className="form-label">
                                             Mesaj Adı<span className="form-required">*</span>
@@ -406,7 +410,7 @@ export class RecurringAdd extends Component {
                                         />
                                     </div>
                                 </div>
-                                <div className="col-lg-4">
+                                <div className="col-lg-3 col-md-6">
                                     <div className="form-group">
                                         <label className="form-label">
                                             Gönderi Başlama Tarihi <span className="form-required">*</span>
@@ -422,7 +426,7 @@ export class RecurringAdd extends Component {
                                         />
                                     </div>
                                 </div>
-                                <div className="col-lg-4">
+                                <div className="col-auto">
                                     <div className="form-group">
                                         <label className="form-label">
                                             Gönderim Saati <span className="form-required">*</span>
@@ -439,6 +443,22 @@ export class RecurringAdd extends Component {
                                             showTimeSelectOnly
                                             timeIntervals={5}
                                             timeCaption="Saat"
+                                        />
+                                    </div>
+                                </div>
+                                <div className="col-lg-3 col-md-6">
+                                    <div className="form-group">
+                                        <label className="form-label">
+                                            Gönderi Sonlanma Tarihi <span className="form-required">*</span>
+                                        </label>
+                                        <DatePicker
+                                            autoComplete="off"
+                                            selected={end_date}
+                                            dateFormat="dd MMMM yyyy"
+                                            name="end_date"
+                                            locale="tr"
+                                            onChange={date => this.handleDate(date, "end_date")}
+                                            className={`form-control ${formErrors.end_date}`}
                                         />
                                     </div>
                                 </div>
@@ -474,7 +494,17 @@ export class RecurringAdd extends Component {
     };
 
     renderSegmentSettings = () => {
-        const { segments, selected_segment, when, is_active, select, is_trial, passed_day, formErrors } = this.state;
+        const {
+            segments,
+            selected_segment,
+            when,
+            end_date,
+            is_active,
+            select,
+            is_trial,
+            passed_day,
+            formErrors
+        } = this.state;
         const segmentName = segments.find(x => x.static_segment_id === selected_segment).segment_name;
         switch (selected_segment) {
             case 1:
@@ -525,7 +555,8 @@ export class RecurringAdd extends Component {
                                     {is_trial ? " Ön Kayıt Öğrencilerine" : " " + is_active.label + " Öğrencilere"}
                                 </strong>
                                 , her gün çalışacak şekilde yeni kayıtlara{" "}
-                                <strong> {formatDate(when, "DD MMMM YYYY")}</strong> tarihinden itibaren saat
+                                <strong> {formatDate(when, "DD MMMM YYYY")}</strong> tarihinden{" "}
+                                <strong> {formatDate(end_date, "DD MMMM YYYY")}</strong> tarihine kadar saat
                                 <strong> {formatDate(when, "HH:mm")}</strong>'de/da gönderim yapacaktır.
                             </div>
                         </div>
@@ -559,7 +590,8 @@ export class RecurringAdd extends Component {
                                     {is_trial ? " Ön Kayıt Öğrencilerine" : " " + is_active.label + " Öğrencilere"}
                                 </strong>
                                 , her gün çalışacak şekilde doğum günü olanlara{" "}
-                                <strong> {formatDate(when, "DD MMMM YYYY")}</strong> tarihinden itibaren saat
+                                <strong> {formatDate(when, "DD MMMM YYYY")}</strong> tarihinden{" "}
+                                <strong> {formatDate(end_date, "DD MMMM YYYY")}</strong> tarihine kadar saat
                                 <strong> {formatDate(when, "HH:mm")}</strong>'de/da gönderim yapacaktır.
                             </div>
                         </div>
@@ -573,7 +605,8 @@ export class RecurringAdd extends Component {
                             <i className="fe fe-check mr-2" aria-hidden="true"></i>
                             <strong>{segmentName}</strong> segmenti seçilmiş olup bu mesaj
                             <strong> devamsızlık yapan (okula/kursa gelmeyen)</strong> öğrencilere, her gün çalışacak
-                            şekilde <strong> {formatDate(when, "DD MMMM YYYY")}</strong> tarihinden itibaren saat
+                            şekilde <strong> {formatDate(when, "DD MMMM YYYY")}</strong> tarihinden{" "}
+                            <strong> {formatDate(end_date, "DD MMMM YYYY")}</strong> tarihine kadar saat
                             <strong> {formatDate(when, "HH:mm")}</strong>'de/da gönderim yapacaktır.
                         </div>
                     </div>
@@ -627,7 +660,8 @@ export class RecurringAdd extends Component {
                                 <i className="fe fe-check mr-2" aria-hidden="true"></i>
                                 <strong>{segmentName}</strong> segmenti seçilmiş olup bu mesaj, ödemesini{" "}
                                 <strong>{passed_day}</strong> gün geciktirmiş öğrencilere, her gün çalışacak şekilde{" "}
-                                <strong> {formatDate(when, "DD MMMM YYYY")}</strong> tarihinden itibaren saat
+                                <strong> {formatDate(when, "DD MMMM YYYY")}</strong> tarihinden{" "}
+                                <strong> {formatDate(end_date, "DD MMMM YYYY")}</strong> tarihine kadar saat
                                 <strong> {formatDate(when, "HH:mm")}</strong>'de/da gönderim yapacaktır.
                             </div>
                         </div>
@@ -790,7 +824,7 @@ export class RecurringAdd extends Component {
                 <div className="card-footer">
                     <button
                         type="button"
-                        onClick={() => this.handlePrevStep(3)}
+                        onClick={() => this.handlePrevStep(2)}
                         className="btn btn-secondary btn-icon mr-auto">
                         <i className="fa fa-arrow-left mr-2"></i>Geri Dön
                     </button>

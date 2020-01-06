@@ -57,7 +57,7 @@ export class List extends Component {
                     list.map((el, key) => {
                         return (
                             <div className="col-md-6 col-lg-4" key={key.toString()}>
-                                <div className="card card-hover hover-primary text-decoration-none">
+                                <div className="card card-hover hover-primary cursor-default">
                                     <div className="card-body p-125">
                                         <div className="row gutters-xs align-items-center">
                                             <div className="col">
