@@ -37,11 +37,8 @@ export class Messages extends Component {
                             <Link to="/app/messages/add" className="dropdown-item">
                                 Manuel Mesaj Gönderimi
                             </Link>
-                            <Link to="/app/messages/add" className="dropdown-item cursor-not-allowed disabled">
+                            <Link to="/app/messages/recurring/add" className="dropdown-item">
                                 Otomatik Mesaj Gönderimi
-                                <span className="ml-1">
-                                    (<i className="fe fe-lock mr-0" />)
-                                </span>
                             </Link>
                         </div>
                     </div>

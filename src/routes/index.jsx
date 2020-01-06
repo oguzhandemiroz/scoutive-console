@@ -68,6 +68,7 @@ import Income from "../components/Accountings/Income/Income";
 import Expense from "../components/Accountings/Expense/Expense";
 
 import MessagesAdd from "../components/Messages/Add";
+import RecurringAdd from "../components/Messages/RecurringAdd";
 import MessagesDetail from "../components/Messages/Detail";
 
 import UnpaidPlayerList from "../components/Reports/UnpaidPlayerList";
@@ -470,6 +471,13 @@ var indexRoutes = [
         path: "/messages/add",
         name: "Mesaj Gönderim Merkezi - Ekle",
         component: MessagesAdd,
+        layout: "/app",
+        prop: { exact: true }
+    },
+    {
+        path: "/messages/recurring/add",
+        name: "Mesaj Gönderim Merkezi - Otomatik Mesaj Ekle",
+        component: RecurringAdd,
         layout: "/app",
         prop: { exact: true }
     },

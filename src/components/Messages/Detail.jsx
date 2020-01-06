@@ -144,12 +144,12 @@ export class Detail extends Component {
             .replace(/\u015e/g, "Ş|")
             .replace(/\u015f/g, "ş|")
             .replace(/\r?\n/g, " |").length;
-        if (content.length >= 736) return 6;
-        if (content.length >= 588) return 5;
-        if (content.length >= 440) return 4;
-        if (content.length >= 292) return 3;
-        if (content.length >= 151) return 2;
-        if (content.length >= 0) return 1;
+        if (contentLength >= 736) return 6;
+        if (contentLength >= 588) return 5;
+        if (contentLength >= 440) return 4;
+        if (contentLength >= 292) return 3;
+        if (contentLength >= 151) return 2;
+        if (contentLength >= 0) return 1;
     };
 
     getMessageLength = content => {

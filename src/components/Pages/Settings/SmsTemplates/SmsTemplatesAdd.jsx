@@ -288,125 +288,125 @@ export class SmsTemplatesAdd extends Component {
                                 <label className="form-label">
                                     Şablon İkonu <span className="form-required">*</span>
                                 </label>
-                                <div class="selectgroup selectgroup-pills">
-                                    <label class="selectgroup-item" data-toggle="tooltip" title="Hoşgeldin">
+                                <div className="selectgroup selectgroup-pills">
+                                    <label className="selectgroup-item" data-toggle="tooltip" title="Hoşgeldin">
                                         <input
                                             type="radio"
                                             name="icon"
                                             value="fa fa-handshake"
-                                            class="selectgroup-input"
+                                            className="selectgroup-input"
                                             onChange={this.handleRadio}
                                         />
-                                        <span class="selectgroup-button selectgroup-button-icon">
-                                            <i class="fa fa-handshake"></i>
+                                        <span className="selectgroup-button selectgroup-button-icon">
+                                            <i className="fa fa-handshake"></i>
                                         </span>
                                     </label>
-                                    <label class="selectgroup-item" data-toggle="tooltip" title="Bilgilendirme">
+                                    <label className="selectgroup-item" data-toggle="tooltip" title="Bilgilendirme">
                                         <input
                                             type="radio"
                                             name="icon"
                                             value="fa fa-info"
-                                            class="selectgroup-input"
+                                            className="selectgroup-input"
                                             onChange={this.handleRadio}
                                         />
-                                        <span class="selectgroup-button selectgroup-button-icon">
-                                            <i class="fa fa-info"></i>
+                                        <span className="selectgroup-button selectgroup-button-icon">
+                                            <i className="fa fa-info"></i>
                                         </span>
                                     </label>
-                                    <label class="selectgroup-item" data-toggle="tooltip" title="Duyuru">
+                                    <label className="selectgroup-item" data-toggle="tooltip" title="Duyuru">
                                         <input
                                             type="radio"
                                             name="icon"
                                             value="fa fa-bullhorn"
-                                            class="selectgroup-input"
+                                            className="selectgroup-input"
                                             onChange={this.handleRadio}
                                         />
-                                        <span class="selectgroup-button selectgroup-button-icon">
-                                            <i class="fa fa-bullhorn"></i>
+                                        <span className="selectgroup-button selectgroup-button-icon">
+                                            <i className="fa fa-bullhorn"></i>
                                         </span>
                                     </label>
-                                    <label class="selectgroup-item" data-toggle="tooltip" title="Yoklama">
+                                    <label className="selectgroup-item" data-toggle="tooltip" title="Yoklama">
                                         <input
                                             type="radio"
                                             name="icon"
                                             value="fa fa-clock"
-                                            class="selectgroup-input"
+                                            className="selectgroup-input"
                                             onChange={this.handleRadio}
                                         />
-                                        <span class="selectgroup-button selectgroup-button-icon">
-                                            <i class="fa fa-clock"></i>
+                                        <span className="selectgroup-button selectgroup-button-icon">
+                                            <i className="fa fa-clock"></i>
                                         </span>
                                     </label>
-                                    <label class="selectgroup-item" data-toggle="tooltip" title="Personel Yoklama">
+                                    <label className="selectgroup-item" data-toggle="tooltip" title="Personel Yoklama">
                                         <input
                                             type="radio"
                                             name="icon"
                                             value="fa fa-business-time"
-                                            class="selectgroup-input"
+                                            className="selectgroup-input"
                                             onChange={this.handleRadio}
                                         />
-                                        <span class="selectgroup-button selectgroup-button-icon">
-                                            <i class="fa fa-business-time"></i>
+                                        <span className="selectgroup-button selectgroup-button-icon">
+                                            <i className="fa fa-business-time"></i>
                                         </span>
                                     </label>
-                                    <label class="selectgroup-item" data-toggle="tooltip" title="Ödeme Başarılı">
+                                    <label className="selectgroup-item" data-toggle="tooltip" title="Ödeme Başarılı">
                                         <input
                                             type="radio"
                                             name="icon"
                                             value="fa fa-file-invoice-dollar"
-                                            class="selectgroup-input"
+                                            className="selectgroup-input"
                                             onChange={this.handleRadio}
                                         />
-                                        <span class="selectgroup-button selectgroup-button-icon">
-                                            <i class="fa fa-file-invoice-dollar"></i>
+                                        <span className="selectgroup-button selectgroup-button-icon">
+                                            <i className="fa fa-file-invoice-dollar"></i>
                                         </span>
                                     </label>
-                                    <label class="selectgroup-item" data-toggle="tooltip" title="Ödeme Geçikmiş">
+                                    <label className="selectgroup-item" data-toggle="tooltip" title="Ödeme Geçikmiş">
                                         <input
                                             type="radio"
                                             name="icon"
                                             value="fa fa-hand-holding-usd"
-                                            class="selectgroup-input"
+                                            className="selectgroup-input"
                                             onChange={this.handleRadio}
                                         />
-                                        <span class="selectgroup-button selectgroup-button-icon">
-                                            <i class="fa fa-hand-holding-usd"></i>
+                                        <span className="selectgroup-button selectgroup-button-icon">
+                                            <i className="fa fa-hand-holding-usd"></i>
                                         </span>
                                     </label>
-                                    <label class="selectgroup-item" data-toggle="tooltip" title="Doğum Günü">
+                                    <label className="selectgroup-item" data-toggle="tooltip" title="Doğum Günü">
                                         <input
                                             type="radio"
                                             name="icon"
                                             value="fa fa-birthday-cake"
-                                            class="selectgroup-input"
+                                            className="selectgroup-input"
                                             onChange={this.handleRadio}
                                         />
-                                        <span class="selectgroup-button selectgroup-button-icon">
-                                            <i class="fa fa-birthday-cake"></i>
+                                        <span className="selectgroup-button selectgroup-button-icon">
+                                            <i className="fa fa-birthday-cake"></i>
                                         </span>
                                     </label>
-                                    <label class="selectgroup-item" data-toggle="tooltip" title="Uyarı/Hatırlatıcı">
+                                    <label className="selectgroup-item" data-toggle="tooltip" title="Uyarı/Hatırlatıcı">
                                         <input
                                             type="radio"
                                             name="icon"
                                             value="fa fa-bell"
-                                            class="selectgroup-input"
+                                            className="selectgroup-input"
                                             onChange={this.handleRadio}
                                         />
-                                        <span class="selectgroup-button selectgroup-button-icon">
-                                            <i class="fa fa-bell"></i>
+                                        <span className="selectgroup-button selectgroup-button-icon">
+                                            <i className="fa fa-bell"></i>
                                         </span>
                                     </label>
-                                    <label class="selectgroup-item" data-toggle="tooltip" title="Antrenman">
+                                    <label className="selectgroup-item" data-toggle="tooltip" title="Antrenman">
                                         <input
                                             type="radio"
                                             name="icon"
                                             value="fa fa-running"
-                                            class="selectgroup-input"
+                                            className="selectgroup-input"
                                             onChange={this.handleRadio}
                                         />
-                                        <span class="selectgroup-button selectgroup-button-icon">
-                                            <i class="fa fa-running"></i>
+                                        <span className="selectgroup-button selectgroup-button-icon">
+                                            <i className="fa fa-running"></i>
                                         </span>
                                     </label>
                                 </div>

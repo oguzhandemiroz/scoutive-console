@@ -243,6 +243,53 @@ const SendTestMessages = data => {
     } catch (e) {}
 };
 
+const ListStaticSegments = () => {
+    try {
+        return fetch(ep.SEGMENTS_STATIC_LIST, {
+            method: "POST",
+            body: JSON.stringify({
+                uid: localStorage.getItem("UID")
+            }),
+            headers: h
+        })
+            .then(res => res.json())
+            .then(response => {
+                if (response) {
+                    const status = response.status;
+                    if (status.code !== 1020) errorSwal(status);
+                    return response;
+                }
+            })
+            .catch(e => fatalSwal(true));
+    } catch (e) {}
+};
+
+const CreateSegment = data => {
+    try {
+        return fetch(ep.SEGMENT_CREATE, {
+            method: "POST",
+            body: JSON.stringify(data),
+            headers: h
+        })
+            .then(res => res.json())
+            .then(response => {
+                if (response) {
+                    const status = response.status;
+                    if (status.code !== 1020) errorSwal(status);
+                    else {
+                        Toast.fire({
+                            type: "success",
+                            title: status.description,
+                            timer: 2500
+                        });
+                    }
+                    return response;
+                }
+            })
+            .catch(e => fatalSwal(true));
+    } catch (e) {}
+};
+
 export {
     CreateRecipient,
     ListMessageTemplates,
@@ -253,5 +300,7 @@ export {
     CancelCampaign,
     DetailCampaign,
     CreateMessageTemplate,
-    SendTestMessages
+    SendTestMessages,
+    ListStaticSegments,
+    CreateSegment
 };

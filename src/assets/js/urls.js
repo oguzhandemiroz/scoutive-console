@@ -116,7 +116,9 @@ var ep = {
     CAMPAIGN_CREATE: host + api_version + "create/campaign",
     CAMPAIGN_LIST: host + api_version + "list/campaigns",
     CAMPAIGN_CANCEL: host + api_version + "cancel/campaign",
-    CAMPAIGN_DETAIL: host + api_version + "get/campaign"
+    CAMPAIGN_DETAIL: host + api_version + "get/campaign",
+    SEGMENTS_STATIC_LIST: host + api_version + "list/segments/static",
+    SEGMENT_CREATE: host + api_version + "create/segment"
 };
 
 export default ep;
