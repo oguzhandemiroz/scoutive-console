@@ -7,7 +7,8 @@ import ep from "../../assets/js/urls";
 import _ from "lodash";
 import "../../assets/css/datatables.responsive.css";
 import { formatDate } from "../../services/Others.jsx";
-import { CancelCampaign } from "../../services/Messages.jsx";
+import { CancelCampaign, ToggleStatusCampaign } from "../../services/Messages.jsx";
+import moment from "moment";
 const $ = require("jquery");
 $.DataTable = require("datatables.net-responsive");
 
@@ -32,10 +33,11 @@ function _childNodes(dt, row, col) {
 }
 
 const statusType = {
-    0: { bg: "badge-secondary", title: "İptal" },
+    0: { bg: "badge-danger", title: "İptal" },
     1: { bg: "badge-warning", title: "Kuyrukta" },
     2: { bg: "badge-success", title: "Tamamlandı" },
-    3: { bg: "badge-danger", title: "Tamamlanamadı" }
+    3: { bg: "badge-secondary", title: "Durduruldu" },
+    999: { bg: "badge-orange", title: "Devam Ediyor" }
 };
 
 export class List extends Component {
@@ -141,7 +143,7 @@ export class List extends Component {
                             return data + " " + row.template.template_name;
                         },
                         createdCell: (td, cellData, rowData) => {
-                            const { campaign_id, title, template } = rowData;
+                            const { campaign_id, title, template, segment_id } = rowData;
                             ReactDOM.render(
                                 <BrowserRouter>
                                     <div
@@ -154,6 +156,7 @@ export class List extends Component {
                                         className="text-inherit font-weight-600"
                                         to={"/app/messages/detail/" + campaign_id}
                                         onClick={() => this.props.history.push(`/app/messages/detail/${campaign_id}`)}>
+                                        {segment_id ? <span className="badge badge-primary mr-2">OTOMATİK</span> : null}
                                         {title}
                                     </Link>
                                 </BrowserRouter>,
@@ -168,29 +171,58 @@ export class List extends Component {
                             return data + " " + row.template.template_name;
                         },
                         createdCell: (td, cellData, rowData) => {
-                            const { status } = rowData;
-                            ReactDOM.render(
-                                <span className={`badge ${statusType[status].bg}`}>{statusType[status].title}</span>,
-                                td
-                            );
+                            const { status, segment_id } = rowData;
+                            if (segment_id && status === 1) {
+                                ReactDOM.render(
+                                    <span className={`badge ${statusType[999].bg}`}>{statusType[999].title}</span>,
+                                    td
+                                );
+                            } else {
+                                ReactDOM.render(
+                                    <span className={`badge ${statusType[status].bg}`}>
+                                        {statusType[status].title}
+                                    </span>,
+                                    td
+                                );
+                            }
                         }
                     },
                     {
                         targets: "action",
                         responsivePriority: 5,
                         createdCell: (td, cellData, rowData) => {
-                            const { campaign_id, status, title } = rowData;
+                            const { campaign_id, status, title, segment_id } = rowData;
                             ReactDOM.render(
                                 <BrowserRouter>
                                     <Link
                                         to={"/app/messages/detail/" + campaign_id}
+                                        data-toggle="tooltip"
+                                        title="Gönderimi Görüntüle"
                                         className="btn btn-icon btn-sm btn-secondary mx-1"
                                         onClick={() => this.props.history.push(`/app/messages/detail/${campaign_id}`)}>
-                                        Görüntüle
+                                        <i className="fe fe-eye" />
                                     </Link>
-                                    {status === 1 ? (
+                                    {segment_id && status === 1 ? (
                                         <button
                                             className="btn btn-icon btn-sm btn-gray mx-1"
+                                            data-toggle="tooltip"
+                                            title="Gönderimi Durdur"
+                                            onClick={() => this.toggleStatusCampaign(campaign_id, title, 3)}>
+                                            <i className="fe fe-pause" />
+                                        </button>
+                                    ) : null}
+                                    {segment_id && status === 3 ? (
+                                        <button
+                                            className="btn btn-icon btn-sm btn-orange mx-1"
+                                            data-toggle="tooltip"
+                                            title="Gönderimi Başlat"
+                                            onClick={() => this.toggleStatusCampaign(campaign_id, title, 1)}>
+                                            <i className="fe fe-play" />
+                                        </button>
+                                    ) : null}
+                                    {status !== 2 && status !== 0 ? (
+                                        <button
+                                            className="btn btn-icon btn-sm btn-danger mx-1"
                                             data-toggle="tooltip"
                                             title="Gönderimi İptal Et"
                                             onClick={() => this.cancelCampaign(campaign_id, title)}>
@@ -218,12 +250,39 @@ export class List extends Component {
                         }
                     },
                     {
-                        data: "person_count"
+                        data: "person_count",
+                        render: function(data, type, row) {
+                            return row.segment_id ? "<span style='font-size:20px;'>∞</span>" : data;
+                        }
+                    },
+                    {
+                        data: "created_date",
+                        responsivePriority: 10012,
+                        className: "none",
+                        render: function(data, type, row) {
+                            return formatDate(data, "DD MMMM YYYY, HH:mm");
+                        }
                     },
                     {
                         data: "when",
                         render: function(data, type, row) {
                             return formatDate(data, "DD MMMM YYYY, HH:mm");
+                        }
+                    },
+                    {
+                        data: "end_date",
+                        render: function(data, type, row) {
+                            return formatDate(data, "DD MMMM YYYY, HH:mm");
+                        }
+                    },
+                    {
+                        data: "working_days",
+                        responsivePriority: 10012,
+                        className: "none",
+                        render: function(data, type, row) {
+                            return _.sortBy(data)
+                                .map(x => moment.weekdays(parseInt(x)))
+                                .join(", ");
                         }
                     },
                     {
@@ -260,7 +319,7 @@ export class List extends Component {
         showSwal({
             type: "warning",
             title: "Mesaj İptali",
-            html: `${name} adlı mesaj iptal edilecektir.<br>Mesaj gönderimi olmayacaktır.<br>Onaylıyor musunuz?`,
+            html: `<strong>${name}</strong> adlı mesaj iptal edilecektir.<br>Mesaj gönderimi olmayacaktır.<br>Onaylıyor musunuz?`,
             confirmButtonText: "Onaylıyorum",
             cancelButtonText: "İptal",
             confirmButtonColor: "#cd201f",
@@ -272,6 +331,36 @@ export class List extends Component {
                 CancelCampaign({
                     uid: uid,
                     campaign_id: campaign_id
+                }).then(response => {
+                    if (response) {
+                        this.reload();
+                    }
+                });
+            }
+        });
+    };
+
+    toggleStatusCampaign = (campaign_id, name, status) => {
+        const { uid } = this.state;
+        showSwal({
+            type: "warning",
+            title: status === 1 ? "Mesajı Başlat" : "Mesajı Durdur",
+            html:
+                status === 1
+                    ? `<strong>${name}</strong> adlı mesaj başlatılacaktır.<br>Mesaj gönderimi tekrar başlayacaktır.<br>Onaylıyor musunuz?`
+                    : `<strong>${name}</strong> adlı mesaj durdurulacaktır.<br>Mesaj gönderimi duracaktır.<br>Onaylıyor musunuz?`,
+            confirmButtonText: "Onaylıyorum",
+            cancelButtonText: "İptal",
+            confirmButtonColor: "#cd201f",
+            cancelButtonColor: "#868e96",
+            showCancelButton: true,
+            reverseButtons: true
+        }).then(re => {
+            if (re.value) {
+                ToggleStatusCampaign({
+                    uid: uid,
+                    campaign_id: campaign_id,
+                    status: status
                 }).then(response => {
                     if (response) {
                         this.reload();
@@ -301,7 +390,10 @@ export class List extends Component {
                             <th className="w-1 no-sort control" />
                             <th className="title pl-5">MESAJ ADI</th>
                             <th className="person_count">KİŞİ SAYISI</th>
-                            <th className="when">GÖNDERİM TARİHİ</th>
+                            <th className="created_date">OLUŞTURMA TARİHİ</th>
+                            <th className="when">BAŞLAMA TARİHİ</th>
+                            <th className="end_date">SONLANMA TARİHİ</th>
+                            <th className="working_days">GÖNDERİ ÇALIŞMA GÜNLERİ</th>
                             <th className="status">DURUM</th>
                             <th className="no-sort action w-1">İşlem</th>
                         </tr>

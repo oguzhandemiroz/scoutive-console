@@ -177,7 +177,7 @@ export class Messages extends Component {
                                                             <label className="form-label">Telefon</label>
                                                             {formatPhone(recipient.phone)}
                                                         </div>
-                                                        <div className="col-sm-6 col-lg-3">
+                                                        <div className="col-auto">
                                                             <label className="form-label">Email</label>
                                                             {nullCheck(recipient.email)}
                                                         </div>

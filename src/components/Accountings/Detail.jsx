@@ -9,6 +9,7 @@ export class Detail extends Component {
 
         this.state = {
             uid: localStorage.getItem("UID"),
+            sname: localStorage.getItem("sName"),
             note: null,
             loading: "active"
         };
@@ -36,7 +37,7 @@ export class Detail extends Component {
     };
 
     render() {
-        const { amount, payment_date, accounting_type, person, note, loading } = this.state;
+        const { amount, sname, payment_date, accounting_type, person, note, loading } = this.state;
         const { aid } = this.props.match.params;
         return (
             <div className="container">
@@ -60,9 +61,12 @@ export class Detail extends Component {
                             </div>
                             <div className={`dimmer ${loading}`}>
                                 <div className="loader" />
-                                <div className="dimmer-content">
+                                <div className="dimmer-content border">
                                     <div className="card-body p-5">
                                         <div className="row">
+                                            <div className="col-lg-12">
+                                                <h3 className="d-none d-print-block">{sname}</h3>
+                                            </div>
                                             {person ? (
                                                 <div className="col-lg-6 col-sm-12 col-md-6 mb-2">
                                                     <div className="example">

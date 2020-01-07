@@ -88,6 +88,10 @@ figure span.player-number {
     cursor: not-allowed !important;
 }
 
+.pointer-events {
+    pointer-events: all !important;
+}
+
 .react-datepicker-popper {
     z-index: 9999 !important;
 }
@@ -932,6 +936,18 @@ a.badge {
     color: #fff;
     background-color: #343a40;
 }
+.badge.badge-indigo {
+    color: #fff;
+    background-color: #6574cd !important;
+}
+.badge.badge-lime {
+    color: #fff;
+    background-color: #7bd235 !important;
+}
+.badge.badge-orange {
+    color: #fff;
+    background-color: #fd9644;
+}
 .text-h1 {
     font-size: 1.625rem !important;
 }
@@ -1407,4 +1423,68 @@ a.step-item:hover {
 .hr-text.hr-text-right > *:first-child {
     padding-right: 0;
     padding-left: 0.5rem;
+}
+
+/* ### BREACRUMB ### */
+.breadcrumb {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1rem;
+    list-style: none;
+    background-color: #f1f3f8;
+    border-radius: 3px;
+}
+
+.breadcrumb-item {
+    display: flex;
+}
+.breadcrumb-item + .breadcrumb-item {
+    padding-left: 0.5rem;
+}
+.breadcrumb-item + .breadcrumb-item::before {
+    display: inline-block;
+    padding-right: 0.5rem;
+    color: #aeb3bc;
+    content: "/";
+}
+.breadcrumb-item + .breadcrumb-item:hover::before {
+    text-decoration: underline;
+}
+.breadcrumb-item + .breadcrumb-item:hover::before {
+    text-decoration: none;
+}
+.breadcrumb-item.active {
+    color: #aeb3bc;
+}
+
+.breadcrumb {
+    padding: 0;
+    margin: 0;
+    background: transparent;
+}
+
+.breadcrumb-item.active a {
+    color: inherit;
+    pointer-events: none;
+}
+
+.breadcrumb-dots .breadcrumb-item + .breadcrumb-item::before {
+    content: "·";
+}
+
+.breadcrumb-arrows .breadcrumb-item + .breadcrumb-item::before {
+    content: "›";
+}
+
+.breadcrumb-bullets .breadcrumb-item + .breadcrumb-item::before {
+    content: "•";
+}
+
+.breadcrumb-alternate a {
+    color: #8b929e;
+}
+
+.breadcrumb-alternate .breadcrumb-item.active {
+    color: #354052;
 }

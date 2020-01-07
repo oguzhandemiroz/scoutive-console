@@ -117,6 +117,7 @@ var ep = {
     CAMPAIGN_LIST: host + api_version + "list/campaigns",
     CAMPAIGN_CANCEL: host + api_version + "cancel/campaign",
     CAMPAIGN_DETAIL: host + api_version + "get/campaign",
+    CAMPAIGN_STATUS_TOGGLE: host + api_version + "toggle/campaign/status",
     SEGMENTS_STATIC_LIST: host + api_version + "list/segments/static",
     SEGMENT_CREATE: host + api_version + "create/segment"
 };

@@ -937,7 +937,7 @@ export class Add extends Component {
                                             value={fee || "0,00"}
                                         />
                                     </div>
-                                    <div className="form-group mb-0">
+                                    <div className="form-group">
                                         <label className="form-label">
                                             Ödeme Tarihi<span className="form-required">*</span>
                                         </label>

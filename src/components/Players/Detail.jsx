@@ -3,8 +3,9 @@ import { Link, withRouter } from "react-router-dom";
 import { DetailPlayer } from "../../services/Player.jsx";
 import Tabs from "../../components/Players/Tabs";
 import PersonCard from "./PersonCard";
-import moment from "moment";
+import Swal from "sweetalert2";
 import { formatPhone, nullCheck, formatDate, fullnameGenerator } from "../../services/Others.jsx";
+import { showSwal } from "../Alert.jsx";
 
 const genderToText = {
     0: "Erkek",
@@ -36,6 +37,10 @@ export class Detail extends Component {
         this.detailPlayer();
     }
 
+    componentWillUnmount() {
+        Swal.close();
+    }
+
     detailPlayer = () => {
         const { uid, to } = this.state;
         DetailPlayer({ uid: uid, to: to, attribute_values: [] }).then(response => {
@@ -45,6 +50,22 @@ export class Detail extends Component {
                     const data = response.data;
                     delete data.uid;
                     this.setState({ ...data, loading: "" });
+                    if (data.recipient_parent_id === -1) {
+                        showSwal({
+                            type: "warning",
+                            title: "İletişim Servisi Uyarısı!",
+                            html: `İletişim Bilgisi tanımlanmamış.<br/>Tanımlamak için <a href="/app/players/messages/${to}">tıklayın...</a>`,
+                            backdrop: false,
+                            toast: true,
+                            showConfirmButton: false,
+                            position: "top-end",
+                            timer: 10000,
+                            customClass: {
+                                popup: "flex-column",
+                                content: "mt-3"
+                            }
+                        });
+                    }
                 }
             }
         });

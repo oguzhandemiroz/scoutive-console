@@ -89,19 +89,19 @@ export class RecurringAdd extends Component {
                 is_active: [
                     {
                         value: -1,
-                        label: "Tüm"
+                        label: "Tüm Kayıtlar"
                     },
                     {
                         value: 0,
-                        label: "Kaydı Pasif"
+                        label: "Pasif Kayıtlar"
                     },
                     {
                         value: 1,
-                        label: "Kaydı Aktif"
+                        label: "Aktif Kayıtlar"
                     },
                     {
                         value: 2,
-                        label: "Kaydı Dondurulmuş"
+                        label: "Dondurulmuş Kayıtlar"
                     }
                 ],
                 employees: null
@@ -756,8 +756,7 @@ export class RecurringAdd extends Component {
                                             />
                                             <h5 className="mt-5">Mesaj Şablonu Bulunamadı!</h5>
                                             <p className="text-muted text-center">
-                                                Kampanya oluşturmak için ve mesaj gönderimi yapabilmek için şablon
-                                                oluşturmanız gerekmektedir...
+                                                Mesaj gönderimi yapabilmek için şablon oluşturmanız gerekmektedir...
                                                 <br />
                                                 Hemen varsayılan şablonları yükle!
                                             </p>

@@ -48,7 +48,6 @@ export class SmsTemplatesEdit extends Component {
     handleSubmit = () => {
         const { uid, detail } = this.state;
         if (formValid(this.state)) {
-            this.setState({ loadingButton: "btn-loading" });
             UpdateMessageTemplate({
                 uid: uid,
                 ...detail
@@ -56,6 +55,7 @@ export class SmsTemplatesEdit extends Component {
                 if (response) {
                     if (response.status.code === 1020) this.reload();
                 }
+                this.setState({ loadingButton: "" });
             });
         } else {
             this.setState(prevState => ({

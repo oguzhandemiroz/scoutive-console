@@ -198,6 +198,32 @@ const CancelCampaign = data => {
     } catch (e) {}
 };
 
+const ToggleStatusCampaign = data => {
+    try {
+        return fetch(ep.CAMPAIGN_STATUS_TOGGLE, {
+            method: "POST",
+            body: JSON.stringify(data),
+            headers: h
+        })
+            .then(res => res.json())
+            .then(response => {
+                if (response) {
+                    const status = response.status;
+                    if (status.code !== 1020) errorSwal(status);
+                    else {
+                        Toast.fire({
+                            type: "success",
+                            title: status.description,
+                            timer: 2500
+                        });
+                    }
+                    return response;
+                }
+            })
+            .catch(e => fatalSwal(true));
+    } catch (e) {}
+};
+
 const DetailCampaign = data => {
     try {
         return fetch(ep.CAMPAIGN_DETAIL, {
@@ -302,5 +328,6 @@ export {
     CreateMessageTemplate,
     SendTestMessages,
     ListStaticSegments,
-    CreateSegment
+    CreateSegment,
+    ToggleStatusCampaign
 };

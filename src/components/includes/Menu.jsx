@@ -15,31 +15,34 @@ const menu = [
         navlink: { to: "/app/players", exact: false, activeClassName: "", className: "nav-link" },
         dataToggle: "dropdown",
         childDividerClass: "dropdown-menu dropdown-menu-arrow",
-        icon: "fa fa-user-alt",
-        text: " Kişiler",
+        icon: "fa fa-user-friends mr-2",
+        text: "Kişiler",
         item: [
             {
                 to: "/app/players",
                 className: "dropdown-item",
+                activeClassName: "active",
                 childText: "Öğrenciler",
                 icon: "fa fa-user-graduate"
             },
             {
                 to: "/app/parents",
                 className: "dropdown-item",
+                activeClassName: "active",
                 childText: "Veliler",
                 icon: "fa fa-user"
             },
             {
                 to: "/app/employees",
                 className: "dropdown-item",
+                activeClassName: "active",
                 childText: "Personeller",
                 icon: "fa fa-user-tie"
             }
         ],
         condition: true
     },
-    {
+    /*  {
         li: "nav-item",
         navlink: { to: "/app/employees", exact: false, activeClassName: "active", className: "nav-link" },
         icon: "fa fa-user-tie",
@@ -62,13 +65,31 @@ const menu = [
         text: "Veliler",
         item: null,
         condition: true
-    },
+    }, */
     {
         li: "nav-item",
         navlink: { to: "/app/groups", exact: false, activeClassName: "active", className: "nav-link" },
         icon: "fa fa-th",
         text: "Gruplar",
         item: null,
+        condition: true
+    },
+    {
+        li: "nav-item cursor-not-allowed",
+        navlink: {
+            to: "/app/training",
+            exact: true,
+            activeClassName: "active",
+            className: "nav-link cursor-not-allowed disabled"
+        },
+        icon: "fa fa-running",
+        text: "Antrenman",
+        item: null,
+        child: () => (
+            <span className="ml-2">
+                (<i className="fe fe-lock mr-0" />)
+            </span>
+        ),
         condition: true
     },
     {
@@ -142,13 +163,14 @@ class Menu extends Component {
                                                     </NavLink>
                                                     {el.item ? (
                                                         <div className={el.childDividerClass}>
-                                                            {el.item.map((xy, k) => {
+                                                            {el.item.map((ch, k) => {
                                                                 return (
                                                                     <NavLink
                                                                         key={k.toString()}
-                                                                        to={xy.to}
-                                                                        className={xy.className}>
-                                                                        <i className={xy.icon} /> {xy.childText}
+                                                                        to={ch.to}
+                                                                        activeClassName={ch.activeClassName}
+                                                                        className={ch.className}>
+                                                                        <i className={ch.icon} /> {ch.childText}
                                                                     </NavLink>
                                                                 );
                                                             })}

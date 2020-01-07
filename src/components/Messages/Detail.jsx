@@ -4,13 +4,23 @@ import { DetailCampaign } from "../../services/Messages";
 import { nullCheck, formatDate } from "../../services/Others";
 import { GetSettings } from "../../services/School";
 import ListRecipient from "./ListRecipient";
+import _ from "lodash";
+import moment from "moment";
 
 const statusType = {
     "-1": { bg: "badge-info", title: "Yükleniyor..." },
-    0: { bg: "badge-secondary", title: "İptal" },
+    0: { bg: "badge-danger", title: "İptal" },
     1: { bg: "badge-warning", title: "Kuyrukta" },
     2: { bg: "badge-success", title: "Tamamlandı" },
-    3: { bg: "badge-danger", title: "Tamamlanamadı" }
+    3: { bg: "badge-secondary", title: "Tamamlanamadı" },
+    999: { bg: "badge-orange", title: "Devam Ediyor" }
+};
+
+const isActiveStatus = {
+    "-1": "Tüm Kayıtlar",
+    0: "Pasif Kayıtlar",
+    1: "Aktif Kayıtlar",
+    2: "Dondurulmuş Kayıtlar"
 };
 
 export class Detail extends Component {
@@ -59,11 +69,6 @@ export class Detail extends Component {
 
     getCampaignDetail = () => {
         const { uid, cid } = this.state;
-        /* GetSchoolFees().then(response => {
-            if (response) {
-                this.setState({ school_fees: response.data.reverse(), loading: "" });
-            }
-        }); */
         DetailCampaign({
             uid: uid,
             campaign_id: cid
@@ -79,7 +84,10 @@ export class Detail extends Component {
         return (
             <div className="form-group">
                 <label className="form-label">Toplam Gönderim Maliyeti</label>
-                {template ? this.checkMessageCost(template.content) * persons.length : "0"}
+                {template
+                    ? this.checkMessageCost(template.content) *
+                      persons.filter(x => x.message.status.code === "1").length
+                    : "0"}
             </div>
         );
     };
@@ -131,6 +139,63 @@ export class Detail extends Component {
         }
     };
 
+    segmentDetail = () => {
+        const { segment } = this.state;
+        if (segment) {
+            const replaceIsActive = segment.values.is_active.replace(/[()]/g, "").split(",");
+            return (
+                <>
+                    <div className="hr-text hr-text-center mt-1">Segment Detayları</div>
+                    <div className="row">
+                        <div className="col-lg-3 col-md-6">
+                            <div className="form-group">
+                                <label className="form-label">Segment Adı</label>
+                                <div className="form-control-plaintext">{segment.segment_name}</div>
+                            </div>
+                        </div>
+                        <div className="col-lg-3 col-md-6">
+                            <div className="form-group">
+                                <label className="form-label">Kayıt Tipi</label>
+                                <div className="form-control-plaintext">
+                                    {segment.values.is_trial ? "Ön Kayıtlar" : "Normal Öğrenciler"}
+                                </div>
+                            </div>
+                        </div>
+                        <div className="col-lg-3 col-md-6">
+                            <div className="form-group">
+                                <label className="form-label">Kayıt Durumu</label>
+                                <div className="form-control-plaintext">
+                                    {segment.values.is_active === "(0,1,2)"
+                                        ? isActiveStatus["-1"]
+                                        : replaceIsActive.map(x => isActiveStatus[x]).join(", ")}
+                                </div>
+                            </div>
+                        </div>
+                        {segment.static_segment_id === 4 ? (
+                            <div className="col-lg-3 col-md-6">
+                                <div className="form-group">
+                                    <label className="form-label">
+                                        Kaç Gün Gecikmiş?
+                                        <span className="mx-2">
+                                            <span
+                                                className="form-help"
+                                                data-toggle="popover"
+                                                data-placement="top"
+                                                data-content="Ödeme zamanı gelen ve X gündür ödeme yapmayan öğrencilere mesaj gönderir">
+                                                ?
+                                            </span>
+                                        </span>
+                                    </label>
+                                    <div className="form-control-plaintext">{segment.values.passed_day}</div>
+                                </div>
+                            </div>
+                        ) : null}
+                    </div>
+                </>
+            );
+        } else return null;
+    };
+
     checkMessageCost = content => {
         const contentLength = content
             .replace(/\u00c2/g, "Â|")
@@ -168,7 +233,7 @@ export class Detail extends Component {
     };
 
     render() {
-        const { start, title, when, status, persons } = this.state;
+        const { start, title, when, created_date, end_date, working_days, status, persons, segment } = this.state;
         return (
             <div className="container">
                 <div className="page-header">
@@ -185,7 +250,7 @@ export class Detail extends Component {
                             </div>
                             <div className="card-body">
                                 <div className="row">
-                                    <div className="col-lg-4 col-md-6">
+                                    <div className="col-lg-4 col-md-4">
                                         <div className="form-group">
                                             <label className="form-label">Mesaj Başlığı (Gönderici Adı)</label>
                                             <div className="form-control-plaintext">
@@ -197,7 +262,7 @@ export class Detail extends Component {
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="col-lg-4 col-md-6">
+                                    <div className="col-lg-4 col-md-4">
                                         <div className="form-group">
                                             <label className="form-label">Mesaj İçi Gönderici Adı</label>
                                             <div className="form-control-plaintext">
@@ -209,32 +274,74 @@ export class Detail extends Component {
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="col-lg-4 col-md-6">
+                                    <div className="col-lg-4 col-md-4">
                                         <div className="form-group">
                                             <label className="form-label">Mesajın Durumu</label>
-                                            <span className={`badge ${statusType[status].bg}`}>
-                                                {statusType[status].title}
-                                            </span>
+                                            {segment && segment.segment_id && status === 1 ? (
+                                                <span className={`badge ${statusType[999].bg}`}>
+                                                    {statusType[999].title}
+                                                </span>
+                                            ) : (
+                                                <span className={`badge ${statusType[status].bg}`}>
+                                                    {statusType[status].title}
+                                                </span>
+                                            )}
                                         </div>
                                     </div>
-                                    <div className="col-lg-4 col-md-6">
+                                </div>
+                                <div className="row">
+                                    <div className="col-lg-4 col-md-4">
                                         <div className="form-group">
-                                            <label className="form-label">Kampanya Adı</label>
-                                            <div className="form-control-plaintext">{nullCheck(title)}</div>
+                                            <label className="form-label">Mesaj Adı</label>
+                                            <div className="form-control-plaintext">
+                                                {segment && segment.segment_id ? (
+                                                    <span className="badge badge-primary mr-2">OTOMATİK</span>
+                                                ) : null}
+                                                {nullCheck(title)}
+                                            </div>
                                         </div>
                                     </div>
-                                    <div className="col-lg-4 col-md-6">
+                                    <div className="col-lg-4 col-md-4">
                                         <div className="form-group">
-                                            <label className="form-label">Gönderim Tarihi</label>
+                                            <label className="form-label">Çalışma Günleri</label>
+                                            <div className="form-control-plaintext">
+                                                {_.sortBy(working_days)
+                                                    .map(x => moment.weekdays(parseInt(x)))
+                                                    .join(", ")}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="col-lg-4 col-md-4">
+                                        <div className="form-control-plaintext">{this.deliveryCost()}</div>
+                                    </div>
+                                </div>
+                                <div className="row">
+                                    <div className="col-lg-4 col-md-4">
+                                        <div className="form-group">
+                                            <label className="form-label">Oluşturma Tarihi</label>
+                                            <div className="form-control-plaintext">
+                                                {formatDate(created_date, "DD MMMM YYYY, HH:mm")}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="col-lg-4 col-md-4">
+                                        <div className="form-group">
+                                            <label className="form-label">Başlama Tarihi</label>
                                             <div className="form-control-plaintext">
                                                 {formatDate(when, "DD MMMM YYYY, HH:mm")}
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="col-lg-4 col-md-6">
-                                        <div className="form-control-plaintext">{this.deliveryCost()}</div>
+                                    <div className="col-lg-4 col-md-4">
+                                        <div className="form-group">
+                                            <label className="form-label">Sonlanma Tarihi</label>
+                                            <div className="form-control-plaintext">
+                                                {formatDate(end_date, "DD MMMM YYYY, HH:mm")}
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
+                                {this.segmentDetail()}
                                 <div className="hr-text hr-text-center mt-1">Şablon, Önizleme, Özet</div>
                                 <div className="row row-deck row-cards">
                                     <div className="col-lg-4">{this.selectedTemplate()}</div>

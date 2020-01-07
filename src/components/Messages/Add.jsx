@@ -612,8 +612,7 @@ export class Add extends Component {
                                             />
                                             <h5 className="mt-5">Mesaj Şablonu Bulunamadı!</h5>
                                             <p className="text-muted text-center">
-                                                Kampanya oluşturmak için ve mesaj gönderimi yapabilmek için şablon
-                                                oluşturmanız gerekmektedir...
+                                                Mesaj gönderimi yapabilmek için şablon oluşturmanız gerekmektedir...
                                                 <br />
                                                 Hemen varsayılan şablonları yükle!
                                             </p>
@@ -724,21 +723,32 @@ export class Add extends Component {
                             <div className="form-group mb-0">
                                 <label className="form-label mb-3">
                                     Öğrenciler
-                                    <span className="float-right">
-                                        {players.length > 0 ? (
+                                    <ol
+                                        className="float-right breadcrumb breadcrumb-dots font-weight-normal"
+                                        aria-label="breadcrumbs">
+                                        <li className="breadcrumb-item">
                                             <span
-                                                className="text-primary cursor-pointer btn-link"
-                                                onClick={() => this.setState({ players: [] })}>
-                                                Tüm Seçimleri Kaldır ({players.length} Seçili)
+                                                className="text-primary btn-link cursor-pointer"
+                                                onClick={this.listPlayers}>
+                                                Yenile
                                             </span>
-                                        ) : (
-                                            <span
-                                                className="text-primary cursor-pointer btn-link"
-                                                onClick={this.selectAllPlayers}>
-                                                Listenen Tüm Kişileri Seç
-                                            </span>
-                                        )}
-                                    </span>
+                                        </li>
+                                        <li class="breadcrumb-item">
+                                            {players.length > 0 ? (
+                                                <span
+                                                    className="text-primary btn-link cursor-pointer"
+                                                    onClick={() => this.setState({ players: [] })}>
+                                                    Tüm Seçimleri Kaldır ({players.length} Seçili)
+                                                </span>
+                                            ) : (
+                                                <span
+                                                    className="text-primary btn-link cursor-pointer"
+                                                    onClick={this.selectAllPlayers}>
+                                                    Listenen Tüm Kişileri Seç
+                                                </span>
+                                            )}
+                                        </li>
+                                    </ol>
                                 </label>
                                 <div className="row row-cards row-deck">
                                     {select.initialPlayers ? (
@@ -755,6 +765,18 @@ export class Add extends Component {
                                                             className={`card user-select-none cursor-pointer shadow-sm ${
                                                                 players.indexOf(el.player_id) > -1 ? "card-active" : ""
                                                             } ${el.recipient_parent_id === -1 ? "card-inactive" : ""}`}>
+                                                            {el.recipient_parent_id === -1 ? (
+                                                                <Link
+                                                                    to={"/app/players/messages/" + el.uid}
+                                                                    target="_blank"
+                                                                    className="btn btn-primary btn-sm pointer-events"
+                                                                    style={{
+                                                                        borderBottomRightRadius: 0,
+                                                                        borderBottomLeftRadius: 0
+                                                                    }}>
+                                                                    İletişim Bilgisini Düzenle
+                                                                </Link>
+                                                            ) : null}
                                                             <div className="card-body p-125 card-checkbox">
                                                                 <div className="row gutters-sm align-items-center">
                                                                     <div className="col-auto">
@@ -1178,6 +1200,14 @@ export class Add extends Component {
     };
 
     listPlayers = () => {
+        this.setState(prevState => ({
+            select: {
+                ...prevState.select,
+                players: null,
+                initialPlayers: null
+            },
+            players: []
+        }));
         ListPlayers().then(response => {
             if (response) {
                 this.setState(prevState => ({
