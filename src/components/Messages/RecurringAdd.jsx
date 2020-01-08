@@ -21,6 +21,7 @@ import { formatDate, formatPhone, fullnameGenerator } from "../../services/Other
 import { GetSettings, GetSchoolFees } from "../../services/School";
 import { MessagesAllTime } from "../../services/Report";
 import { ListEmployees } from "../../services/Employee";
+import { Groups } from "../../services/FillSelect";
 const $ = require("jquery");
 registerLocale("tr", tr);
 
@@ -39,6 +40,7 @@ const initialState = {
     },
     passed_day: 3,
     working_days: [0, 1, 2, 3, 4, 5, 6],
+    groups: [],
     segment_id: null
 };
 
@@ -104,7 +106,8 @@ export class RecurringAdd extends Component {
                         label: "Dondurulmuş Kayıtlar"
                     }
                 ],
-                employees: null
+                employees: null,
+                groups: null
             },
             start: {
                 settings: {
@@ -279,7 +282,8 @@ export class RecurringAdd extends Component {
             is_trial,
             is_active,
             status,
-            passed_day
+            passed_day,
+            groups
         } = this.state;
         const required = {
             title: title,
@@ -302,6 +306,10 @@ export class RecurringAdd extends Component {
         if (selected_segment === 4) {
             required.passed_day = passed_day;
             values.passed_day = passed_day;
+        }
+        if (selected_segment === 5) {
+            required.groups = groups;
+            values.group_id = `(${groups.map(x => x.value).join(",")})`;
         }
 
         if (selected_segment && formValid(required)) {
@@ -365,7 +373,7 @@ export class RecurringAdd extends Component {
         const { segments, selected_segment, loadingButton, title, when, formErrors, end_date } = this.state;
         return (
             <>
-                <div className="card-body pb-0">
+                <div className="card-body pb-2">
                     <div className="hr-text mt-0">Hazır Segmentler</div>
                     <div className="row row-deck">
                         {segments ? (
@@ -503,7 +511,9 @@ export class RecurringAdd extends Component {
             select,
             is_trial,
             passed_day,
-            formErrors
+            formErrors,
+            working_days,
+            groups
         } = this.state;
         const segmentName = segments.find(x => x.static_segment_id === selected_segment).segment_name;
         switch (selected_segment) {
@@ -554,7 +564,7 @@ export class RecurringAdd extends Component {
                                 <strong>
                                     {is_trial ? " Ön Kayıt Öğrencilerine" : " " + is_active.label + " Öğrencilere"}
                                 </strong>
-                                , her gün çalışacak şekilde yeni kayıtlara{" "}
+                                , haftada {working_days.length} gün çalışacak şekilde yeni kayıtlara{" "}
                                 <strong> {formatDate(when, "DD MMMM YYYY")}</strong> tarihinden{" "}
                                 <strong> {formatDate(end_date, "DD MMMM YYYY")}</strong> tarihine kadar saat
                                 <strong> {formatDate(when, "HH:mm")}</strong>'de/da gönderim yapacaktır.
@@ -589,7 +599,7 @@ export class RecurringAdd extends Component {
                                 <strong>
                                     {is_trial ? " Ön Kayıt Öğrencilerine" : " " + is_active.label + " Öğrencilere"}
                                 </strong>
-                                , her gün çalışacak şekilde doğum günü olanlara{" "}
+                                , haftada {working_days.length} gün çalışacak şekilde doğum günü olanlara{" "}
                                 <strong> {formatDate(when, "DD MMMM YYYY")}</strong> tarihinden{" "}
                                 <strong> {formatDate(end_date, "DD MMMM YYYY")}</strong> tarihine kadar saat
                                 <strong> {formatDate(when, "HH:mm")}</strong>'de/da gönderim yapacaktır.
@@ -604,8 +614,9 @@ export class RecurringAdd extends Component {
                         <div className="alert alert-info alert-icon">
                             <i className="fe fe-check mr-2" aria-hidden="true"></i>
                             <strong>{segmentName}</strong> segmenti seçilmiş olup bu mesaj
-                            <strong> devamsızlık yapan (okula/kursa gelmeyen)</strong> öğrencilere, her gün çalışacak
-                            şekilde <strong> {formatDate(when, "DD MMMM YYYY")}</strong> tarihinden{" "}
+                            <strong> devamsızlık yapan (okula/kursa gelmeyen)</strong> öğrencilere, haftada{" "}
+                            {working_days.length} gün çalışacak şekilde{" "}
+                            <strong> {formatDate(when, "DD MMMM YYYY")}</strong> tarihinden{" "}
                             <strong> {formatDate(end_date, "DD MMMM YYYY")}</strong> tarihine kadar saat
                             <strong> {formatDate(when, "HH:mm")}</strong>'de/da gönderim yapacaktır.
                         </div>
@@ -621,6 +632,7 @@ export class RecurringAdd extends Component {
                             <div className="form-group">
                                 <label className="form-label">
                                     Kaç Gün Gecikmiş?
+                                    <span className="form-required">*</span>
                                     <span className="mx-2">
                                         <span
                                             className="form-help"
@@ -659,7 +671,62 @@ export class RecurringAdd extends Component {
                             <div className="alert alert-info alert-icon">
                                 <i className="fe fe-check mr-2" aria-hidden="true"></i>
                                 <strong>{segmentName}</strong> segmenti seçilmiş olup bu mesaj, ödemesini{" "}
-                                <strong>{passed_day}</strong> gün geciktirmiş öğrencilere, her gün çalışacak şekilde{" "}
+                                <strong>{passed_day}</strong> gün geciktirmiş öğrencilere, haftada {working_days.length}{" "}
+                                gün çalışacak şekilde <strong> {formatDate(when, "DD MMMM YYYY")}</strong> tarihinden{" "}
+                                <strong> {formatDate(end_date, "DD MMMM YYYY")}</strong> tarihine kadar saat
+                                <strong> {formatDate(when, "HH:mm")}</strong>'de/da gönderim yapacaktır.
+                            </div>
+                        </div>
+                    </>
+                );
+            case 5:
+                return (
+                    <>
+                        <div className="col-lg-12">
+                            <div className="hr-text">{segmentName} Segmenti Ayarları</div>
+                        </div>
+                        <div className="col-lg-6">
+                            <div className="form-group">
+                                <label className="form-label">Kayıt Durumu</label>
+                                <Select
+                                    value={is_active}
+                                    onChange={val => this.handleSelect(val, "is_active")}
+                                    name="is_active"
+                                    styles={selectCustomStyles}
+                                    options={select.is_active}
+                                    noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
+                                />
+                            </div>
+                        </div>
+                        <div className="col-lg-6">
+                            <div className="form-group">
+                                <label className="form-label">
+                                    Grup(lar)
+                                    <span className="form-required">*</span>
+                                </label>
+                                <Select
+                                    value={groups}
+                                    isMulti
+                                    onChange={val => this.handleSelect(val, "groups")}
+                                    options={select.groups}
+                                    name="groups"
+                                    placeholder="Seç..."
+                                    styles={formErrors.groups ? selectCustomStylesError : selectCustomStyles}
+                                    isClearable={true}
+                                    isSearchable={true}
+                                    isDisabled={select.groups ? false : true}
+                                    isLoading={select.groups ? false : true}
+                                    noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
+                                />
+                            </div>
+                        </div>
+                        <div className="col-lg-12">
+                            <div className="hr-text">Uyarılar</div>
+                            <div className="alert alert-info alert-icon">
+                                <i className="fe fe-check mr-2" aria-hidden="true"></i>
+                                <strong>{segmentName}</strong> segmenti seçilmiş olup bu mesaj
+                                <strong> seçili olan gruplara</strong>, haftada {working_days.length} gün çalışacak
+                                şekilde
                                 <strong> {formatDate(when, "DD MMMM YYYY")}</strong> tarihinden{" "}
                                 <strong> {formatDate(end_date, "DD MMMM YYYY")}</strong> tarihine kadar saat
                                 <strong> {formatDate(when, "HH:mm")}</strong>'de/da gönderim yapacaktır.
@@ -909,7 +976,7 @@ export class RecurringAdd extends Component {
     };
 
     summaryReport = () => {
-        const { when, select_template, school_fees, templates, start } = this.state;
+        const { when, select_template, working_days, templates } = this.state;
         if (templates) {
             let template = templates.find(x => x.template_id === select_template);
             let cost = this.checkMessageCost(templates.find(x => x.template_id === select_template).content);
@@ -919,7 +986,8 @@ export class RecurringAdd extends Component {
                     <div className="alert alert-info alert-icon">
                         <i className="fe fe-align-left mr-2"></i>
                         <p>
-                            Her gün çalışacak şekilde saat<strong> {formatDate(when, "HH:mm")} </strong>'de/da
+                            Haftada {working_days.length} gün çalışacak şekilde saat
+                            <strong> {formatDate(when, "HH:mm")} </strong>'de/da
                             <strong> {template.template_name} </strong> adlı şablon ile mesaj (SMS) gönderimi
                             yapılacaktır.
                             <br />
@@ -1053,11 +1121,26 @@ export class RecurringAdd extends Component {
 
     selectSegment = k => {
         const { segments } = this.state;
+        if (k === 5) this.listGroups();
         this.setState({
             ...initialState,
             selected_segment: k,
             title: segments.find(x => x.static_segment_id === k).segment_name + " - " + moment().unix()
         });
+    };
+
+    listGroups = () => {
+        const { select } = this.state;
+        if (!select.groups) {
+            Groups().then(response => {
+                this.setState(prevState => ({
+                    select: {
+                        ...prevState.select,
+                        groups: response
+                    }
+                }));
+            });
+        }
     };
 
     listMessageTemplates = () => {

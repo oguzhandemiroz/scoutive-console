@@ -244,7 +244,7 @@ export class ListRecipient extends Component {
                             <th className="to">TELEFON</th>
                             <th className="operator">OPERATOR</th>
                             <th className="sent_date">GÖNDERİM TARİHİ</th>
-                            <th className="content">İLETİLEN MESAJ</th>
+                            <th className="content">İÇERİK</th>
                             <th className="code_message">DURUM</th>
                         </tr>
                     </thead>
