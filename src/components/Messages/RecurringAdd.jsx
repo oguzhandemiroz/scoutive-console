@@ -776,6 +776,9 @@ export class RecurringAdd extends Component {
                                     return (
                                         <div className="col-6 col-lg-3 col-sm-6" key={key.toString()}>
                                             <div
+                                                data-placement="top"
+                                                data-toggle="popover"
+                                                data-content={`<p><strong>Şablon İçeriği</strong></p>${el.content}`}
                                                 className={`card cursor-pointer ${
                                                     select_template === el.template_id ? "card-active" : ""
                                                 }`}
