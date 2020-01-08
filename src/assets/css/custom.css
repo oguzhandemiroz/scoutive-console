@@ -1488,3 +1488,7 @@ a.step-item:hover {
 .breadcrumb-alternate .breadcrumb-item.active {
     color: #354052;
 }
+
+.vertical-middle {
+    vertical-align: middle !important;
+}

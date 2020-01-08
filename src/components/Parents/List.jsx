@@ -267,7 +267,7 @@ export class List extends Component {
                         data: "email",
                         responsivePriority: 10007,
                         render: function(data, type, row) {
-                            if (data) return `<a href="mailto:+${data}">${data}</a>`;
+                            if (data) return `<a class="text-wrap text-break" href="mailto:+${data}">${data}</a>`;
                             else return "&mdash;";
                         }
                     },

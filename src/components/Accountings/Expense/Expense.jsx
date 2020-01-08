@@ -42,11 +42,9 @@ export class Expense extends Component {
                 </div>
 
                 <div className="row row-cards">
-                    <div className="col-sm-6 col-md-4">
+                    <div className="col-12">
                         <ExpenseItems />
                     </div>
-                    <div className="col-sm-6 col-md-4"></div>
-                    <div className="col-sm-6 col-md-4"></div>
                 </div>
 
                 <div className="row row-cards">

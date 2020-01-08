@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { ListAccountingRecords } from "../../../services/Accounting";
 import { formatMoney, formatDate } from "../../../services/Others";
-import moment from "moment";
 import "moment/locale/tr";
 const $ = require("jquery");
 

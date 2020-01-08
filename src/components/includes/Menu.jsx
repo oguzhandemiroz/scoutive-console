@@ -12,19 +12,19 @@ const menu = [
     },
     {
         li: "nav-item dropdown",
-        navlink: { to: "/app/players", exact: false, activeClassName: "", className: "nav-link" },
+        navlink: { to: "/app/persons", exact: false, activeClassName: "", className: "nav-link" },
         dataToggle: "dropdown",
         childDividerClass: "dropdown-menu dropdown-menu-arrow",
         icon: "fa fa-user-friends mr-2",
         text: "Kişiler",
         item: [
-            {
+            /*  {
                 to: "/app/players",
                 className: "dropdown-item",
                 activeClassName: "active",
                 childText: "Öğrenciler",
                 icon: "fa fa-user-graduate"
-            },
+            }, */
             {
                 to: "/app/parents",
                 className: "dropdown-item",
@@ -42,19 +42,19 @@ const menu = [
         ],
         condition: true
     },
-    /*  {
-        li: "nav-item",
-        navlink: { to: "/app/employees", exact: false, activeClassName: "active", className: "nav-link" },
-        icon: "fa fa-user-tie",
-        text: "Personeller",
-        item: null,
-        condition: true
-    },
     {
         li: "nav-item",
         navlink: { to: "/app/players", exact: false, activeClassName: "active", className: "nav-link" },
         icon: "fa fa-user-graduate",
         text: "Öğrenciler",
+        item: null,
+        condition: true
+    },
+    /*  {
+        li: "nav-item",
+        navlink: { to: "/app/employees", exact: false, activeClassName: "active", className: "nav-link" },
+        icon: "fa fa-user-tie",
+        text: "Personeller",
         item: null,
         condition: true
     },

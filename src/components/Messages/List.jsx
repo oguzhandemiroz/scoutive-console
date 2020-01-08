@@ -64,9 +64,13 @@ export class List extends Component {
                             var data = $.map(columns, function(col, i) {
                                 if (col.hidden) {
                                     $(`<tr data-dt-row="${col.rowIndex}" data-dt-column="${col.columnIndex}">
-                                    <th class="w-1">${col.title}</th> 
+                                    <th class="w-1 text-wrap">${col.title}</th> 
                                     </tr>`)
-                                        .append($("<td/>").append(_childNodes(api, col.rowIndex, col.columnIndex)))
+                                        .append(
+                                            $("<td class='text-wrap'/>").append(
+                                                _childNodes(api, col.rowIndex, col.columnIndex)
+                                            )
+                                        )
                                         .appendTo(tbl);
                                     found = true;
                                 }
@@ -137,8 +141,8 @@ export class List extends Component {
                     },
                     {
                         targets: "title",
-                        className: "pl-5",
                         responsivePriority: 1,
+                        className: "pl-5",
                         render: function(data, type, row) {
                             return data + " " + row.template.template_name;
                         },
@@ -153,7 +157,9 @@ export class List extends Component {
                                         <i className={`${template.icon} text-${template.color}`} />
                                     </div>
                                     <Link
-                                        className="text-inherit font-weight-600"
+                                        data-toggle="tooltip"
+                                        title={title}
+                                        className="text-inherit font-weight-600 text-wrap"
                                         to={"/app/messages/detail/" + campaign_id}
                                         onClick={() => this.props.history.push(`/app/messages/detail/${campaign_id}`)}>
                                         {segment_id ? <span className="badge badge-primary mr-2">OTOMATİK</span> : null}
@@ -166,7 +172,7 @@ export class List extends Component {
                     },
                     {
                         targets: "status",
-                        responsivePriority: 2,
+                        responsivePriority: 4,
                         render: function(data, type, row) {
                             return data + " " + row.template.template_name;
                         },
@@ -245,19 +251,21 @@ export class List extends Component {
                     },
                     {
                         data: "title",
+                        responsivePriority: 1,
                         render: function(data, type, row) {
                             return data + " " + row.template.template_name;
                         }
                     },
                     {
                         data: "person_count",
+                        responsivePriority: 10,
                         render: function(data, type, row) {
                             return row.segment_id ? "<span style='font-size:20px;'>∞</span>" : data;
                         }
                     },
                     {
                         data: "created_date",
-                        responsivePriority: 10012,
+                        responsivePriority: 10013,
                         className: "none",
                         render: function(data, type, row) {
                             return formatDate(data, "DD MMMM YYYY, HH:mm");
@@ -265,19 +273,21 @@ export class List extends Component {
                     },
                     {
                         data: "when",
+                        responsivePriority: 10011,
                         render: function(data, type, row) {
                             return formatDate(data, "DD MMMM YYYY, HH:mm");
                         }
                     },
                     {
                         data: "end_date",
+                        responsivePriority: 10012,
                         render: function(data, type, row) {
                             return formatDate(data, "DD MMMM YYYY, HH:mm");
                         }
                     },
                     {
                         data: "working_days",
-                        responsivePriority: 10012,
+                        responsivePriority: 10015,
                         className: "none",
                         render: function(data, type, row) {
                             return _.sortBy(data)
@@ -286,10 +296,12 @@ export class List extends Component {
                         }
                     },
                     {
-                        data: "status"
+                        data: "status",
+                        responsivePriority: 4
                     },
                     {
-                        data: null
+                        data: null,
+                        responsivePriority: 5
                     }
                 ]
             });
@@ -386,7 +398,7 @@ export class List extends Component {
                     className="table card-table w-100 table-vcenter table-striped text-nowrap datatable dataTable">
                     <thead>
                         <tr>
-                            <th className="campaign_id">ID</th>
+                            <th className="w-1 campaign_id">ID</th>
                             <th className="w-1 no-sort control" />
                             <th className="title pl-5">MESAJ ADI</th>
                             <th className="person_count">KİŞİ SAYISI</th>

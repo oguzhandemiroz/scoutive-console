@@ -93,7 +93,10 @@ export class Add extends Component {
         e.preventDefault();
         const { uid, name, work_days, start_time, end_time, employee, start_age, end_age, area, players } = this.state;
 
-        if (formValid(this.state)) {
+        let require = { ...this.state };
+        delete require.area;
+
+        if (formValid(require)) {
             this.setState({ loadingButton: "btn-loading" });
 
             CreateGroup({

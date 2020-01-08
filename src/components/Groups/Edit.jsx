@@ -104,7 +104,10 @@ export class Edit extends Component {
             remove
         } = this.state;
 
-        if (formValid(this.state)) {
+        let require = { ...this.state };
+        delete require.area;
+
+        if (formValid(require)) {
             this.setState({ loadingButton: "btn-loading" });
 
             UpdateGroup({

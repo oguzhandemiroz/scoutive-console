@@ -76,9 +76,13 @@ export class ListRecipient extends Component {
                             var data = $.map(columns, function(col, i) {
                                 if (col.hidden) {
                                     $(`<tr data-dt-row="${col.rowIndex}" data-dt-column="${col.columnIndex}">
-                                <th class="w-1">${col.title}</th> 
-                                </tr>`)
-                                        .append($("<td/>").append(_childNodes(api, col.rowIndex, col.columnIndex)))
+                                    <th class="w-1 text-wrap">${col.title}</th> 
+                                    </tr>`)
+                                        .append(
+                                            $("<td class='text-wrap'/>").append(
+                                                _childNodes(api, col.rowIndex, col.columnIndex)
+                                            )
+                                        )
                                         .appendTo(tbl);
                                     found = true;
                                 }

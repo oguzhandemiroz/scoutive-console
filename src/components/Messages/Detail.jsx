@@ -12,7 +12,7 @@ const statusType = {
     0: { bg: "badge-danger", title: "İptal" },
     1: { bg: "badge-warning", title: "Kuyrukta" },
     2: { bg: "badge-success", title: "Tamamlandı" },
-    3: { bg: "badge-secondary", title: "Tamamlanamadı" },
+    3: { bg: "badge-secondary", title: "Durduruldu" },
     999: { bg: "badge-orange", title: "Devam Ediyor" }
 };
 
