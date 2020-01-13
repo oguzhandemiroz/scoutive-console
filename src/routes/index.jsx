@@ -29,6 +29,7 @@ import EditPlayer from "../components/Players/Edit";
 import PaymentPlayer from "../components/Players/Payment";
 import PaymentNew from "../components/Players/PaymentNew";
 import FeeDetailPlayer from "../components/Players/FeeDetail";
+import MessageDetailPlayer from "../components/Players/MessageDetail";
 import VacationPlayer from "../components/Players/Vacation";
 import RollcallPlayer from "../components/Players/Rollcall";
 import MessagesPlayer from "../components/Players/Messages";
@@ -244,6 +245,13 @@ var indexRoutes = [
         path: "/players/messages/:uid",
         name: "Messages Player",
         component: MessagesPlayer,
+        layout: "/app",
+        prop: { exact: true }
+    },
+    {
+        path: "/players/message-detail/:uid",
+        name: "Messages Detail Player",
+        component: MessageDetailPlayer,
         layout: "/app",
         prop: { exact: true }
     },
