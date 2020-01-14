@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import PersonCard from "./PersonCard";
 import { DetailParent, GetParentPlayers } from "../../services/Parent";
-import { avatarPlaceholder, fullnameGenerator, nullCheck, formatMoney, formatDate } from "../../services/Others";
+import { fullnameGenerator, nullCheck, formatMoney, formatDate } from "../../services/Others";
+import Tabs from "./Tabs";
 import { Link } from "react-router-dom";
 
 const dailyType = {
@@ -74,11 +75,14 @@ export class Detail extends Component {
     };
 
     render() {
-        const { loading, players } = this.state;
+        const { to, loading, players } = this.state;
+        const { match } = this.props;
         return (
             <div className="container">
                 <div className="page-header">
                     <h1 className="page-title">Veli Detay</h1>
+                    <div className="col" />
+                    <div className="col-auto px-0">{<Tabs match={match} to={to} />}</div>
                 </div>
                 <div className="row">
                     <PersonCard data={this.state} history={this.props.history} />

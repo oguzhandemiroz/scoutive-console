@@ -200,6 +200,21 @@ export class ActionButton extends Component {
                 condition: true
             },
             {
+                name: "message-detail",
+                tag: "Link",
+                elementAttr: {
+                    className: "dropdown-item",
+                    to: `/app/employees/message-detail/${to}`,
+                    onClick: () => history.push(`/app/employees/message-detail/${to}`)
+                },
+                childText: "Mesaj Geçmişi",
+                child: {
+                    className: "dropdown-icon fa fa-comment-dots"
+                },
+                lock: false,
+                condition: true
+            },
+            {
                 tag: "Link",
                 elementAttr: {
                     className: "dropdown-item",

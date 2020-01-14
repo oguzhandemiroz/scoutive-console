@@ -13605,6 +13605,10 @@ a.text-dark:focus {
     color: rgba(255, 255, 255, 0.5) !important;
 }
 
+.text-white-75 {
+    color: rgba(255, 255, 255, 0.75) !important;
+}
+
 .text-hide {
     font: 0/0 a;
     color: transparent;
@@ -15597,7 +15601,6 @@ a.icon:hover {
     overflow: hidden !important;
 }
 
-
 .shadow-none {
     box-shadow: none !important;
 }
@@ -15668,7 +15671,7 @@ a.icon:hover {
     position: relative;
 }
 
-.nav-tabs .nav-item i {
+.nav-tabs .nav-item i:not(.icon-placeholder-i) {
     margin-right: 0.25rem;
     line-height: 1;
     font-size: 0.875rem;
@@ -17456,7 +17459,7 @@ Card maps
 
 /**
 Card tabs
- */
+ */ /* 
 .card-tabs {
     display: -ms-flexbox;
     display: flex;
@@ -17501,7 +17504,7 @@ a.card-tabs-item.active {
 
 .card-tabs-item + .card-tabs-item {
     border-left: 1px solid rgba(0, 40, 100, 0.12);
-}
+} */
 
 /**
 Card status

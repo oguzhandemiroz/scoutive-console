@@ -61,7 +61,7 @@ export class ActionButton extends Component {
                 tag: "button",
                 elementAttr: {
                     className: "dropdown-item cursor-not-allowed disabled",
-                    onClick: () => console.log("Veliye Mesaj Gönder")
+                    onClick: () => console.log("Mesaj Gönder")
                 },
                 childText: "Mesaj Gönder",
                 child: {

@@ -20,6 +20,7 @@ import VacationEmployee from "../components/Employees/Vacation";
 import SalaryEmployee from "../components/Employees/Salary";
 import SalaryDetailEmployee from "../components/Employees/SalaryDetail";
 import RollcallEmployee from "../components/Employees/Rollcall";
+import MessageDetailEmployee from "../components/Employees/MessageDetail";
 
 import AddPlayer from "../components/Players/Add";
 import TrialPlayer from "../components/Players/Trial";
@@ -35,6 +36,7 @@ import RollcallPlayer from "../components/Players/Rollcall";
 import MessagesPlayer from "../components/Players/Messages";
 
 import DetailParent from "../components/Parents/Detail";
+import MessageDetailParent from "../components/Parents/MessageDetail";
 
 import Attributes from "../components/Others/Attributes";
 
@@ -68,7 +70,9 @@ import ExpenseInvoice from "../components/Accountings/Expense/Invoice";
 import Income from "../components/Accountings/Income/Income";
 import Expense from "../components/Accountings/Expense/Expense";
 
-import MessagesAdd from "../components/Messages/Add";
+import SelectType from "../components/Messages/SelectType";
+import MessagesSingleAdd from "../components/Messages/SingleAdd";
+import MessagesBulkAdd from "../components/Messages/BulkAdd";
 import RecurringAdd from "../components/Messages/RecurringAdd";
 import MessagesDetail from "../components/Messages/Detail";
 
@@ -187,6 +191,12 @@ var indexRoutes = [
         layout: "/app"
     },
     {
+        path: "/employees/message-detail/:uid",
+        name: "Message Detail Employee",
+        component: MessageDetailEmployee,
+        layout: "/app"
+    },
+    {
         path: "/players",
         name: "Players",
         component: Players,
@@ -285,6 +295,13 @@ var indexRoutes = [
         path: "/parents/detail/:uid",
         name: "Detail Parent",
         component: DetailParent,
+        layout: "/app",
+        prop: { exact: true }
+    },
+    {
+        path: "/parents/message-detail/:uid",
+        name: "Messages Detail Parent",
+        component: MessageDetailParent,
         layout: "/app",
         prop: { exact: true }
     },
@@ -476,15 +493,29 @@ var indexRoutes = [
         prop: { exact: true }
     },
     {
-        path: "/messages/add",
-        name: "Mesaj Gönderim Merkezi - Ekle",
-        component: MessagesAdd,
+        path: "/messages/select",
+        name: "Mesaj Gönderim Merkezi - Tekil Mesaj Oluştur",
+        component: SelectType,
+        layout: "/app",
+        prop: { exact: true }
+    },
+    {
+        path: "/messages/single/add",
+        name: "Mesaj Gönderim Merkezi - Tekil Mesaj Oluştur",
+        component: MessagesSingleAdd,
+        layout: "/app",
+        prop: { exact: true }
+    },
+    {
+        path: "/messages/bulk/add",
+        name: "Mesaj Gönderim Merkezi - Toplu Mesaj Oluştur",
+        component: MessagesBulkAdd,
         layout: "/app",
         prop: { exact: true }
     },
     {
         path: "/messages/recurring/add",
-        name: "Mesaj Gönderim Merkezi - Otomatik Mesaj Ekle",
+        name: "Mesaj Gönderim Merkezi - Otomatik Mesaj Oluştur",
         component: RecurringAdd,
         layout: "/app",
         prop: { exact: true }

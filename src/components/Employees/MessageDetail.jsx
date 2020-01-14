@@ -1,12 +1,12 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import { DetailPlayer } from "../../services/Player";
+import { DetailEmployee } from "../../services/Employee.jsx";
 import { nullCheck, formatPhone, formatDate } from "../../services/Others";
 import { GetSettings } from "../../services/School";
-import { ListPersonMessages } from "../../services/Messages";
-import Tabs from "../Players/Tabs";
 import MessagesNotActivate from "../NotActivate/Messages";
-import PersonCard from "./PersonCard";
+import { ListPersonMessages } from "../../services/Messages";
+import Tabs from "../Employees/Tabs";
+import PersonCard from "./PersonCard.jsx";
 import _ from "lodash";
 const $ = require("jquery");
 
@@ -22,9 +22,6 @@ export class MessageDetail extends Component {
         this.state = {
             uid: localStorage.getItem("UID"),
             to: props.match.params.uid,
-            attributes: {},
-            data: {},
-            groups: [],
             loading: "active",
             messages: null,
             pageCount: null,
@@ -41,7 +38,7 @@ export class MessageDetail extends Component {
     }
 
     componentDidMount() {
-        this.detailPlayer();
+        this.getEmployeeDetail();
         GetSettings().then(resSettings => {
             this.setState({
                 sms_active: parseInt(resSettings.settings.sms_active)
@@ -53,15 +50,20 @@ export class MessageDetail extends Component {
         });
     }
 
-    detailPlayer = () => {
+    getEmployeeDetail = () => {
         const { uid, to } = this.state;
-        DetailPlayer({ uid: uid, to: to, attribute_values: [] }).then(response => {
+        DetailEmployee({
+            uid: uid,
+            to: to
+        }).then(response => {
             if (response !== null) {
                 const status = response.status;
                 if (status.code === 1020) {
                     const data = response.data;
-                    delete data.uid;
-                    this.setState({ ...data, loading: "" });
+                    this.setState({
+                        ...data,
+                        loading: ""
+                    });
                 }
             }
         });
@@ -72,7 +74,7 @@ export class MessageDetail extends Component {
         ListPersonMessages({
             uid: uid,
             to: to,
-            person_type: 1
+            person_type: 2
         }).then(response => {
             if (response) {
                 if (response.status.code === 1020) {
@@ -158,11 +160,12 @@ export class MessageDetail extends Component {
         return (
             <div className="container">
                 <div className="page-header">
-                    <h1 className="page-title">Öğrenci Detay &mdash; Mesaj Geçmişi</h1>
+                    <h1 className="page-title">Personel Detay &mdash; Mesaj Geçmişi</h1>
                     <div className="col" />
-                    <div className="col-auto px-0">{<Tabs match={match} to={to} />}</div>
+                    <div className="col-auto px-0">
+                        <Tabs match={match} to={to} />
+                    </div>
                 </div>
-
                 <div className="row">
                     <PersonCard data={this.state} history={this.props.history} />
                     {sms_active ? (

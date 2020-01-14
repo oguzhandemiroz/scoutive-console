@@ -27,7 +27,7 @@ export class Messages extends Component {
                     <div className="page-header">
                         <h1 className="page-title">İletişim Merkezi</h1>
                         <Link
-                            to="/app/messages/add"
+                            to="/app/messages/select"
                             className="btn btn-icon btn-sm btn-success ml-auto dropdown-toggle"
                             data-toggle="dropdown">
                             Yeni Mesaj Oluştur

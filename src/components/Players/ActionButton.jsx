@@ -30,6 +30,24 @@ export class ActionButton extends Component {
 
         const actionMenu = [
             {
+                name: "parent-message",
+                tag: "button",
+                elementAttr: {
+                    className: "dropdown-item cursor-not-allowed disabled",
+                    onClick: () => console.log("Mesaj Gönder")
+                },
+                childText: "Mesaj Gönder",
+                child: {
+                    className: "dropdown-icon fa fa-paper-plane"
+                },
+                lock: lock,
+                condition: true
+            },
+            {
+                divider: key => dropdownDivider(key),
+                condition: true
+            },
+            {
                 name: "payment",
                 tag: "Link",
                 elementAttr: {
@@ -179,24 +197,6 @@ export class ActionButton extends Component {
                 condition: !is_trial && status === 1
             },
             {
-                name: "parent-message",
-                tag: "button",
-                elementAttr: {
-                    className: "dropdown-item cursor-not-allowed disabled",
-                    onClick: () => console.log("Veliye Mesaj Gönder")
-                },
-                childText: "Veliye Mesaj Gönder",
-                child: {
-                    className: "dropdown-icon fa fa-paper-plane"
-                },
-                lock: lock,
-                condition: true
-            },
-            {
-                divider: key => dropdownDivider(key),
-                condition: true
-            },
-            {
                 name: "edit",
                 tag: "Link",
                 elementAttr: {
@@ -262,6 +262,21 @@ export class ActionButton extends Component {
                 childText: "İletişim Servisi",
                 child: {
                     className: "dropdown-icon fa fa-sms"
+                },
+                lock: false,
+                condition: true
+            },
+            {
+                name: "message-detail",
+                tag: "Link",
+                elementAttr: {
+                    className: "dropdown-item",
+                    to: `/app/players/message-detail/${to}`,
+                    onClick: () => history.push(`/app/players/message-detail/${to}`)
+                },
+                childText: "Mesaj Geçmişi",
+                child: {
+                    className: "dropdown-icon fa fa-comment-dots"
                 },
                 lock: false,
                 condition: true

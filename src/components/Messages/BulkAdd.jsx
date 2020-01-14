@@ -42,7 +42,7 @@ const ImageOptionEmployee = props => (
     </Option>
 );
 
-export class Add extends Component {
+export class BulkAdd extends Component {
     constructor(props) {
         super(props);
 
@@ -1316,4 +1316,4 @@ export class Add extends Component {
     }
 }
 
-export default withRouter(Add);
+export default withRouter(BulkAdd);

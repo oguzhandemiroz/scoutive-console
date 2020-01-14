@@ -316,6 +316,25 @@ const CreateSegment = data => {
     } catch (e) {}
 };
 
+const ListPersonMessages = data => {
+    try {
+        return fetch(ep.MESSAGES_LIST_PERSON_MESSAGES, {
+            method: "POST",
+            body: JSON.stringify(data),
+            headers: h
+        })
+            .then(res => res.json())
+            .then(response => {
+                if (response) {
+                    const status = response.status;
+                    if (status.code !== 1020) errorSwal(status);
+                    return response;
+                }
+            })
+            .catch(e => fatalSwal(true));
+    } catch (e) {}
+};
+
 export {
     CreateRecipient,
     ListMessageTemplates,
@@ -329,5 +348,6 @@ export {
     SendTestMessages,
     ListStaticSegments,
     CreateSegment,
-    ToggleStatusCampaign
+    ToggleStatusCampaign,
+    ListPersonMessages
 };

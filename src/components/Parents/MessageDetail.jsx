@@ -1,12 +1,12 @@
 import React, { Component } from "react";
+import PersonCard from "./PersonCard";
+import { DetailParent } from "../../services/Parent";
+import { nullCheck, formatDate, formatPhone } from "../../services/Others";
 import { Link } from "react-router-dom";
-import { DetailPlayer } from "../../services/Player";
-import { nullCheck, formatPhone, formatDate } from "../../services/Others";
+import MessagesNotActivate from "../NotActivate/Messages";
 import { GetSettings } from "../../services/School";
 import { ListPersonMessages } from "../../services/Messages";
-import Tabs from "../Players/Tabs";
-import MessagesNotActivate from "../NotActivate/Messages";
-import PersonCard from "./PersonCard";
+import Tabs from "./Tabs";
 import _ from "lodash";
 const $ = require("jquery");
 
@@ -18,13 +18,9 @@ const messageType = {
 export class MessageDetail extends Component {
     constructor(props) {
         super(props);
-
         this.state = {
             uid: localStorage.getItem("UID"),
             to: props.match.params.uid,
-            attributes: {},
-            data: {},
-            groups: [],
             loading: "active",
             messages: null,
             pageCount: null,
@@ -41,7 +37,7 @@ export class MessageDetail extends Component {
     }
 
     componentDidMount() {
-        this.detailPlayer();
+        this.detailParent();
         GetSettings().then(resSettings => {
             this.setState({
                 sms_active: parseInt(resSettings.settings.sms_active)
@@ -53,10 +49,10 @@ export class MessageDetail extends Component {
         });
     }
 
-    detailPlayer = () => {
+    detailParent = () => {
         const { uid, to } = this.state;
-        DetailPlayer({ uid: uid, to: to, attribute_values: [] }).then(response => {
-            if (response !== null) {
+        DetailParent({ uid: uid, to: to }).then(response => {
+            if (response) {
                 const status = response.status;
                 if (status.code === 1020) {
                     const data = response.data;
@@ -72,7 +68,7 @@ export class MessageDetail extends Component {
         ListPersonMessages({
             uid: uid,
             to: to,
-            person_type: 1
+            person_type: 3
         }).then(response => {
             if (response) {
                 if (response.status.code === 1020) {
@@ -158,11 +154,10 @@ export class MessageDetail extends Component {
         return (
             <div className="container">
                 <div className="page-header">
-                    <h1 className="page-title">Öğrenci Detay &mdash; Mesaj Geçmişi</h1>
+                    <h1 className="page-title">Veli Detay &mdash; Mesaj Geçmişi</h1>
                     <div className="col" />
                     <div className="col-auto px-0">{<Tabs match={match} to={to} />}</div>
                 </div>
-
                 <div className="row">
                     <PersonCard data={this.state} history={this.props.history} />
                     {sms_active ? (

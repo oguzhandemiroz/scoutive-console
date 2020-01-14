@@ -8,43 +8,23 @@ const tabList = [
         icon: "fa fa-info-circle"
     },
     {
-        text: "Aidat Geçmişi",
-        path: "fee-detail",
-        icon: "fa fa-receipt"
-    },
-    {
-        text: "İzin Geçmişi",
-        path: "vacation",
-        icon: "fa fa-coffee"
-    },
-    {
-        text: "Yoklama Geçmişi",
-        path: "rollcall",
-        icon: "fa fa-calendar-check"
-    },
-    {
         text: "Mesaj Geçmişi",
         path: "message-detail",
         icon: "fa fa-comment-dots"
-    },
-    {
-        text: "İletişim Servisi",
-        path: "messages",
-        icon: "fa fa-sms"
     }
 ];
 
 export class Tabs extends Component {
     render() {
         const { match, to } = this.props;
-        const splitPath = match.path.replace("/app/players/", "").split("/")[0];
+        const splitPath = match.path.replace("/app/parents/", "").split("/")[0];
 
         return (
-            <div className="btn-group" role="group" aria-label="Player Tabs">
+            <div className="btn-group" role="group" aria-label="Parent Tabs">
                 {tabList.map((el, key) => (
                     <Link
                         key={key.toString()}
-                        to={`/app/players/${el.path}/${to}`}
+                        to={`/app/parents/${el.path}/${to}`}
                         className={`btn btn-secondary ${splitPath === el.path ? "active" : ""}`}>
                         <i className={`${el.icon} mr-2`}></i>
                         {el.text}

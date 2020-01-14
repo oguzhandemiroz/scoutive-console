@@ -132,7 +132,7 @@ export class PersonCard extends Component {
                     </div>
                     <div className="card-footer">
                         <ActionButton
-                            hide={["edit", "detail", "rollcall", "fee"]}
+                            hide={["edit", "detail", "rollcall", "fee", "message-detail", "messages"]}
                             vacationButton={player =>
                                 this.setState({
                                     player: player
