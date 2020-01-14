@@ -20,7 +20,7 @@ export class SelectType extends Component {
                             <div className="card-body pb-0">
                                 <div className="row row-deck justify-content-center">
                                     <div className="col-lg-4 col-md-4 col-sm-12">
-                                        <Link className="card card-link" to="#">
+                                        <Link className="card card-link" to="/app/messages/single/add">
                                             <div className="card-body text-center">
                                                 <div className="icon-placeholder icon-placeholder-lg bg-dark">
                                                     <i className="fa fa-user text-white-75"></i>
@@ -33,7 +33,7 @@ export class SelectType extends Component {
                                         </Link>
                                     </div>
                                     <div className="col-lg-4 col-md-4 col-sm-12">
-                                        <Link className="card card-link" to="#">
+                                        <Link className="card card-link" to="/app/messages/bulk/add">
                                             <div className="card-body text-center">
                                                 <div className="icon-placeholder icon-placeholder-lg bg-dark">
                                                     <i className="fa fa-users text-white-75"></i>
@@ -44,7 +44,7 @@ export class SelectType extends Component {
                                         </Link>
                                     </div>
                                     <div className="col-lg-4 col-md-4 col-sm-12">
-                                        <Link className="card card-link" to="#">
+                                        <Link className="card card-link" to="/app/messages/recurring/add">
                                             <div className="card-body text-center">
                                                 <div className="icon-placeholder icon-placeholder-lg bg-dark">
                                                     <i className="fa fa-history text-white-75"></i>

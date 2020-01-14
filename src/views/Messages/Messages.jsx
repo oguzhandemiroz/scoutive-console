@@ -26,21 +26,9 @@ export class Messages extends Component {
                 <div className="container">
                     <div className="page-header">
                         <h1 className="page-title">İletişim Merkezi</h1>
-                        <Link
-                            to="/app/messages/select"
-                            className="btn btn-icon btn-sm btn-success ml-auto dropdown-toggle"
-                            data-toggle="dropdown">
+                        <Link to="/app/messages/select" className="btn btn-icon btn-sm btn-success ml-auto">
                             Yeni Mesaj Oluştur
                         </Link>
-
-                        <div className="dropdown-menu">
-                            <Link to="/app/messages/add" className="dropdown-item">
-                                Manuel Mesaj Gönderimi
-                            </Link>
-                            <Link to="/app/messages/recurring/add" className="dropdown-item">
-                                Otomatik Mesaj Gönderimi
-                            </Link>
-                        </div>
                     </div>
                     <div className="row row-cards">
                         <div className="col">

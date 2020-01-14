@@ -500,11 +500,10 @@ var indexRoutes = [
         prop: { exact: true }
     },
     {
-        path: "/messages/single/add",
+        path: "/messages/single/add/:uid?/:ptype?",
         name: "Mesaj Gönderim Merkezi - Tekil Mesaj Oluştur",
         component: MessagesSingleAdd,
         layout: "/app",
-        prop: { exact: true }
     },
     {
         path: "/messages/bulk/add",

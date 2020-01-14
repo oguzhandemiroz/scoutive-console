@@ -1212,7 +1212,7 @@ export class RecurringAdd extends Component {
         return (
             <div className="container">
                 <div className="page-header">
-                    <h1 className="page-title">Otomatik (Tekrarlayan) Mesaj Oluştur &mdash; SMS</h1>
+                    <h1 className="page-title">Otomatik (Tekrarlayan) Mesaj Oluştur</h1>
                     <Link className="btn btn-link ml-auto" to={"/app/messages"}>
                         İletişim Merkezine Geri Dön
                     </Link>

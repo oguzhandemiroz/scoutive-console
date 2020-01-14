@@ -1287,7 +1287,7 @@ export class BulkAdd extends Component {
         return (
             <div className="container">
                 <div className="page-header">
-                    <h1 className="page-title">Mesaj Oluştur &mdash; SMS</h1>
+                    <h1 className="page-title">Toplu Mesaj Oluştur</h1>
                     <Link className="btn btn-link ml-auto" to={"/app/messages"}>
                         İletişim Merkezine Geri Dön
                     </Link>
