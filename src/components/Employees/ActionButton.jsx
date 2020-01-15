@@ -27,6 +27,24 @@ export class ActionButton extends Component {
 
         const actionMenu = [
             {
+                tag: "button",
+                elementAttr: {
+                    className: "dropdown-item",
+                    to: `/app/messages/single/add/${to}/employee`,
+                    onClick: () => history.push(`/app/messages/single/add/${to}/employee`)
+                },
+                childText: "Mesaj Gönder",
+                child: {
+                    className: "dropdown-icon fa fa-paper-plane"
+                },
+                lock: false,
+                condition: true
+            },
+            {
+                divider: key => dropdownDivider(key),
+                condition: true
+            },
+            {
                 tag: "Link",
                 elementAttr: {
                     className: "dropdown-item",
@@ -77,19 +95,6 @@ export class ActionButton extends Component {
             {
                 divider: key => dropdownDivider(key),
                 condition: status
-            },
-            {
-                tag: "button",
-                elementAttr: {
-                    className: "dropdown-item cursor-not-allowed disabled",
-                    onClick: () => console.log("Mesaj Gönder")
-                },
-                childText: "Mesaj Gönder",
-                child: {
-                    className: "dropdown-icon fa fa-paper-plane"
-                },
-                lock: lock,
-                condition: true
             },
             {
                 tag: "button",

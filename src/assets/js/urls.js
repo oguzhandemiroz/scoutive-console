@@ -107,6 +107,7 @@ var ep = {
     START: host + api_version + "start",
     SESSION: host + api_version + "session",
     RECIPIENT_CREATE: host + api_version + "create/recipient",
+    MESSAGES_CREATE: host + api_version + "create/message",
     MESSAGES_SEND_TEST: host + api_version + "send/test/message",
     MESSAGES_LIST_PERSON_MESSAGES: host + api_version + "list/person/messages",
     MESSAGES_TEMPLATES_LIST: host + api_version + "list/message/templates",

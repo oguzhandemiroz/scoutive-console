@@ -219,7 +219,7 @@ export class BulkAdd extends Component {
         const { select, uid } = this.state;
         if (name === "selectSender" && parseInt(value) === 1) {
             if (!select.employees) {
-                ListEmployees(uid).then(response => {
+                ListEmployees().then(response => {
                     if (response) {
                         this.setState(prevState => ({
                             select: {

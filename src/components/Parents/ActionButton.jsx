@@ -12,7 +12,7 @@ export class ActionButton extends Component {
     }
 
     renderActionButton = () => {
-        const { data, renderButton, dropdown, hide } = this.props;
+        const { data, renderButton, dropdown, history, hide } = this.props;
         const { to, name } = data;
         const fullname = name;
 
@@ -24,6 +24,25 @@ export class ActionButton extends Component {
         );
 
         const actionMenu = [
+            {
+                name: "parent-message",
+                tag: "button",
+                elementAttr: {
+                    className: "dropdown-item",
+                    to: `/app/messages/single/add/${to}/parent`,
+                    onClick: () => history.push(`/app/messages/single/add/${to}/parent`)
+                },
+                childText: "Mesaj Gönder",
+                child: {
+                    className: "dropdown-icon fa fa-paper-plane"
+                },
+                lock: false,
+                condition: true
+            },
+            {
+                divider: key => dropdownDivider(key),
+                condition: true
+            },
             {
                 name: "payment",
                 tag: "Link",
@@ -52,20 +71,6 @@ export class ActionButton extends Component {
                 childText: "Ödeme Al",
                 child: {
                     className: "dropdown-icon fa fa-hand-holding-usd"
-                },
-                lock: lock,
-                condition: true
-            },
-            {
-                name: "parent-message",
-                tag: "button",
-                elementAttr: {
-                    className: "dropdown-item cursor-not-allowed disabled",
-                    onClick: () => console.log("Mesaj Gönder")
-                },
-                childText: "Mesaj Gönder",
-                child: {
-                    className: "dropdown-icon fa fa-paper-plane"
                 },
                 lock: lock,
                 condition: true

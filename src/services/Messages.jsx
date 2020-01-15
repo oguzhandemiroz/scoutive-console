@@ -335,6 +335,32 @@ const ListPersonMessages = data => {
     } catch (e) {}
 };
 
+const CreateMessage = data => {
+    try {
+        return fetch(ep.MESSAGES_CREATE, {
+            method: "POST",
+            body: JSON.stringify(data),
+            headers: h
+        })
+            .then(res => res.json())
+            .then(response => {
+                if (response) {
+                    const status = response.status;
+                    if (status.code !== 1020) errorSwal(status);
+                    else {
+                        Toast.fire({
+                            type: "success",
+                            title: status.description,
+                            timer: 2500
+                        });
+                    }
+                    return response;
+                }
+            })
+            .catch(e => fatalSwal(true));
+    } catch (e) {}
+};
+
 export {
     CreateRecipient,
     ListMessageTemplates,
@@ -349,5 +375,6 @@ export {
     ListStaticSegments,
     CreateSegment,
     ToggleStatusCampaign,
-    ListPersonMessages
+    ListPersonMessages,
+    CreateMessage
 };

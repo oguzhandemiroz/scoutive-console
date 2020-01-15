@@ -33,14 +33,15 @@ export class ActionButton extends Component {
                 name: "parent-message",
                 tag: "button",
                 elementAttr: {
-                    className: "dropdown-item cursor-not-allowed disabled",
-                    onClick: () => console.log("Mesaj Gönder")
+                    className: "dropdown-item",
+                    to: `/app/messages/single/add/${to}/player`,
+                    onClick: () => history.push(`/app/messages/single/add/${to}/player`)
                 },
                 childText: "Mesaj Gönder",
                 child: {
                     className: "dropdown-icon fa fa-paper-plane"
                 },
-                lock: lock,
+                lock: false,
                 condition: true
             },
             {
