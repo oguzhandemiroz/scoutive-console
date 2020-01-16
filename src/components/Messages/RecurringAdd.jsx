@@ -187,7 +187,9 @@ export class RecurringAdd extends Component {
             end_date: formatDate(end_date, "YYYY-MM-DD ") + formatDate(when, "HH:mm:00")
         }).then(response => {
             if (response) {
-                this.props.history.push("/app/messages");
+                if (response.status.code === 1020) {
+                    this.props.history.push("/app/messages/detail/" + response.campaign_id);
+                }
             }
         });
     };
@@ -317,7 +319,9 @@ export class RecurringAdd extends Component {
             CreateSegment({
                 uid: uid,
                 segment_name:
-                    segments.find(x => x.static_segment_id === selected_segment).segment_name + " - " + moment().unix(),
+                    segments.find(x => x.static_segment_id === selected_segment).segment_name +
+                    " - " +
+                    moment(when).format("DDMMYY"),
                 static_segment_id: selected_segment,
                 values: values
             }).then(response => {
@@ -1123,12 +1127,12 @@ export class RecurringAdd extends Component {
     };
 
     selectSegment = k => {
-        const { segments } = this.state;
+        const { segments, when } = this.state;
         if (k === 5) this.listGroups();
         this.setState({
             ...initialState,
             selected_segment: k,
-            title: segments.find(x => x.static_segment_id === k).segment_name + " - " + moment().unix()
+            title: segments.find(x => x.static_segment_id === k).segment_name + " - " + moment(when).format("DDMMYY")
         });
     };
 

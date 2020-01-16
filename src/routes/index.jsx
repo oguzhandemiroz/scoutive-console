@@ -10,6 +10,7 @@ import Parents from "../views/Parents/Parents";
 import Messages from "../views/Messages/Messages";
 import _404 from "../views/Pages/404";
 import Empty from "../components/Pages/Empty";
+import Slip from "../components/Players/Payment/Slip";
 
 import Terms from "../views/Pages/Terms";
 
@@ -136,66 +137,73 @@ var indexRoutes = [
         prop: { exact: true }
     },
     {
-        path: "/employees",
+        path: "/persons/employees",
         name: "Employees",
         component: Employees,
         layout: "/app",
         prop: { exact: true }
     },
     {
-        path: "/employees/add",
+        path: "/persons/employees/add",
         name: "Add Employees",
         component: AddEmployee,
         layout: "/app",
         prop: { exact: true }
     },
     {
-        path: "/employees/detail/:uid",
+        path: "/persons/employees/detail/:uid",
         name: "Detail Employee",
         component: DetailEmployee,
         layout: "/app",
         prop: { exact: true }
     },
     {
-        path: "/employees/vacation/:uid",
+        path: "/persons/employees/vacation/:uid",
         name: "Vacation Employee",
         component: VacationEmployee,
         layout: "/app",
         prop: { exact: true }
     },
     {
-        path: "/employees/rollcall/:uid",
+        path: "/persons/employees/rollcall/:uid",
         name: "Rollcall Employee",
         component: RollcallEmployee,
         layout: "/app",
         prop: { exact: true }
     },
     {
-        path: "/employees/edit/:uid",
+        path: "/persons/employees/edit/:uid",
         name: "Edit Employee",
         component: EditEmployee,
         layout: "/app",
         prop: { exact: true }
     },
     {
-        path: "/employees/salary/:uid?",
+        path: "/persons/employees/salary/:uid?",
         name: "Pay Salary",
         component: SalaryEmployee,
         layout: "/app",
         prop: { exact: false }
     },
     {
-        path: "/employees/salary-detail/:uid",
+        path: "/persons/employees/salary-detail/:uid",
         name: "Detail Salary",
         component: SalaryDetailEmployee,
         layout: "/app"
     },
     {
-        path: "/employees/message-detail/:uid",
+        path: "/persons/employees/message-detail/:uid",
         name: "Message Detail Employee",
         component: MessageDetailEmployee,
         layout: "/app"
     },
+    /* {
+        path: "/persons",
+        name: "Persons",
+        component: Persons,
+        layout: "/app",
+        prop: { exact: true }
+    }, */
     {
         path: "/players",
         name: "Players",
@@ -285,21 +293,21 @@ var indexRoutes = [
         layout: "/app"
     },
     {
-        path: "/parents",
+        path: "/persons/parents",
         name: "Parents",
         component: Parents,
         layout: "/app",
         prop: { exact: true }
     },
     {
-        path: "/parents/detail/:uid",
+        path: "/persons/parents/detail/:uid",
         name: "Detail Parent",
         component: DetailParent,
         layout: "/app",
         prop: { exact: true }
     },
     {
-        path: "/parents/message-detail/:uid",
+        path: "/persons/parents/message-detail/:uid",
         name: "Messages Detail Parent",
         component: MessageDetailParent,
         layout: "/app",
@@ -503,7 +511,7 @@ var indexRoutes = [
         path: "/messages/single/add/:uid?/:ptype?",
         name: "Mesaj Gönderim Merkezi - Tekil Mesaj Oluştur",
         component: MessagesSingleAdd,
-        layout: "/app",
+        layout: "/app"
     },
     {
         path: "/messages/bulk/add",
@@ -530,6 +538,13 @@ var indexRoutes = [
         path: "/reload",
         name: "Reload App Page",
         component: Empty,
+        layout: "/app",
+        prop: { exact: true }
+    },
+    {
+        path: "/slip",
+        name: "Slip",
+        component: Slip,
         layout: "/app",
         prop: { exact: true }
     },

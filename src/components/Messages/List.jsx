@@ -33,10 +33,13 @@ function _childNodes(dt, row, col) {
 }
 
 const statusType = {
-    0: { bg: "badge-danger", title: "İptal" },
+    0: { bg: "badge-dark", title: "İptal" },
     1: { bg: "badge-warning", title: "Kuyrukta" },
     2: { bg: "badge-success", title: "Tamamlandı" },
     3: { bg: "badge-secondary", title: "Durduruldu" },
+    4: { bg: "badge-danger", title: "Yetersiz Bakiye" },
+    5: { bg: "badge-danger", title: "Başarısız" },
+    6: { bg: "badge-danger", title: "Başarısız" },
     999: { bg: "badge-orange", title: "Devam Ediyor" }
 };
 
@@ -228,7 +231,7 @@ export class List extends Component {
                                     ) : null}
                                     {status !== 2 && status !== 0 ? (
                                         <button
-                                            className="btn btn-icon btn-sm btn-danger mx-1"
+                                            className="btn btn-icon btn-sm btn-dark mx-1"
                                             data-toggle="tooltip"
                                             title="Gönderimi İptal Et"
                                             onClick={() => this.cancelCampaign(campaign_id, title)}>

@@ -153,7 +153,9 @@ export class BulkAdd extends Component {
             working_days: [0, 1, 2, 3, 4, 5, 6]
         }).then(response => {
             if (response) {
-                this.props.history.push("/app/messages");
+                if (response.status.code === 1020) {
+                    this.props.history.push("/app/messages/detail/" + response.campaign_id);
+                }
             }
         });
     };

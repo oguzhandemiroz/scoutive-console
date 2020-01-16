@@ -15,6 +15,7 @@ import DatePicker, { registerLocale } from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import tr from "date-fns/locale/tr";
 import _ from "lodash";
+import moment from "moment";
 const $ = require("jquery");
 registerLocale("tr", tr);
 
@@ -143,6 +144,7 @@ export class SingleAdd extends Component {
         const { uid, person, sender, personType, select_template, content, when } = this.state;
         CreateMessage({
             uid: uid,
+            campaign_name: person.label + " - " + moment(when).format("DDMMYY"),
             to: person.value,
             person_type: personTypeToType[personType],
             content: content,
@@ -150,7 +152,11 @@ export class SingleAdd extends Component {
             template_id: select_template ? select_template : 0,
             when: formatDate(when, "YYYY-MM-DD HH:mm:00")
         }).then(response => {
-            if (response) this.props.history.push(`/app/${personType}s/message-detail/${person.value}`);
+            if (response) {
+                if (response.status.code === 1020) {
+                    this.props.history.push("/app/messages/detail/" + response.campaign_id);
+                }
+            }
         });
     };
 
@@ -227,8 +233,10 @@ export class SingleAdd extends Component {
                 break;
             case "parent":
                 this.listParents();
+                break;
             case "employee":
                 this.listEmployees();
+                break;
             default:
                 break;
         }

@@ -48,8 +48,8 @@ export class ActionButton extends Component {
                 tag: "Link",
                 elementAttr: {
                     className: "dropdown-item",
-                    to: `/app/employees/salary/${to}`,
-                    onClick: () => history.push(`/app/employees/salary/${to}`)
+                    to: `/app/persons/employees/salary/${to}`,
+                    onClick: () => history.push(`/app/persons/employees/salary/${to}`)
                 },
                 childText: "Maaş Öde",
                 child: {
@@ -151,8 +151,8 @@ export class ActionButton extends Component {
                 tag: "Link",
                 elementAttr: {
                     className: "dropdown-item",
-                    to: `/app/employees/edit/${to}`,
-                    onClick: () => history.push(`/app/employees/edit/${to}`)
+                    to: `/app/persons/employees/edit/${to}`,
+                    onClick: () => history.push(`/app/persons/employees/edit/${to}`)
                 },
                 childText: "Düzenle",
                 child: {
@@ -180,8 +180,8 @@ export class ActionButton extends Component {
                 tag: "Link",
                 elementAttr: {
                     className: "dropdown-item",
-                    to: `/app/employees/salary-detail/${to}`,
-                    onClick: () => history.push(`/app/employees/salary-detail/${to}`)
+                    to: `/app/persons/employees/salary-detail/${to}`,
+                    onClick: () => history.push(`/app/persons/employees/salary-detail/${to}`)
                 },
                 childText: "Maaş Geçmişi",
                 child: {
@@ -194,8 +194,8 @@ export class ActionButton extends Component {
                 tag: "Link",
                 elementAttr: {
                     className: "dropdown-item",
-                    to: `/app/employees/rollcall/${to}`,
-                    onClick: () => history.push(`/app/employees/rollcall/${to}`)
+                    to: `/app/persons/employees/rollcall/${to}`,
+                    onClick: () => history.push(`/app/persons/employees/rollcall/${to}`)
                 },
                 childText: "Yoklama Geçmişi",
                 child: {
@@ -209,8 +209,8 @@ export class ActionButton extends Component {
                 tag: "Link",
                 elementAttr: {
                     className: "dropdown-item",
-                    to: `/app/employees/message-detail/${to}`,
-                    onClick: () => history.push(`/app/employees/message-detail/${to}`)
+                    to: `/app/persons/employees/message-detail/${to}`,
+                    onClick: () => history.push(`/app/persons/employees/message-detail/${to}`)
                 },
                 childText: "Mesaj Geçmişi",
                 child: {
@@ -223,8 +223,8 @@ export class ActionButton extends Component {
                 tag: "Link",
                 elementAttr: {
                     className: "dropdown-item",
-                    to: `/app/employees/detail/${to}`,
-                    onClick: () => history.push(`/app/employees/detail/${to}`)
+                    to: `/app/persons/employees/detail/${to}`,
+                    onClick: () => history.push(`/app/persons/employees/detail/${to}`)
                 },
                 childText: "Tüm Bilgileri",
                 child: {

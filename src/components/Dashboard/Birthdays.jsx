@@ -139,7 +139,7 @@ export class Birthdays extends Component {
                                                             </div>
                                                             <div className="col pl-1">
                                                                 <Link
-                                                                    to={"/app/employees/detail/" + el.uid}
+                                                                    to={"/app/persons/employees/detail/" + el.uid}
                                                                     className="text-body font-weight-600 d-block">
                                                                     {fullnameGenerator(el.name, el.surname)}
                                                                 </Link>

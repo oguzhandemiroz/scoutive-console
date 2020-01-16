@@ -457,7 +457,7 @@ export class Detail extends Component {
             data.map(el => {
                 const fullname = fullnameGenerator(el.name, el.surname);
                 $parent.append(`
-                    <a href="/app/parents/detail/${el.uid}"
+                    <a href="/app/persons/parents/detail/${el.uid}"
                     class="text-inherit" 
                     data-toggle="popover" 
                     data-placement="top" 

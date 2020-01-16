@@ -149,8 +149,8 @@ export class Add extends Component {
 							<BrowserRouter>
 								<Link
 									className="text-inherit font-weight-600"
-									to={"/app/employees/detail/" + uid}
-									onClick={() => this.props.history.push(`/app/employees/detail/${uid}`)}>
+									to={"/app/persons/employees/detail/" + uid}
+									onClick={() => this.props.history.push(`/app/persons/employees/detail/${uid}`)}>
 									{fullname}
 								</Link>
 							</BrowserRouter>,
@@ -353,7 +353,7 @@ export class Add extends Component {
 							return fullname;
 						}
 						if (data)
-							return `<a class="text-inherit font-weight-600" href="/app/employees/detail/${row.uid}">${fullname}</a>`;
+							return `<a class="text-inherit font-weight-600" href="/app/persons/employees/detail/${row.uid}">${fullname}</a>`;
 					}
 				},
 				{

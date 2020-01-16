@@ -48,7 +48,7 @@ export class ActionButton extends Component {
                 tag: "Link",
                 elementAttr: {
                     className: "dropdown-item cursor-not-allowed disabled",
-                    to: `/app/parents/payment/${to}`
+                    to: `/app/persons/parents/payment/${to}`
                 },
                 childText: "Öğrenci Tanımla",
                 child: {
@@ -66,7 +66,7 @@ export class ActionButton extends Component {
                 tag: "Link",
                 elementAttr: {
                     className: "dropdown-item cursor-not-allowed disabled",
-                    to: `/app/parents/payment/${to}`
+                    to: `/app/persons/parents/payment/${to}`
                 },
                 childText: "Ödeme Al",
                 child: {

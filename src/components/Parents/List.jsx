@@ -157,8 +157,8 @@ export class List extends Component {
                                 <BrowserRouter>
                                     <Link
                                         className="text-inherit font-weight-600"
-                                        to={"/app/parents/detail/" + uid}
-                                        onClick={() => this.props.history.push(`/app/parents/detail/${uid}`)}>
+                                        to={"/app/persons/parents/detail/" + uid}
+                                        onClick={() => this.props.history.push(`/app/persons/parents/detail/${uid}`)}>
                                         {fullname}
                                     </Link>
                                 </BrowserRouter>,
@@ -200,20 +200,20 @@ export class List extends Component {
                                         renderButton={() => (
                                             <>
                                                 <Link
-                                                    to={"/app/parents/detail/" + uid}
+                                                    to={"/app/persons/parents/detail/" + uid}
                                                     className="btn btn-icon btn-sm btn-secondary"
                                                     data-toggle="tooltip"
                                                     onClick={() =>
-                                                        this.props.history.push(`/app/parents/detail/${uid}`)
+                                                        this.props.history.push(`/app/persons/parents/detail/${uid}`)
                                                     }
                                                     title="Görüntüle">
                                                     <i className="fe fe-eye" />
                                                 </Link>
                                                 <Link
-                                                    to={"/app/parents/edit/" + uid}
+                                                    to={"/app/persons/parents/edit/" + uid}
                                                     className="btn btn-icon btn-sm btn-secondary mx-1"
                                                     data-toggle="tooltip"
-                                                    onClick={() => this.props.history.push(`/app/parents/edit/${uid}`)}
+                                                    onClick={() => this.props.history.push(`/app/persons/parents/edit/${uid}`)}
                                                     title="Düzenle">
                                                     <i className="fe fe-edit" />
                                                 </Link>
@@ -251,7 +251,7 @@ export class List extends Component {
                                 return fullname;
                             }
                             if (data)
-                                return `<a class="text-inherit font-weight-600" href="/app/parents/detail/${row.uid}">${fullname}</a>`;
+                                return `<a class="text-inherit font-weight-600" href="/app/persons/parents/detail/${row.uid}">${fullname}</a>`;
                         }
                     },
                     {

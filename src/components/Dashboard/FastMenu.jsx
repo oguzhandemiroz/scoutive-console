@@ -39,7 +39,7 @@ export class FastMenu extends Component {
                 tag: "Link",
                 elementAttr: {
                     className: "dropdown-item",
-                    to: `/app/employees/add`
+                    to: `/app/persons/employees/add`
                 },
                 childText: "Personel Ekle",
                 child: {
@@ -85,7 +85,7 @@ export class FastMenu extends Component {
                 tag: "Link",
                 elementAttr: {
                     className: "dropdown-item",
-                    to: `/app/employees/salary`
+                    to: `/app/persons/employees/salary`
                 },
                 childText: "Maaş Öde",
                 child: {

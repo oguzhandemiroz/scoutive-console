@@ -82,7 +82,7 @@ export class PersonCard extends Component {
                             renderButton={() => (
                                 <>
                                     <Link
-                                        to={"/app/parents/edit/" + data.to}
+                                        to={"/app/persons/parents/edit/" + data.to}
                                         className="btn btn-icon btn-dark btn-block">
                                         <i className="fe fe-edit mr-2" />
                                         Düzenle

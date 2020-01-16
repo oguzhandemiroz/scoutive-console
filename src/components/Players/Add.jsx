@@ -1311,7 +1311,7 @@ export class Add extends Component {
                                                                     {el.kinship}
                                                                 </div>
                                                                 <Link
-                                                                    to={`/app/parents/detail/${el.uid}`}
+                                                                    to={`/app/persons/parents/detail/${el.uid}`}
                                                                     target="_blank">
                                                                     {fullnameGenerator(el.name, el.surname)}
                                                                 </Link>

@@ -4,7 +4,7 @@ import Swal from "sweetalert2";
 import moment from "moment";
 
 const reload = history => {
-	const current = "/app/employees";
+	const current = "/app/persons/employees";
 	history.replace(`/`);
 	setTimeout(() => {
 		history.replace(current);

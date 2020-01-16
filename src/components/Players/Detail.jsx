@@ -210,7 +210,7 @@ export class Detail extends Component {
                                                                                     {el.kinship}
                                                                                 </div>
                                                                                 <Link
-                                                                                    to={`/app/parents/detail/${el.uid}`}>
+                                                                                    to={`/app/persons/parents/detail/${el.uid}`}>
                                                                                     {fullnameGenerator(
                                                                                         el.name,
                                                                                         el.surname

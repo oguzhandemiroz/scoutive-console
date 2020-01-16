@@ -27,6 +27,12 @@ function _childNodes(dt, row, col) {
     return nodes;
 }
 
+const personTypeToText = {
+    1: "players",
+    2: "persons/employees",
+    3: "persons/parents"
+};
+
 export class ListRecipient extends Component {
     constructor(props) {
         super(props);
@@ -129,14 +135,19 @@ export class ListRecipient extends Component {
                             }
                         },
                         createdCell: (td, cellData, rowData) => {
-                            const { uid, name, surname } = rowData;
+                            const { uid, name, surname, person_type } = rowData;
+                            console.log(person_type, personTypeToText[person_type]);
                             const fullname = fullnameGenerator(name, surname);
                             ReactDOM.render(
                                 <BrowserRouter>
                                     <Link
                                         className="text-inherit font-weight-600"
-                                        to={"/app/players/detail/" + uid}
-                                        onClick={() => this.props.history.push(`/app/players/detail/${uid}`)}>
+                                        to={`/app/${personTypeToText[person_type]}/detail/${uid}`}
+                                        onClick={() =>
+                                            this.props.history.push(
+                                                `/app/${personTypeToText[person_type]}/detail/${uid}`
+                                            )
+                                        }>
                                         {fullname}
                                     </Link>
                                 </BrowserRouter>,

@@ -148,7 +148,11 @@ export class Detail extends Component {
                                                                         <label className="form-label">Grup</label>
                                                                         <div className="form-control-plaintext">
                                                                             {el.group
-                                                                                ? el.group.map(el => <div>{el}</div>)
+                                                                                ? el.group.map((el, key) => (
+                                                                                      <div key={key.toString()}>
+                                                                                          {el}
+                                                                                      </div>
+                                                                                  ))
                                                                                 : nullCheck(el.group)}
                                                                         </div>
                                                                     </div>

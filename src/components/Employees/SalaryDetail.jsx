@@ -87,7 +87,7 @@ export class SalaryDetail extends Component {
                             <div className="card-header">
                                 <h3 className="card-title">Maaş Geçmişi</h3>
                                 <button
-                                    onClick={() => this.props.history.push("/app/employees/salary/" + to)}
+                                    onClick={() => this.props.history.push("/app/persons/employees/salary/" + to)}
                                     className="btn btn-sm btn-success ml-auto">
                                     Maaş Öde
                                 </button>

@@ -234,7 +234,7 @@ export class Edit extends Component {
 					}
 				)
 			}).then(code => {
-				if (code === 1020) setTimeout(() => this.props.history.push("/app/employees/detail/" + to), 1000);
+				if (code === 1020) setTimeout(() => this.props.history.push("/app/persons/employees/detail/" + to), 1000);
 				else this.setState({ loadingButton: "" });
 			});
 		} else {
@@ -544,7 +544,7 @@ export class Edit extends Component {
 					<h1 className="page-title">Personel Düzenle</h1>
 					<div className="col" />
 					<div className="col-4 text-right">
-						<Link to={`/app/employees/detail/${to}`}>
+						<Link to={`/app/persons/employees/detail/${to}`}>
 							<i className="fe fe-arrow-left" /> Detay sayfasına dön
 						</Link>
 					</div>

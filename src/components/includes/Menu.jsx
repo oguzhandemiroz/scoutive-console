@@ -12,28 +12,21 @@ const menu = [
     },
     {
         li: "nav-item dropdown",
-        navlink: { to: "/app/persons", exact: false, activeClassName: "", className: "nav-link" },
+        navlink: { to: "/app/persons", exact: false, activeClassName: "active", className: "nav-link" },
         dataToggle: "dropdown",
         childDividerClass: "dropdown-menu dropdown-menu-arrow",
         icon: "fa fa-user-friends mr-2",
         text: "Kişiler",
         item: [
-            /*  {
-                to: "/app/players",
-                className: "dropdown-item",
-                activeClassName: "active",
-                childText: "Öğrenciler",
-                icon: "fa fa-user-graduate"
-            }, */
             {
-                to: "/app/parents",
+                to: "/app/persons/parents",
                 className: "dropdown-item",
                 activeClassName: "active",
                 childText: "Veliler",
                 icon: "fa fa-user"
             },
             {
-                to: "/app/employees",
+                to: "/app/persons/employees",
                 className: "dropdown-item",
                 activeClassName: "active",
                 childText: "Personeller",
@@ -52,7 +45,7 @@ const menu = [
     },
     /*  {
         li: "nav-item",
-        navlink: { to: "/app/employees", exact: false, activeClassName: "active", className: "nav-link" },
+        navlink: { to: "/app/persons/employees", exact: false, activeClassName: "active", className: "nav-link" },
         icon: "fa fa-user-tie",
         text: "Personeller",
         item: null,
@@ -60,7 +53,7 @@ const menu = [
     },
     {
         li: "nav-item",
-        navlink: { to: "/app/parents", exact: false, activeClassName: "active", className: "nav-link" },
+        navlink: { to: "/app/persons/parents", exact: false, activeClassName: "active", className: "nav-link" },
         icon: "fa fa-user",
         text: "Veliler",
         item: null,

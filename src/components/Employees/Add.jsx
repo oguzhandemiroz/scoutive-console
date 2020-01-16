@@ -207,11 +207,11 @@ export class Add extends Component {
                         UploadFile(formData).then(response => {
                             this.setState({ loadingImage: "", loadingButton: "" });
                             if (response)
-                                if (!addContinuously) this.props.history.push("/app/employees/detail/" + response.uid);
+                                if (!addContinuously) this.props.history.push("/app/persons/employees/detail/" + response.uid);
                                 else this.reload();
                         });
                     } else if (addContinuously) this.reload();
-                    else this.props.history.push("/app/employees/detail/" + response.uid);
+                    else this.props.history.push("/app/persons/employees/detail/" + response.uid);
                 } else this.setState({ loadingButton: "" });
             });
         } else {
@@ -965,7 +965,7 @@ export class Add extends Component {
                                                 showCancelButton: true,
                                                 reverseButtons: true
                                             }).then(result => {
-                                                if (result.value) this.props.history.push("/app/employees");
+                                                if (result.value) this.props.history.push("/app/persons/employees");
                                             });
                                         }}
                                         className="btn btn-link">
