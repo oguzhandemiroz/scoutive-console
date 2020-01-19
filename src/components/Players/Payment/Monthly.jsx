@@ -767,6 +767,14 @@ export class Monthly extends Component {
         }
     };
 
+    printSlip = () => {
+        const { uid, select_fee } = this.state;
+        const { to } = this.props.state;
+
+        const renderURL = `https://scoutive.online/api/v1/fee/slip/${uid}/${to}/${select_fee.fee_id}`;
+        window.open(renderURL, "_blank");
+    };
+
     render() {
         const { selectError, select_fee, select, year } = this.state;
         const { uid, player, loadingButton, tab, settings } = this.props.state;
@@ -856,12 +864,20 @@ export class Monthly extends Component {
                                 <button className="btn btn-danger btn-icon" onClick={this.deleteFee} type="button">
                                     Ödemeyi İptal Et
                                 </button>
-                                <button
-                                    onClick={this.completeFee}
-                                    type="button"
-                                    className={`btn btn-primary ${loadingButton}`}>
-                                    Aidat Ödemesi Ekle
-                                </button>
+                                <div>
+                                    <button
+                                        className="btn btn-secondary btn-icon mr-2"
+                                        onClick={this.printSlip}
+                                        type="button">
+                                        <i className="fe fe-printer mr-2"></i>Makbuz Yazdır
+                                    </button>
+                                    <button
+                                        onClick={this.completeFee}
+                                        type="button"
+                                        className={`btn btn-primary ${loadingButton}`}>
+                                        Aidat Ödemesi Ekle
+                                    </button>
+                                </div>
                             </div>
                         ) : select_fee.status === -1 || select_fee.status === 3 ? (
                             <div className="card-footer d-flex justify-content-between">
@@ -880,9 +896,12 @@ export class Monthly extends Component {
                                 </button>
                             </div>
                         ) : select_fee.status === 2 ? (
-                            <div className="card-footer">
+                            <div className="card-footer d-flex justify-content-between">
                                 <button className="btn btn-danger btn-icon" onClick={this.deleteFee} type="button">
                                     Ödemeyi İptal Et
+                                </button>
+                                <button className="btn btn-secondary btn-icon" onClick={this.printSlip} type="button">
+                                    <i className="fe fe-printer mr-2"></i>Makbuz Yazdır
                                 </button>
                             </div>
                         ) : null}

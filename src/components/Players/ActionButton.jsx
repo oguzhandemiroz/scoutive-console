@@ -65,24 +65,6 @@ export class ActionButton extends Component {
             },
             {
                 divider: key => dropdownDivider(key),
-                condition: !is_trial && status === 0
-            },
-            {
-                name: "payment-warning",
-                tag: "button",
-                elementAttr: {
-                    className: "dropdown-item cursor-not-allowed disabled",
-                    onClick: () => console.log("Ödeme İkazı")
-                },
-                childText: "Ödeme İkazı",
-                child: {
-                    className: "dropdown-icon fa fa-exclamation-triangle"
-                },
-                lock: lock,
-                condition: !is_trial && status !== 0
-            },
-            {
-                divider: key => dropdownDivider(key),
                 condition: !is_trial && status !== 0
             },
             {
@@ -179,7 +161,7 @@ export class ActionButton extends Component {
                 divider: key => dropdownDivider(key),
                 condition: !is_trial && status === 1
             },
-            {
+            /* {
                 name: "point",
                 tag: "button",
                 elementAttr: {
@@ -196,7 +178,7 @@ export class ActionButton extends Component {
             {
                 divider: key => dropdownDivider(key),
                 condition: !is_trial && status === 1
-            },
+            }, */
             {
                 name: "edit",
                 tag: "Link",
@@ -212,7 +194,7 @@ export class ActionButton extends Component {
                 lock: false,
                 condition: is_trial === 0
             },
-            {
+            /* {
                 name: "group",
                 tag: "button",
                 elementAttr: {
@@ -233,7 +215,7 @@ export class ActionButton extends Component {
                 },
                 lock: lock,
                 condition: !is_trial && status !== 0
-            },
+            }, */
             {
                 divider: key => dropdownDivider(key),
                 condition: !is_trial && status !== 0
@@ -252,7 +234,7 @@ export class ActionButton extends Component {
                 lock: lock,
                 condition: true
             },
-            {
+            /* {
                 name: "messages",
                 tag: "Link",
                 elementAttr: {
@@ -326,7 +308,7 @@ export class ActionButton extends Component {
                 },
                 lock: false,
                 condition: true
-            }
+            } */
         ];
 
         return (

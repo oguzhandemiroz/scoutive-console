@@ -238,8 +238,7 @@ export class Payment extends Component {
                         });
                         this.listPastPayment(value.value); */
                         this.props.history.push("/app/players/payment/fee/" + value.value);
-                        window.location.reload()
-                        
+                        window.location.reload();
                     }
                     break;
                 default:
