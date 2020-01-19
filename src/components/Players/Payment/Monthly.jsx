@@ -576,45 +576,48 @@ export class Monthly extends Component {
 
     // Aylık Ödeme - Geçmiş Aidat Çizelgesi
     renderMonthlyPastNew = () => {
-        const { fees, selected_month, fees_keys, year } = this.state;
-        return (
-            <div className="col-12">
-                <div className="form-group">
-                    <label className="form-label">Geçmiş Aidat Çizelgesi ({year.value})</label>
-                    <div className="installment-detail monthly-detail d-flex flex-lg-row flex-md-row flex-column">
-                        {fees && fees_keys.length > 0 ? (
-                            fees_keys.map((el, key) => {
-                                const status = fees[el].status;
+        try {
+            const { fees, selected_month, fees_keys, year } = this.state;
+            return (
+                <div className="col-12">
+                    <div className="form-group">
+                        <label className="form-label">Geçmiş Aidat Çizelgesi ({year.value})</label>
+                        <div className="installment-detail monthly-detail d-flex flex-lg-row flex-md-row flex-column">
+                            {fees && fees_keys.length > 0 ? (
+                                fees_keys.map((el, key) => {
+                                    const status = fees[el].status;
 
-                                const tooltip = Object.keys(fees[el]).length > 0 ? feeStatus[status].text : "Ödeme Yok";
+                                    const tooltip =
+                                        Object.keys(fees[el]).length > 0 ? feeStatus[status].text : "Ödeme Yok";
 
-                                const tag_color =
-                                    selected_month === el
-                                        ? "tag-info"
-                                        : Object.keys(fees[el]).length > 0
-                                        ? feeStatus[status].color
-                                        : "";
+                                    const tag_color =
+                                        selected_month === el
+                                            ? "tag-info"
+                                            : Object.keys(fees[el]).length > 0
+                                            ? feeStatus[status].color
+                                            : "";
 
-                                return (
-                                    <span
-                                        onClick={() => this.selectFee(el)}
-                                        key={key.toString()}
-                                        className={"tag " + tag_color}
-                                        data-toggle="tooltip"
-                                        title={tooltip}>
-                                        <div className="d-none d-lg-block">{moment(el).format("MMMM")}</div>
-                                        <div className="d-block d-lg-none">{moment(el).format("MMM")}</div>
-                                    </span>
-                                );
-                            })
-                        ) : (
-                            <div className="loader mx-auto"></div>
-                        )}
+                                    return (
+                                        <span
+                                            onClick={() => this.selectFee(el)}
+                                            key={key.toString()}
+                                            className={"tag " + tag_color}
+                                            data-toggle="tooltip"
+                                            title={tooltip}>
+                                            <div className="d-none d-lg-block">{moment(el).format("MMMM")}</div>
+                                            <div className="d-block d-lg-none">{moment(el).format("MMM")}</div>
+                                        </span>
+                                    );
+                                })
+                            ) : (
+                                <div className="loader mx-auto"></div>
+                            )}
+                        </div>
+                        {this.renderMonthlyFinalSituation()}
                     </div>
-                    {this.renderMonthlyFinalSituation()}
                 </div>
-            </div>
-        );
+            );
+        } catch (e) {}
     };
 
     // Aylık Ödeme - Yeni Ödeme
