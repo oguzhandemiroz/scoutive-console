@@ -461,6 +461,7 @@ export class Add extends Component {
                         ReactDOM.render(
                             <BrowserRouter>
                                 <ActionButton
+                                    hide={["edit"]}
                                     vacationButton={data =>
                                         this.setState({
                                             data: data

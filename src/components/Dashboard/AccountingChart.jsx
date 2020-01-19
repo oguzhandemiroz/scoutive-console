@@ -163,8 +163,6 @@ export class AccountingChart extends Component {
                         }
                     ];
 
-                    console.log(generated_data);
-
                     this.setState(prevState => ({
                         chartOptions: {
                             ...prevState.chartOptions,

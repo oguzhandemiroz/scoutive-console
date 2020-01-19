@@ -67,7 +67,7 @@ const menu = [
         item: null,
         condition: true
     },
-    {
+    /* {
         li: "nav-item cursor-not-allowed",
         navlink: {
             to: "/app/training",
@@ -84,7 +84,7 @@ const menu = [
             </span>
         ),
         condition: true
-    },
+    }, */
     {
         li: "nav-item",
         navlink: { to: "/app/rollcalls", exact: false, activeClassName: "active", className: "nav-link" },
@@ -117,7 +117,7 @@ const menu = [
         item: null,
         condition: true
     },
-    {
+    /* {
         li: "nav-item cursor-not-allowed",
         navlink: {
             to: "/app/reports",
@@ -134,7 +134,7 @@ const menu = [
             </span>
         ),
         condition: true
-    }
+    } */
 ];
 
 class Menu extends Component {

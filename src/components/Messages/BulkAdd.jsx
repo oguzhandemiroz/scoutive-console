@@ -744,7 +744,7 @@ export class BulkAdd extends Component {
                                                 Yenile
                                             </span>
                                         </li>
-                                        <li class="breadcrumb-item">
+                                        <li className="breadcrumb-item">
                                             {players.length > 0 ? (
                                                 <span
                                                     className="text-primary btn-link cursor-pointer"
@@ -1224,7 +1224,7 @@ export class BulkAdd extends Component {
                 this.setState(prevState => ({
                     select: {
                         ...prevState.select,
-                        players: response.data.filter(x => x.status !== 0),
+                        players: response.data,
                         initialPlayers: response.data
                             .filter(x => x.status !== 0)
                             .filter(y => y.recipient_parent_id !== -1)
