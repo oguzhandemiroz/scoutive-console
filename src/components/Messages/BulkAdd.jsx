@@ -306,7 +306,7 @@ export class BulkAdd extends Component {
                 ...prevState.select,
                 initialPlayers: result
             },
-            players: [],
+            /* players: [], */
             [name]: checked,
             filter: null
         }));
@@ -321,7 +321,7 @@ export class BulkAdd extends Component {
                 ...prevState.select,
                 initialPlayers: result
             },
-            players: [],
+            /* players: [], */
             undefined_contact_toggle: false,
             [name]: checked ? parseInt(value) : null
         }));
@@ -373,7 +373,7 @@ export class BulkAdd extends Component {
         }
 
         this.setState({
-            players: [],
+            /* players: [], */
             undefined_contact_toggle: false,
             [name]: checked ? parseInt(value) : null
         });
@@ -424,7 +424,7 @@ export class BulkAdd extends Component {
         }
 
         this.setState({
-            players: [],
+            /* players: [], */
             undefined_contact_toggle: false,
             [name]: checked ? parseInt(value) : null
         });

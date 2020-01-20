@@ -313,7 +313,7 @@ export class Add extends Component {
                     branch: branch ? "" : true
                 },
                 parentError: parents.length === 0 ? true : false,
-                paymentError: payment_type === false ? true : false
+                paymentError: payment_type === null ? true : false
             }));
         }
     };
@@ -1136,49 +1136,31 @@ export class Add extends Component {
                                             />
                                             <span className="selectgroup-button danger">Pasif</span>
                                         </label>
-                                        <label
-                                            className="selectgroup-item"
-                                            data-toggle="tooltip"
-                                            title="Kaydı Dondurulmuş Öğrenci">
-                                            <input
-                                                type="radio"
-                                                name="is_active"
-                                                value="2"
-                                                className="selectgroup-input"
-                                                checked={is_active === 2}
-                                                onChange={this.handleRadio}
-                                            />
-                                            <span className="selectgroup-button azure">Donuk</span>
-                                        </label>
                                     </div>
                                 </div>
 
-                                {is_active === 0 || is_active === 2 ? (
+                                {is_active === 0 ? (
                                     <fieldset className="form-fieldset">
-                                        {is_active === 0 ? (
-                                            <div className="form-group">
-                                                <label className="form-label">
-                                                    Okuldan Ayrılma Tarihi
-                                                    <span className="form-required">*</span>
-                                                </label>
-                                                <DatePicker
-                                                    autoComplete="off"
-                                                    selected={end_date}
-                                                    selectsEnd
-                                                    startDate={start_date}
-                                                    minDate={start_date}
-                                                    name="end_date"
-                                                    locale="tr"
-                                                    dateFormat="dd/MM/yyyy"
-                                                    onChange={date => this.handleDate(date, "end_date")}
-                                                    className={`form-control ${formErrors.end_date}`}
-                                                />
-                                            </div>
-                                        ) : null}
-                                        <div className="form-group mb-0">
+                                        <div className="form-group">
                                             <label className="form-label">
-                                                {is_active === 0 ? "Okuldan Ayrılma Nedeni" : "Dondurma Nedeni"}
+                                                Okuldan Ayrılma Tarihi
+                                                <span className="form-required">*</span>
                                             </label>
+                                            <DatePicker
+                                                autoComplete="off"
+                                                selected={end_date}
+                                                selectsEnd
+                                                startDate={start_date}
+                                                minDate={start_date}
+                                                name="end_date"
+                                                locale="tr"
+                                                dateFormat="dd/MM/yyyy"
+                                                onChange={date => this.handleDate(date, "end_date")}
+                                                className={`form-control ${formErrors.end_date}`}
+                                            />
+                                        </div>
+                                        <div className="form-group mb-0">
+                                            <label className="form-label">Okuldan Ayrılma Nedeni</label>
                                             <button
                                                 type="button"
                                                 onClick={() => {

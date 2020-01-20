@@ -323,10 +323,17 @@ export class Monthly extends Component {
     };
 
     handleSelect = (value, name) => {
+        const { select_fee } = this.state;
         if (name === "year") {
             this.setState({ [name]: value });
             this.listPlayerFees(value.value);
-            this.setState({ ...initialState });
+            this.setState({
+                ...initialState,
+                select_fee: {
+                    budget_id: select_fee.budget_id,
+                    paid_date: select_fee.paid_date
+                }
+            });
         } else {
             this.setState(prevState => ({
                 formErrors: {

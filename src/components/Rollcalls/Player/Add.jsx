@@ -990,7 +990,7 @@ export class Add extends Component {
                                         </thead>
                                     </table>
 
-                                    <GroupChange data={data} history={this.props.history} />
+                                    {/* <GroupChange data={data} history={this.props.history} /> */}
                                     <Vacation data={data} history={this.props.history} />
                                 </div>
                             </div>

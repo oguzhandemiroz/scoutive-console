@@ -172,7 +172,7 @@ export class PersonCard extends Component {
                         />
 
                         <Vacation data={player} history={history} />
-                        <GroupChange data={player} history={history} />
+                        {/* <GroupChange data={player} history={history} /> */}
                     </div>
                 </div>
             </div>

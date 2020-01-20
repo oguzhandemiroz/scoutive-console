@@ -630,7 +630,7 @@ class Table extends Component {
                     </thead>
                 </table>
                 <Vacation data={data} history={this.props.history} />
-                <GroupChange data={data} history={this.props.history} />
+                {/* <GroupChange data={data} history={this.props.history} /> */}
                 <ListFilter filterState={this.generateFilter} />
             </div>
         );

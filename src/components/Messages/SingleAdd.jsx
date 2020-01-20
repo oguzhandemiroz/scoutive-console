@@ -4,7 +4,12 @@ import Select from "react-select";
 import { ListPlayers } from "../../services/Player";
 import { ListParents } from "../../services/Parent";
 import { ListEmployees } from "../../services/Employee";
-import { ListMessageTemplates, SendTestMessages, CreateMessage } from "../../services/Messages";
+import {
+    ListMessageTemplates,
+    SendTestMessages,
+    CreateMessage,
+    ActivateMessageTemplate
+} from "../../services/Messages";
 import { selectCustomStyles, formValid, selectCustomStylesError } from "../../assets/js/core";
 import { fullnameGenerator, formatPhone, nullCheck, formatDate } from "../../services/Others";
 import sms_activate_image from "../../assets/images/illustrations/sms_activate.svg";
@@ -398,7 +403,7 @@ export class SingleAdd extends Component {
 
     listMessageTemplates = () => {
         const { select } = this.state;
-        if (!select.templates) {
+        if (!select.templates || (select.templates && select.templates.length === 0)) {
             this.setState({ loadingTemplates: true });
             ListMessageTemplates().then(response => {
                 if (response) {
@@ -499,6 +504,15 @@ export class SingleAdd extends Component {
             .replace(/\u015e/g, "Ş|")
             .replace(/\u015f/g, "ş|")
             .replace(/\r?\n/g, " |").length;
+    };
+
+    activateTemplates = () => {
+        this.setState({ loadingButton: "btn-loading" });
+        ActivateMessageTemplate().then(response => {
+            if (response) {
+                if (response.status.code === 1020) this.listMessageTemplates();
+            }
+        });
     };
 
     selectedTemplate = () => {
