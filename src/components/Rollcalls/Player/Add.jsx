@@ -229,14 +229,11 @@ export class Add extends Component {
                         const { uid, name, surname } = rowData;
                         const fullname = fullnameGenerator(name, surname);
                         ReactDOM.render(
-                            <BrowserRouter>
-                                <Link
-                                    className="text-inherit font-weight-600"
-                                    to={"/app/players/detail/" + uid}
-                                    onClick={() => this.props.history.push(`/app/players/detail/${uid}`)}>
-                                    {fullname}
-                                </Link>
-                            </BrowserRouter>,
+                            <div
+                                className="btn-link cursor-pointer text-inherit font-weight-600"
+                                onClick={() => this.props.history.push(`/app/players/detail/${uid}`)}>
+                                {fullname}
+                            </div>,
                             td
                         );
                     }
@@ -262,19 +259,19 @@ export class Add extends Component {
                     createdCell: (td, cellData, rowData) => {
                         const { groups } = rowData;
                         ReactDOM.render(
-                            <BrowserRouter>
+                            <>
                                 {groups.length > 0
                                     ? groups.map(el => (
-                                          <Link
+                                          <div
                                               key={el.value.toString()}
-                                              className="d-block text-inherit"
+                                              className="d-block text-inherit btn-link cursor-pointer"
                                               to={`/app/groups/detail/${el.value}`}
                                               onClick={() => this.props.history.push(`/app/groups/detail/${el.value}`)}>
                                               {el.label}
-                                          </Link>
+                                          </div>
                                       ))
                                     : "—"}
-                            </BrowserRouter>,
+                            </>,
                             td
                         );
                     }
@@ -429,7 +426,7 @@ export class Add extends Component {
                     createdCell: (td, cellData, rowData) => {
                         const { uid, name, surname, note, daily } = rowData;
                         ReactDOM.render(
-                            <BrowserRouter>
+                            <>
                                 {daily !== -1 ? (
                                     <span
                                         onClick={() => this.removeRollcallStatus(uid)}
@@ -446,7 +443,7 @@ export class Add extends Component {
                                     title={note ? "Not: " + note : "Not Gir"}>
                                     <i className={`fe fe-edit ${note ? "text-orange" : ""}`} />
                                 </span>
-                            </BrowserRouter>,
+                            </>,
                             td
                         );
                     }
@@ -459,39 +456,37 @@ export class Add extends Component {
                         const fullname = fullnameGenerator(rowData.name, rowData.surname);
                         const { uid, group, status, is_trial } = rowData;
                         ReactDOM.render(
-                            <BrowserRouter>
-                                <ActionButton
-                                    hide={["edit"]}
-                                    vacationButton={data =>
-                                        this.setState({
-                                            data: data
-                                        })
-                                    }
-                                    groupChangeButton={data =>
-                                        this.setState({
-                                            data: data
-                                        })
-                                    }
-                                    history={this.props.history}
-                                    dropdown={true}
-                                    data={{
-                                        to: uid,
-                                        name: fullname,
-                                        is_trial: is_trial,
-                                        status: status,
-                                        group: group
-                                    }}
-                                    renderButton={() => (
-                                        <a
-                                            className="icon"
-                                            data-toggle="dropdown"
-                                            aria-haspopup="true"
-                                            aria-expanded="false">
-                                            <i className="fe fe-more-vertical"></i>
-                                        </a>
-                                    )}
-                                />
-                            </BrowserRouter>,
+                            <ActionButton
+                                hide={["edit"]}
+                                vacationButton={data =>
+                                    this.setState({
+                                        data: data
+                                    })
+                                }
+                                groupChangeButton={data =>
+                                    this.setState({
+                                        data: data
+                                    })
+                                }
+                                history={this.props.history}
+                                dropdown={true}
+                                data={{
+                                    to: uid,
+                                    name: fullname,
+                                    is_trial: is_trial,
+                                    status: status,
+                                    group: group
+                                }}
+                                renderButton={() => (
+                                    <a
+                                        className="icon"
+                                        data-toggle="dropdown"
+                                        aria-haspopup="true"
+                                        aria-expanded="false">
+                                        <i className="fe fe-more-vertical"></i>
+                                    </a>
+                                )}
+                            />,
                             td
                         );
                     }

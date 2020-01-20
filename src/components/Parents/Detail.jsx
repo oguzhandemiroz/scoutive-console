@@ -31,7 +31,12 @@ export class Detail extends Component {
     }
 
     componentDidMount() {
+        console.log(this.props)
         this.detailParent();
+    }
+
+    componentWillReceiveProps(nextProps) {
+        console.log(nextProps)
     }
 
     detailParent = () => {

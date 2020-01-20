@@ -77,14 +77,11 @@ class Table extends Component {
                             const { uid, name, surname } = rowData;
                             const fullname = fullnameGenerator(name, surname);
                             ReactDOM.render(
-                                <BrowserRouter>
-                                    <Link
-                                        className="text-inherit font-weight-600"
-                                        to={"/app/persons/employees/detail/" + uid}
-                                        onClick={() => this.props.history.push(`/app/persons/employees/detail/${uid}`)}>
-                                        {fullname}
-                                    </Link>
-                                </BrowserRouter>,
+                                <div
+                                    className="btn-link cursor-pointer text-inherit font-weight-600"
+                                    onClick={() => this.props.history.push(`/app/persons/employees/detail/${uid}`)}>
+                                    {fullname}
+                                </div>,
                                 td
                             );
                         }
@@ -95,21 +92,20 @@ class Table extends Component {
                         createdCell: (td, cellData, rowData) => {
                             const { groups } = rowData;
                             ReactDOM.render(
-                                <BrowserRouter>
+                                <>
                                     {groups.length > 0
                                         ? groups.map(el => (
-                                              <Link
+                                              <div
                                                   key={el.value.toString()}
-                                                  className="d-block text-inherit"
-                                                  to={`/app/groups/detail/${el.value}`}
+                                                  className="d-block text-inherit btn-link cursor-pointer"
                                                   onClick={() =>
                                                       this.props.history.push(`/app/groups/detail/${el.value}`)
                                                   }>
                                                   {el.label}
-                                              </Link>
+                                              </div>
                                           ))
                                         : "—"}
-                                </BrowserRouter>,
+                                </>,
                                 td
                             );
                         }
@@ -120,43 +116,41 @@ class Table extends Component {
                             const fullname = fullnameGenerator(rowData.name, rowData.surname);
                             const { uid, status } = rowData;
                             ReactDOM.render(
-                                <BrowserRouter>
-                                    <ActionButton
-                                        advancePaymentButton={data =>
-                                            this.setState({
-                                                data: data
-                                            })
-                                        }
-                                        vacationButton={data =>
-                                            this.setState({
-                                                data: data
-                                            })
-                                        }
-                                        passwordButton={data =>
-                                            this.setState({
-                                                data: data
-                                            })
-                                        }
-                                        history={this.props.history}
-                                        dropdown={true}
-                                        data={{
-                                            to: uid,
-                                            name: fullname,
-                                            status: status
-                                        }}
-                                        renderButton={() => (
-                                            <button
-                                                type="button"
-                                                id="employee-action"
-                                                className="btn btn-sm btn-secondary btn-block dropdown-toggle"
-                                                data-toggle="dropdown"
-                                                aria-haspopup="true"
-                                                aria-expanded="false">
-                                                İşlem
-                                            </button>
-                                        )}
-                                    />
-                                </BrowserRouter>,
+                                <ActionButton
+                                    advancePaymentButton={data =>
+                                        this.setState({
+                                            data: data
+                                        })
+                                    }
+                                    vacationButton={data =>
+                                        this.setState({
+                                            data: data
+                                        })
+                                    }
+                                    passwordButton={data =>
+                                        this.setState({
+                                            data: data
+                                        })
+                                    }
+                                    history={this.props.history}
+                                    dropdown={true}
+                                    data={{
+                                        to: uid,
+                                        name: fullname,
+                                        status: status
+                                    }}
+                                    renderButton={() => (
+                                        <button
+                                            type="button"
+                                            id="employee-action"
+                                            className="btn btn-sm btn-secondary btn-block dropdown-toggle"
+                                            data-toggle="dropdown"
+                                            aria-haspopup="true"
+                                            aria-expanded="false">
+                                            İşlem
+                                        </button>
+                                    )}
+                                />,
                                 td
                             );
                         }

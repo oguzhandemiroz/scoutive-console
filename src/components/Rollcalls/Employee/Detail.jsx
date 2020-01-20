@@ -147,14 +147,11 @@ export class Detail extends Component {
                         const { uid, name, surname } = rowData;
                         const fullname = fullnameGenerator(name, surname);
                         ReactDOM.render(
-                            <BrowserRouter>
-                                <Link
-                                    className="text-inherit font-weight-600"
-                                    to={"/app/persons/employees/detail/" + uid}
-                                    onClick={() => this.props.history.push(`/app/persons/employees/detail/${uid}`)}>
-                                    {fullname}
-                                </Link>
-                            </BrowserRouter>,
+                            <div
+                                className="text-inherit font-weight-600 btn-link cursor-pointer"
+                                onClick={() => this.props.history.push(`/app/persons/employees/detail/${uid}`)}>
+                                {fullname}
+                            </div>,
                             td
                         );
                     }

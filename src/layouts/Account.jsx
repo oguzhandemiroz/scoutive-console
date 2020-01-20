@@ -21,7 +21,6 @@ class App extends Component {
 
     componentDidMount() {
         Start();
-        console.log("burası istek aldı");
     }
 
     render() {

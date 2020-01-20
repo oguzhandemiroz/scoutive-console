@@ -5,17 +5,17 @@ import Vacation from "../PlayerAction/Vacation";
 import GroupChange from "../PlayerAction/GroupChange";
 import { fullnameGenerator, nullCheck, formatDate, formatPhone, formatMoney } from "../../services/Others";
 
-const statusType = {
-    0: "bg-danger",
-    1: "bg-green",
-    2: "bg-azure",
-    3: "bg-indigo"
-};
-
 const paymentTypeText = {
     0: "AYLIK",
     1: "BURSLU",
     2: "TEK ÖDEME"
+};
+
+const statusType = {
+    0: { bg: "bg-danger", title: "Pasif" },
+    1: { bg: "bg-success", title: "Aktif" },
+    2: { bg: "bg-azure", title: "Donuk" },
+    3: { bg: "bg-indigo", title: "Ön Kayıt" }
 };
 
 export class PersonCard extends Component {
@@ -45,8 +45,10 @@ export class PersonCard extends Component {
                                         className="avatar avatar-xxl mr-4"
                                         style={{ backgroundImage: `url(${data.image})` }}>
                                         <span
+                                            data-toggle="tooltip"
+                                            title={statusType[data.status || 1].title + " Öğrenci"}
                                             className={`avatar-sm avatar-status ${
-                                                !data.is_trial ? statusType[data.status] : statusType[3]
+                                                !data.is_trial ? statusType[data.status || 1].bg : statusType[3].bg
                                             }`}
                                         />
                                     </span>

@@ -136,21 +136,15 @@ export class ListRecipient extends Component {
                         },
                         createdCell: (td, cellData, rowData) => {
                             const { uid, name, surname, person_type } = rowData;
-                            console.log(person_type, personTypeToText[person_type]);
                             const fullname = fullnameGenerator(name, surname);
                             ReactDOM.render(
-                                <BrowserRouter>
-                                    <Link
-                                        className="text-inherit font-weight-600"
-                                        to={`/app/${personTypeToText[person_type]}/detail/${uid}`}
-                                        onClick={() =>
-                                            this.props.history.push(
-                                                `/app/${personTypeToText[person_type]}/detail/${uid}`
-                                            )
-                                        }>
-                                        {fullname}
-                                    </Link>
-                                </BrowserRouter>,
+                                <div
+                                    className="text-inherit font-weight-600 btn-link cursor-pointer"
+                                    onClick={() =>
+                                        this.props.history.push(`/app/${personTypeToText[person_type]}/detail/${uid}`)
+                                    }>
+                                    {fullname}
+                                </div>,
                                 td
                             );
                         }

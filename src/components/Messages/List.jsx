@@ -152,23 +152,22 @@ export class List extends Component {
                         createdCell: (td, cellData, rowData) => {
                             const { campaign_id, title, template, segment_id } = rowData;
                             ReactDOM.render(
-                                <BrowserRouter>
+                                <>
                                     <div
                                         data-toggle="tooltip"
                                         title={template.template_name}
                                         className={`icon-placeholder icon-placeholder-xxs bg-${template.color}-lightest mr-3`}>
                                         <i className={`${template.icon} text-${template.color}`} />
                                     </div>
-                                    <Link
+                                    <div
                                         data-toggle="tooltip"
                                         title={title}
-                                        className="text-inherit font-weight-600 text-wrap"
-                                        to={"/app/messages/detail/" + campaign_id}
+                                        className="btn-link cursor-pointer text-inherit font-weight-600 text-wrap"
                                         onClick={() => this.props.history.push(`/app/messages/detail/${campaign_id}`)}>
                                         {segment_id ? <span className="badge badge-primary mr-2">OTOMATİK</span> : null}
                                         {title}
-                                    </Link>
-                                </BrowserRouter>,
+                                    </div>
+                                </>,
                                 td
                             );
                         }
@@ -202,15 +201,14 @@ export class List extends Component {
                         createdCell: (td, cellData, rowData) => {
                             const { campaign_id, status, title, segment_id } = rowData;
                             ReactDOM.render(
-                                <BrowserRouter>
-                                    <Link
-                                        to={"/app/messages/detail/" + campaign_id}
+                                <>
+                                    <button
                                         data-toggle="tooltip"
                                         title="Gönderimi Görüntüle"
                                         className="btn btn-icon btn-sm btn-secondary mx-1"
                                         onClick={() => this.props.history.push(`/app/messages/detail/${campaign_id}`)}>
                                         <i className="fe fe-eye" />
-                                    </Link>
+                                    </button>
                                     {segment_id && status === 1 ? (
                                         <button
                                             className="btn btn-icon btn-sm btn-gray mx-1"
@@ -238,7 +236,7 @@ export class List extends Component {
                                             <i className="fe fe-x" />
                                         </button>
                                     ) : null}
-                                </BrowserRouter>,
+                                </>,
                                 td
                             );
                         }

@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import { Link, withRouter } from "react-router-dom";
 import deletePlayer from "../PlayerAction/DeletePlayer";
 import freezePlayer from "../PlayerAction/FreezePlayer";
 import refreshPlayer from "../PlayerAction/RefreshPlayer";
@@ -51,10 +50,9 @@ export class ActionButton extends Component {
             },
             {
                 name: "payment",
-                tag: "Link",
+                tag: "button",
                 elementAttr: {
                     className: "dropdown-item",
-                    to: `/app/players/payment/fee/${to}`,
                     onClick: () => history.push(`/app/players/payment/fee/${to}`)
                 },
                 childText: "Ödeme Al",
@@ -185,10 +183,9 @@ export class ActionButton extends Component {
             }, */
             {
                 name: "edit",
-                tag: "Link",
+                tag: "button",
                 elementAttr: {
                     className: "dropdown-item",
-                    to: `/app/players/edit/${to}`,
                     onClick: () => history.push(`/app/players/edit/${to}`)
                 },
                 childText: "Düzenle",
@@ -238,17 +235,17 @@ export class ActionButton extends Component {
                 },
                 lock: lock,
                 condition: true
-            },{
+            },
+            {
                 name: "fee",
                 divider: key => dropdownDivider(key),
                 condition: true
             },
             {
                 name: "fee",
-                tag: "Link",
+                tag: "button",
                 elementAttr: {
                     className: "dropdown-item",
-                    to: `/app/players/fee-detail/${to}`,
                     onClick: () => history.push(`/app/players/fee-detail/${to}`)
                 },
                 childText: "Aidat Geçmişi",
@@ -260,10 +257,9 @@ export class ActionButton extends Component {
             }
             /* {
                 name: "messages",
-                tag: "Link",
+                tag: "button",
                 elementAttr: {
                     className: "dropdown-item",
-                    to: `/app/players/messages/${to}`,
                     onClick: () => history.push(`/app/players/messages/${to}`)
                 },
                 childText: "İletişim Servisi",
@@ -275,10 +271,9 @@ export class ActionButton extends Component {
             },
             {
                 name: "message-detail",
-                tag: "Link",
+                tag: "button",
                 elementAttr: {
                     className: "dropdown-item",
-                    to: `/app/players/message-detail/${to}`,
                     onClick: () => history.push(`/app/players/message-detail/${to}`)
                 },
                 childText: "Mesaj Geçmişi",
@@ -290,10 +285,9 @@ export class ActionButton extends Component {
             },
             {
                 name: "rollcall",
-                tag: "Link",
+                tag: "button",
                 elementAttr: {
                     className: "dropdown-item",
-                    to: `/app/players/rollcall/${to}`,
                     onClick: () => history.push(`/app/players/rollcall/${to}`)
                 },
                 childText: "Yoklama Geçmişi",
@@ -305,10 +299,9 @@ export class ActionButton extends Component {
             },
             {
                 name: "detail",
-                tag: "Link",
+                tag: "button",
                 elementAttr: {
                     className: "dropdown-item",
-                    to: `/app/players/detail/${to}`,
                     onClick: () => history.push(`/app/players/detail/${to}`)
                 },
                 childText: "Tüm Bilgileri",
@@ -347,14 +340,7 @@ export class ActionButton extends Component {
                     {actionMenu.map((el, key) => {
                         if (hide && hide.indexOf(el.name) > -1) return null;
                         if (el.condition) {
-                            if (el.tag === "Link") {
-                                return (
-                                    <Link {...el.elementAttr} key={key.toString()}>
-                                        <i {...el.child} /> {el.childText}
-                                        {el.lock}
-                                    </Link>
-                                );
-                            } else if (el.tag === "button") {
+                            if (el.tag === "button") {
                                 return (
                                     <button {...el.elementAttr} key={key.toString()}>
                                         <i {...el.child} /> {el.childText}

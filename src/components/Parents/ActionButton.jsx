@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
 
 export class ActionButton extends Component {
     constructor(props) {
@@ -44,11 +43,11 @@ export class ActionButton extends Component {
                 condition: true
             },
             {
-                name: "payment",
-                tag: "Link",
+                name: "player-define",
+                tag: "button",
                 elementAttr: {
                     className: "dropdown-item cursor-not-allowed disabled",
-                    to: `/app/persons/parents/payment/${to}`
+                    onClick: () => console.log("Öğrenci Tanımla")
                 },
                 childText: "Öğrenci Tanımla",
                 child: {
@@ -63,10 +62,10 @@ export class ActionButton extends Component {
             },
             {
                 name: "payment",
-                tag: "Link",
+                tag: "button",
                 elementAttr: {
                     className: "dropdown-item cursor-not-allowed disabled",
-                    to: `/app/persons/parents/payment/${to}`
+                    onClick: () => history.push(`/app/persons/parents/payment/${to}`)
                 },
                 childText: "Ödeme Al",
                 child: {
@@ -136,14 +135,7 @@ export class ActionButton extends Component {
                     {actionMenu.map((el, key) => {
                         if (hide && hide.indexOf(el.name) > -1) return null;
                         if (el.condition) {
-                            if (el.tag === "Link") {
-                                return (
-                                    <Link {...el.elementAttr} key={key.toString()}>
-                                        <i {...el.child} /> {el.childText}
-                                        {el.lock}
-                                    </Link>
-                                );
-                            } else if (el.tag === "button") {
+                            if (el.tag === "button") {
                                 return (
                                     <button {...el.elementAttr} key={key.toString()}>
                                         <i {...el.child} /> {el.childText}

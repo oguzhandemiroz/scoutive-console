@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import { Link, withRouter } from "react-router-dom";
 import deleteEmployee from "../EmployeeAction/DeleteEmployee";
 import activateEmployee from "../EmployeeAction/ActivateEmployee";
 
@@ -30,7 +29,6 @@ export class ActionButton extends Component {
                 tag: "button",
                 elementAttr: {
                     className: "dropdown-item",
-                    to: `/app/messages/single/add/${to}/employee`,
                     onClick: () => history.push(`/app/messages/single/add/${to}/employee`)
                 },
                 childText: "Mesaj Gönder",
@@ -45,10 +43,9 @@ export class ActionButton extends Component {
                 condition: true
             },
             {
-                tag: "Link",
+                tag: "button",
                 elementAttr: {
                     className: "dropdown-item",
-                    to: `/app/persons/employees/salary/${to}`,
                     onClick: () => history.push(`/app/persons/employees/salary/${to}`)
                 },
                 childText: "Maaş Öde",
@@ -148,10 +145,9 @@ export class ActionButton extends Component {
                 condition: status
             },
             {
-                tag: "Link",
+                tag: "button",
                 elementAttr: {
                     className: "dropdown-item",
-                    to: `/app/persons/employees/edit/${to}`,
                     onClick: () => history.push(`/app/persons/employees/edit/${to}`)
                 },
                 childText: "Düzenle",
@@ -177,10 +173,9 @@ export class ActionButton extends Component {
                 condition: true
             },
             {
-                tag: "Link",
+                tag: "button",
                 elementAttr: {
                     className: "dropdown-item",
-                    to: `/app/persons/employees/salary-detail/${to}`,
                     onClick: () => history.push(`/app/persons/employees/salary-detail/${to}`)
                 },
                 childText: "Maaş Geçmişi",
@@ -191,10 +186,9 @@ export class ActionButton extends Component {
                 condition: true
             },
             {
-                tag: "Link",
+                tag: "button",
                 elementAttr: {
                     className: "dropdown-item",
-                    to: `/app/persons/employees/rollcall/${to}`,
                     onClick: () => history.push(`/app/persons/employees/rollcall/${to}`)
                 },
                 childText: "Yoklama Geçmişi",
@@ -206,10 +200,9 @@ export class ActionButton extends Component {
             },
             {
                 name: "message-detail",
-                tag: "Link",
+                tag: "button",
                 elementAttr: {
                     className: "dropdown-item",
-                    to: `/app/persons/employees/message-detail/${to}`,
                     onClick: () => history.push(`/app/persons/employees/message-detail/${to}`)
                 },
                 childText: "Mesaj Geçmişi",
@@ -220,10 +213,9 @@ export class ActionButton extends Component {
                 condition: true
             },
             {
-                tag: "Link",
+                tag: "button",
                 elementAttr: {
                     className: "dropdown-item",
-                    to: `/app/persons/employees/detail/${to}`,
                     onClick: () => history.push(`/app/persons/employees/detail/${to}`)
                 },
                 childText: "Tüm Bilgileri",
@@ -261,14 +253,7 @@ export class ActionButton extends Component {
                     <div role="separator" className="dropdown-divider" />
                     {actionMenu.map((el, key) => {
                         if (el.condition) {
-                            if (el.tag === "Link") {
-                                return (
-                                    <Link {...el.elementAttr} key={key.toString()}>
-                                        <i {...el.child} /> {el.childText}
-                                        {el.lock}
-                                    </Link>
-                                );
-                            } else if (el.tag === "button") {
+                            if (el.tag === "button") {
                                 return (
                                     <button {...el.elementAttr} key={key.toString()}>
                                         <i {...el.child} /> {el.childText}

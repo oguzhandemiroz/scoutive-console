@@ -100,19 +100,14 @@ export class List extends Component {
                         targets: "budget_name",
                         createdCell: (td, cellData, rowData) => {
                             ReactDOM.render(
-                                <BrowserRouter>
-                                    <Link
-                                        onClick={() =>
-                                            this.props.history.push("/app/budgets/detail/" + rowData.budget_id)
-                                        }
-                                        to={"/app/budgets/detail/" + rowData.budget_id}
-                                        className="text-inherit"
-                                        data-toggle="tooltip"
-                                        data-placement="top"
-                                        data-original-title={cellData}>
-                                        {cellData}
-                                    </Link>
-                                </BrowserRouter>,
+                                <div
+                                    onClick={() => this.props.history.push("/app/budgets/detail/" + rowData.budget_id)}
+                                    className="btn-link cursor-pointer text-inherit"
+                                    data-toggle="tooltip"
+                                    data-placement="top"
+                                    data-original-title={cellData}>
+                                    {cellData}
+                                </div>,
                                 td
                             );
                         }
