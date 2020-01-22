@@ -221,6 +221,36 @@ export class SingleAdd extends Component {
         });
     };
 
+    handleRadio = e => {
+        const { name, value } = e.target;
+        const { select, uid } = this.state;
+        if (name === "selectSender" && parseInt(value) === 1) {
+            if (!select.employees) {
+                ListEmployees().then(response => {
+                    if (response) {
+                        this.setState(prevState => ({
+                            select: {
+                                ...prevState.select,
+                                employees: response.data.map(el => {
+                                    return {
+                                        value: el.uid,
+                                        label: fullnameGenerator(el.name, el.surname),
+                                        image: el.image,
+                                        phone: el.phone,
+                                        email: el.email
+                                    };
+                                })
+                            }
+                        }));
+                    }
+                });
+            }
+        } else if (name === "selectSender" && parseInt(value) === 0) {
+            this.setState({ employee: null });
+        }
+        this.setState({ [name]: parseInt(value) });
+    };
+
     handlePersonType = e => {
         const { name, value } = e.target;
         const { to } = this.state;
@@ -317,13 +347,14 @@ export class SingleAdd extends Component {
     };
 
     handleSendTestMessage = () => {
-        const { uid, employee, selectSender, select_template } = this.state;
+        const { uid, employee, selectSender, content, sender } = this.state;
         if (selectSender === 0) {
             this.setState({ loadingTestButton: "btn-loading" });
             SendTestMessages({
                 uid: uid,
                 to: uid,
-                template_id: select_template
+                sender: sender,
+                content: content
             }).then(response => {
                 this.setState({ loadingTestButton: "" });
                 $("#sendTestMessageModal").modal("hide");
@@ -333,7 +364,8 @@ export class SingleAdd extends Component {
             SendTestMessages({
                 uid: uid,
                 to: employee.value,
-                template_id: select_template
+                sender: sender,
+                content: content
             }).then(response => {
                 this.setState({ loadingTestButton: "" });
                 $("#sendTestMessageModal").modal("hide");

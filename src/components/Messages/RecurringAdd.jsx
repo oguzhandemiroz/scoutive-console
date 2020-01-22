@@ -75,6 +75,7 @@ export class RecurringAdd extends Component {
                     components: () => this.sendPreviewStep()
                 }
             ],
+            sender: "8503055215",
             segments: null,
             templates: null,
             selected_segment: null,
@@ -142,13 +143,15 @@ export class RecurringAdd extends Component {
     }
 
     handleSendTestMessage = () => {
-        const { uid, employee, selectSender, select_template } = this.state;
+        const { uid, employee, selectSender, select_template, templates, sender } = this.state;
+        let template = templates.find(x => x.template_id === select_template);
         if (selectSender === 0) {
             this.setState({ loadingTestButton: "btn-loading" });
             SendTestMessages({
                 uid: uid,
                 to: uid,
-                template_id: select_template
+                sender: sender,
+                content: template.content
             }).then(response => {
                 this.setState({ loadingTestButton: "" });
                 $("#sendTestMessageModal").modal("hide");
@@ -158,7 +161,8 @@ export class RecurringAdd extends Component {
             SendTestMessages({
                 uid: uid,
                 to: employee.value,
-                template_id: select_template
+                sender: sender,
+                content: template.content
             }).then(response => {
                 this.setState({ loadingTestButton: "" });
                 $("#sendTestMessageModal").modal("hide");
