@@ -172,7 +172,7 @@ export class ActionButton extends Component {
                 lock: lock,
                 condition: true
             },
-            {
+            /* {
                 tag: "button",
                 elementAttr: {
                     className: "dropdown-item",
@@ -211,7 +211,7 @@ export class ActionButton extends Component {
                 },
                 lock: false,
                 condition: true
-            },
+            }, */
             {
                 tag: "button",
                 elementAttr: {
