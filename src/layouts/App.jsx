@@ -43,6 +43,7 @@ class App extends Component {
                         <Switch>
                             <Redirect exact from="/app" to="/app/dashboard" />
                             <Redirect exact from="/app/rollcalls" to="/app/rollcalls/player" />
+                            <Redirect exact from="/app/persons" to="/app/persons/employees" />
                             {indexRoutes.map((route, key) => {
                                 if (route.layout === "/app" || route.name === "404") {
                                     return (

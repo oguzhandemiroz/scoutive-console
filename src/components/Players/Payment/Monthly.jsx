@@ -323,10 +323,17 @@ export class Monthly extends Component {
     };
 
     handleSelect = (value, name) => {
+        const { select_fee } = this.state;
         if (name === "year") {
             this.setState({ [name]: value });
             this.listPlayerFees(value.value);
-            this.setState({ ...initialState });
+            this.setState({
+                ...initialState,
+                select_fee: {
+                    budget_id: select_fee.budget_id,
+                    paid_date: select_fee.paid_date
+                }
+            });
         } else {
             this.setState(prevState => ({
                 formErrors: {
@@ -576,45 +583,48 @@ export class Monthly extends Component {
 
     // Aylık Ödeme - Geçmiş Aidat Çizelgesi
     renderMonthlyPastNew = () => {
-        const { fees, selected_month, fees_keys, year } = this.state;
-        return (
-            <div className="col-12">
-                <div className="form-group">
-                    <label className="form-label">Geçmiş Aidat Çizelgesi ({year.value})</label>
-                    <div className="installment-detail monthly-detail d-flex flex-lg-row flex-md-row flex-column">
-                        {fees && fees_keys.length > 0 ? (
-                            fees_keys.map((el, key) => {
-                                const status = fees[el].status;
+        try {
+            const { fees, selected_month, fees_keys, year } = this.state;
+            return (
+                <div className="col-12">
+                    <div className="form-group">
+                        <label className="form-label">Geçmiş Aidat Çizelgesi ({year.value})</label>
+                        <div className="installment-detail monthly-detail d-flex flex-lg-row flex-md-row flex-column">
+                            {fees && fees_keys.length > 0 ? (
+                                fees_keys.map((el, key) => {
+                                    const status = fees[el].status;
 
-                                const tooltip = Object.keys(fees[el]).length > 0 ? feeStatus[status].text : "Ödeme Yok";
+                                    const tooltip =
+                                        Object.keys(fees[el]).length > 0 ? feeStatus[status].text : "Ödeme Yok";
 
-                                const tag_color =
-                                    selected_month === el
-                                        ? "tag-info"
-                                        : Object.keys(fees[el]).length > 0
-                                        ? feeStatus[status].color
-                                        : "";
+                                    const tag_color =
+                                        selected_month === el
+                                            ? "tag-info"
+                                            : Object.keys(fees[el]).length > 0
+                                            ? feeStatus[status].color
+                                            : "";
 
-                                return (
-                                    <span
-                                        onClick={() => this.selectFee(el)}
-                                        key={key.toString()}
-                                        className={"tag " + tag_color}
-                                        data-toggle="tooltip"
-                                        title={tooltip}>
-                                        <div className="d-none d-lg-block">{moment(el).format("MMMM")}</div>
-                                        <div className="d-block d-lg-none">{moment(el).format("MMM")}</div>
-                                    </span>
-                                );
-                            })
-                        ) : (
-                            <div className="loader mx-auto"></div>
-                        )}
+                                    return (
+                                        <span
+                                            onClick={() => this.selectFee(el)}
+                                            key={key.toString()}
+                                            className={"tag " + tag_color}
+                                            data-toggle="tooltip"
+                                            title={tooltip}>
+                                            <div className="d-none d-lg-block">{moment(el).format("MMMM")}</div>
+                                            <div className="d-block d-lg-none">{moment(el).format("MMM")}</div>
+                                        </span>
+                                    );
+                                })
+                            ) : (
+                                <div className="loader mx-auto"></div>
+                            )}
+                        </div>
+                        {this.renderMonthlyFinalSituation()}
                     </div>
-                    {this.renderMonthlyFinalSituation()}
                 </div>
-            </div>
-        );
+            );
+        } catch (e) {}
     };
 
     // Aylık Ödeme - Yeni Ödeme
@@ -764,6 +774,14 @@ export class Monthly extends Component {
         }
     };
 
+    printSlip = () => {
+        const { uid, select_fee } = this.state;
+        const { to } = this.props.state;
+
+        const renderURL = `https://scoutive.online/api/v1/fee/slip/${uid}/${to}/${select_fee.fee_id}`;
+        window.open(renderURL, "_blank");
+    };
+
     render() {
         const { selectError, select_fee, select, year } = this.state;
         const { uid, player, loadingButton, tab, settings } = this.props.state;
@@ -853,12 +871,20 @@ export class Monthly extends Component {
                                 <button className="btn btn-danger btn-icon" onClick={this.deleteFee} type="button">
                                     Ödemeyi İptal Et
                                 </button>
-                                <button
-                                    onClick={this.completeFee}
-                                    type="button"
-                                    className={`btn btn-primary ${loadingButton}`}>
-                                    Aidat Ödemesi Ekle
-                                </button>
+                                <div>
+                                    <button
+                                        className="btn btn-secondary btn-icon mr-2"
+                                        onClick={this.printSlip}
+                                        type="button">
+                                        <i className="fe fe-printer mr-2"></i>Makbuz Yazdır
+                                    </button>
+                                    <button
+                                        onClick={this.completeFee}
+                                        type="button"
+                                        className={`btn btn-primary ${loadingButton}`}>
+                                        Aidat Ödemesi Ekle
+                                    </button>
+                                </div>
                             </div>
                         ) : select_fee.status === -1 || select_fee.status === 3 ? (
                             <div className="card-footer d-flex justify-content-between">
@@ -877,9 +903,12 @@ export class Monthly extends Component {
                                 </button>
                             </div>
                         ) : select_fee.status === 2 ? (
-                            <div className="card-footer">
+                            <div className="card-footer d-flex justify-content-between">
                                 <button className="btn btn-danger btn-icon" onClick={this.deleteFee} type="button">
                                     Ödemeyi İptal Et
+                                </button>
+                                <button className="btn btn-secondary btn-icon" onClick={this.printSlip} type="button">
+                                    <i className="fe fe-printer mr-2"></i>Makbuz Yazdır
                                 </button>
                             </div>
                         ) : null}

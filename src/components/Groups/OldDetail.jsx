@@ -184,7 +184,7 @@ export class Detail extends Component {
                                                     <label className="form-label">Sorumlu Antrenör: </label>
                                                     {employee ? (
                                                         <Link
-                                                            to={"/app/employees/detail/" + employee.uid}
+                                                            to={"/app/persons/employees/detail/" + employee.uid}
                                                             className="ml-2">
                                                             {fullnameGenerator(employee.name, employee.surname)}
                                                         </Link>

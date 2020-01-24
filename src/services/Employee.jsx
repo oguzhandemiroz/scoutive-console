@@ -90,12 +90,12 @@ const DetailEmployee = data => {
     }
 };
 
-const ListEmployees = uid => {
+const ListEmployees = () => {
     try {
         return fetch(ep.LIST_EMPLOYEE, {
             method: "POST",
             body: JSON.stringify({
-                uid: uid
+                uid: localStorage.getItem("UID")
             }),
             headers: h
         })

@@ -376,7 +376,7 @@ export class ParentModal extends Component {
                                                 <div className="card">
                                                     <div className="card-body">
                                                         <div className="text-dark font-weight-600">{el.kinship}</div>
-                                                        <Link to={`/app/parents/detail/${el.uid}`} target="_blank">
+                                                        <Link to={`/app/persons/parents/detail/${el.uid}`} target="_blank">
                                                             {fullnameGenerator(el.name, el.surname)}
                                                         </Link>
                                                         <div className="text-muted">

@@ -113,14 +113,18 @@ export class AccountingChart extends Component {
             if (response) {
                 const status = response.status;
                 if (status.code === 1020) {
-                    const data = response.data.reverse();
+                    const data = response.data;
                     const generated_data = [
                         {
                             name: "Gelir",
                             data: [
                                 ..._(data)
                                     .groupBy("payment_date")
+                                    .toPairs()
+                                    .sortBy(0)
+                                    .fromPairs()
                                     .map((objs, key) => {
+                                        console.log(key);
                                         return {
                                             x: moment(key).format("DD MMMM, ddd"),
                                             y: _.sumBy(
@@ -139,6 +143,9 @@ export class AccountingChart extends Component {
                             data: [
                                 ..._(data)
                                     .groupBy("payment_date")
+                                    .toPairs()
+                                    .sortBy(0)
+                                    .fromPairs()
                                     .map((objs, key) => {
                                         return {
                                             x: moment(key).format("DD MMMM, ddd"),

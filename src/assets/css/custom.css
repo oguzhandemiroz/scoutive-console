@@ -1026,10 +1026,29 @@ a.badge {
     left: 0;
     right: 0;
     z-index: 999;
+    animation: siren 1.5s ease-in-out infinite;
 }
 
 .start-warning + #header-menu {
     margin-top: 48px;
+}
+
+@keyframes siren {
+    0% {
+        color: #7d6608;
+        border-color: #fbeebc;
+        background-color: #fcf3cf;
+    }
+    50% {
+        color: #6b1110;
+        background-color: #f5d2d2;
+        border-color: #f1c1c0;
+    }
+    100% {
+        color: #7d6608;
+        border-color: #fbeebc;
+        background-color: #fcf3cf;
+    }
 }
 
 .icon-placeholder {
@@ -1043,6 +1062,11 @@ a.badge {
     font-size: 2rem;
     color: #868e96;
     border-radius: 50%;
+}
+.icon-placeholder.icon-placeholder-lg {
+    width: 5.5rem;
+    height: 5.5rem;
+    font-size: 2.5rem;
 }
 .icon-placeholder.icon-placeholder-md {
     width: 3.5rem;
@@ -1491,4 +1515,75 @@ a.step-item:hover {
 
 .vertical-middle {
     vertical-align: middle !important;
+}
+
+/**
+Card tabs
+ */
+.card-tabs {
+    margin-bottom: 1.5rem;
+}
+.card-tabs .nav-tabs {
+    position: relative;
+    z-index: 1000;
+    border-bottom: 0;
+}
+.card-tabs .nav-tabs .nav-link {
+    background: rgba(53, 64, 82, 0.032);
+    border: 1px solid rgba(104, 112, 125, 0.24);
+    border-bottom: 0;
+}
+.card-tabs .nav-tabs .nav-link.active,
+.card-tabs .nav-tabs .nav-link:active,
+.card-tabs .nav-tabs .nav-link:hover {
+    border-color: rgba(104, 112, 125, 0.24);
+}
+.card-tabs .nav-tabs .nav-link.active {
+    background: #ffffff;
+}
+.card-tabs .nav-tabs .nav-item:not(:first-child) .nav-link {
+    border-top-left-radius: 0;
+}
+.card-tabs .nav-tabs .nav-item:not(:last-child) .nav-link {
+    border-top-right-radius: 0;
+}
+.card-tabs .nav-tabs .nav-item + .nav-item {
+    margin-left: -1px;
+}
+.card-tabs .nav-tabs-bottom {
+    margin-bottom: 0;
+}
+.card-tabs .nav-tabs-bottom .nav-item {
+    margin-top: -1px;
+    margin-bottom: 0;
+}
+.card-tabs .nav-tabs-bottom .nav-item .nav-link {
+    border-top-width: 0;
+    border-bottom: 1px solid rgba(104, 112, 125, 0.24);
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+.card-tabs .card {
+    margin: 0;
+    border-top-left-radius: 0;
+}
+.card-tabs .nav-tabs .nav-link {
+    padding: 0.75rem 1.25rem;
+}
+.card-tabs .nav-link,
+.card-tabs .nav-item {
+    padding: 0;
+}
+.card-tabs .nav-tabs {
+    margin: 0;
+}
+
+a.card {
+    color: inherit;
+    transition: 0.3s box-shadow;
+}
+
+a.card:hover {
+    text-decoration: none;
+    box-shadow: rgba(53, 64, 82, 0.16) 0 2px 16px 0;
 }

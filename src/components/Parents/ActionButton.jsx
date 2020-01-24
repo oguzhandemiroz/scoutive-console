@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
 
 export class ActionButton extends Component {
     constructor(props) {
@@ -12,7 +11,7 @@ export class ActionButton extends Component {
     }
 
     renderActionButton = () => {
-        const { data, renderButton, dropdown, hide } = this.props;
+        const { data, renderButton, dropdown, history, hide } = this.props;
         const { to, name } = data;
         const fullname = name;
 
@@ -25,11 +24,30 @@ export class ActionButton extends Component {
 
         const actionMenu = [
             {
-                name: "payment",
-                tag: "Link",
+                name: "parent-message",
+                tag: "button",
+                elementAttr: {
+                    className: "dropdown-item",
+                    to: `/app/messages/single/add/${to}/parent`,
+                    onClick: () => history.push(`/app/messages/single/add/${to}/parent`)
+                },
+                childText: "Mesaj Gönder",
+                child: {
+                    className: "dropdown-icon fa fa-paper-plane"
+                },
+                lock: false,
+                condition: true
+            },
+            {
+                divider: key => dropdownDivider(key),
+                condition: true
+            },
+            {
+                name: "player-define",
+                tag: "button",
                 elementAttr: {
                     className: "dropdown-item cursor-not-allowed disabled",
-                    to: `/app/parents/payment/${to}`
+                    onClick: () => console.log("Öğrenci Tanımla")
                 },
                 childText: "Öğrenci Tanımla",
                 child: {
@@ -44,28 +62,14 @@ export class ActionButton extends Component {
             },
             {
                 name: "payment",
-                tag: "Link",
+                tag: "button",
                 elementAttr: {
                     className: "dropdown-item cursor-not-allowed disabled",
-                    to: `/app/parents/payment/${to}`
+                    onClick: () => history.push(`/app/persons/parents/payment/${to}`)
                 },
                 childText: "Ödeme Al",
                 child: {
                     className: "dropdown-icon fa fa-hand-holding-usd"
-                },
-                lock: lock,
-                condition: true
-            },
-            {
-                name: "parent-message",
-                tag: "button",
-                elementAttr: {
-                    className: "dropdown-item cursor-not-allowed disabled",
-                    onClick: () => console.log("Veliye Mesaj Gönder")
-                },
-                childText: "Mesaj Gönder",
-                child: {
-                    className: "dropdown-icon fa fa-paper-plane"
                 },
                 lock: lock,
                 condition: true
@@ -131,14 +135,7 @@ export class ActionButton extends Component {
                     {actionMenu.map((el, key) => {
                         if (hide && hide.indexOf(el.name) > -1) return null;
                         if (el.condition) {
-                            if (el.tag === "Link") {
-                                return (
-                                    <Link {...el.elementAttr} key={key.toString()}>
-                                        <i {...el.child} /> {el.childText}
-                                        {el.lock}
-                                    </Link>
-                                );
-                            } else if (el.tag === "button") {
+                            if (el.tag === "button") {
                                 return (
                                     <button {...el.elementAttr} key={key.toString()}>
                                         <i {...el.child} /> {el.childText}

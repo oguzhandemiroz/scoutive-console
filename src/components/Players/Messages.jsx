@@ -49,62 +49,66 @@ export class Messages extends Component {
     };
 
     handleSelect = (value, name) => {
-        this.setState({ [name]: value });
+        this.setState({
+            [name]: value
+        });
     };
 
     detailPlayer = () => {
         const { uid, to } = this.state;
         DetailPlayer({ uid: uid, to: to, attribute_values: [] }).then(response => {
             if (response !== null) {
-                const status = response.status;
-                if (status.code === 1020) {
-                    const data = response.data;
-                    const recipients = [
-                        {
-                            label: "Kendisi " + "— " + fullnameGenerator(data.name, data.surname),
-                            fullname: fullnameGenerator(data.name, data.surname),
-                            kinship: "Kendisi",
-                            value: data.player_id,
-                            player_id: data.player_id,
-                            parent_id: 0,
-                            phone: data.phone,
-                            email: data.email,
-                            isDisabled: !data.phone && !data.email ? true : false
-                        }
-                    ];
+                if (response) {
+                    const status = response.status;
+                    if (status.code === 1020) {
+                        const data = response.data;
+                        const recipients = [
+                            {
+                                label: "Kendisi " + "— " + fullnameGenerator(data.name, data.surname),
+                                fullname: fullnameGenerator(data.name, data.surname),
+                                kinship: "Kendisi",
+                                value: data.player_id,
+                                player_id: data.player_id,
+                                parent_id: 0,
+                                phone: data.phone,
+                                email: data.email,
+                                isDisabled: !data.phone && !data.email ? true : false
+                            }
+                        ];
 
-                    data.parents.map(el =>
-                        recipients.push({
-                            label: `Velisi (${el.kinship}) — ` + fullnameGenerator(el.name, el.surname),
-                            fullname: fullnameGenerator(el.name, el.surname),
-                            kinship: el.kinship,
-                            player_id: data.player_id,
-                            value: el.parent_id,
-                            parent_id: el.parent_id,
-                            phone: el.phone,
-                            email: el.email,
-                            isDisabled: !el.phone && !el.email ? true : false
-                        })
-                    );
+                        data.parents.map(el =>
+                            recipients.push({
+                                label: `Velisi (${el.kinship}) — ` + fullnameGenerator(el.name, el.surname),
+                                fullname: fullnameGenerator(el.name, el.surname),
+                                kinship: el.kinship,
+                                player_id: data.player_id,
+                                value: el.parent_id,
+                                parent_id: el.parent_id,
+                                phone: el.phone,
+                                email: el.email,
+                                isDisabled: !el.phone && !el.email ? true : false
+                            })
+                        );
 
-                    delete data.uid;
-                    this.setState(prevState => ({
-                        ...data,
-                        recipient:
-                            data.recipient_parent_id === -1
-                                ? null
-                                : data.recipient_parent_id === 0
-                                ? { ...recipients.filter(x => x.player_id === data.player_id)[0], isRegister: true }
-                                : {
-                                      ...recipients.filter(x => x.parent_id === data.recipient_parent_id)[0],
-                                      isRegister: true
-                                  },
-                        loading: "",
-                        select: {
-                            ...prevState.select,
-                            recipients: recipients
-                        }
-                    }));
+                        delete data.uid;
+                        this.setState(prevState => ({
+                            ...data,
+                            recipient:
+                                data.recipient_parent_id === -1
+                                    ? null
+                                    : data.recipient_parent_id === 0
+                                    ? { ...recipients.filter(x => x.player_id === data.player_id)[0], isRegister: true }
+                                    : {
+                                          ...recipients.filter(x => x.parent_id === data.recipient_parent_id)[0],
+                                          isRegister: true
+                                      },
+                            loading: "",
+                            select: {
+                                ...prevState.select,
+                                recipients: recipients
+                            }
+                        }));
+                    }
                 }
             }
         });

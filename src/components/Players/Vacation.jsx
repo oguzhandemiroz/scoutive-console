@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { DetailPlayer } from "../../services/Player";
-import { fullnameGenerator } from "../../services/Others";
+import { fullnameGenerator, formatDate } from "../../services/Others";
 import { ListVacations, DeleteVacation } from "../../services/PlayerAction";
 import Tabs from "../../components/Players/Tabs";
 import PersonCard from "./PersonCard";
@@ -20,12 +20,6 @@ const noRow = loading => (
         </td>
     </tr>
 );
-
-const vacationStatus = {
-    3: { type: "danger", text: "İptal" },
-    1: { type: "success", text: "Aktif" },
-    2: { type: "warning", text: "Tamamlandı" }
-};
 
 export class VacationPlayer extends Component {
     constructor(props) {
@@ -149,57 +143,43 @@ export class VacationPlayer extends Component {
                             <div className="card-header">
                                 <h3 className="card-title">İzin Geçmişi</h3>
                             </div>
-                            <div className="card-body">
-                                <div className="table-responsive">
-                                    <table className="table table-hover table-outline table-vcenter text-nowrap card-table text-center">
-                                        <thead>
-                                            <tr>
-                                                <th className="w-1">Başlangıç Tarihi</th>
-                                                <th className="w-1">Bitiş Tarihi</th>
-                                                <th className="w-1">Gün Sayısı</th>
-                                                <th className="w-1">Durum</th>
-                                                <th className="w-1"></th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {vacations
-                                                ? vacations.length > 0
-                                                    ? vacations.map((el, key) => {
-                                                          return (
-                                                              <tr key={key.toString()}>
-                                                                  <td>{el.start}</td>
-                                                                  <td>{el.end}</td>
-                                                                  <td>{el.day}</td>
-                                                                  <td>
-                                                                      <span
-                                                                          className={`badge badge-${
-                                                                              vacationStatus[el.status].type
-                                                                          }`}>
-                                                                          {vacationStatus[el.status].text}
-                                                                      </span>
-                                                                  </td>
-                                                                  <td className="text-right">
-                                                                      <button
-                                                                          className="btn btn-sm btn-icon btn-secondary"
-                                                                          onClick={() =>
-                                                                              this.deleteVacation(
-                                                                                  el.vacation_id,
-                                                                                  key + 1
-                                                                              )
-                                                                          }
-                                                                          data-toggle="tooltip"
-                                                                          title="İptal et">
-                                                                          <i className="fe fe-x"></i>
-                                                                      </button>
-                                                                  </td>
-                                                              </tr>
-                                                          );
-                                                      })
-                                                    : noRow()
-                                                : noRow(true)}
-                                        </tbody>
-                                    </table>
-                                </div>
+                            <div className="table-responsive">
+                                <table className="table table-hover table-outline table-vcenter text-nowrap card-table text-center">
+                                    <thead>
+                                        <tr>
+                                            <th className="w-1">Başlangıç Tarihi</th>
+                                            <th className="w-1">Bitiş Tarihi</th>
+                                            <th className="w-1">Gün Sayısı</th>
+                                            <th className="w-1"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {vacations
+                                            ? vacations.length > 0
+                                                ? vacations.map((el, key) => {
+                                                      return (
+                                                          <tr key={key.toString()}>
+                                                              <td>{formatDate(el.start, "LL")}</td>
+                                                              <td>{formatDate(el.end, "LL")}</td>
+                                                              <td>{el.day}</td>
+                                                              <td className="text-right">
+                                                                  <button
+                                                                      className="btn btn-sm btn-icon btn-secondary"
+                                                                      onClick={() =>
+                                                                          this.deleteVacation(el.vacation_id, key + 1)
+                                                                      }
+                                                                      data-toggle="tooltip"
+                                                                      title="İptal et">
+                                                                      <i className="fe fe-x"></i>
+                                                                  </button>
+                                                              </td>
+                                                          </tr>
+                                                      );
+                                                  })
+                                                : noRow()
+                                            : noRow(true)}
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>

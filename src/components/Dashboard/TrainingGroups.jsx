@@ -114,7 +114,7 @@ export class TrainingGroupList extends Component {
                                           </div>
                                           <div className="col pl-1">
                                               <Link
-                                                  to={"/app/employees/detail/" + el.employee.uid}
+                                                  to={"/app/persons/employees/detail/" + el.employee.uid}
                                                   className="text-body font-weight-600 d-block">
                                                   {fullnameGenerator(el.employee.name, el.employee.surname)}
                                               </Link>

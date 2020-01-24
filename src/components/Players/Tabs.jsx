@@ -23,6 +23,11 @@ const tabList = [
         icon: "fa fa-calendar-check"
     },
     {
+        text: "Mesaj Geçmişi",
+        path: "message-detail",
+        icon: "fa fa-comment-dots"
+    },
+    {
         text: "İletişim Servisi",
         path: "messages",
         icon: "fa fa-sms"

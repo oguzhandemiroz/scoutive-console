@@ -22,7 +22,7 @@ class Employees extends Component {
 
     renderEmployeeList = () => {
         const { uid } = this.state;
-        ListEmployees(uid).then(response => {
+        ListEmployees().then(response => {
             if (response) {
                 const status = response.status;
                 if (status.code === 1020) this.setState({ data: response.data });
@@ -37,7 +37,7 @@ class Employees extends Component {
             <div className="container">
                 <div className="page-header">
                     <h1 className="page-title">Personeller</h1>
-                    <Link to="/app/employees/add" className="btn btn-sm btn-success ml-auto">
+                    <Link to="/app/persons/employees/add" className="btn btn-sm btn-success ml-auto">
                         Personel Ekle
                     </Link>
                 </div>

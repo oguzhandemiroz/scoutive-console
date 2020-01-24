@@ -92,13 +92,13 @@ export class Profile extends Component {
                 select
             } = this.state;
 
-            const require = {};
+            const require = {
+                name: name,
+                tax_no: tax_no,
+                tax_office: tax_office,
+                formErrors: formErrors
+            };
             const checkDate = year && month && day ? `${year}-${month}-${day}` : null;
-
-            require.name = name;
-            require.tax_no = tax_no;
-            require.tax_office = tax_office;
-            require.formErrors = formErrors;
 
             if (formValid(require)) {
                 this.setState({ loadingButton: "btn-loading" });

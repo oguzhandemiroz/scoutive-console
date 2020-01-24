@@ -207,7 +207,7 @@ const ActivateSchool = (title, loginInfo, data) => {
         showSwal({
             type: "success",
             title: title,
-            text: "Aktifleştirmek için lütfen email hesabınıza gelen kodu giriniz: ",
+            text: "Kodu almak ve hesabı aktifleştirmek için yetkililer ile iletişime geçiniz: ",
             confirmButtonText: "Devam et",
             input: "text",
             inputAttributes: {

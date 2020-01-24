@@ -4,7 +4,7 @@ import "../../assets/js/core";
 import { datatable_turkish, getCookie } from "../../assets/js/core";
 import { GetParentPlayers } from "../../services/Parent";
 import { fatalSwal, errorSwal } from "../Alert.jsx";
-import { BrowserRouter, Link } from "react-router-dom";
+import { BrowserRouter, Link, Switch, useHistory } from "react-router-dom";
 import ReactDOM from "react-dom";
 import { fullnameGenerator, nullCheck, formatDate, formatMoney } from "../../services/Others";
 import ActionButton from "../Parents/ActionButton";
@@ -154,14 +154,11 @@ export class List extends Component {
                             const { uid, name, surname } = rowData;
                             const fullname = fullnameGenerator(name, surname);
                             ReactDOM.render(
-                                <BrowserRouter>
-                                    <Link
-                                        className="text-inherit font-weight-600"
-                                        to={"/app/parents/detail/" + uid}
-                                        onClick={() => this.props.history.push(`/app/parents/detail/${uid}`)}>
-                                        {fullname}
-                                    </Link>
-                                </BrowserRouter>,
+                                <div
+                                    className="btn-link cursor-pointer text-inherit font-weight-600"
+                                    onClick={() => this.props.history.push(`/app/persons/parents/detail/${uid}`)}>
+                                    {fullname}
+                                </div>,
                                 td
                             );
                         }
@@ -189,46 +186,44 @@ export class List extends Component {
                             const fullname = fullnameGenerator(rowData.name, rowData.surname);
                             const { uid } = rowData;
                             ReactDOM.render(
-                                <BrowserRouter>
-                                    <ActionButton
-                                        history={this.props.history}
-                                        dropdown={true}
-                                        data={{
-                                            to: uid,
-                                            name: fullname
-                                        }}
-                                        renderButton={() => (
-                                            <>
-                                                <Link
-                                                    to={"/app/parents/detail/" + uid}
-                                                    className="btn btn-icon btn-sm btn-secondary"
-                                                    data-toggle="tooltip"
-                                                    onClick={() =>
-                                                        this.props.history.push(`/app/parents/detail/${uid}`)
-                                                    }
-                                                    title="Görüntüle">
-                                                    <i className="fe fe-eye" />
-                                                </Link>
-                                                <Link
-                                                    to={"/app/parents/edit/" + uid}
-                                                    className="btn btn-icon btn-sm btn-secondary mx-1"
-                                                    data-toggle="tooltip"
-                                                    onClick={() => this.props.history.push(`/app/parents/edit/${uid}`)}
-                                                    title="Düzenle">
-                                                    <i className="fe fe-edit" />
-                                                </Link>
-                                                <a
-                                                    title="İşlem Menüsü"
-                                                    className="btn btn-icon btn-sm btn-secondary"
-                                                    data-toggle="dropdown"
-                                                    aria-haspopup="true"
-                                                    aria-expanded="false">
-                                                    <i className="fe fe-menu" />
-                                                </a>
-                                            </>
-                                        )}
-                                    />
-                                </BrowserRouter>,
+                                <ActionButton
+                                    history={this.props.history}
+                                    dropdown={true}
+                                    data={{
+                                        to: uid,
+                                        name: fullname
+                                    }}
+                                    renderButton={() => (
+                                        <>
+                                            <button
+                                                className="btn btn-icon btn-sm btn-secondary"
+                                                data-toggle="tooltip"
+                                                onClick={() =>
+                                                    this.props.history.push(`/app/persons/parents/detail/${uid}`)
+                                                }
+                                                title="Görüntüle">
+                                                <i className="fe fe-eye" />
+                                            </button>
+                                            <button
+                                                className="btn btn-icon btn-sm btn-secondary mx-1"
+                                                data-toggle="tooltip"
+                                                onClick={() =>
+                                                    this.props.history.push(`/app/persons/parents/edit/${uid}`)
+                                                }
+                                                title="Düzenle">
+                                                <i className="fe fe-edit" />
+                                            </button>
+                                            <a
+                                                title="İşlem Menüsü"
+                                                className="btn btn-icon btn-sm btn-secondary"
+                                                data-toggle="dropdown"
+                                                aria-haspopup="true"
+                                                aria-expanded="false">
+                                                <i className="fe fe-menu" />
+                                            </a>
+                                        </>
+                                    )}
+                                />,
                                 td
                             );
                         }
@@ -251,7 +246,7 @@ export class List extends Component {
                                 return fullname;
                             }
                             if (data)
-                                return `<a class="text-inherit font-weight-600" href="/app/parents/detail/${row.uid}">${fullname}</a>`;
+                                return `<a class="text-inherit font-weight-600" href="/app/persons/parents/detail/${row.uid}">${fullname}</a>`;
                         }
                     },
                     {

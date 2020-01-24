@@ -55,6 +55,29 @@ const DetailParent = data => {
     }
 };
 
+const ListParents = () => {
+    try {
+        return fetch(ep.PARENT_LIST, {
+            method: "POST",
+            body: JSON.stringify({
+                uid: localStorage.getItem("UID")
+            }),
+            headers: h
+        })
+            .then(res => res.json())
+            .then(response => {
+                if (response) {
+                    const status = response.status;
+                    if (status.code !== 1020) errorSwal(status);
+                    return response;
+                }
+            })
+            .catch(e => fatalSwal(true));
+    } catch (e) {
+        fatalSwal(true);
+    }
+};
+
 const GetParentPlayers = data => {
     try {
         return fetch(ep.PARENT_PLAYERS, {
@@ -76,4 +99,4 @@ const GetParentPlayers = data => {
     }
 };
 
-export { CreateParent, DetailParent, GetParentPlayers };
+export { CreateParent, DetailParent, GetParentPlayers, ListParents };

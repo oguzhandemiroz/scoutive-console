@@ -122,11 +122,6 @@ export class Rollcall extends Component {
                         <div className="card">
                             <div className="card-header">
                                 <h3 className="card-title">Yoklama Geçmişi</h3>
-                                <button
-                                    onClick={() => this.props.history.push("/app/rollcalls/player")}
-                                    className="btn btn-sm btn-success ml-auto">
-                                    Yoklama Oluştur
-                                </button>
                             </div>
                             <div className="card-body">
                                 <div className="row">

@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import { Link, withRouter } from "react-router-dom";
 import deletePlayer from "../PlayerAction/DeletePlayer";
 import freezePlayer from "../PlayerAction/FreezePlayer";
 import refreshPlayer from "../PlayerAction/RefreshPlayer";
@@ -30,11 +29,30 @@ export class ActionButton extends Component {
 
         const actionMenu = [
             {
-                name: "payment",
-                tag: "Link",
+                name: "parent-message",
+                tag: "button",
                 elementAttr: {
                     className: "dropdown-item",
-                    to: `/app/players/payment/fee/${to}`,
+                    to: `/app/messages/single/add/${to}/player`,
+                    onClick: () => history.push(`/app/messages/single/add/${to}/player`)
+                },
+                childText: "Mesaj Gönder",
+                child: {
+                    className: "dropdown-icon fa fa-paper-plane"
+                },
+                lock: false,
+                condition: true
+            },
+            {
+                name: "payment",
+                divider: key => dropdownDivider(key),
+                condition: true
+            },
+            {
+                name: "payment",
+                tag: "button",
+                elementAttr: {
+                    className: "dropdown-item",
                     onClick: () => history.push(`/app/players/payment/fee/${to}`)
                 },
                 childText: "Ödeme Al",
@@ -45,24 +63,7 @@ export class ActionButton extends Component {
                 condition: !is_trial
             },
             {
-                divider: key => dropdownDivider(key),
-                condition: !is_trial && status === 0
-            },
-            {
-                name: "payment-warning",
-                tag: "button",
-                elementAttr: {
-                    className: "dropdown-item cursor-not-allowed disabled",
-                    onClick: () => console.log("Ödeme İkazı")
-                },
-                childText: "Ödeme İkazı",
-                child: {
-                    className: "dropdown-icon fa fa-exclamation-triangle"
-                },
-                lock: lock,
-                condition: !is_trial && status !== 0
-            },
-            {
+                name: "payment",
                 divider: key => dropdownDivider(key),
                 condition: !is_trial && status !== 0
             },
@@ -137,6 +138,7 @@ export class ActionButton extends Component {
                 condition: status !== 0
             },
             {
+                name: "vacation",
                 divider: key => dropdownDivider(key),
                 condition: status !== 0
             },
@@ -157,10 +159,11 @@ export class ActionButton extends Component {
                 condition: !is_trial && status === 1
             },
             {
+                name: "edit",
                 divider: key => dropdownDivider(key),
                 condition: !is_trial && status === 1
             },
-            {
+            /* {
                 name: "point",
                 tag: "button",
                 elementAttr: {
@@ -177,31 +180,12 @@ export class ActionButton extends Component {
             {
                 divider: key => dropdownDivider(key),
                 condition: !is_trial && status === 1
-            },
-            {
-                name: "parent-message",
-                tag: "button",
-                elementAttr: {
-                    className: "dropdown-item cursor-not-allowed disabled",
-                    onClick: () => console.log("Veliye Mesaj Gönder")
-                },
-                childText: "Veliye Mesaj Gönder",
-                child: {
-                    className: "dropdown-icon fa fa-paper-plane"
-                },
-                lock: lock,
-                condition: true
-            },
-            {
-                divider: key => dropdownDivider(key),
-                condition: true
-            },
+            }, */
             {
                 name: "edit",
-                tag: "Link",
+                tag: "button",
                 elementAttr: {
                     className: "dropdown-item",
-                    to: `/app/players/edit/${to}`,
                     onClick: () => history.push(`/app/players/edit/${to}`)
                 },
                 childText: "Düzenle",
@@ -211,7 +195,7 @@ export class ActionButton extends Component {
                 lock: false,
                 condition: is_trial === 0
             },
-            {
+            /* {
                 name: "group",
                 tag: "button",
                 elementAttr: {
@@ -232,8 +216,9 @@ export class ActionButton extends Component {
                 },
                 lock: lock,
                 condition: !is_trial && status !== 0
-            },
+            }, */
             {
+                name: "certificate",
                 divider: key => dropdownDivider(key),
                 condition: !is_trial && status !== 0
             },
@@ -252,11 +237,29 @@ export class ActionButton extends Component {
                 condition: true
             },
             {
-                name: "messages",
-                tag: "Link",
+                name: "fee",
+                divider: key => dropdownDivider(key),
+                condition: true
+            },
+            {
+                name: "fee",
+                tag: "button",
                 elementAttr: {
                     className: "dropdown-item",
-                    to: `/app/players/messages/${to}`,
+                    onClick: () => history.push(`/app/players/fee-detail/${to}`)
+                },
+                childText: "Aidat Geçmişi",
+                child: {
+                    className: "dropdown-icon fa fa-receipt"
+                },
+                lock: false,
+                condition: true
+            }
+            /* {
+                name: "messages",
+                tag: "button",
+                elementAttr: {
+                    className: "dropdown-item",
                     onClick: () => history.push(`/app/players/messages/${to}`)
                 },
                 childText: "İletişim Servisi",
@@ -267,26 +270,24 @@ export class ActionButton extends Component {
                 condition: true
             },
             {
-                name: "fee",
-                tag: "Link",
+                name: "message-detail",
+                tag: "button",
                 elementAttr: {
                     className: "dropdown-item",
-                    to: `/app/players/fee-detail/${to}`,
-                    onClick: () => history.push(`/app/players/fee-detail/${to}`)
+                    onClick: () => history.push(`/app/players/message-detail/${to}`)
                 },
-                childText: "Aidat Geçmişi",
+                childText: "Mesaj Geçmişi",
                 child: {
-                    className: "dropdown-icon fa fa-receipt"
+                    className: "dropdown-icon fa fa-comment-dots"
                 },
                 lock: false,
                 condition: true
             },
             {
                 name: "rollcall",
-                tag: "Link",
+                tag: "button",
                 elementAttr: {
                     className: "dropdown-item",
-                    to: `/app/players/rollcall/${to}`,
                     onClick: () => history.push(`/app/players/rollcall/${to}`)
                 },
                 childText: "Yoklama Geçmişi",
@@ -298,10 +299,9 @@ export class ActionButton extends Component {
             },
             {
                 name: "detail",
-                tag: "Link",
+                tag: "button",
                 elementAttr: {
                     className: "dropdown-item",
-                    to: `/app/players/detail/${to}`,
                     onClick: () => history.push(`/app/players/detail/${to}`)
                 },
                 childText: "Tüm Bilgileri",
@@ -310,7 +310,7 @@ export class ActionButton extends Component {
                 },
                 lock: false,
                 condition: true
-            }
+            } */
         ];
 
         return (
@@ -340,14 +340,7 @@ export class ActionButton extends Component {
                     {actionMenu.map((el, key) => {
                         if (hide && hide.indexOf(el.name) > -1) return null;
                         if (el.condition) {
-                            if (el.tag === "Link") {
-                                return (
-                                    <Link {...el.elementAttr} key={key.toString()}>
-                                        <i {...el.child} /> {el.childText}
-                                        {el.lock}
-                                    </Link>
-                                );
-                            } else if (el.tag === "button") {
+                            if (el.tag === "button") {
                                 return (
                                     <button {...el.elementAttr} key={key.toString()}>
                                         <i {...el.child} /> {el.childText}

@@ -242,14 +242,11 @@ class Table extends Component {
                             const { uid, name, surname } = rowData;
                             const fullname = fullnameGenerator(name, surname);
                             ReactDOM.render(
-                                <BrowserRouter>
-                                    <Link
-                                        className="text-inherit font-weight-600"
-                                        to={"/app/players/detail/" + uid}
-                                        onClick={() => this.props.history.push(`/app/players/detail/${uid}`)}>
-                                        {fullname}
-                                    </Link>
-                                </BrowserRouter>,
+                                <div
+                                    className="btn-link cursor-pointer text-inherit font-weight-600"
+                                    onClick={() => this.props.history.push(`/app/players/detail/${uid}`)}>
+                                    {fullname}
+                                </div>,
                                 td
                             );
                         }
@@ -275,21 +272,21 @@ class Table extends Component {
                         createdCell: (td, cellData, rowData) => {
                             const { groups } = rowData;
                             ReactDOM.render(
-                                <BrowserRouter>
+                                <>
                                     {groups.length > 0
                                         ? groups.map(el => (
-                                              <Link
+                                              <div
                                                   key={el.value.toString()}
-                                                  className="d-block text-inherit"
+                                                  className="d-block text-inherit btn-link cursor-pointer"
                                                   to={`/app/groups/detail/${el.value}`}
                                                   onClick={() =>
                                                       this.props.history.push(`/app/groups/detail/${el.value}`)
                                                   }>
                                                   {el.label}
-                                              </Link>
+                                              </div>
                                           ))
                                         : "—"}
-                                </BrowserRouter>,
+                                </>,
                                 td
                             );
                         }
@@ -302,60 +299,54 @@ class Table extends Component {
                             const fullname = fullnameGenerator(rowData.name, rowData.surname);
                             const { uid, group, status, is_trial } = rowData;
                             ReactDOM.render(
-                                <BrowserRouter>
-                                    <ActionButton
-                                        hide={["edit"]}
-                                        vacationButton={data =>
-                                            this.setState({
-                                                data: data
-                                            })
-                                        }
-                                        groupChangeButton={data =>
-                                            this.setState({
-                                                data: data
-                                            })
-                                        }
-                                        history={this.props.history}
-                                        dropdown={true}
-                                        data={{
-                                            to: uid,
-                                            name: fullname,
-                                            is_trial: is_trial,
-                                            status: status,
-                                            group: group
-                                        }}
-                                        renderButton={() => (
-                                            <>
-                                                <Link
-                                                    to={"/app/players/detail/" + uid}
-                                                    className="btn btn-icon btn-sm btn-secondary"
-                                                    data-toggle="tooltip"
-                                                    onClick={() =>
-                                                        this.props.history.push(`/app/players/detail/${uid}`)
-                                                    }
-                                                    title="Görüntüle">
-                                                    <i className="fe fe-eye" />
-                                                </Link>
-                                                <Link
-                                                    to={"/app/players/edit/" + uid}
-                                                    className="btn btn-icon btn-sm btn-secondary mx-1"
-                                                    data-toggle="tooltip"
-                                                    onClick={() => this.props.history.push(`/app/players/edit/${uid}`)}
-                                                    title="Düzenle">
-                                                    <i className="fe fe-edit" />
-                                                </Link>
-                                                <a
-                                                    title="İşlem Menüsü"
-                                                    className="btn btn-icon btn-sm btn-secondary"
-                                                    data-toggle="dropdown"
-                                                    aria-haspopup="true"
-                                                    aria-expanded="false">
-                                                    <i className="fe fe-menu" />
-                                                </a>
-                                            </>
-                                        )}
-                                    />
-                                </BrowserRouter>,
+                                <ActionButton
+                                    hide={["edit"]}
+                                    vacationButton={data =>
+                                        this.setState({
+                                            data: data
+                                        })
+                                    }
+                                    groupChangeButton={data =>
+                                        this.setState({
+                                            data: data
+                                        })
+                                    }
+                                    history={this.props.history}
+                                    dropdown={true}
+                                    data={{
+                                        to: uid,
+                                        name: fullname,
+                                        is_trial: is_trial,
+                                        status: status,
+                                        group: group
+                                    }}
+                                    renderButton={() => (
+                                        <>
+                                            <button
+                                                className="btn btn-icon btn-sm btn-secondary"
+                                                data-toggle="tooltip"
+                                                onClick={() => this.props.history.push(`/app/players/detail/${uid}`)}
+                                                title="Görüntüle">
+                                                <i className="fe fe-eye" />
+                                            </button>
+                                            <button
+                                                className="btn btn-icon btn-sm btn-secondary mx-1"
+                                                data-toggle="tooltip"
+                                                onClick={() => this.props.history.push(`/app/players/edit/${uid}`)}
+                                                title="Düzenle">
+                                                <i className="fe fe-edit" />
+                                            </button>
+                                            <a
+                                                title="İşlem Menüsü"
+                                                className="btn btn-icon btn-sm btn-secondary"
+                                                data-toggle="dropdown"
+                                                aria-haspopup="true"
+                                                aria-expanded="false">
+                                                <i className="fe fe-menu" />
+                                            </a>
+                                        </>
+                                    )}
+                                />,
                                 td
                             );
                         }
@@ -567,7 +558,7 @@ class Table extends Component {
             data.map(el => {
                 const fullname = fullnameGenerator(el.name, el.surname);
                 $parent.append(`
-                    <a href="/app/parents/detail/${el.uid}"
+                    <a href="/app/persons/parents/detail/${el.uid}"
                     class="text-inherit" 
                     data-toggle="popover" 
                     data-placement="top" 
@@ -630,7 +621,7 @@ class Table extends Component {
                     </thead>
                 </table>
                 <Vacation data={data} history={this.props.history} />
-                <GroupChange data={data} history={this.props.history} />
+                {/* <GroupChange data={data} history={this.props.history} /> */}
                 <ListFilter filterState={this.generateFilter} />
             </div>
         );

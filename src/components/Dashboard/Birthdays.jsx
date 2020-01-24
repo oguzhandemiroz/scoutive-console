@@ -5,6 +5,7 @@ import "../../assets/css/c3.min.css";
 import moment from "moment";
 import "moment/locale/tr";
 import { fullnameGenerator, avatarPlaceholder } from "../../services/Others";
+import ActionButton from "../../components/Players/ActionButton";
 const $ = require("jquery");
 
 const noRow = loading =>
@@ -110,6 +111,40 @@ export class Birthdays extends Component {
                                                                     {age}. Yaşını Kutlarız!
                                                                 </span>
                                                             </div>
+                                                            <div className="col-auto">
+                                                                <ActionButton
+                                                                    hide={[
+                                                                        "fee",
+                                                                        "passive",
+                                                                        "payment",
+                                                                        "edit",
+                                                                        "start",
+                                                                        "refresh",
+                                                                        "active",
+                                                                        "vacation",
+                                                                        "point",
+                                                                        "group",
+                                                                        "rollcall",
+                                                                        "certificate"
+                                                                    ]}
+                                                                    data={{
+                                                                        to: el.uid,
+                                                                        name: fullnameGenerator(el.name, el.surname),
+                                                                        is_trial: 0
+                                                                    }}
+                                                                    history={this.props.history}
+                                                                    dropdown={true}
+                                                                    renderButton={() => (
+                                                                        <span
+                                                                            className="icon cursor-pointer"
+                                                                            data-toggle="dropdown"
+                                                                            aria-haspopup="true"
+                                                                            aria-expanded="false">
+                                                                            <i className="fe fe-more-vertical"></i>
+                                                                        </span>
+                                                                    )}
+                                                                />
+                                                            </div>
                                                         </div>
                                                     );
                                                 })}
@@ -139,7 +174,7 @@ export class Birthdays extends Component {
                                                             </div>
                                                             <div className="col pl-1">
                                                                 <Link
-                                                                    to={"/app/employees/detail/" + el.uid}
+                                                                    to={"/app/persons/employees/detail/" + el.uid}
                                                                     className="text-body font-weight-600 d-block">
                                                                     {fullnameGenerator(el.name, el.surname)}
                                                                 </Link>

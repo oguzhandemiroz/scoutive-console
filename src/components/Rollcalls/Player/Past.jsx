@@ -219,7 +219,7 @@ export class Past extends Component {
 												<div className="form-inline">
 													<label className="form-label">Sorumlu Antrenör: </label>
 													<Link
-														to={"/app/employees/detail/" + detail.employee.uid}
+														to={"/app/persons/employees/detail/" + detail.employee.uid}
 														className="ml-2">
 														{(detail.employee.name || "") +
 															" " +

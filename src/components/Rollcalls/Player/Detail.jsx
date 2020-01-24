@@ -182,14 +182,11 @@ export class Detail extends Component {
                         const { uid, name, surname } = rowData;
                         const fullname = fullnameGenerator(name, surname);
                         ReactDOM.render(
-                            <BrowserRouter>
-                                <Link
-                                    className="text-inherit font-weight-600"
-                                    to={"/app/players/detail/" + uid}
-                                    onClick={() => this.props.history.push(`/app/players/detail/${uid}`)}>
-                                    {fullname}
-                                </Link>
-                            </BrowserRouter>,
+                            <div
+                                className="text-inherit font-weight-600 btn-link cursor-pointer"
+                                onClick={() => this.props.history.push(`/app/players/detail/${uid}`)}>
+                                {fullname}
+                            </div>,
                             td
                         );
                     }
@@ -215,19 +212,19 @@ export class Detail extends Component {
                     createdCell: (td, cellData, rowData) => {
                         const { groups } = rowData;
                         ReactDOM.render(
-                            <BrowserRouter>
+                            <>
                                 {groups.length > 0
                                     ? groups.map(el => (
-                                          <Link
+                                          <div
                                               key={el.value.toString()}
-                                              className="d-block text-inherit"
+                                              className="d-block text-inherit btn-link cursor-pointer"
                                               to={`/app/groups/detail/${el.value}`}
                                               onClick={() => this.props.history.push(`/app/groups/detail/${el.value}`)}>
                                               {el.label}
-                                          </Link>
+                                          </div>
                                       ))
                                     : "—"}
-                            </BrowserRouter>,
+                            </>,
                             td
                         );
                     }
@@ -457,7 +454,7 @@ export class Detail extends Component {
             data.map(el => {
                 const fullname = fullnameGenerator(el.name, el.surname);
                 $parent.append(`
-                    <a href="/app/parents/detail/${el.uid}"
+                    <a href="/app/persons/parents/detail/${el.uid}"
                     class="text-inherit" 
                     data-toggle="popover" 
                     data-placement="top" 

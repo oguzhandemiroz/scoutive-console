@@ -230,14 +230,15 @@ export class Payment extends Component {
             switch (name) {
                 case "player":
                     {
-                        this.setState({
+                        /* this.setState({
                             ...initialState,
                             ...value,
                             [name]: value,
                             to: value.value
                         });
-                        this.listPastPayment(value.value);
+                        this.listPastPayment(value.value); */
                         this.props.history.push("/app/players/payment/fee/" + value.value);
+                        window.location.reload();
                     }
                     break;
                 default:

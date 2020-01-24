@@ -136,6 +136,7 @@ export class UnpaidPlayer extends Component {
                                           <div className="col-auto">
                                               <ActionButton
                                                   hide={[
+                                                      "edit",
                                                       "start",
                                                       "refresh",
                                                       "active",

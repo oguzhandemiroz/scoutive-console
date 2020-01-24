@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import { Link, withRouter } from "react-router-dom";
 import deleteEmployee from "../EmployeeAction/DeleteEmployee";
 import activateEmployee from "../EmployeeAction/ActivateEmployee";
 
@@ -27,11 +26,27 @@ export class ActionButton extends Component {
 
         const actionMenu = [
             {
-                tag: "Link",
+                tag: "button",
                 elementAttr: {
                     className: "dropdown-item",
-                    to: `/app/employees/salary/${to}`,
-                    onClick: () => history.push(`/app/employees/salary/${to}`)
+                    onClick: () => history.push(`/app/messages/single/add/${to}/employee`)
+                },
+                childText: "Mesaj Gönder",
+                child: {
+                    className: "dropdown-icon fa fa-paper-plane"
+                },
+                lock: false,
+                condition: true
+            },
+            {
+                divider: key => dropdownDivider(key),
+                condition: true
+            },
+            {
+                tag: "button",
+                elementAttr: {
+                    className: "dropdown-item",
+                    onClick: () => history.push(`/app/persons/employees/salary/${to}`)
                 },
                 childText: "Maaş Öde",
                 child: {
@@ -77,19 +92,6 @@ export class ActionButton extends Component {
             {
                 divider: key => dropdownDivider(key),
                 condition: status
-            },
-            {
-                tag: "button",
-                elementAttr: {
-                    className: "dropdown-item cursor-not-allowed disabled",
-                    onClick: () => console.log("Mesaj Gönder")
-                },
-                childText: "Mesaj Gönder",
-                child: {
-                    className: "dropdown-icon fa fa-paper-plane"
-                },
-                lock: lock,
-                condition: true
             },
             {
                 tag: "button",
@@ -143,11 +145,10 @@ export class ActionButton extends Component {
                 condition: status
             },
             {
-                tag: "Link",
+                tag: "button",
                 elementAttr: {
                     className: "dropdown-item",
-                    to: `/app/employees/edit/${to}`,
-                    onClick: () => history.push(`/app/employees/edit/${to}`)
+                    onClick: () => history.push(`/app/persons/employees/edit/${to}`)
                 },
                 childText: "Düzenle",
                 child: {
@@ -172,11 +173,10 @@ export class ActionButton extends Component {
                 condition: true
             },
             {
-                tag: "Link",
+                tag: "button",
                 elementAttr: {
                     className: "dropdown-item",
-                    to: `/app/employees/salary-detail/${to}`,
-                    onClick: () => history.push(`/app/employees/salary-detail/${to}`)
+                    onClick: () => history.push(`/app/persons/employees/salary-detail/${to}`)
                 },
                 childText: "Maaş Geçmişi",
                 child: {
@@ -186,11 +186,10 @@ export class ActionButton extends Component {
                 condition: true
             },
             {
-                tag: "Link",
+                tag: "button",
                 elementAttr: {
                     className: "dropdown-item",
-                    to: `/app/employees/rollcall/${to}`,
-                    onClick: () => history.push(`/app/employees/rollcall/${to}`)
+                    onClick: () => history.push(`/app/persons/employees/rollcall/${to}`)
                 },
                 childText: "Yoklama Geçmişi",
                 child: {
@@ -200,11 +199,24 @@ export class ActionButton extends Component {
                 condition: true
             },
             {
-                tag: "Link",
+                name: "message-detail",
+                tag: "button",
                 elementAttr: {
                     className: "dropdown-item",
-                    to: `/app/employees/detail/${to}`,
-                    onClick: () => history.push(`/app/employees/detail/${to}`)
+                    onClick: () => history.push(`/app/persons/employees/message-detail/${to}`)
+                },
+                childText: "Mesaj Geçmişi",
+                child: {
+                    className: "dropdown-icon fa fa-comment-dots"
+                },
+                lock: false,
+                condition: true
+            },
+            {
+                tag: "button",
+                elementAttr: {
+                    className: "dropdown-item",
+                    onClick: () => history.push(`/app/persons/employees/detail/${to}`)
                 },
                 childText: "Tüm Bilgileri",
                 child: {
@@ -241,14 +253,7 @@ export class ActionButton extends Component {
                     <div role="separator" className="dropdown-divider" />
                     {actionMenu.map((el, key) => {
                         if (el.condition) {
-                            if (el.tag === "Link") {
-                                return (
-                                    <Link {...el.elementAttr} key={key.toString()}>
-                                        <i {...el.child} /> {el.childText}
-                                        {el.lock}
-                                    </Link>
-                                );
-                            } else if (el.tag === "button") {
+                            if (el.tag === "button") {
                                 return (
                                     <button {...el.elementAttr} key={key.toString()}>
                                         <i {...el.child} /> {el.childText}

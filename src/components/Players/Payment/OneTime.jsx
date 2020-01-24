@@ -24,6 +24,14 @@ export class OneTime extends Component {
         };
     }
 
+    printSlip = data => {
+        const { uid } = this.state;
+        const { to } = this.props.state;
+
+        const renderURL = `https://scoutive.online/api/v1/fee/slip/${uid}/${to}/${data.fee_id}`;
+        window.open(renderURL, "_blank");
+    };
+
     payInstallment = data => {
         if (data.fee_type === 1 || data.amount >= data.fee) return null;
         const { uid, to, fee, label, payment_type, budget, period } = this.props.state;
@@ -319,6 +327,17 @@ export class OneTime extends Component {
                                                             }`}
                                                         />
                                                     </div>
+                                                    {amount > 0 ? (
+                                                        <div
+                                                            onClick={() => this.printSlip(el)}
+                                                            className={
+                                                                "ribbon ribbon-right ribbon-bottom bg-white border text-body"
+                                                            }
+                                                            data-toggle="tooltip"
+                                                            title="Makbuz Yazdır">
+                                                            <i className="fe fe-printer" />
+                                                        </div>
+                                                    ) : null}
                                                 </div>
                                             </div>
                                         );

@@ -192,16 +192,13 @@ export class List extends Component {
                     targets: "budget",
                     createdCell: (td, cellData, rowData) => {
                         ReactDOM.render(
-                            <BrowserRouter>
-                                <Link
-                                    onClick={() =>
-                                        this.props.history.push("/app/budgets/detail/" + cellData.budget.budget_id)
-                                    }
-                                    to={`/app/budgets/detail/${cellData.budget.budget_id}`}
-                                    className="text-inherit">
-                                    {cellData.budget.budget_name}
-                                </Link>
-                            </BrowserRouter>,
+                            <div
+                                onClick={() =>
+                                    this.props.history.push("/app/budgets/detail/" + cellData.budget.budget_id)
+                                }
+                                className="btn-link cursor-pointer text-inherit">
+                                {cellData.budget.budget_name}
+                            </div>,
                             td
                         );
                     }
@@ -211,18 +208,15 @@ export class List extends Component {
                     class: "w-1",
                     createdCell: (td, cellData, rowData) => {
                         ReactDOM.render(
-                            <BrowserRouter>
-                                <Link
-                                    onClick={() =>
-                                        this.props.history.push("/app/accountings/detail/" + rowData.accounting_id)
-                                    }
-                                    to={`/app/accountings/detail/${rowData.accounting_id}`}
-                                    data-toggle="tooltip"
-                                    title="İşlemi Görüntüle"
-                                    className="btn btn-icon btn-sm btn-secondary mx-1">
-                                    <i className="fe fe-eye" />
-                                </Link>
-                            </BrowserRouter>,
+                            <button
+                                onClick={() =>
+                                    this.props.history.push("/app/accountings/detail/" + rowData.accounting_id)
+                                }
+                                data-toggle="tooltip"
+                                title="İşlemi Görüntüle"
+                                className="btn btn-icon btn-sm btn-secondary mx-1">
+                                <i className="fe fe-eye" />
+                            </button>,
                             td
                         );
                     }

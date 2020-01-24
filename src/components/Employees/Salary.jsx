@@ -282,7 +282,7 @@ export class Salary extends Component {
 			const { uid } = this.state;
 			const to = this.props.match.params.uid;
 			this.setState({ loadingData: true });
-			ListEmployees(uid).then(response => {
+			ListEmployees().then(response => {
 				if (response) {
 					const status = response.status;
 					if (status.code === 1020) {

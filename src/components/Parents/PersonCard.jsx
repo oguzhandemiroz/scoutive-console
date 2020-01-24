@@ -81,12 +81,12 @@ export class PersonCard extends Component {
                             }}
                             renderButton={() => (
                                 <>
-                                    <Link
-                                        to={"/app/parents/edit/" + data.to}
+                                    <button
+                                        onClick={() => this.props.history.push("/app/persons/parents/edit/" + data.to)}
                                         className="btn btn-icon btn-dark btn-block">
                                         <i className="fe fe-edit mr-2" />
                                         Düzenle
-                                    </Link>
+                                    </button>
                                     <button
                                         className="btn btn-icon btn-dark btn-block"
                                         data-toggle="dropdown"
