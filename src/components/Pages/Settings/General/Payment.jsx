@@ -174,7 +174,7 @@ export class Payment extends Component {
                             ayarlayabilirsiniz.
                         </p>
                         <p>
-                            <strong>Okula başlama tarihine göre ayarlandığında;</strong> her öğreciye özel olarak
+                            <strong>Okula başlama tarihine göre ayarlandığında;</strong> her öğrenciye özel olarak
                             öğrencinin okula başladığı gün baz alınır ve her ayın o günü hatırlatma yapılır.
                         </p>
                         <p>
