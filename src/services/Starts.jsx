@@ -1,5 +1,5 @@
 import { fatalSwal, errorSwal, showSwal } from "../components/Alert.jsx";
-import { Logout } from "./Login";
+import { Logout, SetSchoolInfoToLocalStorage } from "./Login";
 import ep from "../assets/js/urls";
 import { getCookie } from "../assets/js/core.js";
 
@@ -35,6 +35,7 @@ const Start = () => {
                     } else if (status.code !== 1020) errorSwal(status);
                     else {
                         localStorage.setItem("sSettings", JSON.stringify(response.data));
+                        SetSchoolInfoToLocalStorage(response.data.employee.detail, true);
                     }
                     return response;
                 }

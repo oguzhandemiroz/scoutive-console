@@ -53,7 +53,7 @@ const Logout = () => {
     }
 };
 
-const SetSchoolInfoToLocalStorage = data => {
+const SetSchoolInfoToLocalStorage = (data, redirect) => {
     try {
         localStorage.setItem("sName", data.name + (data.surname ? " " + data.surname : ""));
         localStorage.setItem("UID", data.uid);
@@ -62,7 +62,7 @@ const SetSchoolInfoToLocalStorage = data => {
         localStorage.setItem("sType", data.type);
         localStorage.setItem("sPosition", data.type_name);
         localStorage.setItem("sBranch", data.branch_id);
-        setTimeout(() => (window.location.pathname = "/app/dashboard"), 1000);
+        if (!redirect) setTimeout(() => (window.location.pathname = "/app/dashboard"), 1000);
     } catch (e) {}
 };
 
