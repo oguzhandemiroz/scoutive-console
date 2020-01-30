@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Switch, Redirect } from "react-router-d
 import Auth from "./Auth";
 import App from "./App";
 import Account from "./Account";
+import Printable from "./Printable";
 import _404 from "../views/Pages/404.jsx";
 
 const auth = {
@@ -32,6 +33,7 @@ export class Core extends Component {
                     <PublicRoute path="/auth" component={Auth} />
                     <PrivateRoute path="/app" component={App} />
                     <PrivateRoute path="/account" component={Account} />
+                    <PrivateRoute path="/printable" component={Printable} />
                     <Route path="*" component={_404} />
                     <Route path="/reload" component={null} key="reload" />
                 </Switch>

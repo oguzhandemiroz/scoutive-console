@@ -7,7 +7,6 @@ import Footer from "../components/includes/Footer.jsx";
 import FABs from "../components/Others/FABs";
 import indexRoutes from "../routes/index.jsx";
 import { Start } from "../services/Starts.jsx";
-import CommunicationService from "../components/CommunicationService/CommunicationService.jsx";
 const $ = require("jquery");
 
 class App extends Component {

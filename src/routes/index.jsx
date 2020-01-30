@@ -78,6 +78,7 @@ import RecurringAdd from "../components/Messages/RecurringAdd";
 import MessagesDetail from "../components/Messages/Detail";
 
 import UnpaidPlayerList from "../components/Reports/UnpaidPlayerList";
+import PlayerForm from "../components/Printable/PlayerForm";
 
 var indexRoutes = [
     {
@@ -553,6 +554,13 @@ var indexRoutes = [
         name: "Reload Account Page",
         component: Empty,
         layout: "/account",
+        prop: { exact: true }
+    },
+    {
+        path: "/player-form",
+        name: "PlayerForm",
+        component: PlayerForm,
+        layout: "/printable",
         prop: { exact: true }
     },
     {

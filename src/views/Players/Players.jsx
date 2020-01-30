@@ -37,21 +37,13 @@ class Players extends Component {
             <div className="container">
                 <div className="page-header">
                     <h1 className="page-title">Öğrenciler</h1>
-                    <Link
-                        to="/app/players/add"
-                        className="btn btn-icon btn-sm btn-success ml-auto dropdown-toggle"
-                        data-toggle="dropdown">
+                    <Link to="/printable/player-form" className="btn btn-icon btn-secondary ml-auto mr-2">
+                        <i className="fe fe-printer mr-1"></i>
+                        Öğrenci Bilgi Formu
+                    </Link>
+                    <Link to="/app/players/add" className="btn btn-success">
                         Öğrenci Ekle
                     </Link>
-
-                    <div className="dropdown-menu">
-                        <Link to="/app/players/add" className="dropdown-item">
-                            Normal Öğrenci Ekle
-                        </Link>
-                        <Link to="/app/players/add/trial" className="dropdown-item">
-                            Ön Kayıt Öğrenci Ekle
-                        </Link>
-                    </div>
                 </div>
 
                 <div className="row row-cards row-deck">
