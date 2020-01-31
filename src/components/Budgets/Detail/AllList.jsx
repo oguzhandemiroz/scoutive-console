@@ -95,7 +95,7 @@ export class List extends Component {
                 data: function(d) {
                     return JSON.stringify({
                         uid: uid,
-                        filter: { type: 1, budget_id: bid }
+                        filter: { budget_id: bid }
                     });
                 },
                 contentType: "application/json",
