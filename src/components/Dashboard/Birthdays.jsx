@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
+import { Link, withRouter } from "react-router-dom";
 import { ListBirthdays } from "../../services/Report";
 import "../../assets/css/c3.min.css";
 import moment from "moment";
@@ -203,4 +203,4 @@ export class Birthdays extends Component {
     }
 }
 
-export default Birthdays;
+export default withRouter(Birthdays);

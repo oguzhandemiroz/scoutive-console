@@ -37,11 +37,11 @@ class Players extends Component {
             <div className="container">
                 <div className="page-header">
                     <h1 className="page-title">Öğrenciler</h1>
-                    <Link to="/printable/player-form" className="btn btn-icon btn-secondary ml-auto mr-2">
+                    {/* <Link to="/printable/player-form" className="btn btn-icon btn-secondary ml-auto mr-2">
                         <i className="fe fe-printer mr-1"></i>
                         Öğrenci Bilgi Formu
-                    </Link>
-                    <Link to="/app/players/add" className="btn btn-success">
+                    </Link> */}
+                    <Link to="/app/players/add" className="btn btn-success ml-auto">
                         Öğrenci Ekle
                     </Link>
                 </div>
