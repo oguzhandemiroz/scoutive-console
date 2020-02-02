@@ -36,6 +36,8 @@ import VacationPlayer from "../components/Players/Vacation";
 import RollcallPlayer from "../components/Players/Rollcall";
 import MessagesPlayer from "../components/Players/Messages";
 
+import AddParent from "../components/Parents/Add";
+import EditParent from "../components/Parents/Edit";
 import DetailParent from "../components/Parents/Detail";
 import MessageDetailParent from "../components/Parents/MessageDetail";
 
@@ -301,6 +303,20 @@ var indexRoutes = [
         prop: { exact: true }
     },
     {
+        path: "/persons/parents/add",
+        name: "Add Parent",
+        component: AddParent,
+        layout: "/app",
+        prop: { exact: true }
+    },
+    {
+        path: "/persons/parents/edit/:uid",
+        name: "Edit Parent",
+        component: EditParent,
+        layout: "/app",
+        prop: { exact: true }
+    },
+    {
         path: "/persons/parents/detail/:uid",
         name: "Detail Parent",
         component: DetailParent,
@@ -557,7 +573,7 @@ var indexRoutes = [
         prop: { exact: true }
     },
     {
-        path: "/player-form",
+        path: "/player-form/:name?/:phone?/:fee?",
         name: "PlayerForm",
         component: PlayerForm,
         layout: "/printable",

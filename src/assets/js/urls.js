@@ -101,6 +101,7 @@ var ep = {
     REPORT_TRAINING_GROUPS: host + api_version + "report/training/groups",
     REPORT_MESSAGES_ALLTIME: host + api_version + "report/messages/alltime",
     PARENT_CREATE: host + api_version + "create/parent",
+    PARENT_UPDATE: host + api_version + "update/parent",
     PARENT_LIST: host + api_version + "list/parents",
     PARENT_GET: host + api_version + "get/parent",
     PARENT_PLAYERS: host + api_version + "get/parent/players",

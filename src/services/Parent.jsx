@@ -34,6 +34,33 @@ const CreateParent = data => {
     }
 };
 
+const UpdateParent = data => {
+    try {
+        return fetch(ep.PARENT_UPDATE, {
+            method: "PATCH",
+            body: JSON.stringify(data),
+            headers: h
+        })
+            .then(res => res.json())
+            .then(response => {
+                if (response) {
+                    const status = response.status;
+                    if (status.code !== 1020) errorSwal(status);
+                    else {
+                        Toast.fire({
+                            type: "success",
+                            title: "Başarıyla güncellendi..."
+                        });
+                    }
+                    return response;
+                }
+            })
+            .catch(e => fatalSwal(true));
+    } catch (e) {
+        fatalSwal(true);
+    }
+};
+
 const DetailParent = data => {
     try {
         return fetch(ep.PARENT_GET, {
@@ -99,4 +126,4 @@ const GetParentPlayers = data => {
     }
 };
 
-export { CreateParent, DetailParent, GetParentPlayers, ListParents };
+export { CreateParent, UpdateParent, DetailParent, GetParentPlayers, ListParents };

@@ -13,7 +13,7 @@ export class BackToApp extends Component {
                                 Geri Dön
                             </Link>
                             <div className="d-flex ml-auto">
-                                <button onClick={() => window.print()} className="btn btn-sm btn-secondary">
+                                <button onClick={() => window.print()} className="btn btn-secondary">
                                     <i className="fe fe-printer mr-1"></i>Yazdır
                                 </button>
                             </div>

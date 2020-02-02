@@ -1,10 +1,325 @@
 import React, { Component } from "react";
+import moment from "moment";
 /* import "../../assets/css/paper.css";
-import "../../assets/css/normalize.css";
- */
+import "../../assets/css/normalize.css"; */
+
+const normalize = `/*! normalize.css v7.0.0 | MIT License | github.com/necolas/normalize.css */
+html {
+    line-height: 1.15;
+    -ms-text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
+}
+body {
+    margin: 0;
+}
+article,
+aside,
+footer,
+header,
+nav,
+section {
+    display: block;
+}
+h1 {
+    font-size: 2em;
+    margin: 0.67em 0;
+}
+figcaption,
+figure,
+main {
+    display: block;
+}
+figure {
+    margin: 1em 40px;
+}
+hr {
+    box-sizing: content-box;
+    height: 0;
+    overflow: visible;
+}
+pre {
+    font-family: monospace, monospace;
+    font-size: 1em;
+}
+a {
+    background-color: transparent;
+    -webkit-text-decoration-skip: objects;
+}
+abbr[title] {
+    border-bottom: none;
+    text-decoration: underline;
+    text-decoration: underline dotted;
+}
+b,
+strong {
+    font-weight: inherit;
+}
+b,
+strong {
+    font-weight: bolder;
+}
+code,
+kbd,
+samp {
+    font-family: monospace, monospace;
+    font-size: 1em;
+}
+dfn {
+    font-style: italic;
+}
+mark {
+    background-color: #ff0;
+    color: #000;
+}
+small {
+    font-size: 80%;
+}
+sub,
+sup {
+    font-size: 75%;
+    line-height: 0;
+    position: relative;
+    vertical-align: baseline;
+}
+sub {
+    bottom: -0.25em;
+}
+sup {
+    top: -0.5em;
+}
+audio,
+video {
+    display: inline-block;
+}
+audio:not([controls]) {
+    display: none;
+    height: 0;
+}
+img {
+    border-style: none;
+}
+svg:not(:root) {
+    overflow: hidden;
+}
+button,
+input,
+optgroup,
+select,
+textarea {
+    font-family: sans-serif;
+    font-size: 100%;
+    line-height: 1.15;
+    margin: 0;
+}
+button,
+input {
+    overflow: visible;
+}
+button,
+select {
+    text-transform: none;
+}
+[type="reset"],
+[type="submit"],
+button,
+html [type="button"] {
+    -webkit-appearance: button;
+}
+[type="button"]::-moz-focus-inner,
+[type="reset"]::-moz-focus-inner,
+[type="submit"]::-moz-focus-inner,
+button::-moz-focus-inner {
+    border-style: none;
+    padding: 0;
+}
+[type="button"]:-moz-focusring,
+[type="reset"]:-moz-focusring,
+[type="submit"]:-moz-focusring,
+button:-moz-focusring {
+    outline: 1px dotted ButtonText;
+}
+fieldset {
+    padding: 0.35em 0.75em 0.625em;
+}
+legend {
+    box-sizing: border-box;
+    color: inherit;
+    display: table;
+    max-width: 100%;
+    padding: 0;
+    white-space: normal;
+}
+progress {
+    display: inline-block;
+    vertical-align: baseline;
+}
+textarea {
+    overflow: auto;
+}
+[type="checkbox"],
+[type="radio"] {
+    box-sizing: border-box;
+    padding: 0;
+}
+[type="number"]::-webkit-inner-spin-button,
+[type="number"]::-webkit-outer-spin-button {
+    height: auto;
+}
+[type="search"] {
+    -webkit-appearance: textfield;
+    outline-offset: -2px;
+}
+[type="search"]::-webkit-search-cancel-button,
+[type="search"]::-webkit-search-decoration {
+    -webkit-appearance: none;
+}
+::-webkit-file-upload-button {
+    -webkit-appearance: button;
+    font: inherit;
+}
+details,
+menu {
+    display: block;
+}
+summary {
+    display: list-item;
+}
+canvas {
+    display: inline-block;
+}
+template {
+    display: none;
+}
+[hidden] {
+    display: none;
+} /*# sourceMappingURL=normalize.min.css.map */
+`;
+
+const papercss = `
+@page {
+    margin: 0;
+}
+body {
+    margin: 0;
+}
+.sheet {
+    margin: 0;
+    overflow: hidden;
+    position: relative;
+    box-sizing: border-box;
+    page-break-after: always;
+}
+
+/** Paper sizes **/
+article.A3 .sheet {
+    width: 297mm;
+    height: 419mm;
+}
+article.A3.landscape .sheet {
+    width: 420mm;
+    height: 296mm;
+}
+article.A4 .sheet {
+    width: 210mm;
+    height: 296mm;
+}
+article.A4.landscape .sheet {
+    width: 297mm;
+    height: 209mm;
+}
+article.A5 .sheet {
+    width: 148mm;
+    height: 209mm;
+}
+article.A5.landscape .sheet {
+    width: 210mm;
+    height: 147mm;
+}
+article.letter .sheet {
+    width: 216mm;
+    height: 279mm;
+}
+article.letter.landscape .sheet {
+    width: 280mm;
+    height: 215mm;
+}
+article.legal .sheet {
+    width: 216mm;
+    height: 356mm;
+}
+article.legal.landscape .sheet {
+    width: 357mm;
+    height: 215mm;
+}
+
+/** Padding area **/
+.sheet.padding-10mm {
+    padding: 10mm;
+}
+.sheet.padding-15mm {
+    padding: 15mm;
+}
+.sheet.padding-20mm {
+    padding: 20mm;
+}
+.sheet.padding-25mm {
+    padding: 25mm;
+}
+.sheet.padding-10mm-15mm {
+    padding: 10mm 15mm;
+}
+
+/** For screen preview **/
+@media screen {
+    body {
+        background: #e0e0e0;
+    }
+    .sheet {
+        background: white;
+        box-shadow: 0 0.5mm 2mm rgba(0, 0, 0, 0.3);
+        margin: 5mm auto;
+    }
+}
+
+/** Fix for Chrome issue #273306 **/
+@media print {
+    article.A3.landscape {
+        width: 420mm !important;
+    }
+    article.A3,
+    article.A4.landscape {
+        width: 297mm !important;
+    }
+    article.A4,
+    article.A5.landscape {
+        width: 210mm !important;
+    }
+    article.A5 {
+        width: 148mm !important;
+    }
+    article.letter,
+    article.legal {
+        width: 216mm !important;
+    }
+    article.letter.landscape {
+        width: 280mm !important;
+    }
+    article.legal.landscape {
+        width: 357mm !important;
+    }
+    article {
+        margin-top: -1.5rem !important;
+    }
+    @page {
+        size: A4 !important;
+    }
+    
+}
+`;
+
 const styling = `
 @page {
-    size: A4;
+    size: A4 !important;
 }
     body {
         margin: 0 !important;
@@ -159,26 +474,6 @@ const styling = `
     strong {
         font-weight: 600 !important;
     }
-
-    .btn {
-        text-decoration: none !important;
-        white-space: nowrap !important;
-        font-weight: 600 !important;
-        font-size: 16px !important;
-        padding: 12px 32px !important;
-        border-radius: 3px !important;
-        color: #fff !important;
-        line-height: 100% !important;
-        display: block !important;
-        border: 1px solid transparent !important;
-        -webkit-transition: 0.3s background-color !important;
-        transition: 0.3s background-color !important;
-    }
-
-    .btn:hover {
-        text-decoration: none !important;
-    }
-
     .btn-span {
         color: #fff !important;
         font-size: 16px !important;
@@ -377,7 +672,7 @@ const styling = `
     }
 
     .checkKutu {
-        width: 16px;border: 2px solid darkgray;height: 16px;border-radius: 3px;display: inline-block;vertical-align: middle;margin-right: 5px;
+        width: 18px;border: 2px solid darkgray;height: 18px;border-radius: 3px;display: inline-block;vertical-align: middle;margin-right: 5px;
     }
     .veliAyrac {
         border-top: 2px solid #000;
@@ -385,196 +680,220 @@ const styling = `
 `;
 
 export class PlayerForm extends Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            sname: localStorage.getItem("sName"),
+            simage: localStorage.getItem("sImage")
+        };
+    }
+
     render() {
+        const { sname, simage } = this.state;
+        const { name, phone, fee } = this.props.match.params;
         return (
-            <body className="A4">
+            <article className="A4">
+                <style>{papercss}</style>
+                <style>{normalize}</style>
                 <style>{styling}</style>
                 <section className="sheet padding-10mm-15mm">
                     <table>
-                        <tr>
-                            <td valign="middle" align="center" colspan="3">
-                                <img
-                                    height="75"
-                                    src="https://www.fenerbahce.org/FB/media/FB/Images/Clubs/CorporateIdentity/mobile-emblem-info.png"
-                                    alt=""
-                                />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td className="fs-10 pt-sm">
-                                <strong>2020-2021 {"{Halkalı Beşiktaş Futbol Okulu}"} Öğrenci Bilgi Formu</strong>
-                            </td>
-                            <td className="fs-9 pt-sm" align="right">
-                                {"{Kardelen YILDIRIM}"} <strong className="fs-10">{"{0507 878 19 02}"}</strong>
-                            </td>
-                        </tr>
+                        <tbody>
+                            <tr>
+                                <td className="vertical-middle text-center" colSpan="3">
+                                    <img className="avatar avatar-xxl" height="75" src={simage} alt="" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td className="fs-10 pt-sm">
+                                    <strong>
+                                        {moment().format("YYYY")}-
+                                        {moment()
+                                            .add(1, "years")
+                                            .format("YYYY")}{" "}
+                                        {sname} Öğrenci Bilgi Formu
+                                    </strong>
+                                </td>
+                                <td className="fs-9 pt-sm text-right text-uppercase">
+                                    {name} <strong className="fs-10">{phone}</strong>
+                                </td>
+                            </tr>
+                        </tbody>
                     </table>
 
-                    <table border="1" cellpadding="2" className="fs-9" style={{ marginTop: "5px" }}>
-                        <tr>
-                            <th align="center" rowspan="2" className="fs-10">
-                                Öğrenci Bilgi Formu
-                            </th>
-                            <th align="right">Okula Başlama Tarihi</th>
-                            <td width="235"></td>
-                        </tr>
-                        <tr>
-                            <th align="right">Bugünün Tarihi</th>
-                            <td width="235"></td>
-                        </tr>
-                        <tr>
-                            <th colspan="3" className="fs-10">
-                                Öğrencinin Genel Bilgileri
-                            </th>
-                        </tr>
-                        <tr>
-                            <th align="right">Adı ve Soyadı *</th>
-                            <td colspan="2"></td>
-                        </tr>
-                        <tr>
-                            <th align="right">T.C. Kimlik Numarası *</th>
-                            <td colspan="2"></td>
-                        </tr>
-                        <tr>
-                            <th align="right">Aidat *</th>
-                            <td colspan="2"></td>
-                        </tr>
-                        <tr>
-                            <th align="right">Cinsiyet</th>
-                            <td align="center">
-                                <span className="checkKutu"></span>
-                                <strong>Kız</strong>
-                            </td>
-                            <td align="center">
-                                <span className="checkKutu"></span>
-                                <strong>Erkek</strong>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th align="right">Doğum Tarihi (Gün/Ay/Yıl) *</th>
-                            <td colspan="2"></td>
-                        </tr>
-                        <tr>
-                            <th align="right">Telefon Numarası</th>
-                            <td colspan="2"></td>
-                        </tr>
-                        <tr>
-                            <th align="right">Email</th>
-                            <td colspan="2"></td>
-                        </tr>
-                        <tr>
-                            <th valign="top" align="right" height="60">
-                                Adres *
-                            </th>
-                            <td colspan="2"></td>
-                        </tr>
-                        <tr>
-                            <th align="right">Kan Grubu</th>
-                            <td colspan="2"></td>
-                        </tr>
-                        <tr>
-                            <th align="right">Boy ve Kilo</th>
-                            <td colspan="2"></td>
-                        </tr>
-                        <tr>
-                            <th align="right">Kullandığı Ayak</th>
-                            <td align="center">
-                                <span className="checkKutu"></span>
-                                <strong>Sağ</strong>
-                            </td>
-                            <td align="center">
-                                <span className="checkKutu"></span>
-                                <strong>Sol</strong>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th align="right">Ayak Numarası</th>
-                            <td colspan="2"></td>
-                        </tr>
-                        <tr>
-                            <th align="right">Giydiği Beden (XS, S, M, L, XL)</th>
-                            <td colspan="2"></td>
-                        </tr>
-                        <tr>
-                            <th align="center" colspan="3" className="fs-10">
-                                Veli Bilgileri
-                            </th>
-                        </tr>
-                        <tr>
-                            <th align="right">Yakınlık (Anne, Baba, Diğer) *</th>
-                            <td colspan="2"></td>
-                        </tr>
-                        <tr>
-                            <th align="right">Adı ve Soyadı *</th>
-                            <td colspan="2"></td>
-                        </tr>
-                        <tr>
-                            <th align="right">Telefon Numarası *</th>
-                            <td colspan="2"></td>
-                        </tr>
-                        <tr>
-                            <th align="right">Email</th>
-                            <td colspan="2"></td>
-                        </tr>
-                        <tr className="veliAyrac">
-                            <th align="right">Yakınlık (Anne, Baba, Diğer) *</th>
-                            <td colspan="2"></td>
-                        </tr>
-                        <tr>
-                            <th align="right">Adı ve Soyadı *</th>
-                            <td colspan="2"></td>
-                        </tr>
-                        <tr>
-                            <th align="right">Telefon Numarası *</th>
-                            <td colspan="2"></td>
-                        </tr>
-                        <tr>
-                            <th align="right">Email</th>
-                            <td colspan="2"></td>
-                        </tr>
-                        <tr>
-                            <td
-                                align="right"
-                                style={{ borderRight: 0, borderRightColor: "#fff", borderRightStyle: "solid" }}>
-                                <div className="checKutu"></div>
-                            </td>
-                            <td
-                                align="left"
-                                className="fs-9"
-                                style={{ lineHeight: 1.4, borderLeftColor: "#fff" }}
-                                colspan="2">
-                                Yukarıdaki bilgiler dahilinde gerektiğinde veliyle ve öğrenciyle iletişime
-                                <br />
-                                geçilmesini kabul ediyor ve onaylıyorum.
-                            </td>
-                        </tr>
-                        <tr>
-                            <th valign="top" align="right" height="75">
-                                Adı Soyadı
-                                <br />
-                                İmza
-                            </th>
-                            <td align="left" colspan="2"></td>
-                        </tr>
+                    <table border="1" cellPadding="2" className="fs-9" style={{ marginTop: "5px" }}>
+                        <tbody>
+                            <tr>
+                                <th rowSpan="2" className="fs-10 text-center">
+                                    Öğrenci Bilgi Formu
+                                </th>
+                                <th className="text-right">Okula Başlama Tarihi</th>
+                                <td width="235"></td>
+                            </tr>
+                            <tr>
+                                <th className="text-right">Bugünün Tarihi</th>
+                                <td width="235"></td>
+                            </tr>
+                            <tr>
+                                <th colSpan="3" className="fs-10 text-center">
+                                    Öğrencinin Genel Bilgileri
+                                </th>
+                            </tr>
+                            <tr>
+                                <th className="text-right">Adı ve Soyadı *</th>
+                                <td colSpan="2"></td>
+                            </tr>
+                            <tr>
+                                <th className="text-right">T.C. Kimlik Numarası *</th>
+                                <td colSpan="2"></td>
+                            </tr>
+                            {fee === "1" ? (
+                                <tr>
+                                    <th className="text-right">Aidat *</th>
+                                    <td colSpan="2"></td>
+                                </tr>
+                            ) : null}
+                            <tr>
+                                <th className="text-right">Cinsiyet</th>
+                                <td className="text-center">
+                                    <span className="checkKutu"></span>
+                                    <strong>Kız</strong>
+                                </td>
+                                <td className="text-center">
+                                    <span className="checkKutu"></span>
+                                    <strong>Erkek</strong>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th className="text-right">Doğum Tarihi (Gün/Ay/Yıl) *</th>
+                                <td colSpan="2"></td>
+                            </tr>
+                            <tr>
+                                <th className="text-right">Telefon Numarası</th>
+                                <td colSpan="2"></td>
+                            </tr>
+                            <tr>
+                                <th className="text-right">Email</th>
+                                <td colSpan="2"></td>
+                            </tr>
+                            <tr>
+                                <th valign="top" className="text-right" height="60">
+                                    Adres *
+                                </th>
+                                <td colSpan="2"></td>
+                            </tr>
+                            <tr>
+                                <th className="text-right">Kan Grubu</th>
+                                <td colSpan="2"></td>
+                            </tr>
+                            <tr>
+                                <th className="text-right">Boy ve Kilo</th>
+                                <td colSpan="2"></td>
+                            </tr>
+                            <tr>
+                                <th className="text-right">Kullandığı Ayak</th>
+                                <td className="text-center">
+                                    <span className="checkKutu"></span>
+                                    <strong>Sağ</strong>
+                                </td>
+                                <td className="text-center">
+                                    <span className="checkKutu"></span>
+                                    <strong>Sol</strong>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th className="text-right">Ayak Numarası</th>
+                                <td colSpan="2"></td>
+                            </tr>
+                            <tr>
+                                <th className="text-right">Giydiği Beden (XS, S, M, L, XL)</th>
+                                <td colSpan="2"></td>
+                            </tr>
+                            <tr>
+                                <th colSpan="3" className="fs-10 text-center">
+                                    Veli Bilgileri
+                                </th>
+                            </tr>
+                            <tr>
+                                <th className="text-right">Yakınlık (Anne, Baba, Diğer) *</th>
+                                <td colSpan="2"></td>
+                            </tr>
+                            <tr>
+                                <th className="text-right">Adı ve Soyadı *</th>
+                                <td colSpan="2"></td>
+                            </tr>
+                            <tr>
+                                <th className="text-right">Telefon Numarası *</th>
+                                <td colSpan="2"></td>
+                            </tr>
+                            <tr>
+                                <th className="text-right">Email</th>
+                                <td colSpan="2"></td>
+                            </tr>
+                            <tr className="veliAyrac">
+                                <th className="text-right">Yakınlık (Anne, Baba, Diğer) *</th>
+                                <td colSpan="2"></td>
+                            </tr>
+                            <tr>
+                                <th className="text-right">Adı ve Soyadı *</th>
+                                <td colSpan="2"></td>
+                            </tr>
+                            <tr>
+                                <th className="text-right">Telefon Numarası *</th>
+                                <td colSpan="2"></td>
+                            </tr>
+                            <tr>
+                                <th className="text-right">Email</th>
+                                <td colSpan="2"></td>
+                            </tr>
+                            <tr>
+                                <td
+                                    className="text-right"
+                                    style={{ borderRight: 0, borderRightColor: "#fff", borderRightStyle: "solid" }}>
+                                    <div className="checkKutu"></div>
+                                </td>
+                                <td
+                                    className="fs-9 text-left"
+                                    style={{ lineHeight: 1.4, borderLeftColor: "#fff" }}
+                                    colSpan="2">
+                                    Yukarıdaki bilgiler dahilinde gerektiğinde veliyle ve öğrenciyle iletişime
+                                    <br />
+                                    geçilmesini kabul ediyor ve onaylıyorum.
+                                </td>
+                            </tr>
+                            <tr>
+                                <th valign="top" className="text-right" height="75">
+                                    Adı Soyadı
+                                    <br />
+                                    İmza
+                                </th>
+                                <td className="text-left" colSpan="2"></td>
+                            </tr>
+                        </tbody>
                     </table>
                     <table>
-                        <tr>
-                            <td align="center">
-                                <div className="fs-8" style={{ fontWeight: 600 }}>
-                                    (*) Zorunlu Alanlar
-                                </div>
-                                <div
-                                    className="fs-7"
-                                    style={{ borderTop: 1, borderTopColor: "#fff", borderTopStyle: "lightgray" }}>
-                                    <i>
-                                        Bu form <strong>Scoutive</strong> tarafından otomatik oluşturulmuştur.
-                                    </i>
-                                </div>
-                            </td>
-                        </tr>
+                        <tbody>
+                            <tr>
+                                <td className="text-center">
+                                    <div className="fs-8">(*) Zorunlu Alanlar</div>
+                                    <div
+                                        className="fs-7"
+                                        style={{
+                                            borderTopWidth: 1,
+                                            borderTopColor: "lightgray",
+                                            borderTopStyle: "solid"
+                                        }}>
+                                        <i>
+                                            Bu form <strong>Scoutive</strong> tarafından otomatik oluşturulmuştur.
+                                        </i>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
                     </table>
                 </section>
-            </body>
+            </article>
         );
     }
 }

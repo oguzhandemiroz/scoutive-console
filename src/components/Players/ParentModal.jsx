@@ -13,27 +13,10 @@ Inputmask.extendDefaults({
     autoUnmask: true
 });
 
-Inputmask.extendAliases({
-    try: {
-        suffix: " ₺",
-        radixPoint: ",",
-        groupSeparator: ".",
-        alias: "numeric",
-        autoGroup: true,
-        digits: 2,
-        digitsOptional: false,
-        clearMaskOnLostFocus: false,
-        allowMinus: false,
-        allowPlus: false,
-        rightAlign: false
-    }
-});
-
 const InputmaskDefaultOptions = {
     showMaskOnHover: false,
     showMaskOnFocus: false,
-    placeholder: "0,00",
-    autoUnmask: true
+    placeholder: ""
 };
 
 const initialState = {
@@ -81,7 +64,7 @@ export class ParentModal extends Component {
                 phone: $("[name=phone]")
             };
             const onlyString = "[a-zA-Z-ğüşöçİĞÜŞÖÇı ]*";
-            Inputmask({ alias: "try", ...InputmaskDefaultOptions }).mask(elemArray.phone);
+            Inputmask({ mask: "(999) 999 9999", ...InputmaskDefaultOptions }).mask(elemArray.phone);
             Inputmask({ regex: onlyString, ...InputmaskDefaultOptions }).mask(elemArray.name);
             Inputmask({ regex: "[a-zA-ZğüşöçİĞÜŞÖÇı]*", ...InputmaskDefaultOptions }).mask(elemArray.surname);
         } catch (e) {}
@@ -376,7 +359,9 @@ export class ParentModal extends Component {
                                                 <div className="card">
                                                     <div className="card-body">
                                                         <div className="text-dark font-weight-600">{el.kinship}</div>
-                                                        <Link to={`/app/persons/parents/detail/${el.uid}`} target="_blank">
+                                                        <Link
+                                                            to={`/app/persons/parents/detail/${el.uid}`}
+                                                            target="_blank">
                                                             {fullnameGenerator(el.name, el.surname)}
                                                         </Link>
                                                         <div className="text-muted">

@@ -11,7 +11,7 @@ class Footer extends Component {
                             <div className="col-lg-auto col-sm-12 ml-lg-auto text-center">
                                 <ul className="list-inline list-inline-dots mb-0">
                                     <li className="list-inline-item">
-                                        v1.0.0 <span className="badge badge-secondary ml-1">Beta</span>
+                                        v1.0.0 {/* <span className="badge badge-secondary ml-1">Beta</span> */}
                                     </li>
                                     <li className="list-inline-item">
                                         <a

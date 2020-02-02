@@ -6,6 +6,8 @@ import DailyPlayer from "../../components/Players/Charts/DailyPlayer";
 import TotalFee from "../../components/Players/Charts/TotalFee";
 import DailyCreatedPlayer from "../../components/Players/Charts/DailyCreatedPlayer";
 import TotalPlayerCount from "../../components/Players/Charts/TotalPlayerCount";
+import { showSwal } from "../../components/Alert";
+import Swal from "sweetalert2";
 
 class Players extends Component {
     constructor(props) {
@@ -31,17 +33,60 @@ class Players extends Component {
         });
     };
 
+    printablePlayerForm = () => {
+        Swal.mixin({
+            heightAuto: false,
+            allowEnterKey: false,
+            confirmButtonText: "Devam &rarr;",
+            showCancelButton: true,
+            showCloseButton: true,
+            cancelButtonText: "İptal",
+            confirmButtonColor: "#316cbe",
+            cancelButtonColor: "#868e96",
+            reverseButtons: true
+        })
+            .queue([
+                {
+                    type: "question",
+                    title: "Form İletişim Bilgisi",
+                    text: "Form üzerine yazılacak iletişim bilgisi için yetkili ismini giriniz lütfen:",
+                    input: "text"
+                },
+                {
+                    type: "question",
+                    title: "Form İletişim Bilgisi",
+                    text: "Form üzerine yazılacak iletişim bilgisi için yetkili telefon numarası giriniz lütfen:",
+                    input: "text"
+                },
+                {
+                    type: "question",
+                    title: "Form Alanı",
+                    html: "Form içerisinde <b>Aidat</b> bilgisi bulunsun mu?",
+                    input: "checkbox",
+                    inputValue: 0,
+                    inputPlaceholder: "Evet, bulunsun"
+                }
+            ])
+            .then(result => {
+                if (result.value) {
+                    const results = result.value;
+                    console.log(results);
+                    this.props.history.push(`/printable/player-form/${results[0]}/${results[1]}/${results[2]}`);
+                }
+            });
+    };
+
     render() {
         const { data } = this.state;
         return (
             <div className="container">
                 <div className="page-header">
                     <h1 className="page-title">Öğrenciler</h1>
-                    {/* <Link to="/printable/player-form" className="btn btn-icon btn-secondary ml-auto mr-2">
+                    <button onClick={this.printablePlayerForm} className="btn btn-icon btn-secondary ml-auto mr-2">
                         <i className="fe fe-printer mr-1"></i>
                         Öğrenci Bilgi Formu
-                    </Link> */}
-                    <Link to="/app/players/add" className="btn btn-success ml-auto">
+                    </button>
+                    <Link to="/app/players/add" className="btn btn-success">
                         Öğrenci Ekle
                     </Link>
                 </div>

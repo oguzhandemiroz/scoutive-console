@@ -1587,3 +1587,22 @@ a.card:hover {
     text-decoration: none;
     box-shadow: rgba(53, 64, 82, 0.16) 0 2px 16px 0;
 }
+
+.fs-7 {
+    font-size: 7pt;
+}
+.fs-8 {
+    font-size: 8pt;
+}
+.fs-9 {
+    font-size: 9pt;
+}
+.fs-10 {
+    font-size: 10pt;
+}
+.fs-11 {
+    font-size: 11pt;
+}
+.fs-12 {
+    font-size: 12pt;
+}

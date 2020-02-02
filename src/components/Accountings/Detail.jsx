@@ -10,6 +10,7 @@ export class Detail extends Component {
         this.state = {
             uid: localStorage.getItem("UID"),
             sname: localStorage.getItem("sName"),
+            simage: localStorage.getItem("sImage"),
             note: null,
             loading: "active"
         };
@@ -37,7 +38,7 @@ export class Detail extends Component {
     };
 
     render() {
-        const { amount, sname, payment_date, accounting_type, person, note, loading } = this.state;
+        const { amount, sname, simage, payment_date, accounting_type, person, note, loading } = this.state;
         const { aid } = this.props.match.params;
         return (
             <div className="container">
@@ -59,14 +60,23 @@ export class Detail extends Component {
                                     </button>
                                 </div>
                             </div>
+                            <div className="row align-items-center mb-4 d-none d-print-flex">
+                                <div className="col-12 mb-2 text-center pr-1">
+                                    <span
+                                        className="avatar avatar-xl"
+                                        style={{
+                                            backgroundImage: `url("${simage}")`
+                                        }}></span>
+                                </div>
+                                <div className="col-12 text-center">
+                                    <h3 className="mb-0">{sname}</h3>
+                                </div>
+                            </div>
                             <div className={`dimmer ${loading}`}>
                                 <div className="loader" />
                                 <div className="dimmer-content border">
                                     <div className="card-body p-5">
                                         <div className="row">
-                                            <div className="col-lg-12">
-                                                <h3 className="d-none d-print-block">{sname}</h3>
-                                            </div>
                                             {person ? (
                                                 <div className="col-lg-6 col-sm-12 col-md-6 mb-2">
                                                     <div className="example">
