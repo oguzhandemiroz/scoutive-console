@@ -28,9 +28,9 @@ export class ListFilter extends Component {
     }
 
     componentDidMount() {
-        Groups().then(response => {
+        /* Groups().then(response => {
             this.setState({ options: response, isLoading: false });
-        });
+        }); */
     }
 
     handleSelect = (value, name) => {

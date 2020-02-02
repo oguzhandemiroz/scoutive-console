@@ -40,7 +40,7 @@ const footType = {
 
 const filteredList = () => {
     if (!document.getElementById("clearFilter")) {
-        $("div.filterTools").append(`<a  id="clearFilter" class="btn btn-link text-truncate">Filtreyi temizle</a>`);
+        //$("div.filterTools").append(`<a  id="clearFilter" class="btn btn-link text-truncate">Filtreyi temizle</a>`); //filtre
 
         $(".filterTools #clearFilter").on("click", function() {
             $.fn.dataTable.ext.search = [];
@@ -494,16 +494,17 @@ class Table extends Component {
 
                 initComplete: function() {
                     $.fn.dataTable.ext.search.push(function(settings, searchData, index, rowData, counter) {
-                        if (settings.nTable.id !== "player-list") return true;
-                        return rowData["status"] === 1 ? true : false;
+                        /* if (settings.nTable.id !== "player-list") return true;
+                        return rowData["status"] === 1 ? true : false; */ //filtre
+                        return true;
                     });
                     filteredList();
                 }
             });
 
-            $("div.filterTools").html(`
-                <button type="button" class="btn btn-yellow" data-toggle="modal" data-target="#playerListFilterMenu"><i class="fe fe-filter mr-2"></i>Filtre</button> 
-			`);
+            /*  $("div.filterTools").html(`
+                <button type="button" class="btn btn-yellow" data-toggle="modal" data-target="#playerListFilterMenu"><i class="fe fe-filter mr-2"></i>Filtre</button> //filtre
+			`); */
 
             $.fn.DataTable.ext.errMode = "none";
             table.on("error.dt", function(e, settings, techNote, message) {
@@ -622,7 +623,7 @@ class Table extends Component {
                 </table>
                 <Vacation data={data} history={this.props.history} />
                 {/* <GroupChange data={data} history={this.props.history} /> */}
-                <ListFilter filterState={this.generateFilter} />
+                {/* <ListFilter filterState={this.generateFilter} /> */}
             </div>
         );
     }
