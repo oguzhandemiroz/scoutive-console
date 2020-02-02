@@ -99,7 +99,7 @@ const menu = [
         icon: "fa fa-coins",
         text: "Kasa ve Banka",
         item: null,
-        condition: parseInt(localStorage.getItem("sType")) === 0
+        condition: true
     },
     {
         li: "nav-item",
