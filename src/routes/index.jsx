@@ -80,7 +80,9 @@ import RecurringAdd from "../components/Messages/RecurringAdd";
 import MessagesDetail from "../components/Messages/Detail";
 
 import UnpaidPlayerList from "../components/Reports/UnpaidPlayerList";
+
 import PlayerForm from "../components/Printable/PlayerForm";
+import RollcallForm from "../components/Printable/RollcallForm";
 
 var indexRoutes = [
     {
@@ -576,6 +578,13 @@ var indexRoutes = [
         path: "/player-form/:name?/:phone?/:fee?",
         name: "PlayerForm",
         component: PlayerForm,
+        layout: "/printable",
+        prop: { exact: true }
+    },
+    {
+        path: "/rollcall-form/:rcid?/:type?",
+        name: "RollcallForm",
+        component: RollcallForm,
         layout: "/printable",
         prop: { exact: true }
     },

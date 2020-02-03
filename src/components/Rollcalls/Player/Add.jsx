@@ -934,6 +934,26 @@ export class Add extends Component {
         }
     };
 
+    printableRollcallForm = () => {
+        showSwal({
+            type: "question",
+            title: "Yoklama Formu",
+            text: "Yoklama formu hangi şekilde hazırlansın?",
+            confirmButtonText: "Günlük",
+            showCancelButton: true,
+            showCloseButton: true,
+            cancelButtonText: "Aylık",
+            confirmButtonColor: "#316cbe",
+            cancelButtonColor: "#868e96"
+        }).then(result => {
+            if (result.value) {
+                this.props.history.push(`/printable/rollcall-form/${this.props.match.params.rcid}/daily`);
+            } else {
+                this.props.history.push(`/printable/rollcall-form/${this.props.match.params.rcid}/monthly`);
+            }
+        });
+    };
+
     render() {
         const { data } = this.state;
         return (
@@ -943,6 +963,10 @@ export class Add extends Component {
                     <h1 className="page-title">
                         Yoklamalar &mdash; Öğrenci &mdash; Yoklama Al (#{this.props.match.params.rcid})
                     </h1>
+                    <button onClick={this.printableRollcallForm} className="btn btn-icon btn-secondary ml-auto mr-2">
+                        <i className="fe fe-printer mr-1"></i>
+                        Yoklama Formu
+                    </button>
                 </div>
                 <div className="row row-cards">
                     <div className="col">
