@@ -1606,3 +1606,17 @@ a.card:hover {
 .fs-12 {
     font-size: 12pt;
 }
+
+/* ### Print ### */
+
+@media print {
+    .print-border-dark-light {
+        border: 1px solid #717579 !important;
+    }
+    .print-border-dark-lighter {
+        border: 1px solid #c2c4c6 !important;
+    }
+    .print-border-dark-lightest {
+        border: 1px solid #ebebec !important;
+    }
+}

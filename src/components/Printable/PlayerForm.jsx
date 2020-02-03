@@ -728,12 +728,12 @@ export class PlayerForm extends Component {
                                 <th rowSpan="2" className="fs-10 text-center">
                                     Öğrenci Bilgi Formu
                                 </th>
-                                <th className="text-right">Okula Başlama Tarihi</th>
-                                <td width="235"></td>
+                                <th className="text-right">Okula Başlama (Aidat Ödeme) Tarihi</th>
+                                <td width="165"></td>
                             </tr>
                             <tr>
                                 <th className="text-right">Bugünün Tarihi</th>
-                                <td width="235"></td>
+                                <td width="165"></td>
                             </tr>
                             <tr>
                                 <th colSpan="3" className="fs-10 text-center">

@@ -74,12 +74,12 @@ export class Detail extends Component {
                             </div>
                             <div className={`dimmer ${loading}`}>
                                 <div className="loader" />
-                                <div className="dimmer-content border">
+                                <div className="dimmer-content print-border-dark-light">
                                     <div className="card-body p-5">
                                         <div className="row">
                                             {person ? (
                                                 <div className="col-lg-6 col-sm-12 col-md-6 mb-2">
-                                                    <div className="example">
+                                                    <div className="example print-border-dark-lighter">
                                                         <div className="h3 text-body">Kişi Kartı</div>
                                                         <div className="row">
                                                             <div className="col-auto pr-1">
@@ -146,7 +146,7 @@ export class Detail extends Component {
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="card-body p-5">
+                                    <div className="card-body p-5 print-border-dark-lighter">
                                         <div className="row">
                                             <div className="col-lg-7 col-sm-12 col-md-6">
                                                 <div className="form-group">
