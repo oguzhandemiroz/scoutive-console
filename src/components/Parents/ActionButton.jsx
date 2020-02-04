@@ -60,7 +60,7 @@ export class ActionButton extends Component {
                 divider: key => dropdownDivider(key),
                 condition: true
             },
-            {
+            /* {
                 name: "payment",
                 tag: "button",
                 elementAttr: {
@@ -73,11 +73,11 @@ export class ActionButton extends Component {
                 },
                 lock: lock,
                 condition: true
-            },
+            }, 
             {
                 divider: key => dropdownDivider(key),
                 condition: true
-            },
+            },*/
             {
                 tag: "button",
                 elementAttr: {
