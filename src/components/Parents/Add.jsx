@@ -1,9 +1,5 @@
 import React, { Component } from "react";
-import {
-    formValid,
-    emailRegEx,
-    securityNoRegEx
-} from "../../assets/js/core";
+import { formValid, emailRegEx, securityNoRegEx } from "../../assets/js/core";
 import { CreateParent } from "../../services/Parent";
 import { Link, withRouter } from "react-router-dom";
 import Inputmask from "inputmask";
@@ -222,6 +218,14 @@ export class Add extends Component {
                                         </div>
                                     </div>
                                 </div>
+                            </div>
+                            <div className="alert alert-primary alert-icon card-alert">
+                                <i className="fe fe-alert-triangle mr-2"></i>
+                                <p>
+                                    <strong>Kişisel Veri Koruma Kanunu (KVKK/GDPR) Uyarısı</strong>
+                                </p>
+                                Yukarıdaki bilgilerin, velinin rızası ve bilgisi dahilinde sisteme kayıt edildiğini ve
+                                gerektiğinde veliyle iletişime geçileceğini kabul ediyor ve onaylıyorum.
                             </div>
                             <div className="card-footer text-right">
                                 <button className={`btn btn-primary ${loadingButton}`}>Ekle ve Bitir</button>

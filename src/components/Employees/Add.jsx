@@ -207,7 +207,8 @@ export class Add extends Component {
                         UploadFile(formData).then(response => {
                             this.setState({ loadingImage: "", loadingButton: "" });
                             if (response)
-                                if (!addContinuously) this.props.history.push("/app/persons/employees/detail/" + response.uid);
+                                if (!addContinuously)
+                                    this.props.history.push("/app/persons/employees/detail/" + response.uid);
                                 else this.reload();
                         });
                     } else if (addContinuously) this.reload();
@@ -950,6 +951,14 @@ export class Add extends Component {
                                         </div>
                                     </div>
                                 </div>
+                            </div>
+                            <div className="alert alert-primary alert-icon card-alert">
+                                <i className="fe fe-alert-triangle mr-2"></i>
+                                <p>
+                                    <strong>Kişisel Veri Koruma Kanunu (KVKK/GDPR) Uyarısı</strong>
+                                </p>
+                                Yukarıdaki bilgilerin, personelin rızası ve bilgisi dahilinde sisteme kayıt edildiğini
+                                ve gerektiğinde personel ile iletişime geçileceğini kabul ediyor ve onaylıyorum.
                             </div>
                             <div className="card-footer text-right">
                                 <div className="d-flex" style={{ justifyContent: "space-between" }}>
