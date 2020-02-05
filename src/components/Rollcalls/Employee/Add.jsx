@@ -597,8 +597,8 @@ export class Add extends Component {
         const { rcid } = this.props.match.params;
         showSwal({
             type: "info",
-            title: "Not Giriniz",
-            html: `<b>${name}</b> adlı personel için not giriniz:`,
+            title: "Yoklama Notu",
+            html: `<b>${name}</b> adlı personel için yoklama notu giriniz:`,
             confirmButtonText: "Onayla",
             showCancelButton: true,
             cancelButtonText: "İptal",

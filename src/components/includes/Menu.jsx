@@ -116,7 +116,7 @@ const menu = [
         text: "İletişim Merkezi",
         item: null,
         condition: true
-    },
+    }
     /* {
         li: "nav-item cursor-not-allowed",
         navlink: {

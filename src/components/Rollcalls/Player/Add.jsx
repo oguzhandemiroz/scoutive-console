@@ -803,8 +803,8 @@ export class Add extends Component {
         const { rcid } = this.props.match.params;
         showSwal({
             type: "info",
-            title: "Not Giriniz",
-            html: `<b>${name}</b> adlı öğrenci için not giriniz:`,
+            title: "Yoklama Notu",
+            html: `<b>${name}</b> adlı öğrenci için yoklama notu giriniz:`,
             confirmButtonText: "Onayla",
             showCancelButton: true,
             cancelButtonText: "İptal",
