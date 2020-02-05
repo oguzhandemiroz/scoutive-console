@@ -14,6 +14,7 @@ class HeaderMenu extends Component {
             sName: localStorage.getItem("sName") || "—",
             sImage: localStorage.getItem("sImage"),
             sPosition: localStorage.getItem("sPosition") || "—",
+            sType: localStorage.getItem("sType"),
             systemClock: systemClock()
         };
     }
@@ -32,7 +33,7 @@ class HeaderMenu extends Component {
     }
 
     render() {
-        const { systemClock, uid } = this.state;
+        const { systemClock, sType, uid } = this.state;
         return (
             <div id="header-menu">
                 <div className="header py-4 bg-scoutive">
@@ -81,11 +82,23 @@ class HeaderMenu extends Component {
                                         </span>
                                     </span>
                                     <div className="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
-                                        <button
-                                            className="dropdown-item"
-                                            onClick={() => this.props.history.push(`/account/profile/${uid}`)}>
-                                            <i className="dropdown-icon fe fe-user" /> Profil
-                                        </button>
+                                        {sType === "1" || sType === "0" ? (
+                                            <button
+                                                className="dropdown-item"
+                                                onClick={() => this.props.history.push(`/account/profile/${uid}`)}>
+                                                <i className="dropdown-icon fe fe-user" /> Profil
+                                            </button>
+                                        ) : (
+                                            <button
+                                                className="dropdown-item cursor-not-allowed disabled"
+                                                onClick={() => this.props.history.push(`/account/profile/${uid}`)}>
+                                                <i className="dropdown-icon fe fe-user" /> Profil
+                                                <span className="ml-1">
+                                                    (<i className="fe fe-lock mr-0" />)
+                                                </span>
+                                            </button>
+                                        )}
+
                                         <button
                                             className="dropdown-item"
                                             onClick={() => this.props.history.push(`/account/settings/general/${uid}`)}>
