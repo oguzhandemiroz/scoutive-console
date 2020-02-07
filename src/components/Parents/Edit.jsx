@@ -104,7 +104,7 @@ export class Edit extends Component {
                 if (response) {
                     const status = response.status;
                     if (status.code === 1020) {
-                        this.props.history.push("/app/persons/parents/detail/" + response.data.uid);
+                        this.props.history.push("/app/persons/parents/detail/" + response.uid);
                     }
                 }
                 this.setState({ loadingButton: "" });

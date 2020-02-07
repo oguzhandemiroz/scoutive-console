@@ -98,12 +98,15 @@ class HeaderMenu extends Component {
                                                 </span>
                                             </button>
                                         )}
-
-                                        <button
-                                            className="dropdown-item"
-                                            onClick={() => this.props.history.push(`/account/settings/general/${uid}`)}>
-                                            <i className="dropdown-icon fe fe-settings" /> Ayarlar
-                                        </button>
+                                        {sType === "1" ? (
+                                            <button
+                                                className="dropdown-item"
+                                                onClick={() =>
+                                                    this.props.history.push(`/account/settings/general/${uid}`)
+                                                }>
+                                                <i className="dropdown-icon fe fe-settings" /> Ayarlar
+                                            </button>
+                                        ) : null}
                                         <button className="dropdown-item cursor-not-allowed disabled">
                                             <i className="dropdown-icon fe fe-mail" /> Gelen Kutusu
                                             <span className="ml-1">

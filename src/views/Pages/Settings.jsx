@@ -5,7 +5,7 @@ import SettingsEmployee from "../../components/Pages/SettingsEmployee";
 export class Settings extends Component {
     getSettingsForType = () => {
         const type = parseInt(localStorage.getItem("sType"));
-        return type === 0 ? (
+        return type === 1 ? (
             <SettingsSchool props={this.props} />
         ) : (
             <SettingsEmployee match={this.props.match} />
