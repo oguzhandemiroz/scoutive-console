@@ -39,6 +39,7 @@ export class Edit extends Component {
             loadingButton: "",
             loading: "active"
         };
+        console.log(this.props.match.params.uid);
     }
 
     fieldMasked = () => {
@@ -70,7 +71,9 @@ export class Edit extends Component {
         }).then(response => {
             if (response) {
                 if (response.status.code === 1020) {
-                    this.setState({ ...response.data, loading: "" });
+                    const data = response.data;
+                    delete data.uid;
+                    this.setState({ ...data, loading: "" });
                 }
             }
         });
