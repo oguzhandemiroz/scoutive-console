@@ -121,7 +121,7 @@ export class List extends Component {
                     defaultContent: ""
                 },
                 {
-                    data: "accounting_id",
+                    data: "record_no",
                     class: "w-1",
                     responsivePriority: 10001,
                     render: function(data, type, row, meta) {
@@ -236,7 +236,7 @@ export class List extends Component {
                         <thead>
                             <tr>
                                 <th className="w-1 no-sort control" />
-                                <th className="accounting_id">#</th>
+                                <th className="record_no">#</th>
                                 <th className="accounting_type">İşlem</th>
                                 <th className="amount">Tutar</th>
                                 <th className="payment_date">Ödeme Tarihi</th>
