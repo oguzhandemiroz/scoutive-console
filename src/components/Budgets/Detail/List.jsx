@@ -84,28 +84,32 @@ export class List extends Component {
                         </thead>
                         <tbody>
                             {list
-                                ? list.map((el, key) => {
+                                ? list.map(record => {
                                       return (
-                                          <tr key={key.toString()}>
-                                              <td className="w-1 pl-3 text-muted text-center">#{el.record_no}</td>
+                                          <tr key={record.record_no.toString()}>
+                                              <td className="w-1 pl-3 text-muted text-center">#{record.record_no}</td>
                                               <td>
-                                                  {el.accounting_type}
-                                                  {el.note ? (
+                                                  {record.accounting_type}
+                                                  {record.note ? (
                                                       <span
                                                           className="ml-1 form-help d-inline-flex justify-content-center align-items-center"
                                                           data-toggle="popover"
-                                                          data-content={`<p><strong>İşlem Notu</strong></p>${el.note}`}>
+                                                          data-content={`<p><strong>İşlem Notu</strong></p>${record.note}`}>
                                                           <i className="fe fe-info"></i>
                                                       </span>
                                                   ) : null}
                                               </td>
-                                              <td>{el.amount ? formatMoney(el.amount) : "0,00 ₺"}</td>
-                                              <td className="w-1 text-nowrap">{formatDate(el.payment_date, "LL")}</td>
-                                              <td className="w-1 text-nowrap">{formatDate(el.created_date, "LL")}</td>
-                                              <td className="text-break">{el.budget.budget_name}</td>
+                                              <td>{record.amount ? formatMoney(record.amount) : "0,00 ₺"}</td>
+                                              <td className="w-1 text-nowrap">
+                                                  {formatDate(record.payment_date, "LL")}
+                                              </td>
+                                              <td className="w-1 text-nowrap">
+                                                  {formatDate(record.created_date, "LL")}
+                                              </td>
+                                              <td className="text-break">{record.budget.budget_name}</td>
                                               <td className="w-1 pr-3">
                                                   <Link
-                                                      to={"/app/accountings/detail/" + el.accounting_id}
+                                                      to={"/app/accountings/detail/" + record.accounting_id}
                                                       className="icon">
                                                       <i className="fe fe-eye"></i>
                                                   </Link>

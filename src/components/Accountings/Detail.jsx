@@ -39,7 +39,6 @@ export class Detail extends Component {
 
     render() {
         const { amount, sname, simage, payment_date, accounting_type, record_no, person, note, loading } = this.state;
-        const { aid } = this.props.match.params;
         return (
             <div className="container">
                 <div className="page-header">
