@@ -121,7 +121,7 @@ export class List extends Component {
                     defaultContent: ""
                 },
                 {
-                    data: "accounting_id",
+                    data: "record_no",
                     class: "w-1",
                     responsivePriority: 10001,
                     render: function(data, type, row, meta) {
@@ -190,13 +190,13 @@ export class List extends Component {
                     targets: "budget",
                     createdCell: (td, cellData, rowData) => {
                         ReactDOM.render(
-                                <div
-                                    onClick={() =>
-                                        this.props.history.push("/app/budgets/detail/" + cellData.budget.budget_id)
-                                    }
-                                    className="btn-link cursor-pointer text-inherit">
-                                    {cellData.budget.budget_name}
-                                </div>,
+                            <div
+                                onClick={() =>
+                                    this.props.history.push("/app/budgets/detail/" + cellData.budget.budget_id)
+                                }
+                                className="btn-link cursor-pointer text-inherit">
+                                {cellData.budget.budget_name}
+                            </div>,
                             td
                         );
                     }
@@ -206,16 +206,15 @@ export class List extends Component {
                     class: "w-1",
                     createdCell: (td, cellData, rowData) => {
                         ReactDOM.render(
-                                <button
-                                    onClick={() =>
-                                        this.props.history.push("/app/accountings/detail/" + rowData.accounting_id)
-                                    }
-                                    to={`/app/accountings/detail/${rowData.accounting_id}`}
-                                    data-toggle="tooltip"
-                                    title="İşlemi Görüntüle"
-                                    className="btn btn-icon btn-sm btn-secondary mx-1">
-                                    <i className="fe fe-eye" />
-                                </button>,
+                            <button
+                                onClick={() =>
+                                    this.props.history.push("/app/accountings/detail/" + rowData.accounting_id)
+                                }
+                                data-toggle="tooltip"
+                                title="İşlemi Görüntüle"
+                                className="btn btn-icon btn-sm btn-secondary mx-1">
+                                <i className="fe fe-eye" />
+                            </button>,
                             td
                         );
                     }
@@ -242,7 +241,7 @@ export class List extends Component {
                         <thead>
                             <tr>
                                 <th className="w-1 no-sort control" />
-                                <th className="accounting_id">#</th>
+                                <th className="record_no">#</th>
                                 <th className="accounting_type">İşlem</th>
                                 <th className="amount">Tutar</th>
                                 <th className="payment_date">Ödeme Tarihi</th>

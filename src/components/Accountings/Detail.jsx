@@ -38,8 +38,7 @@ export class Detail extends Component {
     };
 
     render() {
-        const { amount, sname, simage, payment_date, accounting_type, person, note, loading } = this.state;
-        const { aid } = this.props.match.params;
+        const { amount, sname, simage, payment_date, accounting_type, record_no, person, note, loading } = this.state;
         return (
             <div className="container">
                 <div className="page-header">
@@ -50,7 +49,7 @@ export class Detail extends Component {
                         <div className="card">
                             <div className="card-header">
                                 <h3 className="card-title">
-                                    <strong>#{aid} </strong>İşlem Detayı
+                                    <strong>#{record_no} </strong>İşlem Detayı
                                 </h3>
                                 <div className="ml-auto">
                                     <button
@@ -125,7 +124,7 @@ export class Detail extends Component {
                                                 }`}>
                                                 <div className="form-group">
                                                     <label className="form-label">İşlem Numarası</label>
-                                                    <div className="form-control-plaintext">#{aid}</div>
+                                                    <div className="form-control-plaintext">#{record_no}</div>
                                                 </div>
                                                 <div className="form-group mb-0">
                                                     <div className="row gutters-xs">
