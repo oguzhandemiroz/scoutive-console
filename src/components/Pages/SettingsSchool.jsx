@@ -70,8 +70,8 @@ const settingsMenu = [
         pathname: "/permission",
         active: "permission",
         icon: "fa fa-user-cog",
-        class: "",
-        lock: false
+        class: "cursor-not-allowed disabled",
+        lock: lock
     },
     {
         title: "Ödeme",
