@@ -27,7 +27,6 @@ registerLocale("tr", tr);
 
 const initialState = {
     title: null,
-    when: new Date(),
     end_date: moment()
         .add("years", 1)
         .toDate(),
@@ -52,6 +51,7 @@ export class RecurringAdd extends Component {
             uid: localStorage.getItem("UID"),
             sid: localStorage.getItem("sID"),
             ...initialState,
+            when: new Date(),
             steps: [
                 {
                     key: "0",
