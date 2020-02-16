@@ -1620,3 +1620,8 @@ a.card:hover {
         border: 1px solid #ebebec !important;
     }
 }
+
+/* custom-switch-green */
+.custom-switch-green-input:checked ~ .custom-switch-green-indicator {
+    background: #5eba00;
+}
