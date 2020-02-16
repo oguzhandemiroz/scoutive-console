@@ -3,8 +3,6 @@ import { ListPermissions, UpdatePermissions } from "../../../services/School";
 import _ from "lodash";
 const $ = require("jquery");
 
-const permissionKey = ["player", "employee", "rollcall", "accounting", "group", "message"];
-
 const permissionKeyToText = {
     player: "Öğrenci",
     employee: "Personel",
@@ -47,7 +45,6 @@ export class PermissionNew extends Component {
     handleCheck = (pid, type, key, value) => {
         const { permissionList } = this.state;
         const checkedValue = value === 0 ? 1 : 0;
-        console.log(pid, type, key);
         permissionList.find(x => x.permission_id === pid).permissions[type][key] = checkedValue;
         this.setState({ permissionList: permissionList });
     };
@@ -130,9 +127,9 @@ export class PermissionNew extends Component {
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                {permissionKey.map((key, el) => {
+                                                {Object.keys(permissionKeyToText).map((key, idx) => {
                                                     return (
-                                                        <tr key={el.toString()}>
+                                                        <tr key={idx.toString()}>
                                                             <td>{permissionKeyToText[key]}</td>
                                                             {Object.keys(permission.permissions[key]).map(el => (
                                                                 <td key={el}>
