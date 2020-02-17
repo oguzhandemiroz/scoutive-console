@@ -119,7 +119,14 @@ const UpdatePermissions = data => {
             .then(response => {
                 if (response) {
                     const status = response.status;
-                    if (status.code !== 1020) errorSwal(status);
+                    if (status.code !== 1020) {
+                        errorSwal(status);
+                    } else {
+                        Toast.fire({
+                            type: "success",
+                            title: "Başarıyla güncellendi..."
+                        });
+                    }
 
                     return response;
                 }

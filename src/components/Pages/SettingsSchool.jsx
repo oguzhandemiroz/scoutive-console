@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import General from "../../components/Pages/Settings/General";
 import Notifications from "../../components/Pages/Settings/Notifications";
-import Permission from "../../components/Pages/Settings/Permission";
+import Permissions from "./Settings/Permissions";
 import UsageDetail from "../../components/Pages/Settings/UsageDetail";
 import SmsTemplates from "./Settings/SmsTemplates/SmsTemplates";
 import SmsTemplatesEdit from "./Settings/SmsTemplates/SmsTemplatesEdit";
@@ -70,8 +70,8 @@ const settingsMenu = [
         pathname: "/permission",
         active: "permission",
         icon: "fa fa-user-cog",
-        class: "cursor-not-allowed disabled",
-        lock: lock
+        class: "",
+        lock: false
     },
     {
         title: "Ödeme",
@@ -94,7 +94,7 @@ const settingsMenu = [
 const settingsComponentRender = {
     general: <General />,
     notifications: <Notifications />,
-    permission: <Permission />,
+    permission: <Permissions />,
     membership: <UsageDetail />,
     "sms-templates": <SmsTemplates />,
     "sms-templates-edit": <SmsTemplatesEdit />,
