@@ -43,6 +43,7 @@ export class PermissionNew extends Component {
     };
 
     handleCheck = (pid, type, key, value) => {
+        console.log(pid, type, key, value);
         const { permissionList } = this.state;
         const checkedValue = value === 0 ? 1 : 0;
         permissionList.find(x => x.permission_id === pid).permissions[type][key] = checkedValue;
@@ -102,8 +103,8 @@ export class PermissionNew extends Component {
                                                         <span
                                                             className="font-weight-600"
                                                             data-toggle="tooltip"
-                                                            title="Listeleme ve Görüntüleme">
-                                                            L/G
+                                                            title="Oluşturma ve Düzenleme">
+                                                            O/D
                                                             <span className="form-required">*</span>
                                                         </span>
                                                     </th>
@@ -111,8 +112,8 @@ export class PermissionNew extends Component {
                                                         <span
                                                             className="font-weight-600"
                                                             data-toggle="tooltip"
-                                                            title="Oluşturma ve Düzenleme">
-                                                            O/D
+                                                            title="Listeleme ve Görüntüleme">
+                                                            L/G
                                                             <span className="form-required">*</span>
                                                         </span>
                                                     </th>
