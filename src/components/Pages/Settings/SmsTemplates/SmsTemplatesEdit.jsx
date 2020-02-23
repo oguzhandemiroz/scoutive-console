@@ -95,7 +95,7 @@ export class SmsTemplatesEdit extends Component {
             },
             formErrors: {
                 ...prevState.formErrors,
-                [name]: value ? "" : "is-invalid"
+                [name]: value.trim() ? "" : "is-invalid"
             }
         }));
     };

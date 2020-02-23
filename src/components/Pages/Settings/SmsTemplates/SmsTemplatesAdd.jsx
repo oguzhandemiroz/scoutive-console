@@ -90,7 +90,7 @@ export class SmsTemplatesAdd extends Component {
             [name]: name === "content" ? value.slice(0, 883) : value,
             formErrors: {
                 ...prevState.formErrors,
-                [name]: value ? "" : "is-invalid"
+                [name]: value.trim() ? "" : "is-invalid"
             }
         }));
     };
