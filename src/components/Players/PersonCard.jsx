@@ -30,7 +30,6 @@ export class PersonCard extends Component {
     render() {
         const { player } = this.state;
         const { data, history } = this.props;
-        console.log(data.status);
         return (
             <div className="col-lg-4 col-sm-12 col-md-12">
                 <div className="card">

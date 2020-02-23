@@ -7,9 +7,7 @@ import AdvancePayment from "../EmployeeAction/AdvancePayment";
 
 const statusType = {
     0: { bg: "bg-danger", title: "Pasif" },
-    1: { bg: "bg-success", title: "Aktif" },
-    2: { bg: "bg-azure", title: "Donuk" },
-    3: { bg: "bg-indigo", title: "Ön Kayıt" }
+    1: { bg: "bg-success", title: "Aktif" }
 };
 
 export class PersonCard extends Component {
