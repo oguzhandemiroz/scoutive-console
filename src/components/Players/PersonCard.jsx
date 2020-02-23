@@ -30,6 +30,7 @@ export class PersonCard extends Component {
     render() {
         const { player } = this.state;
         const { data, history } = this.props;
+        console.log(data.status);
         return (
             <div className="col-lg-4 col-sm-12 col-md-12">
                 <div className="card">
@@ -46,9 +47,14 @@ export class PersonCard extends Component {
                                         style={{ backgroundImage: `url(${data.image})` }}>
                                         <span
                                             data-toggle="tooltip"
-                                            title={statusType[data.status || 1].title + " Öğrenci"}
+                                            title={
+                                                statusType[data.status !== undefined ? data.status : 1].title +
+                                                " Öğrenci"
+                                            }
                                             className={`avatar-sm avatar-status ${
-                                                !data.is_trial ? statusType[data.status || 1].bg : statusType[3].bg
+                                                !data.is_trial
+                                                    ? statusType[data.status !== undefined ? data.status : 1].bg
+                                                    : statusType[3].bg
                                             }`}
                                         />
                                     </span>
