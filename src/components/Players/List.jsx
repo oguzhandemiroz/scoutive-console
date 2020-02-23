@@ -3,16 +3,11 @@ import { datatable_turkish, getCookie } from "../../assets/js/core";
 import ep from "../../assets/js/urls";
 import { fatalSwal, errorSwal } from "../Alert.jsx";
 import ReactDOM from "react-dom";
-import { BrowserRouter, Link } from "react-router-dom";
-import { fullnameGenerator, nullCheck, formatPhone } from "../../services/Others";
+import { fullnameGenerator, nullCheck, formatPhone, formatDate } from "../../services/Others";
 import { GetPlayerParents } from "../../services/Player";
-import ListFilter from "./ListFilter";
-import GroupChange from "../PlayerAction/GroupChange";
 import Vacation from "../PlayerAction/Vacation";
 import ActionButton from "../Players/ActionButton";
 import _ from "lodash";
-import moment from "moment";
-import "moment/locale/tr";
 import "../../assets/css/datatables.responsive.css";
 const $ = require("jquery");
 $.DataTable = require("datatables.net-responsive");
@@ -397,7 +392,7 @@ class Table extends Component {
                     },
                     {
                         data: "fee",
-                        responsivePriority: 10009,
+                        responsivePriority: 10010,
                         render: function(data, type, row) {
                             const { is_trial, payment_type } = row;
                             if (type === "sort" || type === "type") {
@@ -423,7 +418,7 @@ class Table extends Component {
                     },
                     {
                         data: "point",
-                        responsivePriority: 10010,
+                        responsivePriority: 10011,
                         className: "none",
                         render: function(data) {
                             if (data && data !== "") return data;
@@ -432,7 +427,7 @@ class Table extends Component {
                     },
                     {
                         data: "foot",
-                        responsivePriority: 10011,
+                        responsivePriority: 10012,
                         className: "none",
                         render: function(data) {
                             if (data && data !== "") return footType[data];
@@ -441,7 +436,7 @@ class Table extends Component {
                     },
                     {
                         data: "position",
-                        responsivePriority: 10012,
+                        responsivePriority: 10013,
                         className: "none",
                         render: function(data) {
                             if (data && data !== "") return data.name;
@@ -450,20 +445,21 @@ class Table extends Component {
                     },
                     {
                         data: "birthday",
-                        responsivePriority: 10008,
+                        responsivePriority: 10009,
                         render: function(data, type, row) {
                             if (type === "sort" || type === "type") {
                                 return data;
                             }
                             if (type === "display") {
-                                return moment(data).format("LL");
+                                return formatDate(data, "LL");
                             }
 
-                            return moment(data).format("LL");
+                            return formatDate(data, "LL");
                         }
                     },
                     {
                         data: "groups",
+                        responsivePriority: 10008,
                         render: function(data, type, row) {
                             if (type === "sort" || type === "type") {
                                 return _(data)
@@ -485,6 +481,20 @@ class Table extends Component {
                         responsivePriority: 10001,
                         render: function(data, type, row) {
                             return `<span class="status-icon bg-${dailyType[data][1]}"></span> ${dailyType[data][0]}`;
+                        }
+                    },
+                    {
+                        data: "created_date",
+                        responsivePriority: 10010,
+                        render: function(data, type, row) {
+                            if (type === "sort" || type === "type") {
+                                return data;
+                            }
+                            if (type === "display") {
+                                return formatDate(data, "LL");
+                            }
+
+                            return formatDate(data, "LL");
                         }
                     },
                     {
@@ -599,15 +609,15 @@ class Table extends Component {
             <div>
                 <table
                     id="player-list"
-                    className="table card-table w-100 table-vcenter table-striped text-nowrap datatable dataTable">
+                    className="table card-table w-100 table-vcenter table-striped text-nowrap table-bordered datatable dataTable">
                     <thead>
                         <tr>
                             <th>ID</th>
                             <th className="no-sort">T.C.</th>
-                            <th className="w-1 no-sort control" />
+                            <th className="w-1 no-sort text-center control" />
                             <th className="w-1 text-center no-sort">#</th>
                             <th className="name">AD SOYAD</th>
-                            <th className="parents">VELİSİ</th>
+                            <th className="parents no-sort">VELİSİ</th>
                             <th className="fee">AİDAT</th>
                             <th className="point">GENEL PUAN</th>
                             <th className="foot">KULLANDIĞI AYAK</th>
@@ -615,7 +625,10 @@ class Table extends Component {
                             <th className="birthday">DOĞUM GÜNÜ</th>
                             <th className="groups">GRUP</th>
                             <th className="daily" title="Yoklama Durumu">
-                                YOKLAMA DURUMU
+                                YOKL. DURUMU
+                            </th>
+                            <th className="created_date" title="Oluşturma Tarihi">
+                                OLUŞT. TARİHİ
                             </th>
                             <th className="no-sort action" />
                         </tr>

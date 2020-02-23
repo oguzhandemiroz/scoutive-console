@@ -417,7 +417,7 @@ export class List extends Component {
             <div>
                 <table
                     id="parent-list"
-                    className="table table-hover w-100 card-table table-vcenter text-nowrap datatable table-striped">
+                    className="table table-hover w-100 card-table table-vcenter text-nowrap table-bordered datatable table-striped">
                     <thead>
                         <tr>
                             <th className="security no-sort">T.C. KİMLİK NO</th>

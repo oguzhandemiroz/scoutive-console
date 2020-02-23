@@ -7,7 +7,7 @@ import { BrowserRouter, Link } from "react-router-dom";
 import Vacation from "../EmployeeAction/Vacation";
 import Password from "../EmployeeAction/Password";
 import AdvancePayment from "../EmployeeAction/AdvancePayment";
-import { fullnameGenerator } from "../../services/Others";
+import { fullnameGenerator, formatDate } from "../../services/Others";
 import ActionButton from "./ActionButton";
 import ReactDOM from "react-dom";
 import Inputmask from "inputmask";
@@ -199,7 +199,7 @@ class Table extends Component {
                     },
                     {
                         data: "image",
-                        class: "text-center",
+                        class: "text-center px-3",
                         render: function(data, type, row) {
                             var name = row.name;
                             var surname = row.surname;
@@ -274,6 +274,19 @@ class Table extends Component {
                         }
                     },
                     {
+                        data: "created_date",
+                        render: function(data, type, row) {
+                            if (type === "sort" || type === "type") {
+                                return data;
+                            }
+                            if (type === "display") {
+                                return formatDate(data, "LL");
+                            }
+
+                            return formatDate(data, "LL");
+                        }
+                    },
+                    {
                         data: null
                     }
                 ]
@@ -305,12 +318,12 @@ class Table extends Component {
             <div>
                 <table
                     id="employee-list"
-                    className="table card-table table-vcenter w-100 table-striped text-nowrap datatable">
+                    className="table card-table table-vcenter w-100 table-striped text-nowrap table-bordered datatable">
                     <thead>
                         <tr>
                             <th>ID</th>
                             <th className="w-1 no-sort">T.C.</th>
-                            <th className="w-1 text-center no-sort">#</th>
+                            <th className="w-1 text-center px-3 no-sort">#</th>
                             <th className="w-1 name">AD SOYAD</th>
                             <th className="phone">TELEFON</th>
                             <th className="position">POZİSYON</th>
@@ -318,6 +331,9 @@ class Table extends Component {
                             <th className="groups">GRUP</th>
                             <th className="status" title="Yoklama Durumu">
                                 YOKL. DURUMU
+                            </th>
+                            <th className="created_date" title="Oluşturma Tarihi">
+                                OLUŞT. TARİHİ
                             </th>
                             <th className="no-sort action" />
                         </tr>
