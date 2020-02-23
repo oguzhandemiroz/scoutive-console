@@ -1,4 +1,5 @@
 import Swal from "sweetalert2";
+import "../assets/css/custom-theme-swal.css";
 import { Logout } from "../services/Login.jsx";
 
 const Toast = Swal.mixin({
