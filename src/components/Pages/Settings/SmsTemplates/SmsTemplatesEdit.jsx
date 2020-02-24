@@ -47,10 +47,11 @@ export class SmsTemplatesEdit extends Component {
 
     handleSubmit = () => {
         const { uid, detail } = this.state;
-        if (formValid(this.state)) {
+        if (detail.content.trim() && formValid(this.state)) {
             UpdateMessageTemplate({
                 uid: uid,
-                ...detail
+                ...detail,
+                content: detail.content.trim()
             }).then(response => {
                 if (response) {
                     if (response.status.code === 1020) this.reload();
@@ -61,7 +62,7 @@ export class SmsTemplatesEdit extends Component {
             this.setState(prevState => ({
                 formErrors: {
                     ...prevState.formErrors,
-                    content: detail.content ? "" : "is-invalid",
+                    content: detail.content.trim() ? "" : "is-invalid",
                     template_name: detail.template_name ? "" : "is-invalid"
                 }
             }));
