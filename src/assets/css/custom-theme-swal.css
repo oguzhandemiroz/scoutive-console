@@ -40,7 +40,7 @@
     padding: 0.625em;
     overflow-y: hidden;
     background: rgba(54, 70, 93, 0.99);
-    box-shadow: 0 0 0.625em #d9d9d9;
+    box-shadow: 0 0 0.225em #d9d9d9;
 }
 .swal2-popup.swal2-toast .swal2-header {
     flex-direction: row;
@@ -1474,6 +1474,8 @@ body.swal2-toast-column .swal2-toast .swal2-validation-message {
     font-size: 1em;
 }
 
+/* CUSTOM */
+
 .swal2-container.swal2-shown {
-    background-color: rgba(73, 94, 125, 0.79)
+    background-color: rgba(54, 70, 93, 0.92);
 }

@@ -12,6 +12,7 @@ const Toast = Swal.mixin({
 const showSwal = options => {
     try {
         return Swal.fire({
+            allowOutsideClick: false,
             heightAuto: false,
             allowEnterKey: false,
             confirmButtonText: "Tamam",
@@ -23,7 +24,6 @@ const showSwal = options => {
 const errorSwal = (data, options) => {
     try {
         showSwal({
-            allowOutsideClick: false,
             type: "error",
             title: "Hata Kodu: " + data.code,
             text: data.description,
@@ -35,7 +35,6 @@ const errorSwal = (data, options) => {
 const fatalSwal = logout => {
     try {
         showSwal({
-            allowOutsideClick: false,
             type: "error",
             title: "Hata Kodu: 1050",
             text: "Bir hata oluştu. Üzerinde çalışıyoruz. Lütfen daha sonra tekrar deneyin...",

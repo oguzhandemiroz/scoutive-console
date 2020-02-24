@@ -543,7 +543,6 @@ export class Salary extends Component {
 				Onaylıyor musunuz?`,
 				confirmButtonText: "Onaylıyorum",
 				cancelButtonText: "İptal",
-				confirmButtonColor: "#467fcf",
 				cancelButtonColor: "#868e96",
 				showCancelButton: true,
 				reverseButtons: true
@@ -578,9 +577,14 @@ export class Salary extends Component {
 			showSwal({
 				type: "question",
 				title: "Ödeme Tutarı",
-				html: `<b>${advance_payment.amount.format()} ₺</b> tutarındaki avansın ne kadarını kesinti olarak uygulamak istiyorsunuz? <hr> Toplam kesinti tutarı: <b>${(
+				html: `<b>${advance_payment.amount.format()} ₺</b> tutarındaki avansın ne kadarını kesinti olarak uygulamak istiyorsunuz?<hr>Toplam kesinti tutarı: <b>${(
 					advance_payment.paid_amount + total
 				).format()} ₺</b>`,
+				confirmButtonText: "Onayla",
+				cancelButtonText: "İptal",
+				cancelButtonColor: "#868e96",
+				showCancelButton: true,
+				reverseButtons: true,
 				input: "number",
 				inputValue: totalDeduction,
 				inputAttributes: {
@@ -600,7 +604,6 @@ export class Salary extends Component {
 								).format()} ₺</b> kesinti uygulanacaktır.<br> Onaylıyor musunuz?`,
 								confirmButtonText: "Onaylıyorum",
 								cancelButtonText: "İptal",
-								confirmButtonColor: "#467fcf",
 								cancelButtonColor: "#868e96",
 								showCancelButton: true,
 								reverseButtons: true

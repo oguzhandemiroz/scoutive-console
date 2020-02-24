@@ -602,7 +602,6 @@ export class Add extends Component {
             confirmButtonText: "Onayla",
             showCancelButton: true,
             cancelButtonText: "İptal",
-            confirmButtonColor: "#467fcf",
             cancelButtonColor: "#868e96",
             reverseButtons: true,
             input: "text",

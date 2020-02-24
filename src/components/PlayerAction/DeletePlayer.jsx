@@ -14,9 +14,11 @@ const reload = history => {
 const deletePlayer = (uid, to, name, history) => {
 	try {
 		Swal.mixin({
+            allowOutsideClick: false,
 			heightAuto: false,
 			allowEnterKey: false,
 			confirmButtonText: "Evet &rarr;",
+            showCloseButton: true,
 			showCancelButton: true,
 			cancelButtonText: "Hayır",
 			confirmButtonColor: "#cd201f",

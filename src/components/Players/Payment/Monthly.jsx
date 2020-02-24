@@ -170,7 +170,7 @@ export class Monthly extends Component {
                 confirmButtonText: "Devam et",
                 cancelButtonText: "İptal",
                 confirmButtonColor: "#cd201f",
-                cancelButtonColor: "#467fcf",
+                cancelButtonColor: "#868e96",
                 showCancelButton: true,
                 reverseButtons: true
             });
@@ -463,6 +463,11 @@ export class Monthly extends Component {
             )}</strong> tarihinde <strong>${formatMoney(amount)}</strong> ödeme yapmıştır. <strong>${formatMoney(
                 totalDept
             )} </strong> tutarında borcu bulunmaktadır.<hr>Ne kadarını ödemek istiyorsunuz?`,
+            confirmButtonText: "Onayla",
+            cancelButtonText: "İptal",
+            cancelButtonColor: "#868e96",
+            showCancelButton: true,
+            reverseButtons: true,
             input: "number",
             inputValue: totalDept,
             inputAttributes: {
@@ -486,7 +491,6 @@ export class Monthly extends Component {
                             }</strong> adlı kasa hesabına yatırılacaktır.<br>Onaylıyor musunuz?`,
                             confirmButtonText: "Onaylıyorum",
                             cancelButtonText: "İptal",
-                            confirmButtonColor: "#467fcf",
                             cancelButtonColor: "#868e96",
                             showCancelButton: true,
                             reverseButtons: true
