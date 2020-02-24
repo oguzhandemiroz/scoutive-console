@@ -46,9 +46,14 @@ export class PersonCard extends Component {
                                         style={{ backgroundImage: `url(${data.image})` }}>
                                         <span
                                             data-toggle="tooltip"
-                                            title={statusType[data.status || 1].title + " Öğrenci"}
+                                            title={
+                                                statusType[data.status !== undefined ? data.status : 1].title +
+                                                " Öğrenci"
+                                            }
                                             className={`avatar-sm avatar-status ${
-                                                !data.is_trial ? statusType[data.status || 1].bg : statusType[3].bg
+                                                !data.is_trial
+                                                    ? statusType[data.status !== undefined ? data.status : 1].bg
+                                                    : statusType[3].bg
                                             }`}
                                         />
                                     </span>
