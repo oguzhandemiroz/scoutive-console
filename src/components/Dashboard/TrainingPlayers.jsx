@@ -1,11 +1,16 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { nullCheck, fullnameGenerator, avatarPlaceholder } from "../../services/Others";
-import moment from "moment";
 
 const noPlayers = () => (
     <div className="col-12 font-italic text-muted text-center mt-2">Gruba kayıtlı öğrenci bulunamadı...</div>
 );
+
+const statusType = {
+    0: { bg: "bg-danger", title: "Pasif Öğrenci" },
+    1: { bg: "bg-success", title: "Aktif Öğrenci" },
+    2: { bg: "bg-azure", title: "Donuk Öğrenci" }
+};
 
 export class TrainingPlayers extends Component {
     constructor(props) {
@@ -54,18 +59,35 @@ export class TrainingPlayers extends Component {
                                 <div className="row gutters-xs">
                                     {data.players.length > 0
                                         ? data.players
-                                              .sort((a, b) => (b.status === 1 ? 1 : -1))
+                                              .sort((a, b) => (b.daily === 1 ? 1 : -1))
                                               .map((el, key) => {
                                                   return (
                                                       <div className="col-6 my-3" key={key.toString()}>
                                                           <div className="row">
                                                               <div className="col-auto">
                                                                   <span
-                                                                      className="avatar"
+                                                                      className="avatar avatar-xs"
                                                                       style={{ backgroundImage: `url(${el.image})` }}>
                                                                       {el.image
                                                                           ? ""
                                                                           : avatarPlaceholder(el.name, el.surname)}
+                                                                      <span
+                                                                          data-toggle="tooltip"
+                                                                          title={
+                                                                              statusType[
+                                                                                  el.status !== undefined
+                                                                                      ? el.status
+                                                                                      : 1
+                                                                              ].title
+                                                                          }
+                                                                          className={`avatar-xs avatar-status ${
+                                                                              statusType[
+                                                                                  el.status !== undefined
+                                                                                      ? el.status
+                                                                                      : 1
+                                                                              ].bg
+                                                                          }`}
+                                                                      />
                                                                   </span>
                                                               </div>
                                                               <div className="col pl-0">
@@ -76,15 +98,15 @@ export class TrainingPlayers extends Component {
                                                                   </Link>
                                                                   <div
                                                                       className={`badge ${
-                                                                          el.status === 1
+                                                                          el.daily === 1
                                                                               ? "badge-success"
-                                                                              : el.status === 0 || el.status === -1
+                                                                              : el.daily === 0 || el.daily === -1
                                                                               ? "badge-danger"
                                                                               : "badge-warning"
                                                                       }`}>
-                                                                      {el.status === 1
+                                                                      {el.daily === 1
                                                                           ? "Antrenmanda"
-                                                                          : el.status === 0 || el.status === -1
+                                                                          : el.daily === 0 || el.daily === -1
                                                                           ? "Gelmedi"
                                                                           : "İzinli"}
                                                                   </div>

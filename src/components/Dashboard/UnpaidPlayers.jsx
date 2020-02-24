@@ -7,6 +7,12 @@ import ActionButton from "../../components/Players/ActionButton";
 
 const $ = require("jquery");
 
+const statusType = {
+    0: { bg: "bg-danger", title: "Pasif Öğrenci" },
+    1: { bg: "bg-success", title: "Aktif Öğrenci" },
+    2: { bg: "bg-azure", title: "Donuk Öğrenci" }
+};
+
 const noRow = loading =>
     loading ? (
         <div className={`dimmer active p-3 mb-5`}>
@@ -98,6 +104,13 @@ export class UnpaidPlayer extends Component {
                                                   className="avatar avatar-xs"
                                                   style={{ backgroundImage: `url(${el.image})` }}>
                                                   {el.image ? "" : avatarPlaceholder(el.name, el.surname)}
+                                                  <span
+                                                      data-toggle="tooltip"
+                                                      title={statusType[el.status !== undefined ? el.status : 1].title}
+                                                      className={`avatar-xs avatar-status ${
+                                                          statusType[el.status !== undefined ? el.status : 1].bg
+                                                      }`}
+                                                  />
                                               </span>
                                           </div>
                                           <div className="col px-1">
@@ -147,6 +160,7 @@ export class UnpaidPlayer extends Component {
                                                       "certificate"
                                                   ]}
                                                   data={{
+                                                      status: el.status,
                                                       to: el.uid,
                                                       name: fullnameGenerator(el.name, el.surname),
                                                       is_trial: 0

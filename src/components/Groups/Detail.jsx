@@ -6,7 +6,14 @@ import { DetailGroup, DeleteGroup } from "../../services/Group";
 import { nullCheck, groupAgeSplit, fullnameGenerator, formatDate, avatarPlaceholder } from "../../services/Others";
 import { ListPlayers } from "../../services/Player";
 import { Toast, showSwal } from "../Alert";
+
 const $ = require("jquery");
+
+const statusType = {
+    0: { bg: "bg-danger", title: "Pasif Öğrenci" },
+    1: { bg: "bg-success", title: "Aktif Öğrenci" },
+    2: { bg: "bg-azure", title: "Donuk Öğrenci" }
+};
 
 export class Detail extends Component {
     constructor(props) {
@@ -269,8 +276,22 @@ export class Detail extends Component {
                                                                     className="avatar avatar-lg my-4"
                                                                     style={{ backgroundImage: `url(${el.image})` }}>
                                                                     {el.image
-                                                                        ? null
+                                                                        ? ""
                                                                         : avatarPlaceholder(el.name, el.surname)}
+                                                                    <span
+                                                                        data-toggle="tooltip"
+                                                                        title={
+                                                                            statusType[
+                                                                                el.status !== undefined ? el.status : 1
+                                                                            ].title
+                                                                        }
+                                                                        style={{ width: "1rem", height: "1rem" }}
+                                                                        className={`avatar-status ${
+                                                                            statusType[
+                                                                                el.status !== undefined ? el.status : 1
+                                                                            ].bg
+                                                                        }`}
+                                                                    />
                                                                 </span>
                                                                 <Link
                                                                     className="mb-0 h5 d-block"
