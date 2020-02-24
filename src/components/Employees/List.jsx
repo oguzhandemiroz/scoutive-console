@@ -69,7 +69,7 @@ class Table extends Component {
                         responsivePriority: 1,
                         render: function(data, type, row) {
                             const fullname = fullnameGenerator(data, row.surname);
-                            if (type === "sort" || type === "type") {
+                            if (["sort", "type"].indexOf(type) > -1) {
                                 return fullname;
                             }
                         },
@@ -217,7 +217,7 @@ class Table extends Component {
                         class: "w-1",
                         render: function(data, type, row) {
                             const fullname = fullnameGenerator(data, row.surname);
-                            if (type === "sort" || type === "type") {
+                            if (["sort", "type"].indexOf(type) > -1) {
                                 return fullname;
                             }
                             if (data)
@@ -238,7 +238,7 @@ class Table extends Component {
                     {
                         data: "salary",
                         render: function(data, type, row) {
-                            if (type === "sort" || type === "type") {
+                            if (["sort", "type"].indexOf(type) > -1) {
                                 return data;
                             } else {
                                 var convert = typeof data === "number" ? data.format(2, 3, ".", ",") : data;
@@ -249,19 +249,15 @@ class Table extends Component {
                     },
                     {
                         data: "groups",
-                        render: function(data, type, row) {
-                            if (type === "sort" || type === "type") {
+                        responsivePriority: 10008,
+                        render: function(data, type) {
+                            if (["sort", "type", "display"].indexOf(type) > -1) {
                                 return _(data)
                                     .groupBy("label")
                                     .keys("label")
                                     .join(", ");
                             }
-                            if (type === "display") {
-                                return _(data)
-                                    .groupBy("label")
-                                    .keys("label")
-                                    .join(", ");
-                            }
+
                             return JSON.stringify(data);
                         }
                     },
@@ -275,12 +271,10 @@ class Table extends Component {
                     },
                     {
                         data: "created_date",
-                        render: function(data, type, row) {
-                            if (type === "sort" || type === "type") {
+                        responsivePriority: 10010,
+                        render: function(data, type) {
+                            if (["sort", "type"].indexOf(type) > -1) {
                                 return data;
-                            }
-                            if (type === "display") {
-                                return formatDate(data, "LL");
                             }
 
                             return formatDate(data, "LL");

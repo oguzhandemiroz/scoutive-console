@@ -130,7 +130,7 @@ export class ListRecipient extends Component {
                         responsivePriority: 1,
                         render: function(data, type, row) {
                             const fullname = fullnameGenerator(data, row.surname);
-                            if (type === "sort" || type === "type") {
+                            if (["sort", "type"].indexOf(type) > -1) {
                                 return fullname;
                             }
                         },
