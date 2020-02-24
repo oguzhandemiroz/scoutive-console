@@ -146,7 +146,7 @@ export class List extends Component {
                         responsivePriority: 1,
                         render: function(data, type, row) {
                             const fullname = fullnameGenerator(data, row.surname);
-                            if (type === "sort" || type === "type") {
+                            if (["sort", "type"].indexOf(type) > -1) {
                                 return fullname;
                             }
                         },
@@ -242,7 +242,7 @@ export class List extends Component {
                         responsivePriority: 1,
                         render: function(data, type, row) {
                             const fullname = fullnameGenerator(data, row.surname);
-                            if (type === "sort" || type === "type") {
+                            if (["sort", "type"].indexOf(type) > -1) {
                                 return fullname;
                             }
                             if (data)
@@ -417,7 +417,7 @@ export class List extends Component {
             <div>
                 <table
                     id="parent-list"
-                    className="table table-hover w-100 card-table table-vcenter text-nowrap datatable table-striped">
+                    className="table table-hover w-100 card-table table-vcenter text-nowrap table-bordered datatable table-striped">
                     <thead>
                         <tr>
                             <th className="security no-sort">T.C. KİMLİK NO</th>

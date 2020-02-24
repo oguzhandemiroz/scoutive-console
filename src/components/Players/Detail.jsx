@@ -85,7 +85,8 @@ export class Detail extends Component {
             attributes,
             loading,
             parents,
-            show
+            show,
+            updated_date
         } = this.state;
         const { match } = this.props;
         return (
@@ -99,7 +100,7 @@ export class Detail extends Component {
                 <div className="row">
                     <PersonCard data={this.state} history={this.props.history} />
                     <div className="col-lg-8 col-sm-12 col-md-12">
-                        <div className="card">
+                        <div className="card mb-2">
                             <div className="card-header">
                                 <h3 className="card-title">Detay Bilgiler</h3>
                             </div>
@@ -263,6 +264,9 @@ export class Detail extends Component {
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                        <div className="text-right font-italic text-muted">
+                            Son Düzenleme Tarihi: <strong>{formatDate(updated_date, "LLLL:ss")}</strong>
                         </div>
                     </div>
                 </div>

@@ -139,7 +139,7 @@ export class Detail extends Component {
                     responsivePriority: 1,
                     render: function(data, type, row) {
                         const fullname = fullnameGenerator(data, row.surname);
-                        if (type === "sort" || type === "type") {
+                        if (["sort", "type"].indexOf(type) > -1) {
                             return fullname;
                         }
                     },
@@ -219,7 +219,7 @@ export class Detail extends Component {
                     data: "name",
                     render: function(data, type, row) {
                         const fullname = fullnameGenerator(data, row.surname);
-                        if (type === "sort" || type === "type") {
+                        if (["sort", "type"].indexOf(type) > -1) {
                             return fullname;
                         }
                         if (data)

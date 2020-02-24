@@ -174,7 +174,7 @@ export class Detail extends Component {
                     responsivePriority: 1,
                     render: function(data, type, row) {
                         const fullname = fullnameGenerator(data, row.surname);
-                        if (type === "sort" || type === "type") {
+                        if (["sort", "type"].indexOf(type) > -1) {
                             return fullname;
                         }
                     },
@@ -296,7 +296,7 @@ export class Detail extends Component {
                     responsivePriority: 1,
                     render: function(data, type, row) {
                         const fullname = fullnameGenerator(data, row.surname);
-                        if (type === "sort" || type === "type") {
+                        if (["sort", "type"].indexOf(type) > -1) {
                             return fullname;
                         }
                         if (data)
@@ -308,7 +308,7 @@ export class Detail extends Component {
                     data: "birthday",
                     responsivePriority: 10005,
                     render: function(data, type, row) {
-                        if (type === "sort" || type === "type") {
+                        if (["sort", "type"].indexOf(type) > -1) {
                             return data ? data.split(".")[0] : data;
                         }
 
@@ -318,19 +318,15 @@ export class Detail extends Component {
                 },
                 {
                     data: "groups",
-                    render: function(data, type, row) {
-                        if (type === "sort" || type === "type") {
+                    responsivePriority: 10008,
+                    render: function(data, type) {
+                        if (["sort", "type", "display"].indexOf(type) > -1) {
                             return _(data)
                                 .groupBy("label")
                                 .keys("label")
                                 .join(", ");
                         }
-                        if (type === "display") {
-                            return _(data)
-                                .groupBy("label")
-                                .keys("label")
-                                .join(", ");
-                        }
+
                         return JSON.stringify(data);
                     }
                 },

@@ -134,6 +134,11 @@ export class PersonCard extends Component {
                                         <div className="form-control-plaintext">{formatDate(data.end_date, "LL")}</div>
                                     </div>
                                 ) : null}
+
+                                <div className="form-group">
+                                    <label className="form-label">Oluşturma Tarihi</label>
+                                    <div className="form-control-plaintext">{formatDate(data.created_date, "LL")}</div>
+                                </div>
                             </div>
                         </div>
                     </div>
