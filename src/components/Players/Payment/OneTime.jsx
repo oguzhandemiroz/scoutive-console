@@ -50,6 +50,11 @@ export class OneTime extends Component {
             html: `<strong>${label}</strong> adlı öğrencinin, <strong>${formatMoney(
                 totalDept
             )} </strong> tutarında taksit ödemesi yapılacaktır.<hr>Ne kadarını ödemek istiyorsunuz?`,
+            confirmButtonText: "Onayla",
+            cancelButtonText: "İptal",
+            cancelButtonColor: "#868e96",
+            showCancelButton: true,
+            reverseButtons: true,
             input: "number",
             inputValue: totalDept,
             inputAttributes: {
@@ -71,7 +76,6 @@ export class OneTime extends Component {
                             }</strong> adlı kasa hesabına yatırılacaktır.<br>Onaylıyor musunuz?`,
                             confirmButtonText: "Onaylıyorum",
                             cancelButtonText: "İptal",
-                            confirmButtonColor: "#467fcf",
                             cancelButtonColor: "#868e96",
                             showCancelButton: true,
                             reverseButtons: true
