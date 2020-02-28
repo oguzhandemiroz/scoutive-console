@@ -59,7 +59,7 @@ export class Detail extends Component {
                             toast: true,
                             showConfirmButton: false,
                             position: "top-end",
-                            timer: 100000,
+                            timer: 10000,
                             customClass: {
                                 popup: "flex-column",
                                 content: "mt-3"
