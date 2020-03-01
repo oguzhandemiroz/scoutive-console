@@ -36,7 +36,7 @@ class App extends Component {
                 <div className="flex-fill">
                     <Warnings />
                     <HeaderMenu />
-                    <Menu layout={this.props.match.url} />
+                    <Menu />
                     {/*  <CommunicationService /> */}
                     <div className="my-3 my-md-5">
                         <Switch>

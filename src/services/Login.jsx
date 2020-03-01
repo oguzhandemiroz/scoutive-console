@@ -55,6 +55,7 @@ const Logout = () => {
 
 const SetSchoolInfoToLocalStorage = (data, redirect) => {
     try {
+        console.log(data);
         localStorage.setItem("sName", data.name + (data.surname ? " " + data.surname : ""));
         localStorage.setItem("UID", data.uid);
         localStorage.setItem("sID", data.sid);

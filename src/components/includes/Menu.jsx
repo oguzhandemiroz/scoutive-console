@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import ContentLoader from "react-content-loader";
 import { NavLink } from "react-router-dom";
 
 const menu = [
@@ -137,6 +138,28 @@ const menu = [
     } */
 ];
 
+{
+/* <ContentLoader
+speed={1.5}
+width={600}
+height={55}
+viewBox="0 0 600 55"
+backgroundColor="#f3f3f3"
+foregroundColor="#999fac">
+<circle cx="10" cy="27.5" r="10" />
+<rect x="25" y="23.5" rx="4" ry="4" width="70" height="8" />
+<circle cx="130" cy="27.5" r="10" />
+<rect x="145" y="23.5" rx="4" ry="4" width="70" height="8" />
+<circle cx="250" cy="27.5" r="10" />
+<rect x="265" y="23.5" rx="4" ry="4" width="70" height="8" />
+<circle cx="370" cy="27.5" r="10" />
+<rect x="385" y="23.5" rx="4" ry="4" width="70" height="8" />
+<circle cx="490" cy="27.5" r="10" />
+<rect x="505" y="23.5" rx="4" ry="4" width="70" height="8" />
+</ContentLoader> 
+*/
+}
+
 class Menu extends Component {
     render() {
         return (
@@ -145,35 +168,37 @@ class Menu extends Component {
                     <div className="container">
                         <div className="row align-items-center">
                             <div className="col-lg order-lg-first">
-                                <ul className="nav nav-tabs border-0 flex-column flex-lg-row">
-                                    {menu.map((el, key) => {
-                                        if (el.condition) {
-                                            return (
-                                                <li key={key.toString()} className={el.li}>
-                                                    <NavLink {...el.navlink} data-toggle={el.dataToggle}>
-                                                        <i className={el.icon} /> {el.text}
-                                                        {el.child ? el.child() : null}
-                                                    </NavLink>
-                                                    {el.item ? (
-                                                        <div className={el.childDividerClass}>
-                                                            {el.item.map((ch, k) => {
-                                                                return (
-                                                                    <NavLink
-                                                                        key={k.toString()}
-                                                                        to={ch.to}
-                                                                        activeClassName={ch.activeClassName}
-                                                                        className={ch.className}>
-                                                                        <i className={ch.icon} /> {ch.childText}
-                                                                    </NavLink>
-                                                                );
-                                                            })}
-                                                        </div>
-                                                    ) : null}
-                                                </li>
-                                            );
-                                        }
-                                    })}
-                                </ul>
+                                {
+                                    <ul className="nav nav-tabs border-0 flex-column flex-lg-row">
+                                        {menu.map((el, key) => {
+                                            if (el.condition) {
+                                                return (
+                                                    <li key={key.toString()} className={el.li}>
+                                                        <NavLink {...el.navlink} data-toggle={el.dataToggle}>
+                                                            <i className={el.icon} /> {el.text}
+                                                            {el.child ? el.child() : null}
+                                                        </NavLink>
+                                                        {el.item ? (
+                                                            <div className={el.childDividerClass}>
+                                                                {el.item.map((ch, k) => {
+                                                                    return (
+                                                                        <NavLink
+                                                                            key={k.toString()}
+                                                                            to={ch.to}
+                                                                            activeClassName={ch.activeClassName}
+                                                                            className={ch.className}>
+                                                                            <i className={ch.icon} /> {ch.childText}
+                                                                        </NavLink>
+                                                                    );
+                                                                })}
+                                                            </div>
+                                                        ) : null}
+                                                    </li>
+                                                );
+                                            }
+                                        })}
+                                    </ul>
+                                }
                             </div>
                         </div>
                     </div>
