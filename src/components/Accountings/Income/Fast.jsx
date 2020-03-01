@@ -9,6 +9,7 @@ import { GetBudgets, GetPlayers, GetEmployees } from "../../../services/FillSele
 import Inputmask from "inputmask";
 import moment from "moment";
 import { showSwal } from "../../Alert";
+import Swal from "sweetalert2";
 import { formatMoney, clearMoney } from "../../../services/Others";
 const $ = require("jquery");
 
@@ -109,6 +110,10 @@ export class Fast extends Component {
 		this.listAccountingTypes();
 		this.listBudgets();
 	}
+
+    componentWillUnmount() {
+        Swal.close();
+    }
 
 	handleSubmit = e => {
 		e.preventDefault();

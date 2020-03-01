@@ -39,8 +39,8 @@
     width: auto;
     padding: 0.625em;
     overflow-y: hidden;
-    background: rgba(54, 70, 93, 0.99);
-    box-shadow: 0 0 0.225em #d9d9d9;
+    background: rgba(54, 70, 93, 0.99) !important;
+    box-shadow: 0 0 0.225em #d9d9d9 !important;
 }
 .swal2-popup.swal2-toast .swal2-header {
     flex-direction: row;
@@ -75,12 +75,12 @@
 .swal2-popup.swal2-toast .swal2-icon .swal2-icon-content {
     display: flex;
     align-items: center;
-    font-size: 1.8em;
+    font-size: 1.8em !important;
     font-weight: bold;
 }
 @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
     .swal2-popup.swal2-toast .swal2-icon .swal2-icon-content {
-        font-size: 0.25em;
+        font-size: 0.25em !important;
     }
 }
 .swal2-popup.swal2-toast .swal2-icon.swal2-success .swal2-success-ring {
@@ -109,7 +109,7 @@
     font-size: 1em;
 }
 .swal2-popup.swal2-toast .swal2-styled:focus {
-    box-shadow: 0 0 0 1px rgba(54, 70, 93, 0.99), 0 0 0 3px rgba(122, 145, 178, 0.99);
+    box-shadow: 0 0 0 1px rgba(54, 70, 93, 0.99), 0 0 0 3px rgba(122, 145, 178, 0.99) !important;
 }
 .swal2-popup.swal2-toast .swal2-success {
     border-color: #a5dc86;
@@ -191,7 +191,7 @@
     -webkit-overflow-scrolling: touch;
 }
 .swal2-container.swal2-backdrop-show {
-    background: rgba(54, 70, 93, 0.99);
+    background: rgba(54, 70, 93, 0.99) !important;
 }
 .swal2-container.swal2-backdrop-hide {
     background: transparent !important;
@@ -309,7 +309,7 @@
     padding: 1.25em;
     border: none;
     border-radius: 0.3125em;
-    background: transparent;
+    background: transparent !important;
     font-family: inherit;
     font-size: 1rem;
 }
@@ -331,7 +331,7 @@
     max-width: 100%;
     margin: 0 0 0.4em;
     padding: 0;
-    color: #fff;
+    color: #fff !important;
     font-size: 1.875em;
     font-weight: 600;
     text-align: center;
@@ -421,7 +421,7 @@
 }
 .swal2-styled:focus {
     outline: none;
-    box-shadow: 0 0 0 1px rgba(54, 70, 93, 0.99), 0 0 0 3px rgba(122, 145, 178, 0.99);
+    box-shadow: 0 0 0 1px rgba(54, 70, 93, 0.99), 0 0 0 3px rgba(122, 145, 178, 0.99) !important;
 }
 .swal2-styled::-moz-focus-inner {
     border: 0;
@@ -431,8 +431,8 @@
     justify-content: center;
     margin: 1.25em 0 0;
     padding: 1em 0 0;
-    border-top: 1px solid rgba(255, 255, 255, 0.2);
-    color: #fff;
+    border-top: 1px solid rgba(255, 255, 255, 0.2) !important;
+    color: #fff !important;
     font-size: 1em;
 }
 
@@ -451,7 +451,7 @@
 }
 
 .swal2-close {
-    position: fixed;
+    position: fixed !important;
     z-index: 2;
     /* 1617 */
     top: 0;
@@ -466,9 +466,9 @@
     border-radius: 0;
     outline: initial;
     background: transparent;
-    color: #fff;
+    color: #fff !important;
     font-family: serif;
-    font-size: 3em;
+    font-size: 3em !important;
     line-height: 1.2;
     cursor: pointer;
 }
@@ -486,7 +486,7 @@
     justify-content: center;
     margin: 0;
     padding: 0;
-    color: #fff;
+    color: #fff !important;
     font-size: 1.125em;
     font-weight: normal;
     line-height: normal;
@@ -511,9 +511,9 @@
     transition: border-color 0.3s, box-shadow 0.3s;
     border: 1px solid #d9d9d9;
     border-radius: 0.1875em;
-    background: rgba(73, 94, 125, 0.99);
+    background: rgba(73, 94, 125, 0.99) !important;
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.06);
-    color: #fff;
+    color: #fff !important;
     font-size: 1.125em;
 }
 .swal2-input.swal2-inputerror,
@@ -557,14 +557,14 @@
 
 .swal2-range {
     margin: 1em auto;
-    background: transparent;
+    background: transparent !important;
 }
 .swal2-range input {
     width: 80%;
 }
 .swal2-range output {
     width: 20%;
-    color: #fff;
+    color: #fff !important;
     font-weight: 600;
     text-align: center;
 }
@@ -585,7 +585,7 @@
 }
 
 .swal2-file {
-    background: rgba(73, 94, 125, 0.99);
+    background: rgba(73, 94, 125, 0.99) !important;
     font-size: 1.125em;
 }
 
@@ -598,7 +598,7 @@
     min-width: 50%;
     max-width: 100%;
     padding: 0.375em 0.625em;
-    background: rgba(73, 94, 125, 0.99);
+    background: rgba(73, 94, 125, 0.99) !important;
     color: #fff;
     font-size: 1.125em;
 }
@@ -607,8 +607,8 @@
 .swal2-checkbox {
     align-items: center;
     justify-content: center;
-    background: transparent;
-    color: #fff;
+    background: transparent !important;
+    color: #fff !important;
 }
 .swal2-radio label,
 .swal2-checkbox label {
@@ -626,8 +626,8 @@
     justify-content: center;
     padding: 0.625em;
     overflow: hidden;
-    background: transparent;
-    color: #fff;
+    background: transparent !important;
+    color: #fff !important;
     font-size: 1em;
     font-weight: 300;
 }
@@ -670,7 +670,7 @@
 }
 .swal2-icon.swal2-error {
     border-color: #f27474;
-    color: #f27474;
+    color: #f27474 !important;
 }
 .swal2-icon.swal2-error .swal2-x-mark {
     position: relative;
@@ -715,7 +715,7 @@
 }
 .swal2-icon.swal2-success {
     border-color: #a5dc86;
-    color: #a5dc86;
+    color: #a5dc86 !important;
 }
 .swal2-icon.swal2-success [class^="swal2-success-circular-line"] {
     position: absolute;
@@ -816,11 +816,11 @@
     background: #3085d6;
 }
 .swal2-progress-steps .swal2-progress-step.swal2-active-progress-step ~ .swal2-progress-step {
-    background: rgba(0, 0, 0, 0.2);
+    background: rgba(0, 0, 0, 0.2) !important;
     color: #fff;
 }
 .swal2-progress-steps .swal2-progress-step.swal2-active-progress-step ~ .swal2-progress-step-line {
-    background: rgba(0, 0, 0, 0.2);
+    background: rgba(0, 0, 0, 0.2) !important;
 }
 .swal2-progress-steps .swal2-progress-step-line {
     z-index: 10;
@@ -1305,7 +1305,7 @@
 }
 
 body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown) {
-    overflow: hidden;
+    overflow: hidden !important;
 }
 
 body.swal2-height-auto {
@@ -1376,7 +1376,7 @@ body.swal2-no-backdrop .swal2-container.swal2-bottom-right {
         overflow-y: scroll !important;
     }
     body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown) > [aria-hidden="true"] {
-        display: none;
+        display: none !important;
     }
     body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown) .swal2-container {
         position: static !important;
@@ -1384,7 +1384,7 @@ body.swal2-no-backdrop .swal2-container.swal2-bottom-right {
 }
 
 body.swal2-toast-shown .swal2-container {
-    background-color: transparent;
+    background-color: transparent !important;
 }
 body.swal2-toast-shown .swal2-container.swal2-top {
     top: 0;
@@ -1477,5 +1477,9 @@ body.swal2-toast-column .swal2-toast .swal2-validation-message {
 /* CUSTOM */
 
 .swal2-container.swal2-shown {
-    background-color: rgba(54, 70, 93, 0.92);
+    background-color: rgba(54, 70, 93, 0.92) !important;
+}
+
+.swal2-container.swal2-shown :not(.swal2-container.swal2-shown > .swal2-toast) {
+    background-color: red !important;
 }
