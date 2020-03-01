@@ -63,6 +63,12 @@ const feeStatus = {
     }
 };
 
+const statusType = {
+    0: { bg: "bg-danger", title: "Pasif Öğrenci" },
+    1: { bg: "bg-success", title: "Aktif Öğrenci" },
+    2: { bg: "bg-azure", title: "Donuk Öğrenci" }
+};
+
 const IconOption = props => (
     <Option {...props}>
         <span>
@@ -349,14 +355,15 @@ export class Monthly extends Component {
     };
 
     renderAvatar = () => {
-        const { image, name, surname } = this.props.state;
+        const { image, name, surname, status } = this.props.state;
         return (
-            <span
-                className="avatar avatar-xxl"
-                style={{
-                    backgroundImage: `url(${image})`
-                }}>
-                {!image ? avatarPlaceholder(name, surname) : null}
+            <span className="avatar avatar-xxl" style={{ backgroundImage: `url(${image})` }}>
+                {image ? "" : avatarPlaceholder(name, surname)}
+                <span
+                    data-toggle="tooltip"
+                    title={statusType[status !== undefined ? status : 1].title}
+                    className={`avatar-sm avatar-status ${statusType[status !== undefined ? status : 1].bg}`}
+                />
             </span>
         );
     };

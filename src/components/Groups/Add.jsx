@@ -10,6 +10,12 @@ import moment from "moment";
 import Inputmask from "inputmask";
 const $ = require("jquery");
 
+const statusType = {
+    0: { bg: "bg-danger", title: "Pasif Öğrenci" },
+    1: { bg: "bg-success", title: "Aktif Öğrenci" },
+    2: { bg: "bg-azure", title: "Donuk Öğrenci" }
+};
+
 Inputmask.extendDefaults({
     autoUnmask: true
 });
@@ -488,9 +494,21 @@ export class Add extends Component {
                                                             <span
                                                                 className="avatar avatar-lg my-4"
                                                                 style={{ backgroundImage: `url(${el.image})` }}>
-                                                                {el.image
-                                                                    ? null
-                                                                    : avatarPlaceholder(el.name, el.surname)}
+                                                                {el.image ? "" : avatarPlaceholder(el.name, el.surname)}
+                                                                <span
+                                                                    data-toggle="tooltip"
+                                                                    title={
+                                                                        statusType[
+                                                                            el.status !== undefined ? el.status : 1
+                                                                        ].title
+                                                                    }
+                                                                    style={{ width: "1rem", height: "1rem" }}
+                                                                    className={`avatar-status ${
+                                                                        statusType[
+                                                                            el.status !== undefined ? el.status : 1
+                                                                        ].bg
+                                                                    }`}
+                                                                />
                                                             </span>
                                                             <h5 className="mb-0">
                                                                 {fullnameGenerator(el.name, el.surname)}

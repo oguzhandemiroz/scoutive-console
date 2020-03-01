@@ -7,6 +7,12 @@ import moment from "moment";
 
 const $ = require("jquery");
 
+const statusType = {
+    0: { bg: "bg-danger", title: "Pasif Öğrenci" },
+    1: { bg: "bg-success", title: "Aktif Öğrenci" },
+    2: { bg: "bg-azure", title: "Donuk Öğrenci" }
+};
+
 const noRow = loading =>
     loading ? (
         <div className={`dimmer active p-3 mb-5`}>
@@ -95,12 +101,24 @@ export class UnpaidPlayerList extends Component {
                                               return (
                                                   <div className="row mb-4 pb-4" key={key.toString()}>
                                                       <div className="col-auto px-2">
-                                                          <Link
-                                                              to={"/app/players/detail/" + el.uid}
+                                                          <span
                                                               className="avatar avatar-xs"
                                                               style={{ backgroundImage: `url(${el.image})` }}>
                                                               {el.image ? "" : avatarPlaceholder(el.name, el.surname)}
-                                                          </Link>
+                                                              <span
+                                                                  data-toggle="tooltip"
+                                                                  title={
+                                                                      statusType[
+                                                                          el.status !== undefined ? el.status : 1
+                                                                      ].title
+                                                                  }
+                                                                  className={`avatar-xs avatar-status ${
+                                                                      statusType[
+                                                                          el.status !== undefined ? el.status : 1
+                                                                      ].bg
+                                                                  }`}
+                                                              />
+                                                          </span>
                                                       </div>
                                                       <div className="col px-1">
                                                           <Link
@@ -151,6 +169,7 @@ export class UnpaidPlayerList extends Component {
                                                                   "certificate"
                                                               ]}
                                                               data={{
+                                                                  status: el.status,
                                                                   to: el.uid,
                                                                   name: fullnameGenerator(el.name, el.surname),
                                                                   is_trial: 0
