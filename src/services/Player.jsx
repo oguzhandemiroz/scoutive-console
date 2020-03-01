@@ -106,8 +106,7 @@ const UpdatePlayer = data => {
                 } else {
                     Toast.fire({
                         type: "success",
-                        title: "Başarıyla güncellendi...",
-                        timer: 1000000
+                        title: "Başarıyla güncellendi..."
                     });
                 }
                 return response;
