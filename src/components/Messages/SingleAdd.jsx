@@ -177,32 +177,34 @@ export class SingleAdd extends Component {
     };
 
     handleChange = e => {
-        const { value, name } = e.target;
-        if (name === "content") {
-            const contentCheck = value
-                .replace(/\u00c2/g, "Â|")
-                .replace(/\u00e2/g, "â|")
-                .replace(/\u00fb/g, "û|")
-                .replace(/\u0131/g, "ı|")
-                .replace(/\u00e7/g, "ç|")
-                .replace(/\u011e/g, "Ğ|")
-                .replace(/\u011f/g, "ğ|")
-                .replace(/\u0130/g, "İ|")
-                .replace(/\u015e/g, "Ş|")
-                .replace(/\u015f/g, "ş|")
-                .replace(/\r?\n/g, " |");
-            this.setState({
-                contentLength: contentCheck,
-                cost: this.checkMessageCost(contentCheck)
-            });
-        }
-        this.setState(prevState => ({
-            [name]: name === "content" ? value.slice(0, 883) : value,
-            formErrors: {
-                ...prevState.formErrors,
-                [name]: value ? "" : "is-invalid"
+        try {
+            const { value, name } = e.target;
+            if (name === "content") {
+                const contentCheck = value
+                    .replace(/\u00c2/g, "Â|")
+                    .replace(/\u00e2/g, "â|")
+                    .replace(/\u00fb/g, "û|")
+                    .replace(/\u0131/g, "ı|")
+                    .replace(/\u00e7/g, "ç|")
+                    .replace(/\u011e/g, "Ğ|")
+                    .replace(/\u011f/g, "ğ|")
+                    .replace(/\u0130/g, "İ|")
+                    .replace(/\u015e/g, "Ş|")
+                    .replace(/\u015f/g, "ş|")
+                    .replace(/\r?\n/g, " |");
+                this.setState({
+                    contentLength: contentCheck,
+                    cost: this.checkMessageCost(contentCheck)
+                });
             }
-        }));
+            this.setState(prevState => ({
+                [name]: name === "content" ? value.slice(0, 883) : value,
+                formErrors: {
+                    ...prevState.formErrors,
+                    [name]: value.trim() ? "" : "is-invalid"
+                }
+            }));
+        } catch (e) {}
     };
 
     handleSelect = (value, name) => {
@@ -223,7 +225,7 @@ export class SingleAdd extends Component {
 
     handleRadio = e => {
         const { name, value } = e.target;
-        const { select, uid } = this.state;
+        const { select } = this.state;
         if (name === "selectSender" && parseInt(value) === 1) {
             if (!select.employees) {
                 ListEmployees().then(response => {
@@ -579,7 +581,7 @@ export class SingleAdd extends Component {
     };
 
     deliveryCost = () => {
-        const { content, select } = this.state;
+        const { content } = this.state;
         const template_cost = this.checkMessageCost(content) * 1;
         return (
             <div className="form-group">
@@ -604,7 +606,7 @@ export class SingleAdd extends Component {
     };
 
     summaryReport = () => {
-        const { when, person, content, school_fees, select, start } = this.state;
+        const { when, person, content, school_fees, start } = this.state;
         let cost = this.checkMessageCost(content) * 1;
         return (
             <div className="form-group">
