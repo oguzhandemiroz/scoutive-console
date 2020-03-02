@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-import ContentLoader from "react-content-loader";
 import { NavLink } from "react-router-dom";
+import { CheckPermissions } from "../../services/Others";
 
 const menu = [
     {
@@ -9,7 +9,7 @@ const menu = [
         icon: "fa fa-home",
         text: "Anasayfa",
         item: null,
-        condition: true
+        condition: () => true
     },
     {
         li: "nav-item dropdown",
@@ -24,17 +24,19 @@ const menu = [
                 className: "dropdown-item",
                 activeClassName: "active",
                 childText: "Veliler",
-                icon: "fa fa-user"
+                icon: "fa fa-user",
+                condition: () => CheckPermissions(["p_read", "p_write", "p_remove"], "||")
             },
             {
                 to: "/app/persons/employees",
                 className: "dropdown-item",
                 activeClassName: "active",
                 childText: "Personeller",
-                icon: "fa fa-user-tie"
+                icon: "fa fa-user-tie",
+                condition: () => CheckPermissions(["e_read", "e_write", "e_remove"], "||")
             }
         ],
-        condition: true
+        condition: () => CheckPermissions(["e_read", "e_write", "e_remove", "p_read", "p_write", "p_remove"], "||")
     },
     {
         li: "nav-item",
@@ -42,7 +44,7 @@ const menu = [
         icon: "fa fa-user-graduate",
         text: "Öğrenciler",
         item: null,
-        condition: true
+        condition: () => CheckPermissions(["p_read", "p_write", "p_remove"], "||")
     },
     /*  {
         li: "nav-item",
@@ -50,7 +52,7 @@ const menu = [
         icon: "fa fa-user-tie",
         text: "Personeller",
         item: null,
-        condition: true
+        condition: () => true
     },
     {
         li: "nav-item",
@@ -58,7 +60,7 @@ const menu = [
         icon: "fa fa-user",
         text: "Veliler",
         item: null,
-        condition: true
+        condition: () => true
     }, */
     {
         li: "nav-item",
@@ -66,7 +68,7 @@ const menu = [
         icon: "fa fa-th",
         text: "Gruplar",
         item: null,
-        condition: true
+        condition: () => CheckPermissions(["g_read", "g_write", "g_remove"], "||")
     },
     /* {
         li: "nav-item cursor-not-allowed",
@@ -84,7 +86,7 @@ const menu = [
                 (<i className="fe fe-lock mr-0" />)
             </span>
         ),
-        condition: true
+        condition: () => true
     }, */
     {
         li: "nav-item",
@@ -92,7 +94,7 @@ const menu = [
         icon: "fa fa-clock",
         text: "Yoklamalar",
         item: null,
-        condition: true
+        condition: () => CheckPermissions(["r_read", "r_write", "r_remove"], "||")
     },
     {
         li: "nav-item",
@@ -100,7 +102,7 @@ const menu = [
         icon: "fa fa-coins",
         text: "Kasa ve Banka",
         item: null,
-        condition: true
+        condition: () => CheckPermissions(["a_read", "a_write", "a_remove"], "||")
     },
     {
         li: "nav-item",
@@ -108,7 +110,7 @@ const menu = [
         icon: "fa fa-calculator",
         text: "Gelir/Gider",
         item: null,
-        condition: true
+        condition: () => CheckPermissions(["a_read", "a_write", "a_remove"], "||")
     },
     {
         li: "nav-item",
@@ -116,7 +118,7 @@ const menu = [
         icon: "fa fa-satellite-dish",
         text: "İletişim Merkezi",
         item: null,
-        condition: true
+        condition: () => CheckPermissions(["m_read", "m_write", "m_remove"], "||")
     }
     /* {
         li: "nav-item cursor-not-allowed",
@@ -134,12 +136,12 @@ const menu = [
                 (<i className="fe fe-lock mr-0" />)
             </span>
         ),
-        condition: true
+        condition: () => true
     } */
 ];
 
 {
-/* <ContentLoader
+    /* <ContentLoader
 speed={1.5}
 width={600}
 height={55}
@@ -171,7 +173,7 @@ class Menu extends Component {
                                 {
                                     <ul className="nav nav-tabs border-0 flex-column flex-lg-row">
                                         {menu.map((el, key) => {
-                                            if (el.condition) {
+                                            if (el.condition()) {
                                                 return (
                                                     <li key={key.toString()} className={el.li}>
                                                         <NavLink {...el.navlink} data-toggle={el.dataToggle}>
@@ -181,15 +183,17 @@ class Menu extends Component {
                                                         {el.item ? (
                                                             <div className={el.childDividerClass}>
                                                                 {el.item.map((ch, k) => {
-                                                                    return (
-                                                                        <NavLink
-                                                                            key={k.toString()}
-                                                                            to={ch.to}
-                                                                            activeClassName={ch.activeClassName}
-                                                                            className={ch.className}>
-                                                                            <i className={ch.icon} /> {ch.childText}
-                                                                        </NavLink>
-                                                                    );
+                                                                    if (ch.condition()) {
+                                                                        return (
+                                                                            <NavLink
+                                                                                key={k.toString()}
+                                                                                to={ch.to}
+                                                                                activeClassName={ch.activeClassName}
+                                                                                className={ch.className}>
+                                                                                <i className={ch.icon} /> {ch.childText}
+                                                                            </NavLink>
+                                                                        );
+                                                                    }
                                                                 })}
                                                             </div>
                                                         ) : null}
