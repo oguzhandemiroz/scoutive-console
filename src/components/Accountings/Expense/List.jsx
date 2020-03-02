@@ -125,7 +125,7 @@ export class List extends Component {
                     class: "w-1",
                     responsivePriority: 10001,
                     render: function(data, type, row, meta) {
-                        if (type === "sort" || type === "type") {
+                        if (["sort", "type"].indexOf(type) > -1) {
                             return meta.row;
                         }
                         return `<div class="text-muted">#${data}</div>`;
@@ -143,7 +143,7 @@ export class List extends Component {
                     data: "amount",
                     responsivePriority: 2,
                     render: function(data, type, row) {
-                        if (type === "sort" || type === "type") {
+                        if (["sort", "type"].indexOf(type) > -1) {
                             return data;
                         }
                         if (data !== null && data !== "") return formatMoney(data);
@@ -153,7 +153,7 @@ export class List extends Component {
                     data: "payment_date",
                     responsivePriority: 3,
                     render: function(data, type, row) {
-                        if (type === "sort" || type === "type") {
+                        if (["sort", "type"].indexOf(type) > -1) {
                             return moment(data, "YYYY-MM-DD").unix();
                         }
                         return `<td class="text-nowrap">${formatDate(data, "LL")}</td>`;
@@ -163,7 +163,7 @@ export class List extends Component {
                     data: "created_date",
                     responsivePriority: 4,
                     render: function(data, type, row) {
-                        if (type === "sort" || type === "type") {
+                        if (["sort", "type"].indexOf(type) > -1) {
                             return moment(data, "YYYY-MM-DD").unix();
                         }
                         return `<td class="text-nowrap">${formatDate(data, "LL")}</td>`;

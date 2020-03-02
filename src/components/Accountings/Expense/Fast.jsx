@@ -10,6 +10,7 @@ import Inputmask from "inputmask";
 import moment from "moment";
 import { showSwal } from "../../Alert";
 import { formatMoney, clearMoney } from "../../../services/Others";
+import Swal from "sweetalert2";
 const $ = require("jquery");
 
 Inputmask.extendDefaults({
@@ -109,6 +110,10 @@ export class Fast extends Component {
 		this.listAccountingTypes();
 		this.listBudgets();
 	}
+
+    componentWillUnmount() {
+        Swal.close();
+    }
 
 	handleSubmit = e => {
 		e.preventDefault();

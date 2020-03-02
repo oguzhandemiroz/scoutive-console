@@ -31,6 +31,12 @@ const dailyType = {
     "3": ["Y. Gün İzinli", "warning"]
 };
 
+const statusType = {
+    0: { bg: "bg-danger", title: "Pasif Öğrenci" },
+    1: { bg: "bg-success", title: "Aktif Öğrenci" },
+    2: { bg: "bg-azure", title: "Donuk Öğrenci" }
+};
+
 const { Option } = components;
 const ImageOptionEmployee = props => (
     <Option {...props}>
@@ -800,7 +806,33 @@ export class BulkAdd extends Component {
                                                                             style={{
                                                                                 backgroundImage: `url(${el.image})`
                                                                             }}>
-                                                                            {avatarPlaceholder(el.name, el.surname)}
+                                                                            {el.image
+                                                                                ? ""
+                                                                                : avatarPlaceholder(
+                                                                                      el.name,
+                                                                                      el.surname
+                                                                                  )}
+                                                                            <span
+                                                                                data-toggle="tooltip"
+                                                                                title={
+                                                                                    statusType[
+                                                                                        el.status !== undefined
+                                                                                            ? el.status
+                                                                                            : 1
+                                                                                    ].title
+                                                                                }
+                                                                                style={{
+                                                                                    width: "1rem",
+                                                                                    height: "1rem"
+                                                                                }}
+                                                                                className={`avatar-status ${
+                                                                                    statusType[
+                                                                                        el.status !== undefined
+                                                                                            ? el.status
+                                                                                            : 1
+                                                                                    ].bg
+                                                                                }`}
+                                                                            />
                                                                         </span>
                                                                     </div>
                                                                     <div className="col">
@@ -1229,9 +1261,7 @@ export class BulkAdd extends Component {
                     select: {
                         ...prevState.select,
                         players: response.data,
-                        initialPlayers: response.data
-                            .filter(x => x.status !== 0)
-                            .filter(y => y.recipient_parent_id !== -1)
+                        initialPlayers: response.data.filter(y => y.recipient_parent_id !== -1)
                     }
                 }));
             }

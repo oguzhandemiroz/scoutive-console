@@ -6,7 +6,14 @@ import moment from "moment";
 import "moment/locale/tr";
 import { fullnameGenerator, avatarPlaceholder } from "../../services/Others";
 import ActionButton from "../../components/Players/ActionButton";
+
 const $ = require("jquery");
+
+const statusType = {
+    0: { bg: "bg-danger", title: "Pasif Öğrenci" },
+    1: { bg: "bg-success", title: "Aktif Öğrenci" },
+    2: { bg: "bg-azure", title: "Donuk Öğrenci" }
+};
 
 const noRow = loading =>
     loading ? (
@@ -86,13 +93,24 @@ export class Birthdays extends Component {
                                                         <div className="row mb-3" key={key.toString()}>
                                                             <div className="col-auto d-flex align-items-center">
                                                                 <span
-                                                                    className="avatar"
-                                                                    style={{
-                                                                        backgroundImage: `url(${el.image})`
-                                                                    }}>
+                                                                    className="avatar avatar-xs"
+                                                                    style={{ backgroundImage: `url(${el.image})` }}>
                                                                     {el.image
                                                                         ? ""
                                                                         : avatarPlaceholder(el.name, el.surname)}
+                                                                    <span
+                                                                        data-toggle="tooltip"
+                                                                        title={
+                                                                            statusType[
+                                                                                el.status !== undefined ? el.status : 1
+                                                                            ].title
+                                                                        }
+                                                                        className={`avatar-xs avatar-status ${
+                                                                            statusType[
+                                                                                el.status !== undefined ? el.status : 1
+                                                                            ].bg
+                                                                        }`}
+                                                                    />
                                                                 </span>
                                                             </div>
                                                             <div className="col pl-1">

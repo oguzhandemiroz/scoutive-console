@@ -5,6 +5,11 @@ import Vacation from "../EmployeeAction/Vacation";
 import Password from "../EmployeeAction/Password";
 import AdvancePayment from "../EmployeeAction/AdvancePayment";
 
+const statusType = {
+    0: { bg: "bg-danger", title: "Pasif" },
+    1: { bg: "bg-success", title: "Aktif" }
+};
+
 export class PersonCard extends Component {
     constructor(props) {
         super(props);
@@ -30,8 +35,20 @@ export class PersonCard extends Component {
                                 <div className="media mb-5">
                                     <span
                                         className="avatar avatar-xxl mr-4"
-                                        style={{ backgroundImage: `url(${data.image})` }}
-                                    />
+                                        style={{ backgroundImage: `url(${data.image})` }}>
+                                        <span
+                                            data-toggle="tooltip"
+                                            title={
+                                                statusType[data.status !== undefined ? data.status : 1].title +
+                                                " Öğrenci"
+                                            }
+                                            className={`avatar-sm avatar-status ${
+                                                !data.is_trial
+                                                    ? statusType[data.status !== undefined ? data.status : 1].bg
+                                                    : statusType[3].bg
+                                            }`}
+                                        />
+                                    </span>
                                     <div className="media-body">
                                         <h4 className="m-0">{fullnameGenerator(data.name, data.surname)}</h4>
                                         <p className="text-muted mb-0">{data.position ? data.position.label : "—"}</p>
@@ -96,6 +113,11 @@ export class PersonCard extends Component {
                                         <div className="form-control-plaintext">{formatDate(data.end_date, "LL")}</div>
                                     </div>
                                 ) : null}
+
+                                <div className="form-group">
+                                    <label className="form-label">Oluşturma Tarihi</label>
+                                    <div className="form-control-plaintext">{formatDate(data.created_date, "LL")}</div>
+                                </div>
                             </div>
                         </div>
                     </div>

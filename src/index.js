@@ -10,8 +10,7 @@ import ReactDOM from "react-dom";
 import * as Sentry from "@sentry/browser";
 import * as serviceWorker from "./serviceWorker";
 import Core from "./layouts/Core.jsx";
-import { GeoRequest, GenerateSessionData } from "./services/Session";
-import ep from "./assets/js/urls";
+import { GeoRequest } from "./services/Session";
 const $ = require("jquery");
 
 registerLocale("tr", tr);

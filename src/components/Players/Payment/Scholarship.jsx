@@ -3,6 +3,12 @@ import Select, { components } from "react-select";
 import { avatarPlaceholder } from "../../../services/Others";
 import { selectCustomStyles } from "../../../assets/js/core";
 
+const statusType = {
+    0: { bg: "bg-danger", title: "Pasif Öğrenci" },
+    1: { bg: "bg-success", title: "Aktif Öğrenci" },
+    2: { bg: "bg-azure", title: "Donuk Öğrenci" }
+};
+
 const { Option } = components;
 const ImageOption = props => (
     <Option {...props}>
@@ -13,7 +19,7 @@ const ImageOption = props => (
 
 export class Scholarship extends Component {
     render() {
-        const { player, select, tab, image, name, surname } = this.props.state;
+        const { player, select, status, tab, image, name, surname } = this.props.state;
         return (
             <div className="col-12">
                 <div className="card">
@@ -25,12 +31,15 @@ export class Scholarship extends Component {
                     <div className="card-body">
                         <div className="row mb-4">
                             <div className="col-auto">
-                                <span
-                                    className="avatar avatar-xxl"
-                                    style={{
-                                        backgroundImage: `url(${image})`
-                                    }}>
-                                    {avatarPlaceholder(name, surname)}
+                                <span className="avatar avatar-xxl" style={{ backgroundImage: `url(${image})` }}>
+                                    {image ? "" : avatarPlaceholder(name, surname)}
+                                    <span
+                                        data-toggle="tooltip"
+                                        title={statusType[status !== undefined ? status : 1].title}
+                                        className={`avatar-sm avatar-status ${
+                                            statusType[status !== undefined ? status : 1].bg
+                                        }`}
+                                    />
                                 </span>
                             </div>
                             <div className="col">

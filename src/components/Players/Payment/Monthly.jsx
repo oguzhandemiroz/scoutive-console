@@ -63,6 +63,12 @@ const feeStatus = {
     }
 };
 
+const statusType = {
+    0: { bg: "bg-danger", title: "Pasif Öğrenci" },
+    1: { bg: "bg-success", title: "Aktif Öğrenci" },
+    2: { bg: "bg-azure", title: "Donuk Öğrenci" }
+};
+
 const IconOption = props => (
     <Option {...props}>
         <span>
@@ -170,7 +176,7 @@ export class Monthly extends Component {
                 confirmButtonText: "Devam et",
                 cancelButtonText: "İptal",
                 confirmButtonColor: "#cd201f",
-                cancelButtonColor: "#467fcf",
+                cancelButtonColor: "#868e96",
                 showCancelButton: true,
                 reverseButtons: true
             });
@@ -349,14 +355,15 @@ export class Monthly extends Component {
     };
 
     renderAvatar = () => {
-        const { image, name, surname } = this.props.state;
+        const { image, name, surname, status } = this.props.state;
         return (
-            <span
-                className="avatar avatar-xxl"
-                style={{
-                    backgroundImage: `url(${image})`
-                }}>
-                {!image ? avatarPlaceholder(name, surname) : null}
+            <span className="avatar avatar-xxl" style={{ backgroundImage: `url(${image})` }}>
+                {image ? "" : avatarPlaceholder(name, surname)}
+                <span
+                    data-toggle="tooltip"
+                    title={statusType[status !== undefined ? status : 1].title}
+                    className={`avatar-sm avatar-status ${statusType[status !== undefined ? status : 1].bg}`}
+                />
             </span>
         );
     };
@@ -463,6 +470,11 @@ export class Monthly extends Component {
             )}</strong> tarihinde <strong>${formatMoney(amount)}</strong> ödeme yapmıştır. <strong>${formatMoney(
                 totalDept
             )} </strong> tutarında borcu bulunmaktadır.<hr>Ne kadarını ödemek istiyorsunuz?`,
+            confirmButtonText: "Onayla",
+            cancelButtonText: "İptal",
+            cancelButtonColor: "#868e96",
+            showCancelButton: true,
+            reverseButtons: true,
             input: "number",
             inputValue: totalDept,
             inputAttributes: {
@@ -486,7 +498,6 @@ export class Monthly extends Component {
                             }</strong> adlı kasa hesabına yatırılacaktır.<br>Onaylıyor musunuz?`,
                             confirmButtonText: "Onaylıyorum",
                             cancelButtonText: "İptal",
-                            confirmButtonColor: "#467fcf",
                             cancelButtonColor: "#868e96",
                             showCancelButton: true,
                             reverseButtons: true

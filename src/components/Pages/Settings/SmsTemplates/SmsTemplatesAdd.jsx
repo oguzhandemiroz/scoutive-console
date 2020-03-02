@@ -35,14 +35,14 @@ export class SmsTemplatesAdd extends Component {
     handleSubmit = () => {
         const { uid, template_name, content, color, icon } = this.state;
         this.setState({ ...initialState });
-        if (formValid(this.state)) {
+        if (content.trim() && formValid(this.state)) {
             this.setState({ loadingButton: "btn-loading" });
 
             CreateMessageTemplate({
                 uid: uid,
                 title: null,
                 template_name: template_name,
-                content: content,
+                content: content.trim(),
                 color: color,
                 icon: icon,
                 type: 2
@@ -57,7 +57,7 @@ export class SmsTemplatesAdd extends Component {
             this.setState(prevState => ({
                 formErrors: {
                     ...prevState.formErrors,
-                    content: content ? "" : "is-invalid",
+                    content: content.trim() ? "" : "is-invalid",
                     template_name: template_name ? "" : "is-invalid"
                 },
                 iconError: icon ? false : true,
@@ -90,7 +90,7 @@ export class SmsTemplatesAdd extends Component {
             [name]: name === "content" ? value.slice(0, 883) : value,
             formErrors: {
                 ...prevState.formErrors,
-                [name]: value ? "" : "is-invalid"
+                [name]: value.trim() ? "" : "is-invalid"
             }
         }));
     };

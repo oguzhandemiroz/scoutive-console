@@ -14,6 +14,7 @@ const reload = history => {
 const activatePlayer = (uid, to, name, history) => {
     try {
         Swal.mixin({
+            allowOutsideClick: false,
             heightAuto: false,
             allowEnterKey: false,
             confirmButtonText: "Evet &rarr;",

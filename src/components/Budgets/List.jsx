@@ -129,7 +129,7 @@ export class List extends Component {
                     {
                         data: "balance",
                         render: function(data, type, row) {
-                            if (type === "sort" || type === "type") {
+                            if (["sort", "type"].indexOf(type) > -1) {
                                 return data;
                             } else {
                                 var convert = typeof data === "number" ? data.format(2, 3, ".", ",") : data;

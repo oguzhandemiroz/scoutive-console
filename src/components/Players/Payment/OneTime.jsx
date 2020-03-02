@@ -15,6 +15,12 @@ const ImageOption = props => (
     </Option>
 );
 
+const statusType = {
+    0: { bg: "bg-danger", title: "Pasif Öğrenci" },
+    1: { bg: "bg-success", title: "Aktif Öğrenci" },
+    2: { bg: "bg-azure", title: "Donuk Öğrenci" }
+};
+
 export class OneTime extends Component {
     constructor(props) {
         super(props);
@@ -50,6 +56,11 @@ export class OneTime extends Component {
             html: `<strong>${label}</strong> adlı öğrencinin, <strong>${formatMoney(
                 totalDept
             )} </strong> tutarında taksit ödemesi yapılacaktır.<hr>Ne kadarını ödemek istiyorsunuz?`,
+            confirmButtonText: "Onayla",
+            cancelButtonText: "İptal",
+            cancelButtonColor: "#868e96",
+            showCancelButton: true,
+            reverseButtons: true,
             input: "number",
             inputValue: totalDept,
             inputAttributes: {
@@ -71,7 +82,6 @@ export class OneTime extends Component {
                             }</strong> adlı kasa hesabına yatırılacaktır.<br>Onaylıyor musunuz?`,
                             confirmButtonText: "Onaylıyorum",
                             cancelButtonText: "İptal",
-                            confirmButtonColor: "#467fcf",
                             cancelButtonColor: "#868e96",
                             showCancelButton: true,
                             reverseButtons: true
@@ -114,14 +124,15 @@ export class OneTime extends Component {
     };
 
     renderAvatar = () => {
-        const { image, name, surname } = this.props.state;
+        const { image, name, surname, status } = this.props.state;
         return (
-            <span
-                className="avatar avatar-xxl"
-                style={{
-                    backgroundImage: `url(${image})`
-                }}>
-                {!image ? avatarPlaceholder(name, surname) : null}
+            <span className="avatar avatar-xxl" style={{ backgroundImage: `url(${image})` }}>
+                {image ? "" : avatarPlaceholder(name, surname)}
+                <span
+                    data-toggle="tooltip"
+                    title={statusType[status !== undefined ? status : 1].title}
+                    className={`avatar-sm avatar-status ${statusType[status !== undefined ? status : 1].bg}`}
+                />
             </span>
         );
     };

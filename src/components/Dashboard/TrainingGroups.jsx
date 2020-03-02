@@ -31,6 +31,7 @@ const noRow = loading =>
             </div>
         </div>
     );
+
 export class TrainingGroupList extends Component {
     constructor(props) {
         super(props);
