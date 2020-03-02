@@ -52,7 +52,7 @@ const UploadFile = formData => {
     try {
         if (formData) {
             return fetch(ep.UPLOAD_FILE, {
-                method: "POST",
+                method: "PUT",
                 body: formData
             })
                 .then(res => res.json())
