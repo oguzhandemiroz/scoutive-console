@@ -9,7 +9,7 @@ const menu = [
         icon: "fa fa-home",
         text: "Anasayfa",
         item: null,
-        condition: () => true
+        condition: true
     },
     {
         li: "nav-item dropdown",
@@ -25,7 +25,7 @@ const menu = [
                 activeClassName: "active",
                 childText: "Veliler",
                 icon: "fa fa-user",
-                condition: () => CheckPermissions(["p_read", "p_write", "p_remove"], "||")
+                condition: CheckPermissions(["p_read", "p_write"], "||")
             },
             {
                 to: "/app/persons/employees",
@@ -33,10 +33,10 @@ const menu = [
                 activeClassName: "active",
                 childText: "Personeller",
                 icon: "fa fa-user-tie",
-                condition: () => CheckPermissions(["e_read", "e_write", "e_remove"], "||")
+                condition: CheckPermissions(["e_read", "e_write", "e_remove"], "||")
             }
         ],
-        condition: () => CheckPermissions(["e_read", "e_write", "e_remove", "p_read", "p_write", "p_remove"], "||")
+        condition: CheckPermissions(["e_read", "e_write", "e_remove", "p_read", "p_write"], "||")
     },
     {
         li: "nav-item",
@@ -44,31 +44,15 @@ const menu = [
         icon: "fa fa-user-graduate",
         text: "Öğrenciler",
         item: null,
-        condition: () => CheckPermissions(["p_read", "p_write", "p_remove"], "||")
+        condition: CheckPermissions(["p_read", "p_write", "p_remove"], "||")
     },
-    /*  {
-        li: "nav-item",
-        navlink: { to: "/app/persons/employees", exact: false, activeClassName: "active", className: "nav-link" },
-        icon: "fa fa-user-tie",
-        text: "Personeller",
-        item: null,
-        condition: () => true
-    },
-    {
-        li: "nav-item",
-        navlink: { to: "/app/persons/parents", exact: false, activeClassName: "active", className: "nav-link" },
-        icon: "fa fa-user",
-        text: "Veliler",
-        item: null,
-        condition: () => true
-    }, */
     {
         li: "nav-item",
         navlink: { to: "/app/groups", exact: false, activeClassName: "active", className: "nav-link" },
         icon: "fa fa-th",
         text: "Gruplar",
         item: null,
-        condition: () => CheckPermissions(["g_read", "g_write", "g_remove"], "||")
+        condition: CheckPermissions(["g_read", "g_write", "g_remove"], "||")
     },
     /* {
         li: "nav-item cursor-not-allowed",
@@ -86,7 +70,7 @@ const menu = [
                 (<i className="fe fe-lock mr-0" />)
             </span>
         ),
-        condition: () => true
+        condition: true
     }, */
     {
         li: "nav-item",
@@ -94,7 +78,7 @@ const menu = [
         icon: "fa fa-clock",
         text: "Yoklamalar",
         item: null,
-        condition: () => CheckPermissions(["r_read", "r_write", "r_remove"], "||")
+        condition: CheckPermissions(["r_read", "r_write", "r_remove"], "||")
     },
     {
         li: "nav-item",
@@ -102,7 +86,7 @@ const menu = [
         icon: "fa fa-coins",
         text: "Kasa ve Banka",
         item: null,
-        condition: () => CheckPermissions(["a_read", "a_write", "a_remove"], "||")
+        condition: CheckPermissions(["a_read", "a_write", "a_remove"], "||")
     },
     {
         li: "nav-item",
@@ -110,7 +94,7 @@ const menu = [
         icon: "fa fa-calculator",
         text: "Gelir/Gider",
         item: null,
-        condition: () => CheckPermissions(["a_read", "a_write", "a_remove"], "||")
+        condition: CheckPermissions(["a_read", "a_write", "a_remove"], "||")
     },
     {
         li: "nav-item",
@@ -118,7 +102,7 @@ const menu = [
         icon: "fa fa-satellite-dish",
         text: "İletişim Merkezi",
         item: null,
-        condition: () => CheckPermissions(["m_read", "m_write", "m_remove"], "||")
+        condition: CheckPermissions(["m_read", "m_write", "m_remove"], "||")
     }
     /* {
         li: "nav-item cursor-not-allowed",
@@ -136,7 +120,7 @@ const menu = [
                 (<i className="fe fe-lock mr-0" />)
             </span>
         ),
-        condition: () => true
+        condition: true
     } */
 ];
 
@@ -173,7 +157,7 @@ class Menu extends Component {
                                 {
                                     <ul className="nav nav-tabs border-0 flex-column flex-lg-row">
                                         {menu.map((el, key) => {
-                                            if (el.condition()) {
+                                            if (el.condition) {
                                                 return (
                                                     <li key={key.toString()} className={el.li}>
                                                         <NavLink {...el.navlink} data-toggle={el.dataToggle}>
@@ -183,7 +167,7 @@ class Menu extends Component {
                                                         {el.item ? (
                                                             <div className={el.childDividerClass}>
                                                                 {el.item.map((ch, k) => {
-                                                                    if (ch.condition()) {
+                                                                    if (ch.condition) {
                                                                         return (
                                                                             <NavLink
                                                                                 key={k.toString()}
