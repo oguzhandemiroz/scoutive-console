@@ -4,6 +4,7 @@ import ActionButton from "./ActionButton";
 import Vacation from "../PlayerAction/Vacation";
 import GroupChange from "../PlayerAction/GroupChange";
 import { fullnameGenerator, nullCheck, formatDate, formatPhone, formatMoney } from "../../services/Others";
+import { CheckPermissions } from "../../services/Others";
 
 const paymentTypeText = {
     0: "AYLIK",
@@ -166,12 +167,14 @@ export class PersonCard extends Component {
                             }}
                             renderButton={() => (
                                 <>
-                                    <Link
-                                        to={"/app/players/edit/" + data.to}
-                                        className="btn btn-icon btn-dark btn-block">
-                                        <i className="fe fe-edit mr-2" />
-                                        Düzenle
-                                    </Link>
+                                    {CheckPermissions(["p_write"]) && (
+                                        <Link
+                                            to={"/app/players/edit/" + data.to}
+                                            className="btn btn-icon btn-dark btn-block">
+                                            <i className="fe fe-edit mr-2" />
+                                            Düzenle
+                                        </Link>
+                                    )}
                                     <button
                                         className="btn btn-icon btn-dark btn-block"
                                         data-toggle="dropdown"

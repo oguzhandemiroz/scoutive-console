@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import ActionButton from "./ActionButton";
 import { fullnameGenerator, nullCheck, formatPhone, avatarPlaceholder } from "../../services/Others";
-import { Link } from "react-router-dom";
+import { CheckPermissions } from "../../services/Others";
 
 export class PersonCard extends Component {
     render() {
@@ -81,12 +81,16 @@ export class PersonCard extends Component {
                             }}
                             renderButton={() => (
                                 <>
-                                    <button
-                                        onClick={() => this.props.history.push("/app/persons/parents/edit/" + data.to)}
-                                        className="btn btn-icon btn-dark btn-block">
-                                        <i className="fe fe-edit mr-2" />
-                                        Düzenle
-                                    </button>
+                                    {CheckPermissions(["p_write"]) && (
+                                        <button
+                                            onClick={() =>
+                                                this.props.history.push("/app/persons/parents/edit/" + data.to)
+                                            }
+                                            className="btn btn-icon btn-dark btn-block">
+                                            <i className="fe fe-edit mr-2" />
+                                            Düzenle
+                                        </button>
+                                    )}
                                     <button
                                         className="btn btn-icon btn-dark btn-block"
                                         data-toggle="dropdown"

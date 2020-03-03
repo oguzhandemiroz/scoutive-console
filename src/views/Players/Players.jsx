@@ -6,7 +6,7 @@ import DailyPlayer from "../../components/Players/Charts/DailyPlayer";
 import TotalFee from "../../components/Players/Charts/TotalFee";
 import DailyCreatedPlayer from "../../components/Players/Charts/DailyCreatedPlayer";
 import TotalPlayerCount from "../../components/Players/Charts/TotalPlayerCount";
-import { showSwal } from "../../components/Alert";
+import { CheckPermissions } from "../../services/Others";
 import Swal from "sweetalert2";
 
 class Players extends Component {
@@ -82,13 +82,15 @@ class Players extends Component {
             <div className="container">
                 <div className="page-header">
                     <h1 className="page-title">Öğrenciler</h1>
-                    <button onClick={this.printablePlayerForm} className="btn btn-icon btn-secondary ml-auto mr-2">
+                    <button onClick={this.printablePlayerForm} className="btn btn-secondary ml-auto mr-2">
                         <i className="fe fe-printer mr-1"></i>
                         Öğrenci Bilgi Formu
                     </button>
-                    <Link to="/app/players/add" className="btn btn-success">
-                        Öğrenci Ekle
-                    </Link>
+                    {CheckPermissions(["p_write"]) && (
+                        <Link to="/app/players/add" className="btn btn-success">
+                            Öğrenci Ekle
+                        </Link>
+                    )}
                 </div>
 
                 <div className="row row-cards row-deck">

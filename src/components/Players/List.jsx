@@ -325,7 +325,7 @@ class Table extends Component {
                                                 title="Görüntüle">
                                                 <i className="fe fe-eye" />
                                             </button>
-                                            {CheckPermissions(["p_write"]) ? (
+                                            {CheckPermissions(["p_write"]) && (
                                                 <button
                                                     className="btn btn-icon btn-sm btn-secondary mr-1"
                                                     data-toggle="tooltip"
@@ -333,7 +333,7 @@ class Table extends Component {
                                                     title="Düzenle">
                                                     <i className="fe fe-edit" />
                                                 </button>
-                                            ) : null}
+                                            )}
                                             <a
                                                 title="İşlem Menüsü"
                                                 className="btn btn-icon btn-sm btn-secondary"

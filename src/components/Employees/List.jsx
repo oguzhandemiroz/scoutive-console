@@ -3,7 +3,6 @@ import "jquery";
 import { datatable_turkish, getCookie } from "../../assets/js/core";
 import ep from "../../assets/js/urls";
 import { fatalSwal, errorSwal } from "../Alert.jsx";
-import { BrowserRouter, Link } from "react-router-dom";
 import Vacation from "../EmployeeAction/Vacation";
 import Password from "../EmployeeAction/Password";
 import AdvancePayment from "../EmployeeAction/AdvancePayment";
