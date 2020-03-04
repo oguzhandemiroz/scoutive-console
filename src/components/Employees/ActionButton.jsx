@@ -16,7 +16,6 @@ export class ActionButton extends Component {
         const { uid } = this.state;
         const { data, renderButton, history, dropdown } = this.props;
         const { to, name, status } = data;
-        const fullname = name;
 
         const dropdownDivider = key => <div role="separator" className="dropdown-divider" key={key.toString()} />;
         const lock = (
@@ -56,7 +55,7 @@ export class ActionButton extends Component {
                 tag: "button",
                 elementAttr: {
                     className: "dropdown-item",
-                    onClick: () => this.props.advancePaymentButton({ name: fullname, uid: to }),
+                    onClick: () => this.props.advancePaymentButton({ name: name, uid: to }),
                     "data-toggle": "modal",
                     "data-target": "#advancePaymentModal"
                 },
@@ -71,7 +70,7 @@ export class ActionButton extends Component {
                 tag: "button",
                 elementAttr: {
                     className: "dropdown-item",
-                    onClick: () => this.props.vacationButton({ name: fullname, uid: to }),
+                    onClick: () => this.props.vacationButton({ name: name, uid: to }),
                     "data-toggle": "modal",
                     "data-target": "#vacationModal"
                 },
@@ -86,7 +85,7 @@ export class ActionButton extends Component {
                 tag: "button",
                 elementAttr: {
                     className: "dropdown-item",
-                    onClick: () => activateEmployee(uid, to, fullname, history)
+                    onClick: () => activateEmployee(uid, to, name, history)
                 },
                 childText: "İşe Tekrar Al",
                 child: {
@@ -99,7 +98,7 @@ export class ActionButton extends Component {
                 tag: "button",
                 elementAttr: {
                     className: "dropdown-item",
-                    onClick: () => deleteEmployee(uid, to, fullname, history)
+                    onClick: () => deleteEmployee(uid, to, name, history)
                 },
                 childText: "İşten Çıkar",
                 child: {
@@ -125,7 +124,7 @@ export class ActionButton extends Component {
                 tag: "button",
                 elementAttr: {
                     className: "dropdown-item cursor-not-allowed disabled",
-                    onClick: () => this.props.passwordButton({ name: fullname, uid: uid }),
+                    onClick: () => this.props.passwordButton({ name: name, uid: uid }),
                     "data-toggle": "modal",
                     "data-target": "#passwordModal"
                 },
@@ -212,7 +211,7 @@ export class ActionButton extends Component {
                     x-placement="top-end">
                     <a className="dropdown-item disabled text-azure">
                         <i className="dropdown-icon fa fa-user text-azure" />
-                        {fullname}
+                        {name}
                     </a>
                     <div role="separator" className="dropdown-divider" />
                     {actionMenu.map((el, key) => {
