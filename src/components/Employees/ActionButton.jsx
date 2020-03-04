@@ -50,7 +50,7 @@ export class ActionButton extends Component {
                     className: "dropdown-icon fa fa-money-bill-wave"
                 },
                 lock: false,
-                condition: CheckPermissions(["a_write", "e_write"]) && status
+                condition: CheckPermissions(["a_write"]) && status
             },
             {
                 tag: "button",
@@ -65,7 +65,7 @@ export class ActionButton extends Component {
                     className: "dropdown-icon fa fa-hand-holding-usd"
                 },
                 lock: false,
-                condition: CheckPermissions(["a_write", "e_write"]) && status
+                condition: CheckPermissions(["a_write"]) && status
             },
             {
                 tag: "button",
@@ -93,7 +93,7 @@ export class ActionButton extends Component {
                     className: "dropdown-icon fa fa-redo"
                 },
                 lock: false,
-                condition: CheckPermissions(["e_write", "e_remove"]) && status === 0
+                condition: CheckPermissions(["e_write", "e_remove"]) && !status
             },
             {
                 tag: "button",

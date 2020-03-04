@@ -37,7 +37,7 @@ const tabList = [
         text: "İletişim Servisi",
         path: "messages",
         icon: "fa fa-sms",
-        condition: CheckPermissions(["m_write"])
+        condition: CheckPermissions(["p_write", "m_write"])
     }
 ];
 
