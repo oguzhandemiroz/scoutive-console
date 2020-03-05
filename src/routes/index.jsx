@@ -83,6 +83,8 @@ import UnpaidPlayerList from "../components/Reports/UnpaidPlayerList";
 import PlayerForm from "../components/Printable/PlayerForm";
 import RollcallForm from "../components/Printable/RollcallForm";
 
+import { CheckPermissions } from "../services/Others";
+
 var indexRoutes = [
     {
         path: "/login",
@@ -97,7 +99,7 @@ var indexRoutes = [
         name: "Register",
         component: RegisterPage,
         layout: "/auth",
-        
+
         prop: { exact: true },
         condition: true
     },
@@ -155,7 +157,7 @@ var indexRoutes = [
         component: Employees,
         layout: "/app",
         prop: { exact: true },
-        condition: false
+        condition: CheckPermissions(["e_read", "e_write", "e_remove"], "||")
     },
     {
         path: "/persons/employees/add",
@@ -163,7 +165,7 @@ var indexRoutes = [
         component: AddEmployee,
         layout: "/app",
         prop: { exact: true },
-        condition: true
+        condition: CheckPermissions(["e_write"])
     },
     {
         path: "/persons/employees/detail/:uid",
@@ -171,7 +173,7 @@ var indexRoutes = [
         component: DetailEmployee,
         layout: "/app",
         prop: { exact: true },
-        condition: true
+        condition: CheckPermissions(["e_read"])
     },
     {
         path: "/persons/employees/vacation/:uid",
@@ -179,7 +181,7 @@ var indexRoutes = [
         component: VacationEmployee,
         layout: "/app",
         prop: { exact: true },
-        condition: true
+        condition: CheckPermissions(["e_read"])
     },
     {
         path: "/persons/employees/rollcall/:uid",
@@ -187,7 +189,7 @@ var indexRoutes = [
         component: RollcallEmployee,
         layout: "/app",
         prop: { exact: true },
-        condition: true
+        condition: CheckPermissions(["e_read", "r_read"])
     },
     {
         path: "/persons/employees/edit/:uid",
@@ -195,42 +197,37 @@ var indexRoutes = [
         component: EditEmployee,
         layout: "/app",
         prop: { exact: true },
-        condition: true
+        condition: CheckPermissions(["e_read", "e_write"])
     },
     {
         path: "/persons/employees/salary/:uid?",
         name: "Pay Salary",
         component: SalaryEmployee,
         layout: "/app",
-        prop: { exact: false }
+        prop: { exact: false },
+        condition: CheckPermissions(["e_read", "a_read", "a_write"])
     },
     {
         path: "/persons/employees/salary-detail/:uid",
         name: "Detail Salary",
         component: SalaryDetailEmployee,
-        layout: "/app"
+        layout: "/app",
+        condition: CheckPermissions(["e_read", "a_read"])
     },
     {
         path: "/persons/employees/message-detail/:uid",
         name: "Message Detail Employee",
         component: MessageDetailEmployee,
-        layout: "/app"
-    },
-    /* {
-        path: "/persons",
-        name: "Persons",
-        component: Persons,
         layout: "/app",
-        prop: { exact: true },
-        condition: true
-    }, */
+        condition: CheckPermissions(["e_read", "m_read"])
+    },
     {
         path: "/players",
         name: "Players",
         component: Players,
         layout: "/app",
         prop: { exact: true },
-        condition: true
+        condition: CheckPermissions(["p_read", "p_write", "p_remove"], "||")
     },
     {
         path: "/players/add",
@@ -238,23 +235,7 @@ var indexRoutes = [
         component: AddPlayer,
         layout: "/app",
         prop: { exact: true },
-        condition: true
-    },
-    {
-        path: "/players/add/trial",
-        name: "Trial Players",
-        component: TrialPlayer,
-        layout: "/app",
-        prop: { exact: true },
-        condition: true
-    },
-    {
-        path: "/players/trial/activate/:uid",
-        name: "Activate Trial Players",
-        component: ActivateTrial,
-        layout: "/app",
-        prop: { exact: true },
-        condition: true
+        condition: CheckPermissions(["p_write"])
     },
     {
         path: "/players/detail/:uid",
@@ -262,14 +243,14 @@ var indexRoutes = [
         component: DetailPlayer,
         layout: "/app",
         prop: { exact: true },
-        condition: true
+        condition: CheckPermissions(["p_read"])
     },
     {
         path: "/players/fee-detail/:uid",
         name: "Detail Fee",
         component: FeeDetailPlayer,
         layout: "/app",
-        condition: true
+        condition: CheckPermissions(["p_read", "a_read"])
     },
     {
         path: "/players/vacation/:uid",
@@ -277,7 +258,7 @@ var indexRoutes = [
         component: VacationPlayer,
         layout: "/app",
         prop: { exact: true },
-        condition: true
+        condition: CheckPermissions(["p_read"])
     },
     {
         path: "/players/rollcall/:uid",
@@ -285,7 +266,7 @@ var indexRoutes = [
         component: RollcallPlayer,
         layout: "/app",
         prop: { exact: true },
-        condition: true
+        condition: CheckPermissions(["p_read", "r_read"])
     },
     {
         path: "/players/messages/:uid",
@@ -293,7 +274,7 @@ var indexRoutes = [
         component: MessagesPlayer,
         layout: "/app",
         prop: { exact: true },
-        condition: true
+        condition: CheckPermissions(["p_read", "m_write", "p_write"])
     },
     {
         path: "/players/message-detail/:uid",
@@ -301,7 +282,7 @@ var indexRoutes = [
         component: MessageDetailPlayer,
         layout: "/app",
         prop: { exact: true },
-        condition: true
+        condition: CheckPermissions(["p_read", "m_read"])
     },
     {
         path: "/players/edit/:uid",
@@ -309,14 +290,14 @@ var indexRoutes = [
         component: EditPlayer,
         layout: "/app",
         prop: { exact: true },
-        condition: true
+        condition: CheckPermissions(["p_read", "p_write"])
     },
     {
         path: "/players/payment/fee/:uid?",
         name: "Receive Payment",
         component: PaymentPlayer,
         layout: "/app",
-        condition: true
+        condition: CheckPermissions(["p_read", "a_read", "a_write"])
     },
     {
         path: "/persons/parents",
@@ -324,7 +305,7 @@ var indexRoutes = [
         component: Parents,
         layout: "/app",
         prop: { exact: true },
-        condition: true
+        condition: CheckPermissions(["p_read", "p_write"], "||")
     },
     {
         path: "/persons/parents/add",
@@ -332,7 +313,7 @@ var indexRoutes = [
         component: AddParent,
         layout: "/app",
         prop: { exact: true },
-        condition: true
+        condition: CheckPermissions(["p_write"])
     },
     {
         path: "/persons/parents/edit/:uid",
@@ -340,7 +321,7 @@ var indexRoutes = [
         component: EditParent,
         layout: "/app",
         prop: { exact: true },
-        condition: true
+        condition: CheckPermissions(["p_read", "p_write"])
     },
     {
         path: "/persons/parents/detail/:uid",
@@ -348,7 +329,7 @@ var indexRoutes = [
         component: DetailParent,
         layout: "/app",
         prop: { exact: true },
-        condition: true
+        condition: CheckPermissions(["p_read"])
     },
     {
         path: "/persons/parents/message-detail/:uid",
@@ -356,7 +337,7 @@ var indexRoutes = [
         component: MessageDetailParent,
         layout: "/app",
         prop: { exact: true },
-        condition: true
+        condition: CheckPermissions(["p_read", "m_read"])
     },
     {
         path: "/groups",
@@ -364,7 +345,7 @@ var indexRoutes = [
         component: Groups,
         layout: "/app",
         prop: { exact: true },
-        condition: true
+        condition: CheckPermissions(["g_read", "g_write", "g_remove"], "||")
     },
     {
         path: "/groups/add",
@@ -372,7 +353,7 @@ var indexRoutes = [
         component: GroupAdd,
         layout: "/app",
         prop: { exact: true },
-        condition: true
+        condition: CheckPermissions(["g_write"])
     },
     {
         path: "/groups/detail/:gid",
@@ -380,7 +361,7 @@ var indexRoutes = [
         component: GroupDetail,
         layout: "/app",
         prop: { exact: true },
-        condition: true
+        condition: CheckPermissions(["g_read"])
     },
     {
         path: "/groups/edit/:gid",
@@ -388,7 +369,7 @@ var indexRoutes = [
         component: GroupEdit,
         layout: "/app",
         prop: { exact: true },
-        condition: true
+        condition: CheckPermissions(["g_read", "g_write"])
     },
     {
         path: "/profile",
@@ -410,14 +391,14 @@ var indexRoutes = [
         component: EmployeesRollcallList,
         layout: "/app",
         prop: { exact: true },
-        condition: true
+        condition: CheckPermissions(["r_read"])
     },
     {
         path: "/rollcalls/employee/add/:rcid",
         component: EmployeesRollcallAdd,
         layout: "/app",
         prop: { exact: true },
-        condition: true
+        condition: CheckPermissions(["r_write"])
     },
     {
         path: "/rollcalls/employee/detail/:rcid",
@@ -425,7 +406,7 @@ var indexRoutes = [
         component: EmployeesRollcallDetail,
         layout: "/app",
         prop: { exact: true },
-        condition: true
+        condition: CheckPermissions(["r_read"])
     },
     {
         path: "/rollcalls/player",
@@ -433,7 +414,7 @@ var indexRoutes = [
         component: PlayersRollcallList,
         layout: "/app",
         prop: { exact: true },
-        condition: true
+        condition: CheckPermissions(["r_read"])
     },
     {
         path: "/rollcalls/player/add/:rcid",
@@ -441,7 +422,7 @@ var indexRoutes = [
         component: PlayersRollcallAdd,
         layout: "/app",
         prop: { exact: true },
-        condition: true
+        condition: CheckPermissions(["r_write"])
     },
     {
         path: "/rollcalls/player/detail/:rcid",
@@ -449,7 +430,7 @@ var indexRoutes = [
         component: PlayersRollcallDetail,
         layout: "/app",
         prop: { exact: true },
-        condition: true
+        condition: CheckPermissions(["r_read"])
     },
     {
         path: "/budgets",
@@ -457,7 +438,7 @@ var indexRoutes = [
         component: Budgets,
         layout: "/app",
         prop: { exact: true },
-        condition: true
+        condition: CheckPermissions(["a_read", "a_write", "a_remove"], "||")
     },
     {
         path: "/budgets/add",
@@ -465,7 +446,7 @@ var indexRoutes = [
         component: BudgetAdd,
         layout: "/app",
         prop: { exact: true },
-        condition: true
+        condition: CheckPermissions(["a_write"])
     },
     {
         path: "/budgets/detail/:bid",
@@ -473,7 +454,7 @@ var indexRoutes = [
         component: BudgetDetail,
         layout: "/app",
         prop: { exact: true },
-        condition: true
+        condition: CheckPermissions(["a_read"])
     },
     {
         path: "/budgets/detail/list/:bid",
@@ -481,15 +462,7 @@ var indexRoutes = [
         component: Transaction,
         layout: "/app",
         prop: { exact: true },
-        condition: true
-    },
-    {
-        path: "/players/attr/:pid",
-        name: "Detail Attributes",
-        component: Attributes,
-        layout: "/app",
-        prop: { exact: true },
-        condition: true
+        condition: CheckPermissions(["a_read"])
     },
     {
         path: "/accountings",
@@ -497,7 +470,7 @@ var indexRoutes = [
         component: Accountings,
         layout: "/app",
         prop: { exact: true },
-        condition: true
+        condition: CheckPermissions(["a_read", "a_write", "a_remove"], "||")
     },
     {
         path: "/accountings/detail/:aid",
@@ -505,7 +478,7 @@ var indexRoutes = [
         component: AccountingDetail,
         layout: "/app",
         prop: { exact: true },
-        condition: true
+        condition: CheckPermissions(["a_read"])
     },
     {
         path: "/accountings/income/fast",
@@ -513,7 +486,7 @@ var indexRoutes = [
         component: IncomeFast,
         layout: "/app",
         prop: { exact: true },
-        condition: true
+        condition: CheckPermissions(["a_write"])
     },
     {
         path: "/accountings/income/invoice",
@@ -521,7 +494,7 @@ var indexRoutes = [
         component: IncomeInvoice,
         layout: "/app",
         prop: { exact: true },
-        condition: true
+        condition: false
     },
     {
         path: "/accountings/income/list",
@@ -529,7 +502,7 @@ var indexRoutes = [
         component: Income,
         layout: "/app",
         prop: { exact: true },
-        condition: true
+        condition: CheckPermissions(["a_read"])
     },
     {
         path: "/accountings/expense/fast",
@@ -537,7 +510,7 @@ var indexRoutes = [
         component: ExpenseFast,
         layout: "/app",
         prop: { exact: true },
-        condition: true
+        condition: CheckPermissions(["a_write"])
     },
     {
         path: "/accountings/expense/invoice",
@@ -545,7 +518,7 @@ var indexRoutes = [
         component: ExpenseInvoice,
         layout: "/app",
         prop: { exact: true },
-        condition: true
+        condition: false
     },
     {
         path: "/accountings/expense/list",
@@ -553,7 +526,7 @@ var indexRoutes = [
         component: Expense,
         layout: "/app",
         prop: { exact: true },
-        condition: true
+        condition: CheckPermissions(["a_read"])
     },
     {
         path: "/reports/unpaid/players",
@@ -561,7 +534,7 @@ var indexRoutes = [
         component: UnpaidPlayerList,
         layout: "/app",
         prop: { exact: true },
-        condition: true
+        condition: CheckPermissions(["a_read", "p_read"], "||")
     },
     {
         path: "/messages",
@@ -569,7 +542,7 @@ var indexRoutes = [
         component: Messages,
         layout: "/app",
         prop: { exact: true },
-        condition: true
+        condition: CheckPermissions(["m_read", "m_write", "m_remove"], "||")
     },
     {
         path: "/messages/select",
@@ -577,14 +550,14 @@ var indexRoutes = [
         component: SelectType,
         layout: "/app",
         prop: { exact: true },
-        condition: true
+        condition: CheckPermissions(["m_write"])
     },
     {
         path: "/messages/single/add/:uid?/:ptype?",
         name: "Mesaj Gönderim Merkezi - Tekil Mesaj Oluştur",
         component: MessagesSingleAdd,
         layout: "/app",
-        condition: true
+        condition: CheckPermissions(["m_write"])
     },
     {
         path: "/messages/bulk/add",
@@ -592,7 +565,7 @@ var indexRoutes = [
         component: MessagesBulkAdd,
         layout: "/app",
         prop: { exact: true },
-        condition: true
+        condition: CheckPermissions(["m_write"])
     },
     {
         path: "/messages/recurring/add",
@@ -600,7 +573,7 @@ var indexRoutes = [
         component: RecurringAdd,
         layout: "/app",
         prop: { exact: true },
-        condition: true
+        condition: CheckPermissions(["m_write"])
     },
     {
         path: "/messages/detail/:cid",
@@ -608,7 +581,7 @@ var indexRoutes = [
         component: MessagesDetail,
         layout: "/app",
         prop: { exact: true },
-        condition: true
+        condition: CheckPermissions(["m_read"])
     },
     {
         path: "/reload",
@@ -624,7 +597,7 @@ var indexRoutes = [
         component: Slip,
         layout: "/app",
         prop: { exact: true },
-        condition: true
+        condition: CheckPermissions(["a_read"])
     },
     {
         path: "/reload",
@@ -648,7 +621,7 @@ var indexRoutes = [
         component: RollcallForm,
         layout: "/printable",
         prop: { exact: true },
-        condition: true
+        condition: false
     },
     {
         path: "*",

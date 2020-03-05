@@ -53,7 +53,11 @@ class App extends Component {
                                             key={key}
                                             path={route.layout + route.path}
                                             render={props =>
-                                                route.condition ? <route.component /> : <Redirect to="/app/" />
+                                                route.condition ? (
+                                                    <route.component {...props} />
+                                                ) : (
+                                                    <Redirect to="/app/" />
+                                                )
                                             }
                                         />
                                     );
