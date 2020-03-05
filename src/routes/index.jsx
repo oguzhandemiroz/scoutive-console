@@ -612,7 +612,6 @@ var indexRoutes = [
         name: "PlayerForm",
         component: PlayerForm,
         layout: "/printable",
-        prop: { exact: true },
         condition: true
     },
     {
@@ -620,7 +619,6 @@ var indexRoutes = [
         name: "RollcallForm",
         component: RollcallForm,
         layout: "/printable",
-        prop: { exact: true },
         condition: false
     },
     {
