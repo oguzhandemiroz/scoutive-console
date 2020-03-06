@@ -45,8 +45,6 @@ class App extends Component {
                             <Redirect exact from="/app/persons" to="/app/persons/employees" />
                             {indexRoutes.map((route, key) => {
                                 if (route.layout === "/app" || route.name === "404") {
-                                    console.log(route.condition);
-
                                     return (
                                         <Route
                                             {...route.prop}

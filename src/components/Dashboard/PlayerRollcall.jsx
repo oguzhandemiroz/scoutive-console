@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { ListRollcallType, ActiveRollcall } from "../../services/Rollcalls";
+import { CheckPermissions } from "../../services/Others";
 
 export class PlayerRollcall extends Component {
     constructor(props) {
@@ -7,7 +8,8 @@ export class PlayerRollcall extends Component {
 
         this.state = {
             uid: localStorage.getItem("UID"),
-            rollcall: null
+            rollcall: null,
+            notPermission: false
         };
     }
 
@@ -37,6 +39,8 @@ export class PlayerRollcall extends Component {
                         );
                     }
                 }
+            } else {
+                this.setState({ notPermission: true });
             }
         });
     };
@@ -61,7 +65,12 @@ export class PlayerRollcall extends Component {
     };
 
     render() {
-        const { rollcall } = this.state;
+        const { rollcall, notPermission } = this.state;
+
+        if (!CheckPermissions(["r_read"]) && notPermission) {
+            return null;
+        }
+
         return (
             <>
                 <h4 className="text-muted font-weight-normal">Öğrenci Yoklama Durumu</h4>

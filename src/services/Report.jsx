@@ -1,4 +1,5 @@
 import { fatalSwal, errorSwal } from "../components/Alert";
+import { CheckPermissions } from "./Others";
 import ep from "../assets/js/urls";
 import { getCookie } from "../assets/js/core";
 
@@ -9,6 +10,10 @@ h.append("Authorization", localStorage.getItem("UID"));
 
 const CreatedPlayers = data => {
     try {
+        if (!CheckPermissions(["p_read"])) {
+            return Promise.resolve(null);
+        }
+
         return fetch(ep.REPORT_CREATED_PLAYERS, {
             method: "POST",
             body: JSON.stringify(data),
@@ -30,6 +35,10 @@ const CreatedPlayers = data => {
 
 const ListBirthdays = () => {
     try {
+        if (!CheckPermissions(["e_read", "p_read"], "||")) {
+            return Promise.resolve(null);
+        }
+
         return fetch(ep.REPORT_BIRTHDAYS, {
             method: "POST",
             body: JSON.stringify({
@@ -53,6 +62,10 @@ const ListBirthdays = () => {
 
 const UnpaidPlayers = () => {
     try {
+        if (!CheckPermissions(["a_read", "p_read"], "||")) {
+            return Promise.resolve(null);
+        }
+
         return fetch(ep.REPORT_UNPAID_PLAYERS, {
             method: "POST",
             body: JSON.stringify({
@@ -76,6 +89,10 @@ const UnpaidPlayers = () => {
 
 const TrainingGroups = () => {
     try {
+        if (!CheckPermissions(["g_read"])) {
+            return Promise.resolve(null);
+        }
+
         return fetch(ep.REPORT_TRAINING_GROUPS, {
             method: "POST",
             body: JSON.stringify({

@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import TrainingPlayers from "./TrainingPlayers";
 import { TrainingGroups } from "../../services/Report";
-import { fullnameGenerator, avatarPlaceholder } from "../../services/Others";
+import { fullnameGenerator, avatarPlaceholder, CheckPermissions } from "../../services/Others";
 import moment from "moment";
 const $ = require("jquery");
 
@@ -42,7 +42,8 @@ export class TrainingGroupList extends Component {
             data: {
                 players: []
             },
-            timer: "00:00:00"
+            timer: "00:00:00",
+            notPermission: false
         };
     }
 
@@ -58,6 +59,8 @@ export class TrainingGroupList extends Component {
         TrainingGroups().then(response => {
             if (response) {
                 this.setState({ trainings: response.data });
+            } else {
+                this.setState({ notPermission: true });
             }
         });
     };
@@ -84,91 +87,101 @@ export class TrainingGroupList extends Component {
     };
 
     render() {
-        const { trainings, data, timer } = this.state;
+        const { trainings, data, timer, notPermission } = this.state;
+
+        if (!CheckPermissions(["g_read"]) && notPermission) {
+            return null;
+        }
+
         return (
-            <div className="card">
-                {trainings
-                    ? trainings.length > 0
-                        ? trainings.map((el, key) => {
-                              return (
-                                  <div className="card-body" key={key.toString()}>
-                                      <div className="card-value float-right text-muted">
-                                          <i className="fa fa-running text-green-light" />
-                                      </div>
-                                      <Link to={"/app/groups/detail/" + el.group_id} className="h4 mb-1">
-                                          {el.name}
-                                      </Link>
-                                      <div className="text-muted">
-                                          Grubu&nbsp;
-                                          <strong className="text-body">{el.area ? el.area.name + "'de " : ""}</strong>
-                                          antrenmanda
-                                      </div>
-                                      <div className="row clear-both pt-4">
-                                          <div className="col-auto d-lg-flex align-items-center">
-                                              <div
-                                                  className="avatar"
-                                                  style={{ backgroundImage: `url(${el.employee.image})` }}>
-                                                  {el.employee.image
-                                                      ? ""
-                                                      : avatarPlaceholder(el.employee.name, el.employee.surname)}
+            <div className="col-sm-12 col-lg">
+                <div className="card">
+                    {trainings
+                        ? trainings.length > 0
+                            ? trainings.map((el, key) => {
+                                  return (
+                                      <div className="card-body" key={key.toString()}>
+                                          <div className="card-value float-right text-muted">
+                                              <i className="fa fa-running text-green-light" />
+                                          </div>
+                                          <Link to={"/app/groups/detail/" + el.group_id} className="h4 mb-1">
+                                              {el.name}
+                                          </Link>
+                                          <div className="text-muted">
+                                              Grubu&nbsp;
+                                              <strong className="text-body">
+                                                  {el.area ? el.area.name + "'de " : ""}
+                                              </strong>
+                                              antrenmanda
+                                          </div>
+                                          <div className="row clear-both pt-4">
+                                              <div className="col-auto d-lg-flex align-items-center">
+                                                  <div
+                                                      className="avatar"
+                                                      style={{ backgroundImage: `url(${el.employee.image})` }}>
+                                                      {el.employee.image
+                                                          ? ""
+                                                          : avatarPlaceholder(el.employee.name, el.employee.surname)}
+                                                  </div>
+                                              </div>
+                                              <div className="col pl-1">
+                                                  <Link
+                                                      to={"/app/persons/employees/detail/" + el.employee.uid}
+                                                      className="text-body font-weight-600 d-block">
+                                                      {fullnameGenerator(el.employee.name, el.employee.surname)}
+                                                  </Link>
+                                                  <span
+                                                      className="small text-muted"
+                                                      data-toggle="tooltip"
+                                                      title={el.employee.permission}>
+                                                      Sorumlu Antrenör
+                                                  </span>
+                                              </div>
+                                              <div className="col-auto d-flex flex-column align-items-center">
+                                                  <span
+                                                      className="tag tag-gray-dark"
+                                                      data-original-title="Antrenman Saati"
+                                                      data-offset="-35"
+                                                      data-toggle="tooltip">
+                                                      {moment(el.start_time, "HH:mm").format("HH:mm")}
+                                                      &nbsp;&mdash;&nbsp;
+                                                      {moment(el.end_time, "HH:mm").format("HH:mm")}
+                                                  </span>
                                               </div>
                                           </div>
-                                          <div className="col pl-1">
-                                              <Link
-                                                  to={"/app/persons/employees/detail/" + el.employee.uid}
-                                                  className="text-body font-weight-600 d-block">
-                                                  {fullnameGenerator(el.employee.name, el.employee.surname)}
-                                              </Link>
-                                              <span
-                                                  className="small text-muted"
-                                                  data-toggle="tooltip"
-                                                  title={el.employee.permission}>
-                                                  Sorumlu Antrenör
-                                              </span>
-                                          </div>
-                                          <div className="col-auto d-flex flex-column align-items-center">
-                                              <span
-                                                  className="tag tag-gray-dark"
-                                                  data-original-title="Antrenman Saati"
-                                                  data-offset="-35"
-                                                  data-toggle="tooltip">
-                                                  {moment(el.start_time, "HH:mm").format("HH:mm")}&nbsp;&mdash;&nbsp;
-                                                  {moment(el.end_time, "HH:mm").format("HH:mm")}
-                                              </span>
-                                          </div>
-                                      </div>
-                                      <div className="row mt-5">
-                                          <div className="col-12">
-                                              {el.players.length === 0 ? (
-                                                  <div className="text-muted text-center font-italic">
-                                                      Gruba ait öğrenci bulunamadı...
-                                                  </div>
-                                              ) : (
-                                                  <button
-                                                      onClick={() =>
-                                                          this.setState({
-                                                              data: {
-                                                                  name: el.name,
-                                                                  players: el.players,
-                                                                  start_time: el.start_time,
-                                                                  end_time: el.end_time
-                                                              }
-                                                          })
-                                                      }
-                                                      className="btn btn-block btn-secondary"
-                                                      data-toggle="modal"
-                                                      data-target="#trainingPlayers">
-                                                      Antrenmanda Olan Öğrenciler
-                                                  </button>
-                                              )}
+                                          <div className="row mt-5">
+                                              <div className="col-12">
+                                                  {el.players.length === 0 ? (
+                                                      <div className="text-muted text-center font-italic">
+                                                          Gruba ait öğrenci bulunamadı...
+                                                      </div>
+                                                  ) : (
+                                                      <button
+                                                          onClick={() =>
+                                                              this.setState({
+                                                                  data: {
+                                                                      name: el.name,
+                                                                      players: el.players,
+                                                                      start_time: el.start_time,
+                                                                      end_time: el.end_time
+                                                                  }
+                                                              })
+                                                          }
+                                                          className="btn btn-block btn-secondary"
+                                                          data-toggle="modal"
+                                                          data-target="#trainingPlayers">
+                                                          Antrenmanda Olan Öğrenciler
+                                                      </button>
+                                                  )}
+                                              </div>
                                           </div>
                                       </div>
-                                  </div>
-                              );
-                          })
-                        : noRow()
-                    : noRow(true)}
-                <TrainingPlayers data={data} />
+                                  );
+                              })
+                            : noRow()
+                        : noRow(true)}
+                    <TrainingPlayers data={data} />
+                </div>
             </div>
         );
     }

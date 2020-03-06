@@ -1,6 +1,7 @@
 import { fatalSwal, errorSwal, Toast } from "../components/Alert";
 import ep from "../assets/js/urls";
 import { getCookie } from "../assets/js/core.js";
+import { CheckPermissions } from "./Others";
 
 const h = new Headers();
 h.append("Content-Type", "application/json");
@@ -153,12 +154,22 @@ const DeleteRollcall = (data, type) => {
     } catch (e) {}
 };
 
+/**
+ * @param {Object} data - Request Body Data
+ * @param {number} type 0 -> player, 1 -> employee
+ */
+
 const ActiveRollcall = (data, type) => {
     try {
         /*
 			- type 0 -> player
 			- type 1 -> employee
-		*/
+        */
+
+        if (!CheckPermissions(["r_read"])) {
+            return Promise.resolve(null);
+        }
+
         return fetch(ep.ROLLCALL_ACTIVE + type, {
             method: "POST",
             body: JSON.stringify(data),

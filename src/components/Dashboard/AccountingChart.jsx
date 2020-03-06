@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { ListAccountingRecords } from "../../services/Accounting";
+import { CheckPermissions } from "../../services/Others";
 import Chart from "react-apexcharts";
 import "../../assets/css/apex.css";
 import sc from "../../assets/js/sc";
@@ -14,6 +15,7 @@ export class AccountingChart extends Component {
 
         this.state = {
             uid: localStorage.getItem("UID"),
+            notPermission: false,
             chartOptions: {
                 chart: {
                     id: "accounting-line-chart",
@@ -170,12 +172,18 @@ export class AccountingChart extends Component {
                         }
                     }));
                 }
+            } else {
+                this.setState({ notPermission: true });
             }
         });
     };
 
     render() {
-        const { chartOptions } = this.state;
+        const { chartOptions, notPermission } = this.state;
+        if (!CheckPermissions(["a_read"]) && notPermission) {
+            return null;
+        }
+
         return (
             <div className="col-12">
                 <div className="card">
