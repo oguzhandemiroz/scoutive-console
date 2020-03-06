@@ -1,14 +1,13 @@
 import React, { Component } from "react";
 import ReactDOM from "react-dom";
-import { BrowserRouter, Link } from "react-router-dom";
-import { MakeRollcall, SetNoteRollcall, DeleteRollcall } from "../../../services/Rollcalls";
+import { Link } from "react-router-dom";
+import { MakeRollcall, SetNoteRollcall, DeleteRollcall, CloseRollcall } from "../../../services/Rollcalls";
 import { CreateVacation, UpdateVacation } from "../../../services/PlayerAction";
 import { GetPlayerParents } from "../../../services/Player";
 import { fullnameGenerator, nullCheck, formatPhone } from "../../../services/Others";
 import { WarningModal as Modal } from "../WarningModal";
 import { datatable_turkish, getCookie } from "../../../assets/js/core";
 import { fatalSwal, errorSwal, Toast, showSwal } from "../../Alert.jsx";
-import GroupChange from "../../PlayerAction/GroupChange";
 import Vacation from "../../PlayerAction/Vacation";
 import ep from "../../../assets/js/urls";
 import ActionButton from "../../Players/ActionButton";
@@ -949,19 +948,60 @@ export class Add extends Component {
         });
     };
 
+    closeRollcall = () => {
+        const { uid } = this.state;
+        const { rcid } = this.props.match.params;
+        showSwal({
+            type: "warning",
+            title: "Uyarı",
+            html: `Yoklama sonlandırılacaktır!
+            <br>Yoklama sonlandıktan sonra <u>değişiklik yapamazsınız.</u>
+            <br><br>
+            İşaretlenmemiş öğrenciler sisteme<br>
+            <strong class="text-orange">Tanımsız</strong> olarak tanımlanacaktır.
+            <br>Yoklamayı sonlandırmak istediğinize emin misiniz?
+            <br><br>
+            <u class="bg-red p-1">Bu işlem geri alınamaz.</u>
+            <br><br>
+            <span class="font-italic">Not: Sonlandırılmayan yoklamalar gün sonunda otomatik olarak sonlanır.</span>`,
+            confirmButtonText: "Eminim, Sonlandır",
+            cancelButtonText: "İptal",
+            confirmButtonColor: "#cd201f",
+            cancelButtonColor: "#868e96",
+            showCancelButton: true,
+            reverseButtons: true
+        }).then(re => {
+            console.log(re);
+            if (re.value) {
+                CloseRollcall({
+                    uid: uid,
+                    rollcall_id: rcid
+                }).then(response => {
+                    if (response) {
+                        const status = response.status;
+                        if (status.code === 1020) {
+                            this.props.history.push("/app/rollcalls/player");
+                        }
+                    }
+                });
+            }
+        });
+    };
+
     render() {
         const { data } = this.state;
         return (
             <div className="container">
                 <Modal />
                 <div className="page-header">
-                    <h1 className="page-title">
-                        Yoklamalar &mdash; Öğrenci &mdash; Yoklama Al (#{this.props.match.params.rcid})
-                    </h1>
-                    <button onClick={this.printableRollcallForm} className="btn btn-icon btn-secondary ml-auto mr-2">
+                    <h1 className="page-title">Yoklamalar &mdash; Öğrenciler &mdash; Yoklama Al</h1>
+                    <Link className="btn btn-link ml-auto" to={"/app/rollcalls/player"}>
+                        Yoklamalara Geri Dön
+                    </Link>
+                    {/* <button onClick={this.printableRollcallForm} className="btn btn-icon btn-secondary ml-auto mr-2">
                         <i className="fe fe-printer mr-1"></i>
                         Yoklama Formu
-                    </button>
+                    </button> */}
                 </div>
                 <div className="row row-cards">
                     <div className="col">
@@ -970,11 +1010,14 @@ export class Add extends Component {
                                 <div className="card-status bg-teal" />
                                 <h3 className="card-title">Öğrenci Listesi</h3>
                                 <div className="card-options">
+                                    <button onClick={this.closeRollcall} className="btn btn-sm btn-danger mr-2">
+                                        Yoklamayı Sonlandır
+                                    </button>
                                     <span
                                         className="form-help bg-gray-dark text-white"
                                         data-toggle="popover"
                                         data-placement="bottom"
-                                        data-content='<p>Yoklama yapılırken, sisteme <b>"geldi"</b>, <b>"izinli"</b> veya <b>"gelmedi"</b> olarak giriş yapabilirsiniz.</p><p>Yoklamalar gün sonunda otomatik olarak tamamlanır. İşaretlenmemiş olanlar, sisteme <b>"Tanımsız"</b> şeklinde tanımlanır.</p><p><b className="text-red">Not:</b> Yoklama tamamlana kadar değişiklik yapabilirsiniz. Tamamlanan yoklamalarda değişiklik <b><u><i>yapılamaz.</i></u></b></p>'>
+                                        data-content='<p>Yoklama alınırken, sisteme <b>"geldi"</b>, <b>"izinli"</b> veya <b>"gelmedi"</b> olarak giriş yapabilirsiniz.</p><p>Yoklamalar gün sonunda otomatik olarak tamamlanır. İşaretlenmemiş olanlar, sisteme <b>"Tanımsız"</b> şeklinde tanımlanır.</p><p><b className="text-red">Not:</b> Yoklama tamamlana kadar değişiklik yapabilirsiniz. Tamamlanan yoklamalarda değişiklik <b><u><i>yapılamaz.</i></u></b></p>'>
                                         !
                                     </span>
                                     <Modal />

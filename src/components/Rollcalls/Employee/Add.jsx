@@ -1,10 +1,10 @@
 import React, { Component } from "react";
 import ReactDOM from "react-dom";
-import { BrowserRouter, withRouter, Link } from "react-router-dom";
+import { withRouter, Link } from "react-router-dom";
 import Inputmask from "inputmask";
 import moment from "moment";
 import "moment/locale/tr";
-import { MakeRollcall, SetNoteRollcall, DeleteRollcall } from "../../../services/Rollcalls";
+import { MakeRollcall, SetNoteRollcall, DeleteRollcall, CloseRollcall } from "../../../services/Rollcalls";
 import { CreateVacation, UpdateVacation } from "../../../services/EmployeeAction";
 import { WarningModal as Modal } from "../WarningModal";
 import { datatable_turkish, getCookie } from "../../../assets/js/core";
@@ -652,14 +652,55 @@ export class Add extends Component {
         );
     };
 
+    closeRollcall = () => {
+        const { uid } = this.state;
+        const { rcid } = this.props.match.params;
+        showSwal({
+            type: "warning",
+            title: "Uyarı",
+            html: `Yoklama sonlandırılacaktır!
+            <br>Yoklama sonlandıktan sonra <u>değişiklik yapamazsınız.</u>
+            <br><br>
+            İşaretlenmemiş personeller sisteme<br>
+            <strong class="text-orange">Tanımsız</strong> olarak tanımlanacaktır.
+            <br>Yoklamayı sonlandırmak istediğinize emin misiniz?
+            <br><br>
+            <u class="bg-red p-1">Bu işlem geri alınamaz.</u>
+            <br><br>
+            <span class="font-italic">Not: Sonlandırılmayan yoklamalar gün sonunda otomatik olarak sonlanır.</span>`,
+            confirmButtonText: "Eminim, Sonlandır",
+            cancelButtonText: "İptal",
+            confirmButtonColor: "#cd201f",
+            cancelButtonColor: "#868e96",
+            showCancelButton: true,
+            reverseButtons: true
+        }).then(re => {
+            console.log(re);
+            if (re.value) {
+                CloseRollcall({
+                    uid: uid,
+                    rollcall_id: rcid
+                }).then(response => {
+                    if (response) {
+                        const status = response.status;
+                        if (status.code === 1020) {
+                            this.props.history.push("/app/rollcalls/employee");
+                        }
+                    }
+                });
+            }
+        });
+    };
+
     render() {
         const { data } = this.state;
         return (
             <div className="container">
                 <div className="page-header">
-                    <h1 className="page-title">
-                        Yoklamalar &mdash; Personel &mdash; Yoklama Al (#{this.props.match.params.rcid})
-                    </h1>
+                    <h1 className="page-title">Yoklamalar &mdash; Personeller &mdash; Yoklama Al</h1>
+                    <Link className="btn btn-link ml-auto" to={"/app/rollcalls/employee"}>
+                        Yoklamalara Geri Dön
+                    </Link>
                 </div>
                 <div className="row">
                     <div className="col-lg-12">
@@ -668,11 +709,14 @@ export class Add extends Component {
                                 <div className="card-status bg-azure" />
                                 <h3 className="card-title">Personel Listesi</h3>
                                 <div className="card-options">
+                                    <button onClick={this.closeRollcall} className="btn btn-sm btn-danger mr-2">
+                                        Yoklamayı Sonlandır
+                                    </button>
                                     <span
                                         className="form-help bg-gray-dark text-white"
                                         data-toggle="popover"
                                         data-placement="bottom"
-                                        data-content='<p>Yoklama yapılırken, sisteme <b>"geldi"</b>, <b>"izinli"</b> veya <b>"gelmedi"</b> olarak giriş yapabilirsiniz.</p><p>Yoklamalar gün sonunda otomatik olarak tamamlanır. İşaretlenmemiş olanlar, sisteme <b>"gelmedi"</b> şeklinde tanımlanır.</p><p><b className="text-red">Not:</b> Yoklama tamamlana kadar değişiklik yapabilirsiniz. Tamamlanan yoklamalarda değişiklik <b><u><i>yapılamaz.</i></u></b></p>'>
+                                        data-content='<p>Yoklama alınırken, sisteme <b>"geldi"</b>, <b>"izinli"</b> veya <b>"gelmedi"</b> olarak giriş yapabilirsiniz.</p><p>Yoklamalar gün sonunda otomatik olarak tamamlanır. İşaretlenmemiş olanlar, sisteme <b>"gelmedi"</b> şeklinde tanımlanır.</p><p><b className="text-red">Not:</b> Yoklama tamamlana kadar değişiklik yapabilirsiniz. Tamamlanan yoklamalarda değişiklik <b><u><i>yapılamaz.</i></u></b></p>'>
                                         !
                                     </span>
                                     <Modal />
