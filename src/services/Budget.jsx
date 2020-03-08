@@ -1,6 +1,7 @@
 import { errorSwal, fatalSwal, Toast } from "../components/Alert";
 import ep from "../assets/js/urls";
 import { getCookie } from "../assets/js/core.js";
+import { CheckPermissions } from "../services/Others";
 
 const h = new Headers();
 h.append("Content-Type", "application/json");
@@ -51,6 +52,10 @@ const CreateBudget = data => {
 
 const ListBudgets = uid => {
     try {
+        if (!CheckPermissions(["a_read"])) {
+            return Promise.resolve(null);
+        }
+
         return fetch(ep.BUDGET_LIST, {
             method: "POST",
             body: JSON.stringify({

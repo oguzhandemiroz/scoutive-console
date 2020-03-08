@@ -25,7 +25,7 @@ const menu = [
                 activeClassName: "active",
                 childText: "Veliler",
                 icon: "fa fa-user",
-                condition: CheckPermissions(["p_read", "p_write"], "||")
+                condition: CheckPermissions(["p_read", "p_write", "p_remove"], "||")
             },
             {
                 to: "/app/persons/employees",

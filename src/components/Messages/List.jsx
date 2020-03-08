@@ -159,14 +159,14 @@ export class List extends Component {
                                         className={`icon-placeholder icon-placeholder-xxs bg-${template.color}-lightest mr-3`}>
                                         <i className={`${template.icon} text-${template.color}`} />
                                     </div>
-                                    <div
+                                    <span
                                         data-toggle="tooltip"
                                         title={title}
                                         className="btn-link cursor-pointer text-inherit font-weight-600 text-wrap"
                                         onClick={() => this.props.history.push(`/app/messages/detail/${campaign_id}`)}>
                                         {segment_id ? <span className="badge badge-primary mr-2">OTOMATİK</span> : null}
                                         {title}
-                                    </div>
+                                    </span>
                                 </>,
                                 td
                             );

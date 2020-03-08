@@ -1,6 +1,7 @@
 import { fatalSwal, errorSwal, Toast } from "../components/Alert.jsx";
 import ep from "../assets/js/urls";
 import { getCookie } from "../assets/js/core.js";
+import { CheckPermissions } from "../services/Others";
 
 const h = new Headers();
 h.append("Content-Type", "application/json");
@@ -9,6 +10,10 @@ h.append("Authorization", localStorage.getItem("UID"));
 
 const CreateParent = data => {
     try {
+        if (!CheckPermissions(["p_write"])) {
+            return Promise.resolve(null);
+        }
+
         return fetch(ep.PARENT_CREATE, {
             method: "POST",
             body: JSON.stringify(data),
@@ -36,6 +41,10 @@ const CreateParent = data => {
 
 const UpdateParent = data => {
     try {
+        if (!CheckPermissions(["p_write"])) {
+            return Promise.resolve(null);
+        }
+
         return fetch(ep.PARENT_UPDATE, {
             method: "PATCH",
             body: JSON.stringify(data),
@@ -63,6 +72,10 @@ const UpdateParent = data => {
 
 const DetailParent = data => {
     try {
+        if (!CheckPermissions(["p_read"])) {
+            return Promise.resolve(null);
+        }
+
         return fetch(ep.PARENT_GET, {
             method: "POST",
             body: JSON.stringify(data),
@@ -84,6 +97,10 @@ const DetailParent = data => {
 
 const ListParents = () => {
     try {
+        if (!CheckPermissions(["p_read"])) {
+            return Promise.resolve(null);
+        }
+
         return fetch(ep.PARENT_LIST, {
             method: "POST",
             body: JSON.stringify({

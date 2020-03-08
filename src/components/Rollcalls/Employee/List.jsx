@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import { Link, withRouter } from "react-router-dom";
 import { CreateRollcall, ListRollcall } from "../../../services/Rollcalls";
 import { Toast, showSwal } from "../../Alert";
+import { CheckPermissions } from "../../../services/Others";
+import NotPermissions from "../../../components/NotActivate/NotPermissions";
 import moment from "moment";
 import "moment/locale/tr";
 import Swal from "sweetalert2";
@@ -146,72 +148,102 @@ export class List extends Component {
     };
 
     render() {
-        const { rollcallList, onLoadedData } = this.state;
+        const { rollcallList } = this.state;
         return (
-            <div className="card">
-                <div className="card-header">
-                    <div className="card-status bg-azure" />
-                    <h3 className="card-title">Geçmiş Yoklama Listesi</h3>
-                    <div className="card-options">
-                        <button onClick={this.createRollcall} className="btn btn-sm btn-success">
-                            Yoklama Oluştur
-                        </button>
+            <>
+                {CheckPermissions(["r_read", "r_write"], "||") && (
+                    <div className="card">
+                        <div className="card-header">
+                            <div className="card-status bg-azure" />
+                            <h3 className="card-title">Geçmiş Yoklama Listesi</h3>
+                            {CheckPermissions(["r_write"]) && (
+                                <div className="card-options">
+                                    <button onClick={this.createRollcall} className="btn btn-sm btn-success">
+                                        Yoklama Oluştur
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+                        {CheckPermissions(["r_read"]) && (
+                            <div className="card-body p-0">
+                                <div className="table-responsive">
+                                    <table className="table table-hover table-outline table-vcenter text-nowrap card-table mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th className="pl-0 w-1" />
+                                                <th>Yoklama Tarihi</th>
+                                                <th className="text-center">
+                                                    Personel Katılımı
+                                                    <span
+                                                        className="form-help ml-2"
+                                                        data-original-title="Gelen/Toplam"
+                                                        data-toggle="tooltip"
+                                                        data-placement="top">
+                                                        ?
+                                                    </span>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {rollcallList
+                                                ? rollcallList.length > 0
+                                                    ? rollcallList.map((el, key) => {
+                                                          const redirect =
+                                                              "/app/rollcalls/employee/" +
+                                                              (el.status === 2 ? "add/" : "detail/") +
+                                                              el.rollcall_id;
+                                                          return (
+                                                              <tr key={key.toString()}>
+                                                                  <td className="text-center text-muted">
+                                                                      #{rollcallList.length - key}
+                                                                  </td>
+                                                                  <td>
+                                                                      {el.status === 2 ? (
+                                                                          <span className="badge badge-danger mr-2">
+                                                                              Devam ediyor
+                                                                          </span>
+                                                                      ) : null}
+                                                                      <Link
+                                                                          className="text-inherit font-weight-600"
+                                                                          to={redirect}>
+                                                                          {el.title
+                                                                              ? el.title
+                                                                              : formatDate(
+                                                                                    el.created_date,
+                                                                                    "DD/MM/YYYY HH:mm"
+                                                                                )}
+                                                                      </Link>
+                                                                  </td>
+                                                                  <td className="text-center">
+                                                                      {el.came + "/" + el.total}
+                                                                  </td>
+                                                              </tr>
+                                                          );
+                                                      })
+                                                    : noRow()
+                                                : noRow(true)}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        )}
                     </div>
-                </div>
-
-                <div className="card-body p-0">
-                    <div className="table-responsive">
-                        <table className="table table-striped table-outline table-vcenter text-nowrap card-table mb-0">
-                            <thead>
-                                <tr>
-                                    <th className="pl-0 w-1" />
-                                    <th>Yoklama Tarihi</th>
-                                    <th className="text-center">
-                                        Personel Katılımı
-                                        <span
-                                            className="form-help ml-2"
-                                            data-original-title="Gelen/Toplam"
-                                            data-toggle="tooltip"
-                                            data-placement="top">
-                                            ?
-                                        </span>
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {rollcallList
-                                    ? rollcallList.length > 0
-                                        ? rollcallList.map((el, key) => {
-                                              const redirect =
-                                                  "/app/rollcalls/employee/" +
-                                                  (el.status === 2 ? "add/" : "detail/") +
-                                                  el.rollcall_id;
-                                              return (
-                                                  <tr key={key.toString()}>
-                                                      <td className="text-center text-muted">
-                                                          #{rollcallList.length - key}
-                                                      </td>
-                                                      <td>
-                                                          {el.status === 2 ? (
-                                                              <span className="badge badge-danger mr-2">
-                                                                  Devam ediyor
-                                                              </span>
-                                                          ) : null}
-                                                          <Link className="text-inherit font-weight-600" to={redirect}>
-                                                              {el.title}
-                                                          </Link>
-                                                      </td>
-                                                      <td className="text-center">{el.came + "/" + el.total}</td>
-                                                  </tr>
-                                              );
-                                          })
-                                        : noRow()
-                                    : noRow(true)}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
+                )}
+                {!CheckPermissions(["r_read"]) && (
+                    <NotPermissions
+                        title="Üzgünüz 😣"
+                        imageAlt="Yetersiz Yetki"
+                        content={() => (
+                            <p className="text-muted text-center">
+                                Yoklamaları görüntülemek için yetkiniz bulunmamaktadır.
+                                <br />
+                                Eğer farklı bir sorun olduğunu düşünüyorsanız lütfen yöneticiniz ile iletişime
+                                geçiniz...
+                            </p>
+                        )}
+                    />
+                )}
+            </>
         );
     }
 }

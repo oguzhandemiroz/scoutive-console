@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { ListAccountingRecords } from "../../services/Accounting";
+import { CheckPermissions } from "../../services/Others";
 import moment from "moment";
 import _ from "lodash";
 const $ = require("jquery");
@@ -52,9 +53,14 @@ export class Accounting extends Component {
 
     render() {
         const { recordsIncome, recordsExpense, recordsEndorsement } = this.state;
+
+        if (!CheckPermissions(["a_read"])) {
+            return null;
+        }
+
         return (
             <>
-                <div className="col-md-6 col-sm-6 col-lg-3">
+                <div className="col-md-6 col-sm-6 col-lg">
                     <div className="card">
                         <div className="card-body p-3 text-center">
                             {recordsIncome !== null ? (
@@ -74,7 +80,7 @@ export class Accounting extends Component {
                         </div>
                     </div>
                 </div>
-                <div className="col-md-6 col-sm-6 col-lg-3">
+                <div className="col-md-6 col-sm-6 col-lg">
                     <div className="card">
                         <div className="card-body p-3 text-center">
                             {recordsExpense !== null ? (
@@ -94,7 +100,7 @@ export class Accounting extends Component {
                         </div>
                     </div>
                 </div>
-                <div className="col-md-6 col-sm-6 col-lg-3">
+                <div className="col-md-6 col-sm-6 col-lg">
                     <div className="card">
                         <div className="card-body p-3 text-center">
                             {recordsEndorsement !== null ? (

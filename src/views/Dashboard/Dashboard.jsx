@@ -10,36 +10,50 @@ import FastMenu from "../../components/Dashboard/FastMenu";
 import DailyPlayer from "../../components/Dashboard/DailyPlayer";
 import Accounting from "../../components/Dashboard/Accounting";
 import AccountingChart from "../../components/Dashboard/AccountingChart";
+import NotPermissions from "../../components/NotActivate/NotPermissions";
+import { CheckPermissions } from "../../services/Others";
 
 class Dashboard extends Component {
     render() {
-        return (
-            <div className="container">
-                <div className="page-header">
-                    <h1 className="page-title">Genel Durum</h1>
+        if (!CheckPermissions(["a_read", "p_read", "e_read", "r_read", "g_read"], "||")) {
+            return (
+                <div className="container">
+                    <div className="page-header">
+                        <h1 className="page-title">Genel Durum</h1>
+                    </div>
+                    <NotPermissions
+                        title="Üzgünüz 😣"
+                        imageAlt="Yetersiz Yetki"
+                        content={() => (
+                            <p className="text-muted text-center">
+                                Genel Durumu görüntülemek için yetkiniz bulunmamaktadır.
+                                <br />
+                                Eğer farklı bir sorun olduğunu düşünüyorsanız lütfen yöneticiniz ile iletişime
+                                geçiniz...
+                            </p>
+                        )}
+                    />
                 </div>
-                <PlayerRollcall />
-                <div className="row row-cards">
-                    <DailyPlayer />
-                    <Accounting />
-                </div>
-                <div className="row row-cards">
-                    <AccountingChart />
-                </div>
-                <div className="row row-cards">
-                    <div className="col-sm-12 col-lg-4 order-1">
+            );
+        } else {
+            return (
+                <div className="container">
+                    <div className="page-header">
+                        <h1 className="page-title">Genel Durum</h1>
+                    </div>
+                    <PlayerRollcall />
+                    <div className="row row-cards">
+                        <DailyPlayer />
+                        <Accounting />
+                        <AccountingChart />
                         <UnpaidPlayers />
-                    </div>
-                    <div className="col-sm-12 col-lg-4 order-1">
                         <Birthdays />
-                    </div>
-                    <div className="col-sm-12 col-lg-4 order-1">
                         <TrainingGroups />
                         {/* <FastMenu /> */}
                     </div>
                 </div>
-            </div>
-        );
+            );
+        }
     }
 }
 

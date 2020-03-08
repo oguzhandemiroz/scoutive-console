@@ -305,7 +305,7 @@ var indexRoutes = [
         component: Parents,
         layout: "/app",
         prop: { exact: true },
-        condition: CheckPermissions(["p_read", "p_write"], "||")
+        condition: CheckPermissions(["p_read", "p_write", "p_remove"], "||")
     },
     {
         path: "/persons/parents/add",
@@ -391,7 +391,7 @@ var indexRoutes = [
         component: EmployeesRollcallList,
         layout: "/app",
         prop: { exact: true },
-        condition: CheckPermissions(["r_read"])
+        condition: CheckPermissions(["r_read", "r_write", "r_remove"], "||")
     },
     {
         path: "/rollcalls/employee/add/:rcid",
@@ -414,7 +414,7 @@ var indexRoutes = [
         component: PlayersRollcallList,
         layout: "/app",
         prop: { exact: true },
-        condition: CheckPermissions(["r_read"])
+        condition: CheckPermissions(["r_read", "r_write", "r_remove"], "||")
     },
     {
         path: "/rollcalls/player/add/:rcid",

@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { GetBudget, MakeDefaultBudget, BalanceHistoryBudget } from "../../services/Budget";
-import { nullCheck } from "../../services/Others";
+import { nullCheck, CheckPermissions } from "../../services/Others";
 import { Link } from "react-router-dom";
 import "jquery";
 import Inputmask from "inputmask";
@@ -112,7 +112,7 @@ export class Detail extends Component {
                                     <i className="fe fe-check"></i>
                                 </span>
                             </span>
-                        ) : default_budget === 0 ? (
+                        ) : default_budget === 0 && CheckPermissions(["a_write"]) ? (
                             <button
                                 onClick={this.makeDefault}
                                 className={`btn btn-sm btn-primary ${loadingDefaultButton}`}>

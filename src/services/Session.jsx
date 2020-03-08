@@ -80,11 +80,10 @@ const SetSession = data => {
             .then(res => res.json())
             .then(response => {
                 const status = response.status;
-                if (status.code !== 1020) errorSwal(status);
-                else localStorage.setItem("t", response.t);
+                if (status.code === 1020) localStorage.setItem("t", response.t);
                 return response;
             })
-            .catch(err => fatalSwal(true));
+            .catch(err => fatalSwal());
     } catch (e) {}
 };
 

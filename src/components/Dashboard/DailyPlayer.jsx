@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { CreatedPlayers } from "../../services/Report";
+import { CheckPermissions } from "../../services/Others";
 import moment from "moment";
 
 export class DailyPlayer extends Component {
@@ -41,8 +42,13 @@ export class DailyPlayer extends Component {
 
     render() {
         const { count } = this.state;
+
+        if (!CheckPermissions(["p_read"])) {
+            return null;
+        }
+
         return (
-            <div className="col-md-6 col-sm-6 col-lg-3">
+            <div className="col-md-6 col-sm-6 col-lg">
                 <div className="card">
                     <div className="card-body p-3 text-center">
                         {count !== null ? (

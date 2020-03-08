@@ -10,8 +10,9 @@ import {
     CreateMessage,
     ActivateMessageTemplate
 } from "../../services/Messages";
+import NotPermissions from "../../components/NotActivate/NotPermissions";
 import { selectCustomStyles, formValid, selectCustomStylesError } from "../../assets/js/core";
-import { fullnameGenerator, formatPhone, nullCheck, formatDate } from "../../services/Others";
+import { fullnameGenerator, formatPhone, nullCheck, formatDate, CheckPermissions } from "../../services/Others";
 import sms_activate_image from "../../assets/images/illustrations/sms_activate.svg";
 import SmsUsage from "../Pages/Settings/UsageDetail/SmsUsage";
 import { GetSettings, GetSchoolFees } from "../../services/School";
@@ -120,28 +121,30 @@ export class SingleAdd extends Component {
     }
 
     componentDidMount() {
-        const { personType } = this.state;
-        GetSettings().then(resSettings => this.setState({ start: resSettings }));
-        GetSchoolFees().then(response => {
-            if (response) {
-                this.setState({ school_fees: response.data.reverse(), loading: "" });
+        if (CheckPermissions(["m_write"])) {
+            const { personType } = this.state;
+            GetSettings().then(resSettings => this.setState({ start: resSettings }));
+            GetSchoolFees().then(response => {
+                if (response) {
+                    this.setState({ school_fees: response.data.reverse(), loading: "" });
+                }
+            });
+            MessagesAllTime().then(response => {
+                if (response) {
+                    this.setState({ all_time_messages: response.data });
+                }
+            });
+            switch (personType) {
+                case "player":
+                    this.listPlayers();
+                    break;
+                case "parent":
+                    this.listParents();
+                case "employee":
+                    this.listEmployees();
+                default:
+                    break;
             }
-        });
-        MessagesAllTime().then(response => {
-            if (response) {
-                this.setState({ all_time_messages: response.data });
-            }
-        });
-        switch (personType) {
-            case "player":
-                this.listPlayers();
-                break;
-            case "parent":
-                this.listParents();
-            case "employee":
-                this.listEmployees();
-            default:
-                break;
         }
     }
 
@@ -881,39 +884,45 @@ export class SingleAdd extends Component {
                         <div className="col-lg-12">
                             <div className="hr-text mt-0">Kişi Türü Seç</div>
                             <div className="selectgroup w-100">
-                                <label className="selectgroup-item">
-                                    <input
-                                        className="selectgroup-input"
-                                        type="radio"
-                                        name="personType"
-                                        value="player"
-                                        checked={personType === "player"}
-                                        onChange={this.handlePersonType}
-                                    />
-                                    <span className="selectgroup-button">Öğrenci</span>
-                                </label>
-                                <label className="selectgroup-item">
-                                    <input
-                                        className="selectgroup-input"
-                                        type="radio"
-                                        name="personType"
-                                        value="parent"
-                                        checked={personType === "parent"}
-                                        onChange={this.handlePersonType}
-                                    />
-                                    <span className="selectgroup-button">Veli</span>
-                                </label>
-                                <label className="selectgroup-item">
-                                    <input
-                                        className="selectgroup-input"
-                                        type="radio"
-                                        name="personType"
-                                        value="employee"
-                                        checked={personType === "employee"}
-                                        onChange={this.handlePersonType}
-                                    />
-                                    <span className="selectgroup-button">Personel</span>
-                                </label>
+                                {CheckPermissions(["p_read"]) && (
+                                    <label className="selectgroup-item">
+                                        <input
+                                            className="selectgroup-input"
+                                            type="radio"
+                                            name="personType"
+                                            value="player"
+                                            checked={personType === "player"}
+                                            onChange={this.handlePersonType}
+                                        />
+                                        <span className="selectgroup-button">Öğrenci</span>
+                                    </label>
+                                )}
+                                {CheckPermissions(["p_read"]) && (
+                                    <label className="selectgroup-item">
+                                        <input
+                                            className="selectgroup-input"
+                                            type="radio"
+                                            name="personType"
+                                            value="parent"
+                                            checked={personType === "parent"}
+                                            onChange={this.handlePersonType}
+                                        />
+                                        <span className="selectgroup-button">Veli</span>
+                                    </label>
+                                )}
+                                {CheckPermissions(["e_read"]) && (
+                                    <label className="selectgroup-item">
+                                        <input
+                                            className="selectgroup-input"
+                                            type="radio"
+                                            name="personType"
+                                            value="employee"
+                                            checked={personType === "employee"}
+                                            onChange={this.handlePersonType}
+                                        />
+                                        <span className="selectgroup-button">Personel</span>
+                                    </label>
+                                )}
                             </div>
                         </div>
                         <div className="col-lg-12">
@@ -1209,29 +1218,49 @@ export class SingleAdd extends Component {
             <div className="container">
                 <div className="page-header">
                     <h1 className="page-title">Tekli Mesaj Oluştur</h1>
-                    <Link className="btn btn-link ml-auto" to={"/app/messages"}>
-                        İletişim Merkezine Geri Dön
+                    <Link className="btn btn-link ml-auto" to={"/app/messages/select"}>
+                        Mesaj Tipi Seçme Ekranına Geri Dön
                     </Link>
                 </div>
-                <div className="row">
-                    <div className="col-12">
-                        <div className="steps steps-lime">
-                            {steps.map(el => (
-                                <span key={el.key} className={`step-item ${el.active ? "active" : ""}`}>
-                                    {el.name}
-                                </span>
-                            ))}
-                        </div>
-                    </div>
-                    <div className="col-lg-12">
-                        <div className="card">
-                            <div className="card-header">
-                                <h3 className="card-title">{steps.find(x => x.active).title}</h3>
+                {CheckPermissions(["p_read", "e_read"], "||") ? (
+                    <div className="row">
+                        <div className="col-12">
+                            <div className="steps steps-lime">
+                                {steps.map(el => (
+                                    <span key={el.key} className={`step-item ${el.active ? "active" : ""}`}>
+                                        {el.name}
+                                    </span>
+                                ))}
                             </div>
-                            {steps.find(x => x.active).components()}
+                        </div>
+                        <div className="col-lg-12">
+                            <div className="card">
+                                <div className="card-header">
+                                    <h3 className="card-title">{steps.find(x => x.active).title}</h3>
+                                </div>
+                                {steps.find(x => x.active).components()}
+                            </div>
                         </div>
                     </div>
-                </div>
+                ) : (
+                    <div className="row">
+                        <div className="col-12">
+                            <NotPermissions
+                                title="Üzgünüz 😣"
+                                imageAlt="Yetersiz Yetki"
+                                content={() => (
+                                    <p className="text-muted text-center">
+                                        Tekil Mesaj oluşturabilmek için öğrencileri, velileri veya personelleri
+                                        görüntüleme yetkinizin olması gerekiyor.
+                                        <br />
+                                        Eğer farklı bir sorun olduğunu düşünüyorsanız lütfen yöneticiniz ile iletişime
+                                        geçiniz...
+                                    </p>
+                                )}
+                            />
+                        </div>
+                    </div>
+                )}
             </div>
         );
     }
