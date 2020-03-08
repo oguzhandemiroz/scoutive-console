@@ -1,11 +1,13 @@
 import ep from "../assets/js/urls";
 import { fatalSwal, errorSwal, showSwal, Toast } from "../components/Alert";
 import { ActivationSchool } from "./School";
-import { RequestLogin, SetSchoolInfoToLocalStorage } from "./Login";
+import { RequestLogin, SetSchoolInfoToLocalStorage, SetPermissionsKeys } from "./Login";
 import { SetSession, GenerateSessionData } from "./Session";
 import Inputmask from "inputmask";
+import _ from "lodash";
 import moment from "moment";
 import "moment/locale/tr";
+const CryptoJS = require("crypto-js");
 
 const SplitBirthday = date => {
     try {
@@ -257,6 +259,7 @@ const ActivateSchool = (title, loginInfo, data) => {
                                                                     type: "success",
                                                                     title: "Giriş yapılıyor..."
                                                                 });
+                                                                SetPermissionsKeys(data.permissions);
                                                                 SetSchoolInfoToLocalStorage(data);
                                                             })
                                                         );
@@ -276,6 +279,26 @@ const ActivateSchool = (title, loginInfo, data) => {
                 });
             }
         });
+    } catch (e) {}
+};
+
+const CheckPermissions = (keys, condition_operator) => {
+    try {
+        if (!condition_operator) condition_operator = "&&";
+
+        // decrypt (S:C "Scoutive:Permission") storage
+        const getPermissions = localStorage.getItem("S:P");
+        const decryptPermissions = CryptoJS.AES.decrypt(getPermissions.toString(), "sc_prm");
+        const plainPermissons = JSON.parse(decryptPermissions.toString(CryptoJS.enc.Utf8));
+
+        if (keys.length > 0) {
+            if (condition_operator === "&&") {
+                return _.isEqual(_.sortBy(_.intersection(plainPermissons, keys)), _.sortBy(keys));
+            } else if (condition_operator === "||") {
+                return _.intersection(plainPermissons, keys).length > 0;
+            }
+        }
+        return false;
     } catch (e) {}
 };
 
@@ -299,5 +322,6 @@ export {
     avatarPlaceholder,
     parseJSON,
     isMobile,
-    isChrome
+    isChrome,
+    CheckPermissions
 };

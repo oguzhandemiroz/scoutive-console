@@ -1,7 +1,7 @@
 import logo from "../../assets/images/logo.svg";
 import React, { Component } from "react";
 import { Link, withRouter } from "react-router-dom";
-import { RequestLogin, SetSchoolInfoToLocalStorage } from "../../services/Login.jsx";
+import { RequestLogin, SetSchoolInfoToLocalStorage, SetPermissionsKeys } from "../../services/Login.jsx";
 import { SetSession, GenerateSessionData } from "../../services/Session";
 import { formValid } from "../../assets/js/core";
 import { ActivateSchool } from "../../services/Others";
@@ -46,9 +46,10 @@ export class LoginPage extends Component {
                         });
 
                         GenerateSessionData().then(r =>
-                            SetSession({ uid: data.uid, school_id: data.sid, type: 1, ...r }).then(res =>
-                                SetSchoolInfoToLocalStorage(data)
-                            )
+                            SetSession({ uid: data.uid, school_id: data.sid, type: 1, ...r }).then(res => {
+                                SetPermissionsKeys(data.permissions);
+                                SetSchoolInfoToLocalStorage(data);
+                            })
                         );
                     } else if (status.code === 1082) {
                         this.notActivateSchool(data, status);
