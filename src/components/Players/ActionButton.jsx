@@ -19,7 +19,6 @@ export class ActionButton extends Component {
         const { uid } = this.state;
         const { data, renderButton, history, dropdown, hide } = this.props;
         const { to, name, is_trial, status, group } = data;
-        const fullname = name;
 
         const dropdownDivider = key => <div role="separator" className="dropdown-divider" key={key.toString()} />;
         const lock = (
@@ -63,7 +62,7 @@ export class ActionButton extends Component {
                 tag: "button",
                 elementAttr: {
                     className: "dropdown-item",
-                    onClick: () => freezePlayer(uid, to, fullname, history)
+                    onClick: () => freezePlayer(uid, to, name, history)
                 },
                 childText: "Kaydı Dondur",
                 child: {
@@ -77,7 +76,7 @@ export class ActionButton extends Component {
                 tag: "button",
                 elementAttr: {
                     className: "dropdown-item",
-                    onClick: () => activatePlayer(uid, to, fullname, history)
+                    onClick: () => activatePlayer(uid, to, name, history)
                 },
                 childText: "Kaydı Aktifleştir",
                 child: {
@@ -91,7 +90,7 @@ export class ActionButton extends Component {
                 tag: "button",
                 elementAttr: {
                     className: "dropdown-item",
-                    onClick: () => refreshPlayer(uid, to, fullname, history)
+                    onClick: () => refreshPlayer(uid, to, name, history)
                 },
                 childText: "Kaydı Yenile",
                 child: {
@@ -105,7 +104,7 @@ export class ActionButton extends Component {
                 tag: "button",
                 elementAttr: {
                     className: "dropdown-item",
-                    onClick: () => deletePlayer(uid, to, fullname, history)
+                    onClick: () => deletePlayer(uid, to, name, history)
                 },
                 childText: "Kaydı Pasifleştir",
                 child: {
@@ -119,7 +118,7 @@ export class ActionButton extends Component {
                 tag: "button",
                 elementAttr: {
                     className: "dropdown-item",
-                    onClick: () => this.props.vacationButton({ name: fullname, uid: to }),
+                    onClick: () => this.props.vacationButton({ name: name, uid: to }),
                     "data-toggle": "modal",
                     "data-target": "#vacationModal"
                 },
@@ -169,7 +168,7 @@ export class ActionButton extends Component {
                     className: "dropdown-item cursor-not-allowed disabled",
                     onClick: () =>
                         this.props.groupChangeButton({
-                            name: fullname,
+                            name: name,
                             uid: to,
                             group: typeof group === "string" ? group : group ? group.label : null,
                             group_id: group ? group.value : null
@@ -291,7 +290,7 @@ export class ActionButton extends Component {
                     x-placement="top-end">
                     <a className="dropdown-item disabled text-azure">
                         <i className="dropdown-icon fa fa-user text-azure" />
-                        {fullname}
+                        {name}
                     </a>
                     <div role="separator" className="dropdown-divider" />
                     {actionMenu.map((el, key) => {

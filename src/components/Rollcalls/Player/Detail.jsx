@@ -149,9 +149,7 @@ export class Detail extends Component {
                             });
                         });
                         this.setState({ statuses: statusList, rollcall: d.data });
-                        return d.extra_data === 2
-                            ? []
-                            : d.data.filter(x => x.status === 1).filter(x => x.is_trial === 0);
+                        return d.extra_data === 2 ? [] : d.data;
                     }
                 }
             },

@@ -14,7 +14,6 @@ export class ActionButton extends Component {
     renderActionButton = () => {
         const { data, renderButton, dropdown, history, hide } = this.props;
         const { to, name } = data;
-        const fullname = name;
 
         const dropdownDivider = key => <div role="separator" className="dropdown-divider" key={key.toString()} />;
         const lock = (
@@ -100,7 +99,7 @@ export class ActionButton extends Component {
                     x-placement="top-end">
                     <a className="dropdown-item disabled text-azure">
                         <i className="dropdown-icon fa fa-user text-azure" />
-                        {fullname}
+                        {name}
                     </a>
                     <div role="separator" className="dropdown-divider" />
                     {actionMenu.map((el, key) => {
