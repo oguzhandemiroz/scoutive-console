@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { CheckPermissions } from "../../services/Others";
 
 export class ActionButton extends Component {
     constructor(props) {
@@ -36,11 +37,7 @@ export class ActionButton extends Component {
                     className: "dropdown-icon fa fa-paper-plane"
                 },
                 lock: false,
-                condition: true
-            },
-            {
-                divider: key => dropdownDivider(key),
-                condition: true
+                condition: CheckPermissions(["m_write"])
             },
             {
                 name: "player-define",
@@ -54,30 +51,8 @@ export class ActionButton extends Component {
                     className: "dropdown-icon fa fa-user-graduate"
                 },
                 lock: lock,
-                condition: true
+                condition: CheckPermissions(["p_write"])
             },
-            {
-                divider: key => dropdownDivider(key),
-                condition: true
-            },
-            /* {
-                name: "payment",
-                tag: "button",
-                elementAttr: {
-                    className: "dropdown-item cursor-not-allowed disabled",
-                    onClick: () => history.push(`/app/persons/parents/payment/${to}`)
-                },
-                childText: "Ödeme Al",
-                child: {
-                    className: "dropdown-icon fa fa-hand-holding-usd"
-                },
-                lock: lock,
-                condition: true
-            }, 
-            {
-                divider: key => dropdownDivider(key),
-                condition: true
-            },*/
             {
                 tag: "button",
                 elementAttr: {
@@ -88,11 +63,7 @@ export class ActionButton extends Component {
                     className: "dropdown-icon fa fa-key"
                 },
                 lock: lock,
-                condition: true
-            },
-            {
-                divider: key => dropdownDivider(key),
-                condition: true
+                condition: CheckPermissions(["p_write"])
             },
             {
                 tag: "button",

@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import deleteEmployee from "../EmployeeAction/DeleteEmployee";
 import activateEmployee from "../EmployeeAction/ActivateEmployee";
+import { CheckPermissions } from "../../services/Others";
 
 export class ActionButton extends Component {
     constructor(props) {
@@ -36,11 +37,7 @@ export class ActionButton extends Component {
                     className: "dropdown-icon fa fa-paper-plane"
                 },
                 lock: false,
-                condition: true
-            },
-            {
-                divider: key => dropdownDivider(key),
-                condition: true
+                condition: CheckPermissions(["m_write"])
             },
             {
                 tag: "button",
@@ -53,7 +50,7 @@ export class ActionButton extends Component {
                     className: "dropdown-icon fa fa-money-bill-wave"
                 },
                 lock: false,
-                condition: status
+                condition: CheckPermissions(["a_write"]) && status
             },
             {
                 tag: "button",
@@ -68,11 +65,7 @@ export class ActionButton extends Component {
                     className: "dropdown-icon fa fa-hand-holding-usd"
                 },
                 lock: false,
-                condition: status
-            },
-            {
-                divider: key => dropdownDivider(key),
-                condition: status
+                condition: CheckPermissions(["a_write"]) && status
             },
             {
                 tag: "button",
@@ -87,28 +80,7 @@ export class ActionButton extends Component {
                     className: "dropdown-icon fa fa-coffee"
                 },
                 lock: false,
-                condition: status
-            },
-            {
-                divider: key => dropdownDivider(key),
-                condition: status
-            },
-            {
-                tag: "button",
-                elementAttr: {
-                    className: "dropdown-item cursor-not-allowed disabled",
-                    onClick: () => "İkaz Et"
-                },
-                childText: "İkaz Et",
-                child: {
-                    className: "dropdown-icon fa fa-exclamation-triangle"
-                },
-                lock: lock,
-                condition: true
-            },
-            {
-                divider: key => dropdownDivider(key),
-                condition: true
+                condition: CheckPermissions(["a_write", "e_write"]) && status
             },
             {
                 tag: "button",
@@ -121,11 +93,7 @@ export class ActionButton extends Component {
                     className: "dropdown-icon fa fa-redo"
                 },
                 lock: false,
-                condition: status === 0
-            },
-            {
-                divider: key => dropdownDivider(key),
-                condition: status === 0
+                condition: CheckPermissions(["e_write", "e_remove"]) && !status
             },
             {
                 tag: "button",
@@ -138,11 +106,7 @@ export class ActionButton extends Component {
                     className: "dropdown-icon fa fa-minus-circle"
                 },
                 lock: false,
-                condition: status
-            },
-            {
-                divider: key => dropdownDivider(key),
-                condition: status
+                condition: CheckPermissions(["e_remove"]) && status
             },
             {
                 tag: "button",
@@ -155,7 +119,7 @@ export class ActionButton extends Component {
                     className: "dropdown-icon fa fa-pen"
                 },
                 lock: false,
-                condition: true
+                condition: CheckPermissions(["e_write"])
             },
             {
                 tag: "button",
@@ -170,7 +134,7 @@ export class ActionButton extends Component {
                     className: "dropdown-icon fa fa-key"
                 },
                 lock: lock,
-                condition: true
+                condition: CheckPermissions(["e_write"])
             },
             /* {
                 tag: "button",

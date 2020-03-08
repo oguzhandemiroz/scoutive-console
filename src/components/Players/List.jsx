@@ -7,6 +7,7 @@ import { fullnameGenerator, nullCheck, formatPhone, formatDate } from "../../ser
 import { GetPlayerParents } from "../../services/Player";
 import Vacation from "../PlayerAction/Vacation";
 import ActionButton from "../Players/ActionButton";
+import { CheckPermissions } from "../../services/Others";
 import _ from "lodash";
 import "../../assets/css/datatables.responsive.css";
 const $ = require("jquery");
@@ -318,19 +319,21 @@ class Table extends Component {
                                     renderButton={() => (
                                         <>
                                             <button
-                                                className="btn btn-icon btn-sm btn-secondary"
+                                                className="btn btn-icon btn-sm btn-secondary mr-1"
                                                 data-toggle="tooltip"
                                                 onClick={() => this.props.history.push(`/app/players/detail/${uid}`)}
                                                 title="Görüntüle">
                                                 <i className="fe fe-eye" />
                                             </button>
-                                            <button
-                                                className="btn btn-icon btn-sm btn-secondary mx-1"
-                                                data-toggle="tooltip"
-                                                onClick={() => this.props.history.push(`/app/players/edit/${uid}`)}
-                                                title="Düzenle">
-                                                <i className="fe fe-edit" />
-                                            </button>
+                                            {CheckPermissions(["p_write"]) && (
+                                                <button
+                                                    className="btn btn-icon btn-sm btn-secondary mr-1"
+                                                    data-toggle="tooltip"
+                                                    onClick={() => this.props.history.push(`/app/players/edit/${uid}`)}
+                                                    title="Düzenle">
+                                                    <i className="fe fe-edit" />
+                                                </button>
+                                            )}
                                             <a
                                                 title="İşlem Menüsü"
                                                 className="btn btn-icon btn-sm btn-secondary"

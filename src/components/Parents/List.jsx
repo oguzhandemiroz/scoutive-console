@@ -4,7 +4,7 @@ import "../../assets/js/core";
 import { datatable_turkish, getCookie } from "../../assets/js/core";
 import { GetParentPlayers } from "../../services/Parent";
 import { fatalSwal, errorSwal } from "../Alert.jsx";
-import { BrowserRouter, Link, Switch, useHistory } from "react-router-dom";
+import { CheckPermissions } from "../../services/Others";
 import ReactDOM from "react-dom";
 import { fullnameGenerator, nullCheck, formatDate, formatMoney } from "../../services/Others";
 import ActionButton from "../Parents/ActionButton";
@@ -196,7 +196,7 @@ export class List extends Component {
                                     renderButton={() => (
                                         <>
                                             <button
-                                                className="btn btn-icon btn-sm btn-secondary"
+                                                className="btn btn-icon btn-sm btn-secondary mr-1"
                                                 data-toggle="tooltip"
                                                 onClick={() =>
                                                     this.props.history.push(`/app/persons/parents/detail/${uid}`)
@@ -204,15 +204,17 @@ export class List extends Component {
                                                 title="Görüntüle">
                                                 <i className="fe fe-eye" />
                                             </button>
-                                            <button
-                                                className="btn btn-icon btn-sm btn-secondary mx-1"
-                                                data-toggle="tooltip"
-                                                onClick={() =>
-                                                    this.props.history.push(`/app/persons/parents/edit/${uid}`)
-                                                }
-                                                title="Düzenle">
-                                                <i className="fe fe-edit" />
-                                            </button>
+                                            {CheckPermissions(["p_write"]) && (
+                                                <button
+                                                    className="btn btn-icon btn-sm btn-secondary mr-1"
+                                                    data-toggle="tooltip"
+                                                    onClick={() =>
+                                                        this.props.history.push(`/app/persons/parents/edit/${uid}`)
+                                                    }
+                                                    title="Düzenle">
+                                                    <i className="fe fe-edit" />
+                                                </button>
+                                            )}
                                             <a
                                                 title="İşlem Menüsü"
                                                 className="btn btn-icon btn-sm btn-secondary"

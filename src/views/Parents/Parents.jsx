@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import List from "../../components/Parents/List";
 import { Link } from "react-router-dom";
+import { CheckPermissions } from "../../services/Others";
 
 export class Parents extends Component {
     render() {
@@ -8,9 +9,11 @@ export class Parents extends Component {
             <div className="container">
                 <div className="page-header">
                     <h1 className="page-title">Veliler</h1>
-                    <Link to="/app/persons/parents/add" className="btn btn-success ml-auto">
-                        Veli Ekle
-                    </Link>
+                    {CheckPermissions(["p_write"]) && (
+                        <Link to="/app/persons/parents/add" className="btn btn-success ml-auto">
+                            Veli Ekle
+                        </Link>
+                    )}
                 </div>
                 <div className="row row-cards">
                     <div className="col">

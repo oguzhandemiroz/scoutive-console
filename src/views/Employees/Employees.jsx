@@ -5,6 +5,7 @@ import DailyEmployee from "../../components/Employees/Charts/DailyEmployee";
 import GeneralEmployee from "../../components/Employees/Charts/GeneralEmployee";
 import { Link, withRouter } from "react-router-dom";
 import { ListEmployees } from "../../services/Employee";
+import { CheckPermissions } from "../../services/Others";
 
 class Employees extends Component {
     constructor(props) {
@@ -37,9 +38,11 @@ class Employees extends Component {
             <div className="container">
                 <div className="page-header">
                     <h1 className="page-title">Personeller</h1>
-                    <Link to="/app/persons/employees/add" className="btn btn-sm btn-success ml-auto">
-                        Personel Ekle
-                    </Link>
+                    {CheckPermissions(["e_write"]) && (
+                        <Link to="/app/persons/employees/add" className="btn btn-success ml-auto">
+                            Personel Ekle
+                        </Link>
+                    )}
                 </div>
                 <div className="row row-cards row-deck">
                     <div className="col-sm-12 col-md-6 col-lg-6">
