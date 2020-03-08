@@ -297,9 +297,10 @@ export class Detail extends Component {
         return (
             <div className="container">
                 <div className="page-header">
-                    <h1 className="page-title">
-                        Yoklamalar &mdash; Personel &mdash; Yoklama Al (#{this.props.match.params.rcid})
-                    </h1>
+                    <h1 className="page-title">Yoklamalar &mdash; Personeller &mdash; Yoklama Al</h1>
+                    <Link className="btn btn-link ml-auto" to={"/app/rollcalls/employee"}>
+                        Yoklamalara Geri Dön
+                    </Link>
                 </div>
                 <div className="row">
                     <div className="col-lg-12">

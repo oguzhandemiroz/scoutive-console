@@ -178,6 +178,32 @@ const ActiveRollcall = (data, type) => {
     }
 };
 
+const CloseRollcall = data => {
+    try {
+        return fetch(ep.CLOSE_ROLLCALL, {
+            method: "POST",
+            body: JSON.stringify(data),
+            headers: h
+        })
+            .then(res => res.json())
+            .then(response => {
+                if (response) {
+                    const status = response.status;
+                    if (status.code !== 1020) errorSwal(status);
+                    else
+                        Toast.fire({
+                            type: "success",
+                            title: "İşlem başarılı..."
+                        });
+                    return response;
+                }
+            })
+            .catch(e => fatalSwal(true));
+    } catch (e) {
+        fatalSwal(true);
+    }
+};
+
 export {
     CreateRollcall,
     ListRollcall,
@@ -185,5 +211,6 @@ export {
     SetNoteRollcall,
     ListRollcallType,
     MakeRollcall,
-    ActiveRollcall
+    ActiveRollcall,
+    CloseRollcall
 };
