@@ -99,7 +99,6 @@ export class Add extends Component {
                 contentType: "application/json",
                 complete: function(res) {
                     try {
-                        console.log(res);
                         if (res.responseJSON.status.code !== 1020) {
                             if (res.status !== 200) fatalSwal();
                             else errorSwal(res.responseJSON.status);
@@ -109,7 +108,6 @@ export class Add extends Component {
                     }
                 },
                 dataSrc: d => {
-                    console.log(d);
                     if (d.status.code !== 1020) {
                         errorSwal(d.status);
                         return [];
@@ -379,7 +377,6 @@ export class Add extends Component {
         });
 
         $("#rollcall-list").on("draw.dt", function() {
-            console.log("draw.dt");
             $('[data-toggle="tooltip"]').tooltip();
             $('[data-toggle="popover"]').popover({
                 html: true,
@@ -675,7 +672,6 @@ export class Add extends Component {
             showCancelButton: true,
             reverseButtons: true
         }).then(re => {
-            console.log(re);
             if (re.value) {
                 CloseRollcall({
                     uid: uid,
@@ -716,10 +712,9 @@ export class Add extends Component {
                                         className="form-help bg-gray-dark text-white"
                                         data-toggle="popover"
                                         data-placement="bottom"
-                                        data-content='<p>Yoklama alınırken, sisteme <b>"geldi"</b>, <b>"izinli"</b> veya <b>"gelmedi"</b> olarak giriş yapabilirsiniz.</p><p>Yoklamalar gün sonunda otomatik olarak tamamlanır. İşaretlenmemiş olanlar, sisteme <b>"gelmedi"</b> şeklinde tanımlanır.</p><p><b className="text-red">Not:</b> Yoklama tamamlana kadar değişiklik yapabilirsiniz. Tamamlanan yoklamalarda değişiklik <b><u><i>yapılamaz.</i></u></b></p>'>
+                                        data-content='<p>Yoklama alınırken, sisteme <b>"geldi"</b>, <b>"izinli"</b> veya <b>"gelmedi"</b> olarak giriş yapabilirsiniz.</p><p>Yoklamalar sonlandırılmadığı takdirde gün sonunda otomatik olarak sonlanır. İşaretlenmemiş olanlar, sisteme <b>"Tanımsız"</b> şeklinde tanımlanır.</p><p><b className="text-red">Not:</b> Yoklama sonlanana kadar değişiklik yapabilirsiniz. Sonlanılan yoklamalarda değişiklik <b class="text-red"><u><i>yapılamaz.</i></u></b></p>'>
                                         !
                                     </span>
-                                    <Modal />
                                 </div>
                             </div>
                             <div className="card-body p-0">

@@ -181,7 +181,6 @@ export class Add extends Component {
                     }
                 },
                 dataSrc: d => {
-                    console.log(d);
                     if (d.status.code !== 1020) {
                         errorSwal(d.status);
                         return [];
@@ -971,7 +970,6 @@ export class Add extends Component {
             showCancelButton: true,
             reverseButtons: true
         }).then(re => {
-            console.log(re);
             if (re.value) {
                 CloseRollcall({
                     uid: uid,
@@ -992,7 +990,6 @@ export class Add extends Component {
         const { data } = this.state;
         return (
             <div className="container">
-                <Modal />
                 <div className="page-header">
                     <h1 className="page-title">Yoklamalar &mdash; Öğrenciler &mdash; Yoklama Al</h1>
                     <Link className="btn btn-link ml-auto" to={"/app/rollcalls/player"}>
@@ -1017,10 +1014,9 @@ export class Add extends Component {
                                         className="form-help bg-gray-dark text-white"
                                         data-toggle="popover"
                                         data-placement="bottom"
-                                        data-content='<p>Yoklama alınırken, sisteme <b>"geldi"</b>, <b>"izinli"</b> veya <b>"gelmedi"</b> olarak giriş yapabilirsiniz.</p><p>Yoklamalar gün sonunda otomatik olarak tamamlanır. İşaretlenmemiş olanlar, sisteme <b>"Tanımsız"</b> şeklinde tanımlanır.</p><p><b className="text-red">Not:</b> Yoklama tamamlana kadar değişiklik yapabilirsiniz. Tamamlanan yoklamalarda değişiklik <b><u><i>yapılamaz.</i></u></b></p>'>
+                                        data-content='<p>Yoklama alınırken, sisteme <b>"geldi"</b>, <b>"izinli"</b> veya <b>"gelmedi"</b> olarak giriş yapabilirsiniz.</p><p>Yoklamalar sonlandırılmadığı takdirde gün sonunda otomatik olarak sonlanır. İşaretlenmemiş olanlar, sisteme <b>"Tanımsız"</b> şeklinde tanımlanır.</p><p><b className="text-red">Not:</b> Yoklama sonlanana kadar değişiklik yapabilirsiniz. Sonlanılan yoklamalarda değişiklik <b class="text-red"><u><i>yapılamaz.</i></u></b></p>'>
                                         !
                                     </span>
-                                    <Modal />
                                 </div>
                             </div>
                             <div className="card-body p-0">
