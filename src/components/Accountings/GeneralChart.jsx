@@ -6,7 +6,8 @@ import sc from "../../assets/js/sc";
 import _ from "lodash";
 import moment from "moment";
 import "moment/locale/tr";
-import { formatMoney } from "../../services/Others";
+import { formatMoney, CheckPermissions } from "../../services/Others";
+import NotPermissions from "../../components/NotActivate/NotPermissions";
 
 export class GeneralChart extends Component {
     constructor(props) {
@@ -172,6 +173,22 @@ export class GeneralChart extends Component {
 
     render() {
         const { chartOptions } = this.state;
+        if (!CheckPermissions(["a_read"])) {
+            return (
+                <NotPermissions
+                    title="Üzgünüz 😣"
+                    imageAlt="Yetersiz Yetki"
+                    content={() => (
+                        <p className="text-muted text-center">
+                            Gelir/Gideri görüntülemek için yetkiniz bulunmamaktadır.
+                            <br />
+                            Eğer farklı bir sorun olduğunu düşünüyorsanız lütfen yöneticiniz ile iletişime geçiniz...
+                        </p>
+                    )}
+                />
+            );
+        }
+
         return (
             <div className="col-12">
                 <div className="card">

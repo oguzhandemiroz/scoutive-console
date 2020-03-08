@@ -305,7 +305,7 @@ var indexRoutes = [
         component: Parents,
         layout: "/app",
         prop: { exact: true },
-        condition: CheckPermissions(["p_read", "p_write"], "||")
+        condition: CheckPermissions(["p_read", "p_write", "p_remove"], "||")
     },
     {
         path: "/persons/parents/add",

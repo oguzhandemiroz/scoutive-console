@@ -116,6 +116,10 @@ const TrainingGroups = () => {
 
 const MessagesAllTime = () => {
     try {
+        if (!CheckPermissions(["m_read"])) {
+            return Promise.resolve(null);
+        }
+        
         return fetch(ep.REPORT_MESSAGES_ALLTIME, {
             method: "POST",
             body: JSON.stringify({

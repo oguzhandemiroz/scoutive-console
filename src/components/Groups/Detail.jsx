@@ -3,7 +3,14 @@ import { Link } from "react-router-dom";
 import moment from "moment";
 import "moment/locale/tr";
 import { DetailGroup, DeleteGroup } from "../../services/Group";
-import { nullCheck, groupAgeSplit, fullnameGenerator, formatDate, avatarPlaceholder } from "../../services/Others";
+import {
+    nullCheck,
+    groupAgeSplit,
+    fullnameGenerator,
+    formatDate,
+    avatarPlaceholder,
+    CheckPermissions
+} from "../../services/Others";
 import { ListPlayers } from "../../services/Player";
 import { Toast, showSwal } from "../Alert";
 
@@ -223,21 +230,20 @@ export class Detail extends Component {
                                 </div>
                             </div>
 
-                            <div className="card-footer">
-                                <Link to={"/app/groups/edit/" + gid} className="btn btn-dark btn-block">
-                                    <i className="fe fe-edit mr-2"></i> Düzenle
-                                </Link>
-                                <button
-                                    data-toggle="dropdown"
-                                    className="btn btn-dark dropdown-toggle dropup btn-block">
-                                    İşlem Menüsü
-                                </button>
-                                <div className="dropdown-menu">
-                                    <button onClick={this.deleteGroup} className="dropdown-item">
-                                        <i className="fe fe-trash mr-2"></i> Grubu Sil
-                                    </button>
+                            {CheckPermissions(["g_write", "g_remove"], "||") && (
+                                <div className="card-footer">
+                                    {CheckPermissions(["g_write"]) && (
+                                        <Link to={"/app/groups/edit/" + gid} className="btn btn-dark btn-block">
+                                            <i className="fe fe-edit mr-2"></i> Düzenle
+                                        </Link>
+                                    )}
+                                    {CheckPermissions(["g_write", "g_remove"]) && (
+                                        <button onClick={this.deleteGroup} className="btn btn-danger btn-block">
+                                            <i className="fe fe-trash mr-2"></i> Grubu Sil
+                                        </button>
+                                    )}
                                 </div>
-                            </div>
+                            )}
                         </div>
                     </div>
 

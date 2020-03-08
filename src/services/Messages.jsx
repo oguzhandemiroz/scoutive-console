@@ -1,6 +1,7 @@
 import { fatalSwal, errorSwal, Toast } from "../components/Alert.jsx";
 import ep from "../assets/js/urls";
 import { getCookie } from "../assets/js/core.js";
+import { CheckPermissions } from "./Others.jsx";
 
 const h = new Headers();
 h.append("Content-Type", "application/json");
@@ -35,6 +36,10 @@ const CreateRecipient = data => {
 
 const ListMessageTemplates = () => {
     try {
+        if (!CheckPermissions(["m_read"])) {
+            return Promise.resolve(null);
+        }
+
         return fetch(ep.MESSAGES_TEMPLATES_LIST, {
             method: "POST",
             body: JSON.stringify({
@@ -120,6 +125,10 @@ const UpdateMessageTemplate = data => {
 
 const ActivateMessageTemplate = () => {
     try {
+        if (!CheckPermissions(["m_read"])) {
+            return Promise.resolve(null);
+        }
+        
         return fetch(ep.MESSAGES_TEMPLATES_ACTIVATE, {
             method: "POST",
             body: JSON.stringify({
@@ -148,6 +157,10 @@ const ActivateMessageTemplate = () => {
 
 const CreateCampaign = data => {
     try {
+        if (!CheckPermissions(["m_write"])) {
+            return Promise.resolve(null);
+        }
+
         return fetch(ep.CAMPAIGN_CREATE, {
             method: "POST",
             body: JSON.stringify(data),
@@ -226,6 +239,10 @@ const ToggleStatusCampaign = data => {
 
 const DetailCampaign = data => {
     try {
+        if (!CheckPermissions(["m_read"])) {
+            return Promise.resolve(null);
+        }
+
         return fetch(ep.CAMPAIGN_DETAIL, {
             method: "POST",
             body: JSON.stringify(data),
@@ -245,6 +262,10 @@ const DetailCampaign = data => {
 
 const SendTestMessages = data => {
     try {
+        if (!CheckPermissions(["m_write"])) {
+            return Promise.resolve(null);
+        }
+
         return fetch(ep.MESSAGES_SEND_TEST, {
             method: "POST",
             body: JSON.stringify(data),
@@ -271,6 +292,10 @@ const SendTestMessages = data => {
 
 const ListStaticSegments = () => {
     try {
+        if (!CheckPermissions(["m_read"])) {
+            return Promise.resolve(null);
+        }
+
         return fetch(ep.SEGMENTS_STATIC_LIST, {
             method: "POST",
             body: JSON.stringify({
@@ -292,6 +317,10 @@ const ListStaticSegments = () => {
 
 const CreateSegment = data => {
     try {
+        if (!CheckPermissions(["m_write"])) {
+            return Promise.resolve(null);
+        }
+
         return fetch(ep.SEGMENT_CREATE, {
             method: "POST",
             body: JSON.stringify(data),
@@ -337,6 +366,10 @@ const ListPersonMessages = data => {
 
 const CreateMessage = data => {
     try {
+        if (!CheckPermissions(["m_write"])) {
+            return Promise.resolve(null);
+        }
+
         return fetch(ep.MESSAGES_CREATE, {
             method: "POST",
             body: JSON.stringify(data),

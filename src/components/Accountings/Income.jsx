@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { ListAccountingRecords } from "../../services/Accounting";
-import { formatMoney, formatDate } from "../../services/Others";
+import { formatMoney, formatDate, CheckPermissions } from "../../services/Others";
 const $ = require("jquery");
 
 const noRow = loading => (
@@ -65,101 +65,105 @@ export class Income extends Component {
                     <h1 className="page-title">
                         <i className="fe fe-trending-up mr-2 text-green"></i>Gelir
                     </h1>
-                    <div className="input-group w-auto ml-auto">
-                        <div className="input-group-append">
-                            <Link to="/app/accountings/income/fast" className="btn btn-sm btn-success">
-                                <i className="fa fa-plus-square mr-1"></i> Gelir Oluştur
-                            </Link>
-                            <button
-                                type="button"
-                                className="btn btn-success btn-sm dropdown-toggle dropdown-toggle-split"
-                                data-toggle="dropdown"
-                                aria-haspopup="true"
-                                aria-expanded="false">
-                                <span className="sr-only">Toggle Dropdown</span>
-                            </button>
-                            <div className="dropdown-menu">
-                                <Link
-                                    to="/app/accountings/income/invoice"
-                                    className="dropdown-item cursor-not-allowed disabled">
-                                    <i className="dropdown-icon fa fa-receipt"></i> Fatura
-                                    <span className="ml-2">
-                                        (<i className="fe fe-lock mr-0" />)
-                                    </span>
+                    {CheckPermissions(["a_write"]) && (
+                        <div className="input-group w-auto ml-auto">
+                            <div className="input-group-append">
+                                <Link to="/app/accountings/income/fast" className="btn btn-sm btn-success">
+                                    <i className="fa fa-plus-square mr-1"></i> Gelir Oluştur
                                 </Link>
-                                <Link to="/app/players/payment/fee" className="dropdown-item">
-                                    <i className="dropdown-icon fa fa-hand-holding-usd"></i> Aidat Ödemesi
-                                </Link>
+                                <button
+                                    type="button"
+                                    className="btn btn-success btn-sm dropdown-toggle dropdown-toggle-split"
+                                    data-toggle="dropdown"
+                                    aria-haspopup="true"
+                                    aria-expanded="false">
+                                    <span className="sr-only">Toggle Dropdown</span>
+                                </button>
+                                <div className="dropdown-menu">
+                                    <Link
+                                        to="/app/accountings/income/invoice"
+                                        className="dropdown-item cursor-not-allowed disabled">
+                                        <i className="dropdown-icon fa fa-receipt"></i> Fatura
+                                        <span className="ml-2">
+                                            (<i className="fe fe-lock mr-0" />)
+                                        </span>
+                                    </Link>
+                                    <Link to="/app/players/payment/fee" className="dropdown-item">
+                                        <i className="dropdown-icon fa fa-hand-holding-usd"></i> Aidat Ödemesi
+                                    </Link>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    )}
                 </div>
-                <div className="card">
-                    <div className="card-header">
-                        <h3 className="card-title">Son 5 İşlem</h3>
+                {CheckPermissions(["a_read"]) && (
+                    <div className="card">
+                        <div className="card-header">
+                            <h3 className="card-title">Son 5 İşlem</h3>
+                        </div>
+                        <div className="table-responsive">
+                            <table className="table card-table table-striped table-vcenter table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th className="pl-3 text-center">#</th>
+                                        <th>İşlem</th>
+                                        <th>Tutar</th>
+                                        <th>Ödeme Tarihi</th>
+                                        <th>İşlem Tarihi</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {list
+                                        ? list.map(record => {
+                                              return (
+                                                  <tr key={record.record_no.toString()}>
+                                                      <td className="pl-3 w-1 text-center text-muted">
+                                                          #{record.record_no}
+                                                      </td>
+                                                      <td>
+                                                          {record.accounting_type}
+                                                          {record.note ? (
+                                                              <span
+                                                                  className="ml-1 form-help d-inline-flex justify-content-center align-items-center"
+                                                                  data-toggle="popover"
+                                                                  data-content={`<p><strong>İşlem Notu</strong></p>${record.note}`}>
+                                                                  <i className="fe fe-info"></i>
+                                                              </span>
+                                                          ) : null}
+                                                      </td>
+                                                      <td>{record.amount ? formatMoney(record.amount) : "0,00 ₺"}</td>
+                                                      <td className="w-1 text-nowrap">
+                                                          {formatDate(record.payment_date, "LL")}
+                                                      </td>
+                                                      <td className="w-1 text-nowrap">
+                                                          {formatDate(record.created_date, "LL")}
+                                                      </td>
+                                                      <td className="w-1 pr-3">
+                                                          <Link
+                                                              to={"/app/accountings/detail/" + record.accounting_id}
+                                                              className="icon">
+                                                              <i className="fe fe-eye"></i>
+                                                          </Link>
+                                                      </td>
+                                                  </tr>
+                                              );
+                                          })
+                                        : noRow(true)}
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td colSpan="6" className="text-right font-italic">
+                                            <Link to="/app/accountings/income/list">
+                                                Tümünü görüntüle <i className="fe fe-arrow-right"></i>
+                                            </Link>
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
                     </div>
-                    <div className="table-responsive">
-                        <table className="table card-table table-striped table-vcenter table-bordered">
-                            <thead>
-                                <tr>
-                                    <th className="pl-3 text-center">#</th>
-                                    <th>İşlem</th>
-                                    <th>Tutar</th>
-                                    <th>Ödeme Tarihi</th>
-                                    <th>İşlem Tarihi</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {list
-                                    ? list.map(record => {
-                                          return (
-                                              <tr key={record.record_no.toString()}>
-                                                  <td className="pl-3 w-1 text-center text-muted">
-                                                      #{record.record_no}
-                                                  </td>
-                                                  <td>
-                                                      {record.accounting_type}
-                                                      {record.note ? (
-                                                          <span
-                                                              className="ml-1 form-help d-inline-flex justify-content-center align-items-center"
-                                                              data-toggle="popover"
-                                                              data-content={`<p><strong>İşlem Notu</strong></p>${record.note}`}>
-                                                              <i className="fe fe-info"></i>
-                                                          </span>
-                                                      ) : null}
-                                                  </td>
-                                                  <td>{record.amount ? formatMoney(record.amount) : "0,00 ₺"}</td>
-                                                  <td className="w-1 text-nowrap">
-                                                      {formatDate(record.payment_date, "LL")}
-                                                  </td>
-                                                  <td className="w-1 text-nowrap">
-                                                      {formatDate(record.created_date, "LL")}
-                                                  </td>
-                                                  <td className="w-1 pr-3">
-                                                      <Link
-                                                          to={"/app/accountings/detail/" + record.accounting_id}
-                                                          className="icon">
-                                                          <i className="fe fe-eye"></i>
-                                                      </Link>
-                                                  </td>
-                                              </tr>
-                                          );
-                                      })
-                                    : noRow(true)}
-                            </tbody>
-                            <tfoot>
-                                <tr>
-                                    <td colSpan="6" className="text-right font-italic">
-                                        <Link to="/app/accountings/income/list">
-                                            Tümünü görüntüle <i className="fe fe-arrow-right"></i>
-                                        </Link>
-                                    </td>
-                                </tr>
-                            </tfoot>
-                        </table>
-                    </div>
-                </div>
+                )}
             </div>
         );
     }

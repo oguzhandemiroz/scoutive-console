@@ -10,6 +10,10 @@ h.append("Authorization", localStorage.getItem("UID"));
 
 const CreateAccountingRecord = data => {
     try {
+        if (!CheckPermissions(["a_write"])) {
+            return Promise.resolve(null);
+        }
+
         return fetch(ep.ACCOUNTING_CREATE, {
             method: "POST",
             body: JSON.stringify(data),
@@ -56,6 +60,10 @@ const ListAccountingRecords = data => {
 
 const DetailAccountingRecord = data => {
     try {
+        if (!CheckPermissions(["a_read"])) {
+            return Promise.resolve(null);
+        }
+
         return fetch(ep.ACCOUNTING_DETAIL, {
             method: "POST",
             body: JSON.stringify(data),
@@ -77,6 +85,10 @@ const DetailAccountingRecord = data => {
 
 const ListAccountingTypes = type => {
     try {
+        if (!CheckPermissions(["a_read"])) {
+            return Promise.resolve(null);
+        }
+
         return fetch(ep.ACCOUNTING_TYPE_LIST, {
             method: "POST",
             body: JSON.stringify({

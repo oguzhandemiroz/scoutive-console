@@ -17,7 +17,8 @@ import {
 } from "../../services/Messages";
 import { ListEmployees } from "../../services/Employee";
 import { ListPlayers } from "../../services/Player";
-import { formatDate, fullnameGenerator, avatarPlaceholder, formatPhone } from "../../services/Others";
+import NotPermissions from "../../components/NotActivate/NotPermissions";
+import { formatDate, fullnameGenerator, avatarPlaceholder, formatPhone, CheckPermissions } from "../../services/Others";
 import _ from "lodash";
 const $ = require("jquery");
 
@@ -134,18 +135,20 @@ export class BulkAdd extends Component {
     }
 
     componentDidMount() {
-        GetSettings().then(resSettings => this.setState({ start: resSettings }));
-        GetSchoolFees().then(response => {
-            if (response) {
-                this.setState({ school_fees: response.data.reverse(), loading: "" });
-            }
-        });
-        MessagesAllTime().then(response => {
-            if (response) {
-                this.setState({ all_time_messages: response.data });
-            }
-        });
-        this.developLoad();
+        if (CheckPermissions(["m_write"])) {
+            GetSettings().then(resSettings => this.setState({ start: resSettings }));
+            GetSchoolFees().then(response => {
+                if (response) {
+                    this.setState({ school_fees: response.data.reverse(), loading: "" });
+                }
+            });
+            MessagesAllTime().then(response => {
+                if (response) {
+                    this.setState({ all_time_messages: response.data });
+                }
+            });
+            this.developLoad();
+        }
     }
 
     handleSubmit = () => {
@@ -1324,29 +1327,49 @@ export class BulkAdd extends Component {
             <div className="container">
                 <div className="page-header">
                     <h1 className="page-title">Toplu Mesaj Oluştur</h1>
-                    <Link className="btn btn-link ml-auto" to={"/app/messages"}>
-                        İletişim Merkezine Geri Dön
+                    <Link className="btn btn-link ml-auto" to={"/app/messages/select"}>
+                        Mesaj Tipi Seçme Ekranına Geri Dön
                     </Link>
                 </div>
-                <div className="row">
-                    <div className="col-12">
-                        <div className="steps steps-lime">
-                            {steps.map(el => (
-                                <span key={el.key} className={`step-item ${el.active ? "active" : ""}`}>
-                                    {el.name}
-                                </span>
-                            ))}
-                        </div>
-                    </div>
-                    <div className="col-lg-12">
-                        <div className="card">
-                            <div className="card-header">
-                                <h3 className="card-title">{steps.find(x => x.active).title}</h3>
+                {CheckPermissions(["p_read"]) ? (
+                    <div className="row">
+                        <div className="col-12">
+                            <div className="steps steps-lime">
+                                {steps.map(el => (
+                                    <span key={el.key} className={`step-item ${el.active ? "active" : ""}`}>
+                                        {el.name}
+                                    </span>
+                                ))}
                             </div>
-                            {steps.find(x => x.active).components()}
+                        </div>
+                        <div className="col-lg-12">
+                            <div className="card">
+                                <div className="card-header">
+                                    <h3 className="card-title">{steps.find(x => x.active).title}</h3>
+                                </div>
+                                {steps.find(x => x.active).components()}
+                            </div>
                         </div>
                     </div>
-                </div>
+                ) : (
+                    <div className="row">
+                        <div className="col-12">
+                            <NotPermissions
+                                title="Üzgünüz 😣"
+                                imageAlt="Yetersiz Yetki"
+                                content={() => (
+                                    <p className="text-muted text-center">
+                                        Toplu Mesaj oluşturabilmek için öğrencileri ve velileri görüntüleme yetkinizin
+                                        olması gerekiyor.
+                                        <br />
+                                        Eğer farklı bir sorun olduğunu düşünüyorsanız lütfen yöneticiniz ile iletişime
+                                        geçiniz...
+                                    </p>
+                                )}
+                            />
+                        </div>
+                    </div>
+                )}
             </div>
         );
     }

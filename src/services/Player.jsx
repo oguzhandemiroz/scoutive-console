@@ -10,6 +10,10 @@ h.append("Authorization", localStorage.getItem("UID"));
 
 const CreatePlayer = data => {
     try {
+        if (!CheckPermissions(["p_write"])) {
+            return Promise.resolve(null);
+        }
+
         return fetch(ep.PLAYER_CREATE, {
             method: "POST",
             body: JSON.stringify(data),
@@ -69,6 +73,10 @@ const CreateTrialPlayer = data => {
 
 const DetailPlayer = data => {
     try {
+        if (!CheckPermissions(["p_read"])) {
+            return Promise.resolve(null);
+        }
+
         return fetch(ep.GET_PLAYER, {
             method: "POST",
             body: JSON.stringify(data),
@@ -92,6 +100,10 @@ const DetailPlayer = data => {
 
 const UpdatePlayer = data => {
     try {
+        if (!CheckPermissions(["p_write"])) {
+            return Promise.resolve(null);
+        }
+        
         return fetch(ep.UPDATE_PLAYER, {
             method: "PATCH",
             body: JSON.stringify(data),

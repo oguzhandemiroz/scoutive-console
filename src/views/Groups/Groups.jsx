@@ -20,12 +20,7 @@ export class Groups extends Component {
                 <div className="row">
                     <div className="col-12">
                         {CheckPermissions(["g_read"]) ? (
-                            <div className="card">
-                                <div className="card-header">
-                                    <h3 className="card-title">Tüm Veliler</h3>
-                                </div>
-                                <List />
-                            </div>
+                            <List />
                         ) : (
                             <NotPermissions
                                 title="Üzgünüz 😣"
