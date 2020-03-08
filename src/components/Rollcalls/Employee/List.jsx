@@ -64,7 +64,7 @@ export class List extends Component {
                 type: "info",
                 title: "Yoklama İsmi",
                 html: `
-                Yoklama ismi giriniz lütfen.<br>
+                Yoklama ismi giriniz lütfen. (Opsiyonel)<br>
                 Yoklama ismine tarih girmenize gerek yoktur. Otomatik olarak ismin sonunda tarih eklenecektir.
                 <br><br>Aşağıdaki gibi gözükecektir<br>
                 <strong class="text-orange">"Yoklama Adı - ${formatDate(Date(), "DD/MM/YYYY HH:mm")}"</strong>
@@ -81,66 +81,64 @@ export class List extends Component {
                 },
                 inputValidator: value => {
                     return new Promise(resolve => {
-                        if (value) {
-                            const generatedValue = value + " - " + formatDate(Date(), "DD/MM/YYYY HH:mm");
-                            showSwal({
-                                type: "info",
-                                title: "Bilgi",
-                                html: `<strong>${formatDate(Date(), "LLL")} </strong> tarihinde 
+                        const generatedValue = value
+                            ? value + " - " + formatDate(Date(), "DD/MM/YYYY HH:mm")
+                            : formatDate(Date(), "DD/MM/YYYY HH:mm");
+                        showSwal({
+                            type: "info",
+                            title: "Bilgi",
+                            html: `<strong>${formatDate(Date(), "LLL")} </strong> tarihinde 
                             <strong class="text-orange">${generatedValue}</strong> 
                             adında yoklama açılacaktır.<br>Onaylıyor musunuz?`,
-                                confirmButtonText: "Onaylıyorum",
-                                cancelButtonText: "İptal",
-                                cancelButtonColor: "#868e96",
-                                showCancelButton: true,
-                                reverseButtons: true,
-                                showLoaderOnConfirm: true,
-                                preConfirm: res => {
-                                    return CreateRollcall({
-                                        uid: uid,
-                                        type: 1,
-                                        title: generatedValue
+                            confirmButtonText: "Onaylıyorum",
+                            cancelButtonText: "İptal",
+                            cancelButtonColor: "#868e96",
+                            showCancelButton: true,
+                            reverseButtons: true,
+                            showLoaderOnConfirm: true,
+                            preConfirm: res => {
+                                return CreateRollcall({
+                                    uid: uid,
+                                    type: 1,
+                                    title: generatedValue
+                                })
+                                    .then(response => {
+                                        return response;
                                     })
-                                        .then(response => {
-                                            return response;
-                                        })
-                                        .catch(error => {
-                                            Swal.showValidationMessage(`Hata oluştu: ${error}`);
-                                        });
-                                }
-                            }).then(re => {
+                                    .catch(error => {
+                                        Swal.showValidationMessage(`Hata oluştu: ${error}`);
+                                    });
+                            }
+                        }).then(re => {
+                            if (re.value) {
                                 if (re.value) {
-                                    if (re.value) {
-                                        const status = re.value.status;
-                                        if (status.code === 1020) {
-                                            Toast.fire({
-                                                type: "success",
-                                                title: "İşlem başarılı..."
-                                            });
-                                            this.props.history.push(
-                                                `/app/rollcalls/employee/add/${re.value.rollcall_id}`
-                                            );
-                                        } else if (status.code === 2010) {
-                                            showSwal({
-                                                type: "warning",
-                                                title: "Uyarı",
-                                                text: status.description,
-                                                reverseButtons: true,
-                                                showCancelButton: true,
-                                                confirmButtonText: "Yoklamaya devam et",
-                                                cancelButtonText: "Kapat"
-                                            }).then(result => {
-                                                if (result.value) {
-                                                    this.props.history.push(
-                                                        `/app/rollcalls/employee/add/${re.value.rollcall_id}`
-                                                    );
-                                                }
-                                            });
-                                        }
+                                    const status = re.value.status;
+                                    if (status.code === 1020) {
+                                        Toast.fire({
+                                            type: "success",
+                                            title: "İşlem başarılı..."
+                                        });
+                                        this.props.history.push(`/app/rollcalls/employee/add/${re.value.rollcall_id}`);
+                                    } else if (status.code === 2010) {
+                                        showSwal({
+                                            type: "warning",
+                                            title: "Uyarı",
+                                            text: status.description,
+                                            reverseButtons: true,
+                                            showCancelButton: true,
+                                            confirmButtonText: "Yoklamaya devam et",
+                                            cancelButtonText: "Kapat"
+                                        }).then(result => {
+                                            if (result.value) {
+                                                this.props.history.push(
+                                                    `/app/rollcalls/employee/add/${re.value.rollcall_id}`
+                                                );
+                                            }
+                                        });
                                     }
                                 }
-                            });
-                        } else resolve("Hatalı değer!");
+                            }
+                        });
                     });
                 }
             });
