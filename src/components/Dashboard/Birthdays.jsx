@@ -31,8 +31,7 @@ export class Birthdays extends Component {
         this.state = {
             uid: localStorage.getItem("UID"),
             list: null,
-            count: 0,
-            notPermission: false
+            count: 0
         };
     }
 
@@ -54,16 +53,14 @@ export class Birthdays extends Component {
                         list: data
                     });
                 }
-            } else {
-                this.setState({ notPermission: true });
             }
         });
     };
 
     render() {
-        const { list, notPermission } = this.state;
+        const { list } = this.state;
 
-        if (!CheckPermissions(["e_read", "p_read"], "||") && notPermission) {
+        if (!CheckPermissions(["e_read", "p_read"], "||")) {
             return null;
         }
 

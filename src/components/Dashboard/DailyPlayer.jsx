@@ -9,8 +9,7 @@ export class DailyPlayer extends Component {
 
         this.state = {
             uid: localStorage.getItem("UID"),
-            count: null,
-            notPermission: false
+            count: null
         };
     }
 
@@ -37,16 +36,14 @@ export class DailyPlayer extends Component {
                         count: data[0].count || 0
                     });
                 }
-            } else {
-                this.setState({ notPermission: true });
             }
         });
     };
 
     render() {
-        const { count, notPermission } = this.state;
+        const { count } = this.state;
 
-        if (!CheckPermissions(["p_read"]) && notPermission) {
+        if (!CheckPermissions(["p_read"])) {
             return null;
         }
 

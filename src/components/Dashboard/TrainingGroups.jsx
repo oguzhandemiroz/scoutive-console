@@ -42,8 +42,7 @@ export class TrainingGroupList extends Component {
             data: {
                 players: []
             },
-            timer: "00:00:00",
-            notPermission: false
+            timer: "00:00:00"
         };
     }
 
@@ -59,8 +58,6 @@ export class TrainingGroupList extends Component {
         TrainingGroups().then(response => {
             if (response) {
                 this.setState({ trainings: response.data });
-            } else {
-                this.setState({ notPermission: true });
             }
         });
     };
@@ -87,9 +84,9 @@ export class TrainingGroupList extends Component {
     };
 
     render() {
-        const { trainings, data, timer, notPermission } = this.state;
+        const { trainings, data, timer } = this.state;
 
-        if (!CheckPermissions(["g_read"]) && notPermission) {
+        if (!CheckPermissions(["g_read"])) {
             return null;
         }
 

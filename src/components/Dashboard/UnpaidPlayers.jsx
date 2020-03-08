@@ -30,8 +30,7 @@ export class UnpaidPlayer extends Component {
         this.state = {
             uid: localStorage.getItem("UID"),
             list: null,
-            count: 0,
-            notPermission: false
+            count: 0
         };
     }
 
@@ -59,16 +58,14 @@ export class UnpaidPlayer extends Component {
                         count: data.length
                     });
                 }
-            } else {
-                this.setState({ notPermission: true });
             }
         });
     };
 
     render() {
-        const { list, count, notPermission } = this.state;
+        const { list, count } = this.state;
 
-        if (!CheckPermissions(["a_read", "p_read"], "||") && notPermission) {
+        if (!CheckPermissions(["a_read", "p_read"], "||")) {
             return null;
         }
 

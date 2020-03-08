@@ -13,8 +13,7 @@ export class Accounting extends Component {
             uid: localStorage.getItem("UID"),
             recordsIncome: null,
             recordsExpense: null,
-            recordsEndorsement: null,
-            notPermission: false
+            recordsEndorsement: null
         };
     }
 
@@ -48,16 +47,14 @@ export class Accounting extends Component {
                     });
                     $('[data-toggle="tooltip"]').tooltip();
                 }
-            } else {
-                this.setState({ notPermission: true });
             }
         });
     };
 
     render() {
-        const { recordsIncome, recordsExpense, recordsEndorsement, notPermission } = this.state;
+        const { recordsIncome, recordsExpense, recordsEndorsement } = this.state;
 
-        if (!CheckPermissions(["a_read"]) && notPermission) {
+        if (!CheckPermissions(["a_read"])) {
             return null;
         }
 

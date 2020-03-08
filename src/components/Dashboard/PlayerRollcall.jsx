@@ -8,8 +8,7 @@ export class PlayerRollcall extends Component {
 
         this.state = {
             uid: localStorage.getItem("UID"),
-            rollcall: null,
-            notPermission: false
+            rollcall: null
         };
     }
 
@@ -39,8 +38,6 @@ export class PlayerRollcall extends Component {
                         );
                     }
                 }
-            } else {
-                this.setState({ notPermission: true });
             }
         });
     };
@@ -65,9 +62,9 @@ export class PlayerRollcall extends Component {
     };
 
     render() {
-        const { rollcall, notPermission } = this.state;
+        const { rollcall } = this.state;
 
-        if (!CheckPermissions(["r_read"]) && notPermission) {
+        if (!CheckPermissions(["r_read"])) {
             return null;
         }
 
