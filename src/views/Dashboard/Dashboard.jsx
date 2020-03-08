@@ -23,10 +23,10 @@ class Dashboard extends Component {
                     </div>
                     <NotPermissions
                         title="Üzgünüz 😣"
-                        imageAlt="Yetkiniz Bulunmadı"
+                        imageAlt="Yetersiz Yetki"
                         content={() => (
                             <p className="text-muted text-center">
-                                Genel Durum'u görüntülemek için yetkiniz bulunmamaktadır.
+                                Genel Durumu görüntülemek için yetkiniz bulunmamaktadır.
                                 <br />
                                 Eğer farklı bir sorun olduğunu düşünüyorsanız lütfen yöneticiniz ile iletişime
                                 geçiniz...

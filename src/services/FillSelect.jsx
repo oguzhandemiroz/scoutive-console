@@ -2,6 +2,7 @@ import { Toast, fatalSwal } from "../components/Alert.jsx";
 import ep from "../assets/js/urls";
 import { getCookie } from "../assets/js/core.js";
 import { fullnameGenerator } from "./Others.jsx";
+import { CheckPermissions } from "../services/Others";
 
 const h = new Headers();
 h.append("Content-Type", "application/json");
@@ -231,6 +232,10 @@ const PlayerPositions = type => {
 
 const Groups = () => {
     try {
+        if (!CheckPermissions(["g_read"])) {
+            return Promise.resolve(null);
+        }
+
         return fetch(ep.GROUP, {
             method: "POST",
             body: JSON.stringify({
@@ -374,8 +379,8 @@ const Months = () => {
 const Years = (reverse, start_year, end_year) => {
     try {
         const years = [];
-        var year = start_year || 1950;
-        const endYear = end_year || 2016;
+        var year = start_year || 1950;
+        const endYear = end_year || 2016;
 
         for (year; year <= endYear; year++) {
             years.push({
@@ -558,6 +563,10 @@ const GetPlayers = () => {
 
 const GetBudgets = extra => {
     try {
+        if (!CheckPermissions(["a_read"])) {
+            return Promise.resolve(null);
+        }
+
         return fetch(ep.BUDGET_LIST, {
             method: "POST",
             body: JSON.stringify({

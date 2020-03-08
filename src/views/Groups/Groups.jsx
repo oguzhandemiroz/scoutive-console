@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import List from "../../components/Groups/List";
 import All from "../../components/Groups/All";
 import { Link, withRouter } from "react-router-dom";
+import { CheckPermissions } from "../../services/Others";
+import NotPermissions from "../../components/NotActivate/NotPermissions";
 
 export class Groups extends Component {
     render() {
@@ -9,27 +11,36 @@ export class Groups extends Component {
             <div className="container">
                 <div className="page-header">
                     <h1 className="page-title">Gruplar</h1>
-                    <Link to="/app/groups/add" className="btn btn-sm btn-success ml-auto">
-                        Grup Oluştur
-                    </Link>
+                    {CheckPermissions(["g_write"]) && (
+                        <Link to="/app/groups/add" className="btn btn-sm btn-success ml-auto">
+                            Grup Oluştur
+                        </Link>
+                    )}
                 </div>
                 <div className="row">
                     <div className="col-12">
-                        <List />
+                        {CheckPermissions(["g_read"]) ? (
+                            <div className="card">
+                                <div className="card-header">
+                                    <h3 className="card-title">Tüm Veliler</h3>
+                                </div>
+                                <List />
+                            </div>
+                        ) : (
+                            <NotPermissions
+                                title="Üzgünüz 😣"
+                                imageAlt="Yetersiz Yetki"
+                                content={() => (
+                                    <p className="text-muted text-center">
+                                        Grupları görüntülemek için yetkiniz bulunmamaktadır.
+                                        <br />
+                                        Eğer farklı bir sorun olduğunu düşünüyorsanız lütfen yöneticiniz ile iletişime
+                                        geçiniz...
+                                    </p>
+                                )}
+                            />
+                        )}
                     </div>
-                    {/* <div className="col-lg-3 mb-4">
-                        <Link to="/app/groups/add" className="btn btn-block btn-success btn-icon mb-6">
-                            <i className="fe fe-plus-square mr-2" />
-                            Grup Ekle
-                        </Link>
-                        <List match={this.props.match} />
-                    </div>
-
-                    <div className="col-lg-9">
-                        <div className="card">
-                            <All />
-                        </div>
-                    </div> */}
                 </div>
             </div>
         );

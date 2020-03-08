@@ -50,15 +50,6 @@ const InputmaskDefaultOptions = {
     placeholder: ""
 };
 
-/* const body_measure_list = [
-    "Göğüs Çevresi",
-    "Bel Çevresi",
-    "Kalça Ölçüsü",
-    "Kol Ölçüsü",
-    "Kol Uzunluğu",
-    "Bacak Uzunluğu"
-]; */
-
 export class Add extends Component {
     constructor(props) {
         super(props);
@@ -110,7 +101,10 @@ export class Add extends Component {
             addContinuously: true,
             parentError: false,
             paymentError: false,
-            installment_amounts: null
+            installment_amounts: null,
+            check_permissions: {
+                group: true
+            }
         };
     }
 
@@ -672,12 +666,21 @@ export class Add extends Component {
         });
 
         Groups().then(response => {
-            this.setState(prevState => ({
-                select: {
-                    ...prevState.select,
-                    groups: response
-                }
-            }));
+            if (response) {
+                this.setState(prevState => ({
+                    select: {
+                        ...prevState.select,
+                        groups: response
+                    }
+                }));
+            } else {
+                this.setState(prevState => ({
+                    check_permissions: {
+                        ...prevState.check_permissions,
+                        group: false
+                    }
+                }));
+            }
         });
 
         this.setState(prevState => ({
@@ -720,7 +723,8 @@ export class Add extends Component {
             installment,
             installment_date,
             payment_date,
-            installment_amounts
+            installment_amounts,
+            check_permissions
         } = this.state;
         return (
             <div className="container">
@@ -1227,12 +1231,14 @@ export class Add extends Component {
                                                 onChange={val => this.handleSelect(val, "groups")}
                                                 options={select.groups}
                                                 name="groups"
-                                                placeholder="Seç..."
+                                                placeholder={check_permissions.group ? "Seç..." : "Yetersiz yetki"}
                                                 styles={selectCustomStyles}
                                                 isClearable={true}
                                                 isSearchable={true}
                                                 isDisabled={select.groups ? false : true}
-                                                isLoading={select.groups ? false : true}
+                                                isLoading={
+                                                    check_permissions.group ? (select.groups ? false : true) : false
+                                                }
                                                 noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
                                             />
                                         </div>

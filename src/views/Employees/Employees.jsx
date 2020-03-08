@@ -6,6 +6,7 @@ import GeneralEmployee from "../../components/Employees/Charts/GeneralEmployee";
 import { Link, withRouter } from "react-router-dom";
 import { ListEmployees } from "../../services/Employee";
 import { CheckPermissions } from "../../services/Others";
+import NotPermissions from "../../components/NotActivate/NotPermissions";
 
 class Employees extends Component {
     constructor(props) {
@@ -22,7 +23,6 @@ class Employees extends Component {
     }
 
     renderEmployeeList = () => {
-        const { uid } = this.state;
         ListEmployees().then(response => {
             if (response) {
                 const status = response.status;
@@ -44,29 +44,46 @@ class Employees extends Component {
                         </Link>
                     )}
                 </div>
-                <div className="row row-cards row-deck">
-                    <div className="col-sm-12 col-md-6 col-lg-6">
-                        <DailyEmployee data={data.filter(x => x.status === 1)} />
-                    </div>
-                    <div className="col-sm-12 col-md-6 col-lg-6">
-                        <GeneralEmployee data={data.filter(x => x.status === 1)} />
-                    </div>
-                    {/* <div className="col-sm-6 col-md-4">
-                        <TotalSalary data={data} />
-                    </div> */}
-                </div>
-                <div className="row row-cards">
-                    <div className="col">
-                        <div className="card">
-                            <div className="card-header">
-                                <h3 className="card-title">Tüm Personeller</h3>
+                {CheckPermissions(["e_read"]) ? (
+                    <>
+                        <div className="row row-cards row-deck">
+                            <div className="col-sm-12 col-md-6 col-lg-6">
+                                <DailyEmployee data={data.filter(x => x.status === 1)} />
                             </div>
-                            <div className="table-responsive employee-list">
-                                <Table history={this.props.history} />
+                            <div className="col-sm-12 col-md-6 col-lg-6">
+                                <GeneralEmployee data={data.filter(x => x.status === 1)} />
+                            </div>
+                            {/* <div className="col-sm-6 col-md-4">
+                                <TotalSalary data={data} />
+                            </div> */}
+                        </div>
+                        <div className="row row-cards">
+                            <div className="col">
+                                <div className="card">
+                                    <div className="card-header">
+                                        <h3 className="card-title">Tüm Personeller</h3>
+                                    </div>
+                                    <div className="table-responsive employee-list">
+                                        <Table history={this.props.history} />
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div>
+                    </>
+                ) : (
+                    <NotPermissions
+                        title="Üzgünüz 😣"
+                        imageAlt="Yetersiz Yetki"
+                        content={() => (
+                            <p className="text-muted text-center">
+                                Personelleri görüntülemek için yetkiniz bulunmamaktadır.
+                                <br />
+                                Eğer farklı bir sorun olduğunu düşünüyorsanız lütfen yöneticiniz ile iletişime
+                                geçiniz...
+                            </p>
+                        )}
+                    />
+                )}
             </div>
         );
     }

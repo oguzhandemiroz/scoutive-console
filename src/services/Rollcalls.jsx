@@ -10,6 +10,10 @@ h.append("Authorization", localStorage.getItem("UID"));
 
 const ListRollcall = data => {
     try {
+        if (!CheckPermissions(["r_read"])) {
+            return Promise.resolve(null);
+        }
+
         return fetch(ep.LIST_ROLLCALL, {
             method: "POST",
             body: JSON.stringify(data),

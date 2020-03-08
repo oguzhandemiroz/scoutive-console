@@ -1,6 +1,7 @@
 import { errorSwal, fatalSwal, Toast } from "../components/Alert.jsx";
 import ep from "../assets/js/urls.js";
 import { getCookie } from "../assets/js/core.js";
+import { CheckPermissions } from "../services/Others";
 
 const h = new Headers();
 h.append("Content-Type", "application/json");
@@ -92,6 +93,10 @@ const DetailEmployee = data => {
 
 const ListEmployees = () => {
     try {
+        if (!CheckPermissions(["e_read"])) {
+            return Promise.resolve(null);
+        }
+
         return fetch(ep.LIST_EMPLOYEE, {
             method: "POST",
             body: JSON.stringify({

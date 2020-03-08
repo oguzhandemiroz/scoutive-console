@@ -8,6 +8,7 @@ import DailyCreatedPlayer from "../../components/Players/Charts/DailyCreatedPlay
 import TotalPlayerCount from "../../components/Players/Charts/TotalPlayerCount";
 import { CheckPermissions } from "../../services/Others";
 import Swal from "sweetalert2";
+import NotPermissions from "../../components/NotActivate/NotPermissions";
 
 class Players extends Component {
     constructor(props) {
@@ -92,33 +93,49 @@ class Players extends Component {
                         </Link>
                     )}
                 </div>
-
-                <div className="row row-cards row-deck">
-                    <div className="col-lg-6 col-md-6 col-sm-12">
-                        <DailyPlayer data={data.filter(x => x.status === 1)} />
-                    </div>
-                    <div className="col-lg-6 col-md-6 col-sm-12">
-                        <TotalPlayerCount data={data} />
-                    </div>
-                    {/* <div className="col-sm-6 col-md-4">
-                        <div className="card">
-                            <TotalFee data={data} />
-                            <DailyCreatedPlayer />
-                        </div>
-                    </div> */}
-                </div>
-                <div className="row row-cards">
-                    <div className="col">
-                        <div className="card">
-                            <div className="card-header">
-                                <h3 className="card-title">Tüm Öğrenciler</h3>
+                {CheckPermissions(["p_read"]) ? (
+                    <>
+                        <div className="row row-cards row-deck">
+                            <div className="col-lg-6 col-md-6 col-sm-12">
+                                <DailyPlayer data={data.filter(x => x.status === 1)} />
                             </div>
-                            <div className="player-list">
-                                <Table history={this.props.history} />
+                            <div className="col-lg-6 col-md-6 col-sm-12">
+                                <TotalPlayerCount data={data} />
+                            </div>
+                            {/* <div className="col-sm-6 col-md-4">
+                                <div className="card">
+                                    <TotalFee data={data} />
+                                    <DailyCreatedPlayer />
+                                </div>
+                            </div> */}
+                        </div>
+                        <div className="row row-cards">
+                            <div className="col">
+                                <div className="card">
+                                    <div className="card-header">
+                                        <h3 className="card-title">Tüm Öğrenciler</h3>
+                                    </div>
+                                    <div className="player-list">
+                                        <Table history={this.props.history} />
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div>
+                    </>
+                ) : (
+                    <NotPermissions
+                        title="Üzgünüz 😣"
+                        imageAlt="Yetersiz Yetki"
+                        content={() => (
+                            <p className="text-muted text-center">
+                                Öğrencileri görüntülemek için yetkiniz bulunmamaktadır.
+                                <br />
+                                Eğer farklı bir sorun olduğunu düşünüyorsanız lütfen yöneticiniz ile iletişime
+                                geçiniz...
+                            </p>
+                        )}
+                    />
+                )}
             </div>
         );
     }

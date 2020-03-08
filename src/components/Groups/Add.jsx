@@ -2,12 +2,13 @@ import React, { Component } from "react";
 import Select, { components } from "react-select";
 import { Areas, GetEmployees } from "../../services/FillSelect";
 import { selectCustomStyles, selectCustomStylesError, formValid } from "../../assets/js/core";
-import { avatarPlaceholder, formatDate, fullnameGenerator } from "../../services/Others";
+import { avatarPlaceholder, formatDate, fullnameGenerator, CheckPermissions } from "../../services/Others";
 import { ListPlayers } from "../../services/Player";
 import { CreateGroup, ChangeGroup } from "../../services/Group";
 import _ from "lodash";
 import moment from "moment";
 import Inputmask from "inputmask";
+import NotPermissions from "../NotActivate/NotPermissions";
 const $ = require("jquery");
 
 const statusType = {
@@ -444,105 +445,123 @@ export class Add extends Component {
                     </div>
 
                     <div className="col-lg-8">
-                        <div className="card">
-                            <div className="card-header">
-                                <h3 className="card-title">Öğrenciler</h3>
-                                <div className="card-options">
-                                    <input
-                                        type="text"
-                                        className="form-control form-control-sm"
-                                        placeholder="Öğrenci Ara..."
-                                        name="search"
-                                        onChange={this.handleSearch}
-                                    />
+                        {CheckPermissions(["p_read"]) ? (
+                            <div className="card">
+                                <div className="card-header">
+                                    <h3 className="card-title">Öğrenciler</h3>
+                                    <div className="card-options">
+                                        <input
+                                            type="text"
+                                            className="form-control form-control-sm"
+                                            placeholder="Öğrenci Ara..."
+                                            name="search"
+                                            onChange={this.handleSearch}
+                                        />
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="alert alert-info card-alert pl-5">
-                                <p>
-                                    <strong>Öğrenci Seçmeyi Unutma!</strong>
-                                </p>
-                                Grubun bilgilerini girdikten sonra aşağıdan gruba eklenecek öğrencileri seçebilirsiniz.
-                            </div>
-                            <div className="card-body pb-0">
-                                <div className="row row-cards row-deck">
-                                    {select.initialPlayers ? (
-                                        select.initialPlayers.length > 0 ? (
-                                            select.initialPlayers.map(el => (
-                                                <div className="col-lg-3 col-sm-4" key={el.player_id.toString()}>
-                                                    <div
-                                                        onClick={() => this.handleCard(el.player_id)}
-                                                        className={`card user-select-none cursor-pointer shadow-sm ${
-                                                            players.indexOf(el.player_id) > -1 ? "card-active" : ""
-                                                        }`}>
-                                                        <div className="card-body p-4 text-center card-checkbox">
-                                                            <div
-                                                                className="d-flex justify-content-between align-items-center py-1 px-2"
-                                                                style={{
-                                                                    position: "absolute",
-                                                                    top: 0,
-                                                                    left: 0,
-                                                                    right: 0
-                                                                }}>
-                                                                {this.renderGroups(el.groups)}
+                                <div className="alert alert-info card-alert pl-5">
+                                    <p>
+                                        <strong>Öğrenci Seçmeyi Unutma!</strong>
+                                    </p>
+                                    Grubun bilgilerini girdikten sonra aşağıdan gruba eklenecek öğrencileri
+                                    seçebilirsiniz.
+                                </div>
+                                <div className="card-body pb-0">
+                                    <div className="row row-cards row-deck">
+                                        {select.initialPlayers ? (
+                                            select.initialPlayers.length > 0 ? (
+                                                select.initialPlayers.map(el => (
+                                                    <div className="col-lg-3 col-sm-4" key={el.player_id.toString()}>
+                                                        <div
+                                                            onClick={() => this.handleCard(el.player_id)}
+                                                            className={`card user-select-none cursor-pointer shadow-sm ${
+                                                                players.indexOf(el.player_id) > -1 ? "card-active" : ""
+                                                            }`}>
+                                                            <div className="card-body p-4 text-center card-checkbox">
                                                                 <div
-                                                                    className="text-muted text-h6 ml-auto"
-                                                                    data-toggle="tooltip"
-                                                                    title="Okula Başlama Tarihi">
-                                                                    {formatDate(el.start_date, "DD/MM/YYYY")}
+                                                                    className="d-flex justify-content-between align-items-center py-1 px-2"
+                                                                    style={{
+                                                                        position: "absolute",
+                                                                        top: 0,
+                                                                        left: 0,
+                                                                        right: 0
+                                                                    }}>
+                                                                    {this.renderGroups(el.groups)}
+                                                                    <div
+                                                                        className="text-muted text-h6 ml-auto"
+                                                                        data-toggle="tooltip"
+                                                                        title="Okula Başlama Tarihi">
+                                                                        {formatDate(el.start_date, "DD/MM/YYYY")}
+                                                                    </div>
                                                                 </div>
-                                                            </div>
-                                                            <span
-                                                                className="avatar avatar-lg my-4"
-                                                                style={{ backgroundImage: `url(${el.image})` }}>
-                                                                {el.image ? "" : avatarPlaceholder(el.name, el.surname)}
                                                                 <span
-                                                                    data-toggle="tooltip"
-                                                                    title={
-                                                                        statusType[
-                                                                            el.status !== undefined ? el.status : 1
-                                                                        ].title
-                                                                    }
-                                                                    style={{ width: "1rem", height: "1rem" }}
-                                                                    className={`avatar-status ${
-                                                                        statusType[
-                                                                            el.status !== undefined ? el.status : 1
-                                                                        ].bg
-                                                                    }`}
-                                                                />
-                                                            </span>
-                                                            <h5 className="mb-0">
-                                                                {fullnameGenerator(el.name, el.surname)}
-                                                            </h5>
-                                                            <div
-                                                                className="text-muted text-h6"
-                                                                data-toggle="tooltip"
-                                                                title="Doğum Yılı">
-                                                                {formatDate(el.birthday, "YYYY")}
-                                                            </div>
-
-                                                            {el.position ? (
-                                                                <span
-                                                                    className="badge badge-success mt-3"
-                                                                    data-toggle="tooltip"
-                                                                    title="Mevkii">
-                                                                    {el.position.name}
+                                                                    className="avatar avatar-lg my-4"
+                                                                    style={{ backgroundImage: `url(${el.image})` }}>
+                                                                    {el.image
+                                                                        ? ""
+                                                                        : avatarPlaceholder(el.name, el.surname)}
+                                                                    <span
+                                                                        data-toggle="tooltip"
+                                                                        title={
+                                                                            statusType[
+                                                                                el.status !== undefined ? el.status : 1
+                                                                            ].title
+                                                                        }
+                                                                        style={{ width: "1rem", height: "1rem" }}
+                                                                        className={`avatar-status ${
+                                                                            statusType[
+                                                                                el.status !== undefined ? el.status : 1
+                                                                            ].bg
+                                                                        }`}
+                                                                    />
                                                                 </span>
-                                                            ) : null}
+                                                                <h5 className="mb-0">
+                                                                    {fullnameGenerator(el.name, el.surname)}
+                                                                </h5>
+                                                                <div
+                                                                    className="text-muted text-h6"
+                                                                    data-toggle="tooltip"
+                                                                    title="Doğum Yılı">
+                                                                    {formatDate(el.birthday, "YYYY")}
+                                                                </div>
+
+                                                                {el.position ? (
+                                                                    <span
+                                                                        className="badge badge-success mt-3"
+                                                                        data-toggle="tooltip"
+                                                                        title="Mevkii">
+                                                                        {el.position.name}
+                                                                    </span>
+                                                                ) : null}
+                                                            </div>
                                                         </div>
                                                     </div>
+                                                ))
+                                            ) : (
+                                                <div className="text-center w-100 text-muted font-italic">
+                                                    Sistemde kayıtlı öğrenci bulunamadı...
                                                 </div>
-                                            ))
+                                            )
                                         ) : (
-                                            <div className="text-center w-100 text-muted font-italic">
-                                                Sistemde kayıtlı öğrenci bulunamadı...
-                                            </div>
-                                        )
-                                    ) : (
-                                        <div className="loader mx-auto mb-5" />
-                                    )}
+                                            <div className="loader mx-auto mb-5" />
+                                        )}
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        ) : (
+                            <NotPermissions
+                                title="Üzgünüz 😣"
+                                imageAlt="Yetersiz Yetki"
+                                content={() => (
+                                    <p className="text-muted text-center">
+                                        Öğrencileri görüntülemek için yetkiniz bulunmamaktadır.
+                                        <br />
+                                        Eğer farklı bir sorun olduğunu düşünüyorsanız lütfen yöneticiniz ile iletişime
+                                        geçiniz...
+                                    </p>
+                                )}
+                            />
+                        )}
                     </div>
                 </form>
             </div>
