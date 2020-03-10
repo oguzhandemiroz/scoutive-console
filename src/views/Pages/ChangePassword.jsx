@@ -29,7 +29,8 @@ export class ChangePassword extends Component {
             uid: localStorage.getItem("UID"),
             ...initialState,
             loadingButton: "",
-            formErrors: { password: "", new_password: "", new_password_again: "" }
+            formErrors: { password: "", new_password: "", new_password_again: "" },
+            showPassword: false
         };
     }
 
@@ -87,8 +88,14 @@ export class ChangePassword extends Component {
         } catch (e) {}
     };
 
+    showPasswordToggle = () => {
+        const { showPassword } = this.state;
+        const showPasswordToggle = !showPassword;
+        this.setState({ showPassword: showPasswordToggle });
+    };
+
     render() {
-        const { formErrors, loadingButton, password, new_password, new_password_again } = this.state;
+        const { formErrors, loadingButton, password, new_password, new_password_again, showPassword } = this.state;
         return (
             <div className="page-single">
                 <div className="container">
@@ -102,14 +109,27 @@ export class ChangePassword extends Component {
                                             Mevcut Şifre
                                             <span className="form-required">*</span>
                                         </label>
-                                        <input
-                                            type="password"
-                                            className={`form-control ${formErrors.password}`}
-                                            name="password"
-                                            placeholder="Mevcut Şifre"
-                                            onChange={this.handleChange}
-                                            value={password || ""}
-                                        />
+                                        <div className="input-group">
+                                            <input
+                                                type={showPassword ? "text" : "password"}
+                                                className={`form-control ${formErrors.password}`}
+                                                name="password"
+                                                placeholder="Mevcut Şifre"
+                                                onChange={this.handleChange}
+                                                value={password || ""}
+                                            />
+                                            <span
+                                                class="input-group-append cursor-pointer"
+                                                onClick={this.showPasswordToggle}>
+                                                <span class="input-group-text">
+                                                    {showPassword ? (
+                                                        <i className="fe fe-eye-off"></i>
+                                                    ) : (
+                                                        <i className="fe fe-eye"></i>
+                                                    )}
+                                                </span>
+                                            </span>
+                                        </div>
                                     </div>
 
                                     <div className="form-group">
