@@ -821,6 +821,10 @@ export class Add extends Component {
                                         selected={birthday}
                                         selectsEnd
                                         startDate={birthday}
+                                        maxDate={moment()
+                                            .subtract(3, "years")
+                                            .endOf("year")
+                                            .toDate()}
                                         name="birthday"
                                         locale="tr"
                                         dateFormat="dd/MM/yyyy"
