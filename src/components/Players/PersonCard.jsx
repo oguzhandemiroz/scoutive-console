@@ -3,7 +3,14 @@ import { Link } from "react-router-dom";
 import ActionButton from "./ActionButton";
 import Vacation from "../PlayerAction/Vacation";
 import GroupChange from "../PlayerAction/GroupChange";
-import { fullnameGenerator, nullCheck, formatDate, formatPhone, formatMoney } from "../../services/Others";
+import {
+    fullnameGenerator,
+    nullCheck,
+    formatDate,
+    formatPhone,
+    formatMoney,
+    avatarPlaceholder
+} from "../../services/Others";
 import { CheckPermissions } from "../../services/Others";
 
 const paymentTypeText = {
@@ -45,6 +52,7 @@ export class PersonCard extends Component {
                                     <span
                                         className="avatar avatar-xxl mr-4"
                                         style={{ backgroundImage: `url(${data.image})` }}>
+                                        {!data.image && avatarPlaceholder(data.name, data.surname)}
                                         <span
                                             data-toggle="tooltip"
                                             title={
