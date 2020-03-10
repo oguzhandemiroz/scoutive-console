@@ -608,7 +608,7 @@ var indexRoutes = [
         condition: true
     },
     {
-        path: "/player-form/:name?/:phone?/:fee?",
+        path: "/player-form/:name?/:phone?/:fee?/:hear?",
         name: "PlayerForm",
         component: PlayerForm,
         layout: "/printable",
