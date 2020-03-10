@@ -811,6 +811,10 @@ export class PlayerForm extends Component {
                                 <td colSpan="2"></td>
                             </tr>
                             <tr>
+                                <th className="text-right">Bizi Nereden Duydunuz?</th>
+                                <td colSpan="2"></td>
+                            </tr>
+                            <tr>
                                 <th colSpan="3" className="fs-10 text-center">
                                     Veli Bilgileri
                                 </th>
