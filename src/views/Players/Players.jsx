@@ -36,6 +36,7 @@ class Players extends Component {
 
     printablePlayerForm = () => {
         Swal.mixin({
+            allowOutsideClick: false,
             heightAuto: false,
             allowEnterKey: false,
             confirmButtonText: "Devam &rarr;",
@@ -66,13 +67,22 @@ class Players extends Component {
                     input: "checkbox",
                     inputValue: 0,
                     inputPlaceholder: "Evet, bulunsun"
+                },
+                {
+                    type: "question",
+                    title: "Form Alanı",
+                    html: "Form içerisinde <b>Bizi Nereden Duydunuz?</b> bilgisi bulunsun mu?",
+                    input: "checkbox",
+                    inputValue: 0,
+                    inputPlaceholder: "Evet, bulunsun"
                 }
             ])
             .then(result => {
                 if (result.value) {
                     const results = result.value;
-                    console.log(results);
-                    this.props.history.push(`/printable/player-form/${results[0]}/${results[1]}/${results[2]}`);
+                    this.props.history.push(
+                        `/printable/player-form/${results[0]}/${results[1]}/${results[2]}/${results[3]}`
+                    );
                 }
             });
     };
