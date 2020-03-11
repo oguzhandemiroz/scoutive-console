@@ -30,7 +30,6 @@ const InputmaskDefaultOptions = {
 const { Option } = components;
 const ImageOptionEmployee = props => (
     <Option {...props}>
-        <span className="avatar avatar-sm mr-2" style={{ backgroundImage: `url(${props.data.image})` }} />
         {props.data.label}
         <div className="small text-muted mt-1">
             Pozisyon: <b className="text-blue">{props.data.position}</b>
