@@ -40,7 +40,7 @@ export class Messages extends Component {
     handleSubmit = () => {
         const { uid, recipient } = this.state;
         if (recipient) {
-            this.setState({ loadingButton: "btn-loading" });
+            this.setState({ loadingButton: "btn-loading" }); /*  */
             CreateRecipient({
                 uid: uid,
                 recipients: [{ ...recipient }]
@@ -64,10 +64,10 @@ export class Messages extends Component {
                         const data = response.data;
                         const recipients = [
                             {
-                                label: "Kendisi " + "— " + fullnameGenerator(data.name, data.surname),
+                                label: `Kendisi — ${fullnameGenerator(data.name, data.surname)}`,
                                 fullname: fullnameGenerator(data.name, data.surname),
                                 kinship: "Kendisi",
-                                value: data.player_id,
+                                value: `player_${data.player_id}`,
                                 player_id: data.player_id,
                                 parent_id: 0,
                                 phone: data.phone,
@@ -78,11 +78,11 @@ export class Messages extends Component {
 
                         data.parents.map(el =>
                             recipients.push({
-                                label: `Velisi (${el.kinship}) — ` + fullnameGenerator(el.name, el.surname),
+                                label: `Velisi (${el.kinship}) — ${fullnameGenerator(el.name, el.surname)}`,
                                 fullname: fullnameGenerator(el.name, el.surname),
                                 kinship: el.kinship,
                                 player_id: data.player_id,
-                                value: el.parent_id,
+                                value: `parent_${el.parent_id}`,
                                 parent_id: el.parent_id,
                                 phone: el.phone,
                                 email: el.email,
