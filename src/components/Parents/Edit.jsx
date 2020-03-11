@@ -94,8 +94,8 @@ export class Edit extends Component {
             UpdateParent({
                 uid: uid,
                 to: to,
-                name: name,
-                surname: surname,
+                name: name.capitalize(),
+                surname: surname.toLocaleUpperCase("tr-TR"),
                 phone: phone,
                 email: email === "" ? null : email,
                 job: job,

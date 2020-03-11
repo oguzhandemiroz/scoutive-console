@@ -98,7 +98,7 @@ export class List extends Component {
                                 return CreateRollcall({
                                     uid: uid,
                                     type: 0,
-                                    title: generatedValue
+                                    title: generatedValue.capitalize()
                                 })
                                     .then(response => {
                                         return response;
@@ -205,7 +205,10 @@ export class List extends Component {
                                                                           to={redirect}>
                                                                           {el.title
                                                                               ? el.title
-                                                                              : formatDate(el.created_date, "DD/MM/YYYY HH:mm")}
+                                                                              : formatDate(
+                                                                                    el.created_date,
+                                                                                    "DD/MM/YYYY HH:mm"
+                                                                                )}
                                                                       </Link>
                                                                   </td>
                                                                   <td className="text-center">

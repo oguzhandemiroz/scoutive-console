@@ -102,7 +102,7 @@ export class List extends Component {
                                 return CreateRollcall({
                                     uid: uid,
                                     type: 1,
-                                    title: generatedValue
+                                    title: generatedValue.capitalize()
                                 })
                                     .then(response => {
                                         return response;
