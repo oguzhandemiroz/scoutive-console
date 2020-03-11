@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import ep from "../../assets/js/urls";
-import "../../assets/js/core";
 import { getCookie } from "../../assets/js/core";
 import "../../assets/js/datatables-custom";
 import { GetParentPlayers } from "../../services/Parent";
@@ -17,7 +16,6 @@ import {
 import ActionButton from "../Parents/ActionButton";
 import Inputmask from "inputmask";
 const $ = require("jquery");
-$.DataTable = require("datatables.net-responsive");
 
 const dailyType = {
     "-1": { icon: "help-circle", color: "gray", text: "Tanımsız" },
@@ -235,7 +233,7 @@ export class List extends Component {
                         data: "email",
                         responsivePriority: 10007,
                         render: function(data, type, row) {
-                        if (data) return `<a href="mailto:+${data}">${data}</a>`;
+                            if (data) return `<a href="mailto:+${data}">${data}</a>`;
                             else return "&mdash;";
                         }
                     },
@@ -268,7 +266,6 @@ export class List extends Component {
                 });
             });
         } catch (e) {
-            //fatalSwal();
             console.log("e", e);
         }
     }

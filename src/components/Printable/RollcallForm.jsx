@@ -3,7 +3,6 @@ import { selectCustomStyles, datatable_turkish } from "../../assets/js/core";
 import Select from "react-select";
 import { Groups } from "../../services/FillSelect";
 import { ListRollcallType } from "../../services/Rollcalls";
-import "../../assets/css/datatables.responsive.css";
 import { fullnameGenerator, avatarPlaceholder } from "../../services/Others";
 import _ from "lodash";
 const $ = require("jquery");

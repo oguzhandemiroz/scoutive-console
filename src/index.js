@@ -5,6 +5,7 @@ import tr from "date-fns/locale/tr";
 import "jquery";
 import "popper.js";
 import "bootstrap/dist/js/bootstrap.bundle.min";
+import "./assets/css/datatables.responsive.css";
 import React from "react";
 import ReactDOM from "react-dom";
 import * as Sentry from "@sentry/browser";

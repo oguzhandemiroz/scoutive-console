@@ -3,7 +3,7 @@ import Table from "../../components/Employees/List.jsx";
 import TotalSalary from "../../components/Employees/Charts/TotalSalary";
 import DailyEmployee from "../../components/Employees/Charts/DailyEmployee";
 import GeneralEmployee from "../../components/Employees/Charts/GeneralEmployee";
-import { Link, withRouter } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { ListEmployees } from "../../services/Employee";
 import { CheckPermissions } from "../../services/Others";
 import NotPermissions from "../../components/NotActivate/NotPermissions";
@@ -89,4 +89,4 @@ class Employees extends Component {
     }
 }
 
-export default withRouter(Employees);
+export default Employees;

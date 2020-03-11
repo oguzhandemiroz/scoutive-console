@@ -14,7 +14,6 @@ import ActionButton from "../../Players/ActionButton";
 import _ from "lodash";
 import moment from "moment";
 import "moment/locale/tr";
-import "../../../assets/css/datatables.responsive.css";
 const $ = require("jquery");
 $.DataTable = require("datatables.net-responsive");
 

@@ -37,7 +37,7 @@ export class List extends Component {
     componentDidMount() {
         try {
             const { uid } = this.state;
-            $("#budget-list").DataTable({
+            const table = $("#budget-list").DataTable({
                 dom: '<"top"f>rt<"bottom"ilp><"clear">',
                 responsive: false,
                 order: [0, "asc"],

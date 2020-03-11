@@ -3,7 +3,6 @@ import ReactDOM from "react-dom";
 import { BrowserRouter, Link, withRouter } from "react-router-dom";
 import { datatable_turkish } from "../../assets/js/core";
 import { formatDate, fullnameGenerator, nullCheck, avatarPlaceholder, formatPhone } from "../../services/Others.jsx";
-import "../../assets/css/datatables.responsive.css";
 const $ = require("jquery");
 $.DataTable = require("datatables.net-responsive");
 

@@ -5,7 +5,6 @@ import { BrowserRouter, Link } from "react-router-dom";
 import { datatable_turkish, getCookie } from "../../assets/js/core";
 import ep from "../../assets/js/urls";
 import _ from "lodash";
-import "../../assets/css/datatables.responsive.css";
 import { formatDate } from "../../services/Others.jsx";
 import { CancelCampaign, ToggleStatusCampaign } from "../../services/Messages.jsx";
 import moment from "moment";

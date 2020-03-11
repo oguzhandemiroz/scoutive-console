@@ -1,5 +1,5 @@
 const $ = require("jquery");
-console.log($.fn.dataTableExt);
+$.DataTable = require("datatables.net-responsive");
 
 // All DataTables Turkish Letters Sorting Settings
 if ($.fn.dataTableExt) {
@@ -83,7 +83,6 @@ $.extend(true, $.fn.dataTable.defaults, {
             type: "column",
             target: 2,
             renderer: function(api, rowIdx, columns) {
-                console.log(api, rowIdx);
                 var tbl = $('<table class="w-100"/>');
                 var found = false;
                 var data = $.map(columns, function(col, i) {

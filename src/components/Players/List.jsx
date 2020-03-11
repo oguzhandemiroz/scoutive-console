@@ -16,9 +16,7 @@ import Vacation from "../PlayerAction/Vacation";
 import ActionButton from "../Players/ActionButton";
 import { CheckPermissions } from "../../services/Others";
 import _ from "lodash";
-import "../../assets/css/datatables.responsive.css";
 const $ = require("jquery");
-$.DataTable = require("datatables.net-responsive");
 
 const dailyType = {
     "-1": ["Tanımsız", "secondary"],

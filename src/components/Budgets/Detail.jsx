@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import { GetBudget, MakeDefaultBudget, BalanceHistoryBudget } from "../../services/Budget";
 import { nullCheck, CheckPermissions } from "../../services/Others";
 import { Link } from "react-router-dom";
-import "jquery";
 import Inputmask from "inputmask";
 import moment from "moment";
 import AmountIncreaseModal from "./Modals/AmountIncreaseModal";
