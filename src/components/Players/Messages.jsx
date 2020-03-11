@@ -40,7 +40,7 @@ export class Messages extends Component {
     handleSubmit = () => {
         const { uid, recipient } = this.state;
         if (recipient) {
-            this.setState({ loadingButton: "btn-loading" }); /*  */
+            this.setState({ loadingButton: "btn-loading" });
             CreateRecipient({
                 uid: uid,
                 recipients: [{ ...recipient }]
