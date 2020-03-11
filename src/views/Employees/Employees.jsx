@@ -63,7 +63,7 @@ class Employees extends Component {
                                     <div className="card-header">
                                         <h3 className="card-title">Tüm Personeller</h3>
                                     </div>
-                                    <div className="table-responsive employee-list">
+                                    <div className="employee-list">
                                         <Table history={this.props.history} />
                                     </div>
                                 </div>

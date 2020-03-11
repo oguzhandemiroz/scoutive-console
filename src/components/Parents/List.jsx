@@ -1,12 +1,19 @@
 import React, { Component } from "react";
 import ep from "../../assets/js/urls";
 import "../../assets/js/core";
-import { datatable_turkish, getCookie } from "../../assets/js/core";
+import { getCookie } from "../../assets/js/core";
+import "../../assets/js/datatables-custom";
 import { GetParentPlayers } from "../../services/Parent";
 import { fatalSwal, errorSwal } from "../Alert.jsx";
 import { CheckPermissions } from "../../services/Others";
 import ReactDOM from "react-dom";
-import { fullnameGenerator, nullCheck, formatDate, formatMoney } from "../../services/Others";
+import {
+    fullnameGenerator,
+    nullCheck,
+    formatDate,
+    formatMoney,
+    renderForDataTableSearchStructure
+} from "../../services/Others";
 import ActionButton from "../Parents/ActionButton";
 import Inputmask from "inputmask";
 const $ = require("jquery");
@@ -26,26 +33,6 @@ var statusType = {
     3: { bg: "bg-indigo", title: "Ön Kayıt" }
 };
 
-var _childNodeStore = {};
-function _childNodes(dt, row, col) {
-    var name = row + "-" + col;
-
-    if (_childNodeStore[name]) {
-        return _childNodeStore[name];
-    }
-
-    // https://jsperf.com/childnodes-array-slice-vs-loop
-    var nodes = [];
-    var children = dt.cell(row, col).node().childNodes;
-    for (var i = 0, ien = children.length; i < ien; i++) {
-        nodes.push(children[i]);
-    }
-
-    _childNodeStore[name] = nodes;
-
-    return nodes;
-}
-
 export class List extends Component {
     constructor(props) {
         super(props);
@@ -58,28 +45,11 @@ export class List extends Component {
     componentDidMount() {
         try {
             const { uid } = this.state;
-            $("#parent-list").DataTable({
+            const table = $("#parent-list").DataTable({
                 dom: '<"top"f>rt<"bottom"ilp><"clear">',
                 responsive: {
                     details: {
-                        type: "column",
-                        target: 1,
-                        renderer: function(api, rowIdx, columns) {
-                            var tbl = $('<table class="w-100"/>');
-                            var found = false;
-                            var data = $.map(columns, function(col, i) {
-                                if (col.hidden) {
-                                    $(`<tr data-dt-row="${col.rowIndex}" data-dt-column="${col.columnIndex}">
-                                    <th class="w-1">${col.title}</th> 
-                                    </tr>`)
-                                        .append($("<td/>").append(_childNodes(api, col.rowIndex, col.columnIndex)))
-                                        .appendTo(tbl);
-                                    found = true;
-                                }
-                            });
-
-                            return found ? tbl : false;
-                        }
+                        target: 1
                     }
                 },
                 order: [2, "asc"],
@@ -87,12 +57,6 @@ export class List extends Component {
                     [20, 50, 100, -1],
                     [20, 50, 100, "Tümü"]
                 ],
-                stateSave: false, // change true
-                language: {
-                    ...datatable_turkish,
-                    decimal: ",",
-                    thousands: "."
-                },
                 ajax: {
                     url: ep.PARENT_LIST,
                     type: "POST",
@@ -128,6 +92,10 @@ export class List extends Component {
                     }
                 },
                 columnDefs: [
+                    {
+                        type: "turkish",
+                        targets: "_all"
+                    },
                     {
                         targets: [0],
                         visible: false
@@ -244,6 +212,9 @@ export class List extends Component {
                         responsivePriority: 1,
                         render: function(data, type, row) {
                             const fullname = fullnameGenerator(data, row.surname);
+                            if (type === "filter") {
+                                return renderForDataTableSearchStructure(fullname);
+                            }
                             if (["sort", "type"].indexOf(type) > -1) {
                                 return fullname;
                             }
@@ -264,7 +235,7 @@ export class List extends Component {
                         data: "email",
                         responsivePriority: 10007,
                         render: function(data, type, row) {
-                            if (data) return `<a class="text-wrap text-break" href="mailto:+${data}">${data}</a>`;
+                        if (data) return `<a href="mailto:+${data}">${data}</a>`;
                             else return "&mdash;";
                         }
                     },
@@ -285,12 +256,11 @@ export class List extends Component {
                 ]
             });
 
-            $.fn.DataTable.ext.errMode = "none";
-            $("#parent-list").on("error.dt", function(e, settings, techNote, message) {
+            table.on("error.dt", function(e, settings, techNote, message) {
                 console.log("An error has been reported by DataTables: ", message, techNote);
             });
 
-            $("#parent-list").on("draw.dt", function() {
+            table.on("draw.dt", function() {
                 $('[data-toggle="tooltip"]').tooltip();
                 $('[data-toggle="popover"]').popover({
                     html: true,

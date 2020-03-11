@@ -152,6 +152,15 @@ const avatarPlaceholder = (name, surname) => {
     }
 };
 
+const renderForDataTableSearchStructure = value => {
+    try {
+        const mergedValue = value.toLocaleLowerCase("tr-TR") + value.toLocaleUpperCase("tr-TR");
+        return mergedValue;
+    } catch (e) {
+        return value;
+    }
+};
+
 const groupAgeSplit = age => {
     try {
         var result = {};
@@ -323,5 +332,6 @@ export {
     parseJSON,
     isMobile,
     isChrome,
-    CheckPermissions
+    CheckPermissions,
+    renderForDataTableSearchStructure
 };
