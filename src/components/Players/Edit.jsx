@@ -1257,6 +1257,15 @@ export class Edit extends Component {
                                     </div>
                                 </div>
                             </div>
+                            <div className="alert alert-primary alert-icon card-alert">
+                                <i className="fe fe-alert-triangle mr-2"></i>
+                                <p>
+                                    <strong>Kişisel Veri Koruma Kanunu (KVKK/GDPR) Uyarısı</strong>
+                                </p>
+                                Yukarıdaki bilgilerin, öğrencinin (veya velisinin) rızası ve bilgisi dahilinde sisteme
+                                kayıt edildiğini ve gerektiğinde öğrenciyle (veya velisiyle) iletişime geçileceğini
+                                kabul ediyor ve onaylıyorum.
+                            </div>
                             <div className="card-footer text-right">
                                 <div className="d-flex" style={{ justifyContent: "space-between" }}>
                                     <a
