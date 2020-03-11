@@ -22,7 +22,8 @@ export class RegisterPage extends Component {
                 password: "",
                 terms: ""
             },
-            loadingButton: ""
+            loadingButton: "",
+            showPassword: false
         };
     }
 
@@ -109,8 +110,14 @@ export class RegisterPage extends Component {
         }));
     };
 
+    handleShowPassword = () => {
+        const { showPassword } = this.state;
+        const showPasswordToggle = !showPassword;
+        this.setState({ showPassword: showPasswordToggle });
+    };
+
     render() {
-        const { formErrors } = this.state;
+        const { formErrors, showPassword } = this.state;
         return (
             <div className="page">
                 <div className="page-single">
@@ -170,14 +177,27 @@ export class RegisterPage extends Component {
                                             <label className="form-label">
                                                 Şifre<span className="form-required">*</span>
                                             </label>
-                                            <input
-                                                type="password"
-                                                className={`form-control ${formErrors.password}`}
-                                                placeholder="Şifre"
-                                                name="password"
-                                                noValidate
-                                                onChange={this.handleChange}
-                                            />
+                                            <div className="input-group">
+                                                <input
+                                                    type={showPassword ? "text" : "password"}
+                                                    className={`form-control ${formErrors.password}`}
+                                                    placeholder="Şifre"
+                                                    name="password"
+                                                    noValidate
+                                                    onChange={this.handleChange}
+                                                />
+                                                <span
+                                                    class="input-group-append cursor-pointer"
+                                                    onClick={this.handleShowPassword}>
+                                                    <span class="input-group-text">
+                                                        {showPassword ? (
+                                                            <i className="fe fe-eye-off"></i>
+                                                        ) : (
+                                                            <i className="fe fe-eye"></i>
+                                                        )}
+                                                    </span>
+                                                </span>
+                                            </div>
                                         </div>
                                         <div className="form-group">
                                             <label className="custom-control custom-checkbox">

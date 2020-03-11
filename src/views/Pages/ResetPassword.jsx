@@ -1,9 +1,9 @@
-import React, {Component} from "react";
-import {Link} from "react-router-dom";
+import React, { Component } from "react";
+import { Link } from "react-router-dom";
 import logo from "../../assets/images/logo.svg";
-import {Reset} from "../../services/Password";
+import { Reset } from "../../services/Password";
 
-const formValid = ({formErrors, ...rest}) => {
+const formValid = ({ formErrors, ...rest }) => {
     let valid = true;
 
     Object.values(formErrors).forEach(val => {
@@ -28,7 +28,8 @@ class ResetPassword extends Component {
                 newPassword: "",
                 newPasswordAgain: ""
             },
-            loadingButton: ""
+            loadingButton: "",
+            showPassword: false
         };
     }
 
@@ -36,7 +37,7 @@ class ResetPassword extends Component {
         e.preventDefault();
 
         if (formValid(this.state)) {
-            this.setState({loadingButton: "btn-loading"});
+            this.setState({ loadingButton: "btn-loading" });
 
             Reset(
                 {
@@ -44,10 +45,10 @@ class ResetPassword extends Component {
                     password: this.state.newPassword
                 },
                 this.props.history
-            ).then(() => this.setState({loadingButton: ""}));
+            ).then(() => this.setState({ loadingButton: "" }));
         } else {
-            const {value} = e.target;
-            let formErrors = {...this.state.formErrors};
+            const { value } = e.target;
+            let formErrors = { ...this.state.formErrors };
             console.error("FORM INVALID - DISPLAY ERROR");
 
             formErrors.newPassword = this.state.newPassword
@@ -63,14 +64,14 @@ class ResetPassword extends Component {
                     ? ""
                     : "is-invalid"
                 : "is-invalid";
-            this.setState({formErrors});
+            this.setState({ formErrors });
         }
     };
 
     handleChange = e => {
         e.preventDefault();
-        const {name, value} = e.target;
-        let formErrors = {...this.state.formErrors};
+        const { name, value } = e.target;
+        let formErrors = { ...this.state.formErrors };
 
         switch (name) {
             case "newPassword":
@@ -79,21 +80,23 @@ class ResetPassword extends Component {
 
             case "newPasswordAgain":
                 formErrors.newPasswordAgain =
-                    value.length < 3
-                        ? "is-invalid"
-                        : this.state.newPassword === value
-                        ? ""
-                        : "is-invalid";
+                    value.length < 3 ? "is-invalid" : this.state.newPassword === value ? "" : "is-invalid";
                 break;
             default:
                 break;
         }
 
-        this.setState({formErrors, [name]: value});
+        this.setState({ formErrors, [name]: value });
+    };
+
+    handleShowPassword = () => {
+        const { showPassword } = this.state;
+        const showPasswordToggle = !showPassword;
+        this.setState({ showPassword: showPasswordToggle });
     };
 
     render() {
-        const {formErrors} = this.state;
+        const { formErrors, showPassword } = this.state;
         return (
             <div className="page">
                 <div className="page-single">
@@ -110,39 +113,59 @@ class ResetPassword extends Component {
                                         <div className="card-title">Şifremi Unuttum</div>
                                         <div className="form-group">
                                             <label className="form-label">Yeni Şifre</label>
-                                            <input
-                                                type="email"
-                                                className={`form-control ${formErrors.newPassword}`}
-                                                name="newPassword"
-                                                aria-describedby="emailHelp"
-                                                placeholder="Yeni Şifre"
-                                                noValidate
-                                                onChange={this.handleChange}
-                                            />
+                                            <div className="input-group">
+                                                <input
+                                                    type={showPassword ? "text" : "password"}
+                                                    className={`form-control ${formErrors.newPassword}`}
+                                                    name="newPassword"
+                                                    aria-describedby="emailHelp"
+                                                    placeholder="Yeni Şifre"
+                                                    noValidate
+                                                    onChange={this.handleChange}
+                                                />
+                                                <span
+                                                    class="input-group-append cursor-pointer"
+                                                    onClick={this.handleShowPassword}>
+                                                    <span class="input-group-text">
+                                                        {showPassword ? (
+                                                            <i className="fe fe-eye-off"></i>
+                                                        ) : (
+                                                            <i className="fe fe-eye"></i>
+                                                        )}
+                                                    </span>
+                                                </span>
+                                            </div>
                                         </div>
                                         <div className="form-group">
-                                            <label className="form-label">
-                                                Yeni Şifre (Tekrar)
-                                            </label>
-                                            <input
-                                                type="email"
-                                                className={`form-control ${
-                                                    formErrors.newPasswordAgain
-                                                }`}
-                                                name="newPasswordAgain"
-                                                aria-describedby="emailHelp"
-                                                placeholder="Yeni Şifre (Tekrar)"
-                                                noValidate
-                                                onChange={this.handleChange}
-                                            />
+                                            <label className="form-label">Yeni Şifre (Tekrar)</label>
+                                            <div className="input-group">
+                                                <input
+                                                    type={showPassword ? "text" : "password"}
+                                                    className={`form-control ${formErrors.newPasswordAgain}`}
+                                                    name="newPasswordAgain"
+                                                    aria-describedby="emailHelp"
+                                                    placeholder="Yeni Şifre (Tekrar)"
+                                                    noValidate
+                                                    onChange={this.handleChange}
+                                                />
+                                                <span
+                                                    class="input-group-append cursor-pointer"
+                                                    onClick={this.handleShowPassword}>
+                                                    <span class="input-group-text">
+                                                        {showPassword ? (
+                                                            <i className="fe fe-eye-off"></i>
+                                                        ) : (
+                                                            <i className="fe fe-eye"></i>
+                                                        )}
+                                                    </span>
+                                                </span>
+                                            </div>
                                         </div>
                                         <div className="form-footer">
                                             <button
                                                 type="submit"
-                                                className={`btn btn-primary btn-block ${
-                                                    this.state.loadingButton
-                                                }`}>
-                                                Şifremi sıfırla
+                                                className={`btn btn-primary btn-block ${this.state.loadingButton}`}>
+                                                Şifremi Yenile
                                             </button>
                                         </div>
                                     </div>
