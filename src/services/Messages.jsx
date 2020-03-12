@@ -1,4 +1,4 @@
-import { fatalSwal, errorSwal, Toast } from "../components/Alert.jsx";
+import { fatalSwal, errorSwal, Toast, showToast } from "../components/Alert.jsx";
 import ep from "../assets/js/urls";
 import { getCookie } from "../assets/js/core.js";
 import { CheckPermissions } from "./Others.jsx";
@@ -70,7 +70,11 @@ const CreateMessageTemplate = data => {
             .then(response => {
                 if (response) {
                     const status = response.status;
-                    if (status.code !== 1020) errorSwal(status);
+                    if (status.code !== 1021) {
+                        errorSwal(status);
+                    } else {
+                        showToast(status);
+                    }
                     return response;
                 }
             })
@@ -108,13 +112,10 @@ const UpdateMessageTemplate = data => {
             .then(response => {
                 if (response) {
                     const status = response.status;
-                    if (status.code !== 1020) errorSwal(status);
-                    else {
-                        Toast.fire({
-                            type: "success",
-                            title: status.description,
-                            timer: 2500
-                        });
+                    if (status.code !== 1022) {
+                        errorSwal(status);
+                    } else {
+                        showToast(status);
                     }
                     return response;
                 }
@@ -128,7 +129,7 @@ const ActivateMessageTemplate = () => {
         if (!CheckPermissions(["m_read"])) {
             return Promise.resolve(null);
         }
-        
+
         return fetch(ep.MESSAGES_TEMPLATES_ACTIVATE, {
             method: "POST",
             body: JSON.stringify({

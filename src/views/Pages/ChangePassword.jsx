@@ -44,7 +44,14 @@ export class ChangePassword extends Component {
                     uid: uid,
                     current_password: password,
                     new_password: new_password_again
-                }).then(response => this.props.history.push("/app/dashboard"));
+                }).then(response => {
+                    if (response) {
+                        if (response.status.code === 1022) {
+                            this.props.history.push("/app/dashboard");
+                        }
+                    }
+                    this.setState({ loadingButton: "" });
+                });
             } else {
                 console.error("FORM INVALID - DISPLAY ERROR");
                 let formErrors = { ...this.state.formErrors };

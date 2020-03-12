@@ -54,7 +54,7 @@ export class SmsTemplatesEdit extends Component {
                 content: detail.content.trim()
             }).then(response => {
                 if (response) {
-                    if (response.status.code === 1020) this.reload();
+                    if (response.status.code === 1022) this.reload();
                 }
                 this.setState({ loadingButton: "" });
             });

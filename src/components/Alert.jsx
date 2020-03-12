@@ -21,15 +21,31 @@ const showSwal = options => {
     } catch (e) {}
 };
 
+const showToast = (data, options) => {
+    try {
+        Toast.fire({
+            type: data.icon,
+            title: data.description,
+            ...options
+        });
+    } catch (e) {}
+};
+
 const errorSwal = (data, options) => {
     try {
         showSwal({
-            type: "error",
+            type: data.icon || "error",
             title: "Hata Kodu: " + data.code,
             text: data.description,
             ...options
         });
-    } catch (e) {}
+    } catch (e) {
+        showSwal({
+            type: "error",
+            title: "Hata",
+            text: "Bir hata oluştu. Lütfen daha sonra tekrar deneyin..."
+        });
+    }
 };
 
 const fatalSwal = logout => {
@@ -47,4 +63,4 @@ const fatalSwal = logout => {
     } catch (e) {}
 };
 
-export { Toast, showSwal, errorSwal, fatalSwal };
+export { Toast, showSwal, errorSwal, fatalSwal, showToast };

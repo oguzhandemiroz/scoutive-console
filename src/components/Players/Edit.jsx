@@ -214,7 +214,7 @@ export class Edit extends Component {
                     parents: parents
                 }).then(response => {
                     if (response) {
-                        if (response.status.code === 1020) {
+                        if (response.status.code === 1022) {
                             setTimeout(this.props.history.push("/app/players/detail/" + to), 1000);
                         }
                     }

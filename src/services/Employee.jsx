@@ -1,4 +1,4 @@
-import { errorSwal, fatalSwal, Toast } from "../components/Alert.jsx";
+import { errorSwal, fatalSwal, Toast, showToast } from "../components/Alert.jsx";
 import ep from "../assets/js/urls.js";
 import { getCookie } from "../assets/js/core.js";
 import { CheckPermissions } from "../services/Others";
@@ -10,6 +10,10 @@ h.append("Authorization", localStorage.getItem("UID"));
 
 const CreateEmployee = data => {
     try {
+        if (!CheckPermissions(["e_write"])) {
+            return Promise.resolve(null);
+        }
+
         return fetch(ep.CREATE_EMPLOYEE, {
             method: "POST",
             body: JSON.stringify(data),
@@ -19,14 +23,10 @@ const CreateEmployee = data => {
             .then(response => {
                 console.log(response);
                 const status = response.status;
-
-                if (status.code !== 1020) {
+                if (status.code !== 1021) {
                     errorSwal(status);
                 } else {
-                    Toast.fire({
-                        type: "success",
-                        title: "Başarıyla oluşturuldu..."
-                    });
+                    showToast(status);
                     return response;
                 }
             })
@@ -38,6 +38,10 @@ const CreateEmployee = data => {
 
 const UpdateEmployee = data => {
     try {
+        if (!CheckPermissions(["e_write"])) {
+            return Promise.resolve(null);
+        }
+
         return fetch(ep.UPDATE_EMPLOYEE, {
             method: "PATCH",
             body: JSON.stringify(data),
@@ -49,13 +53,10 @@ const UpdateEmployee = data => {
                 const data = response.data;
                 const status = response.status;
 
-                if (status.code !== 1020) {
+                if (status.code !== 1022) {
                     errorSwal(status);
                 } else {
-                    Toast.fire({
-                        type: "success",
-                        title: "Başarıyla güncellendi..."
-                    });
+                    showToast(status);
 
                     return status.code;
                 }
@@ -68,6 +69,10 @@ const UpdateEmployee = data => {
 
 const DetailEmployee = data => {
     try {
+        if (!CheckPermissions(["e_read"])) {
+            return Promise.resolve(null);
+        }
+
         return fetch(ep.GET_EMPLOYEE, {
             method: "POST",
             body: JSON.stringify(data),
@@ -121,6 +126,10 @@ const ListEmployees = () => {
 
 const DeleteEmployee = data => {
     try {
+        if (!CheckPermissions(["e_remove"])) {
+            return Promise.resolve(null);
+        }
+
         return fetch(ep.EMPLOYEE_DELETE, {
             method: "DELETE",
             body: JSON.stringify(data),
@@ -130,7 +139,11 @@ const DeleteEmployee = data => {
             .then(response => {
                 if (response) {
                     const status = response.status;
-                    if (status.code !== 1020) errorSwal(status);
+                    if (status.code !== 1022) {
+                        errorSwal(status);
+                    } else {
+                        showToast(status);
+                    }
 
                     return response;
                 }
@@ -143,6 +156,10 @@ const DeleteEmployee = data => {
 
 const ActivateEmployee = data => {
     try {
+        if (!CheckPermissions(["e_write", "e_remove"])) {
+            return Promise.resolve(null);
+        }
+
         return fetch(ep.EMPLOYEE_ACTIVATE, {
             method: "POST",
             body: JSON.stringify(data),
@@ -152,7 +169,11 @@ const ActivateEmployee = data => {
             .then(response => {
                 if (response) {
                     const status = response.status;
-                    if (status.code !== 1020) errorSwal(status);
+                    if (status.code !== 1022) {
+                        errorSwal(status);
+                    } else {
+                        showToast(status);
+                    }
 
                     return response;
                 }

@@ -5,7 +5,7 @@ import { RequestLogin, SetSchoolInfoToLocalStorage, SetPermissionsKeys } from ".
 import { SetSession, GenerateSessionData } from "../../services/Session";
 import { formValid } from "../../assets/js/core";
 import { ActivateSchool } from "../../services/Others";
-import { showSwal, Toast } from "../../components/Alert";
+import { showSwal, Toast, showToast } from "../../components/Alert";
 
 export class LoginPage extends Component {
     constructor(props) {
@@ -39,11 +39,8 @@ export class LoginPage extends Component {
                 if (response) {
                     const data = response.data;
                     const status = response.status;
-                    if (status.code === 1020) {
-                        Toast.fire({
-                            type: "success",
-                            title: "Giriş yapılıyor..."
-                        });
+                    if (status.code === 1012) {
+                        showToast(status);
 
                         GenerateSessionData().then(r =>
                             SetSession({ uid: data.uid, school_id: data.sid, type: 1, ...r }).then(res => {
@@ -51,7 +48,7 @@ export class LoginPage extends Component {
                                 SetSchoolInfoToLocalStorage(data);
                             })
                         );
-                    } else if (status.code === 1082) {
+                    } else if (status.code === 1017) {
                         this.notActivateSchool(data, status);
                     }
                 }

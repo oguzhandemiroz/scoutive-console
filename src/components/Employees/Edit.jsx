@@ -234,7 +234,7 @@ export class Edit extends Component {
                     }
                 )
             }).then(code => {
-                if (code === 1020)
+                if (code === 1022)
                     setTimeout(() => this.props.history.push("/app/persons/employees/detail/" + to), 1000);
                 else this.setState({ loadingButton: "" });
             });

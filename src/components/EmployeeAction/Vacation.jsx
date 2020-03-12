@@ -160,22 +160,17 @@ export class Vacation extends Component {
             ).then(response => {
                 if (response) {
                     const status = response.status;
-                    if (status.code === 1020) {
-                        console.log(response);
-                        Toast.fire({
-                            type: "success",
-                            title: "Başarıyla kaydedildi..."
-                        });
+                    if (status.code === 1021) {
                         setTimeout(() => this.reload(), 1000);
-                    } else if (status.code === 1037) {
+                    } else if (status.code === 1030) {
                         showSwal({
                             type: "warning",
                             title: "Uyarı!",
                             html: `${status.description}.<br>
-								Yeni bilgiler ile güncellemek ister misiniz? <hr/>
+								Yeni bilgiler ile güncellemek ister misiniz? <hr class="my-3"/>
 								<div class="card text-left">
 								<div class="card-header">
-									<h2 class="card-title">Önceki Bilgiler</h2>
+									<h2 class="card-title text-dark font-weight-600">Önceki Bilgiler</h2>
 								</div>
 								<table class="table card-table">
 									<tbody>
@@ -236,13 +231,6 @@ export class Vacation extends Component {
                                 }).then(response => {
                                     if (response) {
                                         const status = response.status;
-                                        if (status.code === 1020) {
-                                            console.log(response);
-                                            Toast.fire({
-                                                type: "success",
-                                                title: "Başarıyla güncellendi..."
-                                            });
-                                        }
                                         setTimeout(() => this.reload(), 1000);
                                     }
                                 });

@@ -1,4 +1,4 @@
-import { fatalSwal, errorSwal, Toast } from "../components/Alert.jsx";
+import { fatalSwal, errorSwal, Toast, showToast } from "../components/Alert.jsx";
 import ep from "../assets/js/urls";
 import { getCookie } from "../assets/js/core.js";
 import { CheckPermissions } from "../services/Others";
@@ -23,12 +23,10 @@ const CreateParent = data => {
             .then(response => {
                 if (response) {
                     const status = response.status;
-                    if (status.code !== 1020) errorSwal(status);
-                    else {
-                        Toast.fire({
-                            type: "success",
-                            title: "Başarıyla oluşturuldu..."
-                        });
+                    if (status.code !== 1021) {
+                        errorSwal(status);
+                    } else {
+                        showToast(status);
                     }
                     return response;
                 }
@@ -54,12 +52,9 @@ const UpdateParent = data => {
             .then(response => {
                 if (response) {
                     const status = response.status;
-                    if (status.code !== 1020) errorSwal(status);
+                    if (status.code !== 1022) errorSwal(status);
                     else {
-                        Toast.fire({
-                            type: "success",
-                            title: "Başarıyla güncellendi..."
-                        });
+                        showToast(status);
                     }
                     return response;
                 }
