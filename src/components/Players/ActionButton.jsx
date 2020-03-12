@@ -18,7 +18,7 @@ export class ActionButton extends Component {
     renderActionButton = () => {
         const { uid } = this.state;
         const { data, renderButton, history, dropdown, hide } = this.props;
-        const { to, name, is_trial, status, group } = data;
+        const { to, name, status, group } = data;
 
         const dropdownDivider = key => <div role="separator" className="dropdown-divider" key={key.toString()} />;
         const lock = (

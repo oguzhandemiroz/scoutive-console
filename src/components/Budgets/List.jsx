@@ -1,12 +1,11 @@
 import React, { Component } from "react";
 import ep from "../../assets/js/urls";
-import "../../assets/js/core";
-import { datatable_turkish, getCookie } from "../../assets/js/core";
+import "../../assets/js/datatables-custom";
+import { getCookie } from "../../assets/js/core";
 import { fatalSwal, errorSwal } from "../Alert.jsx";
-import { BrowserRouter, Link } from "react-router-dom";
 import ReactDOM from "react-dom";
+import { renderForDataTableSearchStructure } from "../../services/Others";
 const $ = require("jquery");
-$.DataTable = require("datatables.net");
 
 const budgetType = {
     0: { icon: "briefcase", text: "Kasa" },
@@ -39,18 +38,16 @@ export class List extends Component {
             const { uid } = this.state;
             const table = $("#budget-list").DataTable({
                 dom: '<"top"f>rt<"bottom"ilp><"clear">',
-                responsive: false,
-                order: [0, "asc"],
-                aLengthMenu: [
-                    [10, 25, 50, 100, -1],
-                    [10, 25, 50, 100, "Tümü"]
-                ],
-                stateSave: false, // change true
-                language: {
-                    ...datatable_turkish,
-                    decimal: ",",
-                    thousands: "."
+                responsive: {
+                    details: {
+                        target: 0
+                    }
                 },
+                order: [2, "asc"],
+                aLengthMenu: [
+                    [20, 50, 100, -1],
+                    [20, 50, 100, "Tümü"]
+                ],
                 ajax: {
                     url: ep.BUDGET_LIST,
                     type: "POST",
@@ -68,7 +65,6 @@ export class List extends Component {
                     contentType: "application/json",
                     complete: function(res) {
                         try {
-                            console.log(res);
                             if (res.responseJSON.status.code !== 1020) {
                                 if (res.status !== 200) fatalSwal();
                                 else errorSwal(res.responseJSON.status);
@@ -78,7 +74,6 @@ export class List extends Component {
                         }
                     },
                     dataSrc: function(d) {
-                        console.log("dataSrc", d);
                         if (d.status.code !== 1020) {
                             errorSwal(d.status);
                             return [];
@@ -87,27 +82,43 @@ export class List extends Component {
                 },
                 columnDefs: [
                     {
+                        type: "turkish",
+                        targets: "_all"
+                    },
+                    {
+                        className: "control",
+                        orderable: false,
+                        targets: [0]
+                    },
+                    {
                         targets: "no-sort",
                         orderable: false
                     },
                     {
-                        targets: [0],
+                        targets: [1],
                         createdCell: (td, cellData) => {
                             ReactDOM.render(<i className={`fa fa-${budgetType[cellData].icon}`} />, td);
                         }
                     },
                     {
                         targets: "budget_name",
+                        render: function(data, type, row) {
+                            if (type === "filter") {
+                                return renderForDataTableSearchStructure(data);
+                            }
+
+                            return data;
+                        },
                         createdCell: (td, cellData, rowData) => {
                             ReactDOM.render(
-                                <div
+                                <span
                                     onClick={() => this.props.history.push("/app/budgets/detail/" + rowData.budget_id)}
                                     className="btn-link cursor-pointer text-inherit"
                                     data-toggle="tooltip"
                                     data-placement="top"
                                     data-original-title={cellData}>
                                     {cellData}
-                                </div>,
+                                </span>,
                                 td
                             );
                         }
@@ -115,19 +126,27 @@ export class List extends Component {
                 ],
                 columns: [
                     {
-                        data: "budget_type"
-                    },
-                    {
-                        data: "budget_name"
+                        data: null,
+                        defaultContent: ""
                     },
                     {
                         data: "budget_type",
+                        responsivePriority: 0
+                    },
+                    {
+                        data: "budget_name",
+                        responsivePriority: 1
+                    },
+                    {
+                        data: "budget_type",
+                        responsivePriority: 5,
                         render: function(data, type, row) {
                             return budgetType[data].text;
                         }
                     },
                     {
                         data: "balance",
+                        responsivePriority: 2,
                         render: function(data, type, row) {
                             if (["sort", "type"].indexOf(type) > -1) {
                                 return data;
@@ -140,6 +159,7 @@ export class List extends Component {
                     },
                     {
                         data: "currency",
+                        responsivePriority: 4,
                         render: function(data, type, row) {
                             return `${currencyType[data].sign} (${row.currency})`;
                         }
@@ -154,6 +174,7 @@ export class List extends Component {
                     },
                     {
                         data: "default",
+                        responsivePriority: 3,
                         class: "text-center w-1",
                         render: function(data, type, row) {
                             return data ? '<span class="badge badge-primary">Varsayılan</span>' : null;
@@ -162,16 +183,14 @@ export class List extends Component {
                 ]
             });
 
-            $.fn.DataTable.ext.errMode = "none";
-            $("#budget-list").on("error.dt", function(e, settings, techNote, message) {
+            table.on("error.dt", function(e, settings, techNote, message) {
                 console.log("An error has been reported by DataTables: ", message, techNote);
             });
 
-            $("#budget-list").on("draw.dt", function() {
+            table.on("draw.dt", function() {
                 $('[data-toggle="tooltip"]').tooltip();
             });
         } catch (e) {
-            //fatalSwal();
             console.log("e", e);
         }
     }
@@ -188,16 +207,17 @@ export class List extends Component {
             <div>
                 <table
                     id="budget-list"
-                    className="table table-hover w-100 card-table table-vcenter text-nowrap datatable">
+                    className="table table-hover w-100 card-table table-vcenter text-nowrap datatable table-bordered">
                     <thead>
                         <tr>
+                            <th className="w-1 no-sort control" />
                             <th className="w-1 text-center budget_type no-sort"></th>
                             <th className="budget_name">HESAP ADI</th>
                             <th className="budget_type">HESAP TÜRÜ</th>
                             <th className="balance">BAKİYE</th>
                             <th className="currency">PARA BİRİMİ</th>
                             <th className="status">DURUM</th>
-                            <th className="w-1 default no-sort"></th>
+                            <th className="w-1 default no-sort">VARSAYILAN</th>
                         </tr>
                     </thead>
                 </table>

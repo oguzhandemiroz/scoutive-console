@@ -72,7 +72,6 @@ export class List extends Component {
                     contentType: "application/json",
                     complete: function(res) {
                         try {
-                            console.log(res);
                             if (res.responseJSON.status.code !== 1020) {
                                 if (res.status !== 200) fatalSwal();
                                 else errorSwal(res.responseJSON.status);
@@ -82,7 +81,6 @@ export class List extends Component {
                         }
                     },
                     dataSrc: function(d) {
-                        console.log("dataSrc", d);
                         if (d.status.code !== 1020) {
                             errorSwal(d.status);
                             return [];

@@ -1,16 +1,20 @@
 import React, { Component } from "react";
 import ReactDOM from "react-dom";
-import { BrowserRouter, Link, withRouter } from "react-router-dom";
-import Inputmask from "inputmask";
-import moment from "moment";
-import "moment/locale/tr";
-import { WarningModal as Modal } from "../WarningModal";
-import { datatable_turkish, getCookie } from "../../../assets/js/core";
+import { Link, withRouter } from "react-router-dom";
+import { getCookie } from "../../../assets/js/core";
+import "../../../assets/js/datatables-custom";
 import ep from "../../../assets/js/urls";
 import { fatalSwal, errorSwal } from "../../Alert.jsx";
-import { fullnameGenerator } from "../../../services/Others";
+import {
+    fullnameGenerator,
+    renderForDataTableSearchStructure,
+    formatPhone,
+    nullCheck,
+    avatarPlaceholder
+} from "../../../services/Others";
+import moment from "moment";
+import "moment/locale/tr";
 const $ = require("jquery");
-$.DataTable = require("datatables.net");
 
 const dailyType = {
     "-1": { icon: "help-circle", color: "gray", text: "Tanımsız" },
@@ -67,18 +71,16 @@ export class Detail extends Component {
         const { rcid } = this.props.match.params;
         const table = $("#rollcall-list").DataTable({
             dom: '<"top"f>rt<"bottom"ilp><"clear">',
-            responsive: false,
-            order: [3, "asc"],
+            responsive: {
+                details: {
+                    target: 2
+                }
+            },
+            order: [4, "asc"],
             aLengthMenu: [
                 [30, 50, 100, -1],
                 [30, 50, 100, "Tümü"]
             ],
-            stateSave: false, // change true
-            language: {
-                ...datatable_turkish,
-                decimal: ",",
-                thousands: "."
-            },
             ajax: {
                 url: ep.ROLLCALL_LIST_TYPE + "employees",
                 type: "POST",
@@ -97,7 +99,6 @@ export class Detail extends Component {
                 contentType: "application/json",
                 complete: function(res) {
                     try {
-                        console.log(res);
                         if (res.responseJSON.status.code !== 1020) {
                             if (res.status !== 200) fatalSwal();
                             else errorSwal(res.responseJSON.status);
@@ -107,7 +108,6 @@ export class Detail extends Component {
                     }
                 },
                 dataSrc: d => {
-                    console.log(d);
                     if (d.status.code !== 1020) {
                         errorSwal(d.status);
                         return [];
@@ -121,14 +121,23 @@ export class Detail extends Component {
                             });
                         });
                         this.setState({ statuses: statusList, rollcall: d.data });
-                        return d.extra_data === 2 ? [] : d.data.filter(x => x.status === 1);
+                        return d.extra_data === 2 ? [] : d.data;
                     }
                 }
             },
             columnDefs: [
                 {
+                    type: "turkish",
+                    targets: "_all"
+                },
+                {
                     targets: [0, 1],
                     visible: false
+                },
+                {
+                    className: "control",
+                    orderable: false,
+                    targets: [2]
                 },
                 {
                     targets: "no-sort",
@@ -136,13 +145,6 @@ export class Detail extends Component {
                 },
                 {
                     targets: "name",
-                    responsivePriority: 1,
-                    render: function(data, type, row) {
-                        const fullname = fullnameGenerator(data, row.surname);
-                        if (["sort", "type"].indexOf(type) > -1) {
-                            return fullname;
-                        }
-                    },
                     createdCell: (td, cellData, rowData) => {
                         const { uid, name, surname } = rowData;
                         const fullname = fullnameGenerator(name, surname);
@@ -199,26 +201,33 @@ export class Detail extends Component {
                     data: "security_id"
                 },
                 {
+                    data: null,
+                    defaultContent: ""
+                },
+                {
                     data: "image",
+                    responsivePriority: 6,
                     class: "text-center",
                     render: function(data, type, row) {
-                        var name = row.name;
-                        var surname = row.surname;
                         var status = row.status;
                         var renderBg = row.is_trial ? statusType[3].bg : statusType[status].bg;
                         var renderTitle = row.is_trial
                             ? statusType[status].title + " & Ön Kayıt Personel"
                             : statusType[status].title + " Personel";
-                        return `<div class="avatar text-uppercase" style="background-image: url(${data || ""})">
-									${data ? "" : name.slice(0, 1) + surname.slice(0, 1)}
+                        return `<div class="avatar text-uppercase" style="background-image: url(${nullCheck(data)})">
+									${avatarPlaceholder(row.name, row.surname)}
 									<span class="avatar-status ${renderBg}" data-toggle="tooltip" title="${renderTitle}"></span>
 								</div>`;
                     }
                 },
                 {
                     data: "name",
+                    responsivePriority: 1,
                     render: function(data, type, row) {
                         const fullname = fullnameGenerator(data, row.surname);
+                        if (type === "filter") {
+                            return renderForDataTableSearchStructure(fullname);
+                        }
                         if (["sort", "type"].indexOf(type) > -1) {
                             return fullname;
                         }
@@ -228,26 +237,31 @@ export class Detail extends Component {
                 },
                 {
                     data: "phone",
+                    responsivePriority: 4,
                     render: function(data, type, row) {
-                        const formatPhone = data ? Inputmask.format(data, { mask: "(999) 999 9999" }) : null;
-                        if (formatPhone) return `<a href="tel:+90${data}" class="text-inherit">${formatPhone}</a>`;
-                        else return "&mdash;";
+                        return `<a href="tel:+90${data}" class="text-inherit">${formatPhone(data)}</a>`;
                     }
                 },
                 {
-                    data: "position"
+                    data: "position",
+                    responsivePriority: 5
                 },
                 {
                     data: null
                 },
                 {
                     data: "note",
+                    responsivePriority: 3,
                     render: function(data, type, row) {
-                        return `<div class="text-break">${data || "—"}</div>`;
+                        if (type === "filter") {
+                            return renderForDataTableSearchStructure(data);
+                        }
+                        return `<div class="text-break">${nullCheck(data)}</div>`;
                     }
                 },
                 {
                     data: "daily",
+                    responsivePriority: 2,
                     class: "text-center",
                     render: function(data, type, row) {
                         return `<div
@@ -262,13 +276,11 @@ export class Detail extends Component {
             ]
         });
 
-        $.fn.DataTable.ext.errMode = "none";
-        $("#rollcall-list").on("error.dt", function(e, settings, techNote, message) {
+        table.on("error.dt", function(e, settings, techNote, message) {
             console.log("An error has been reported by DataTables: ", message, techNote);
         });
 
-        $("#rollcall-list").on("draw.dt", function() {
-            console.log("draw.dt");
+        table.on("draw.dt", function() {
             $('[data-toggle="tooltip"]').tooltip();
         });
     };
@@ -313,10 +325,9 @@ export class Detail extends Component {
                                         className="form-help bg-gray-dark text-white"
                                         data-toggle="popover"
                                         data-placement="bottom"
-                                        data-content='<p>Yoklama yapılırken, sisteme <b>"geldi"</b>, <b>"izinli"</b> veya <b>"gelmedi"</b> olarak giriş yapabilirsiniz.</p><p>Yoklamalar gün sonunda otomatik olarak tamamlanır. İşaretlenmemiş olanlar, sisteme <b>"gelmedi"</b> şeklinde tanımlanır.</p><p><b className="text-red">Not:</b> Yoklama tamamlana kadar değişiklik yapabilirsiniz. Tamamlanan yoklamalarda değişiklik <b><u><i>yapılamaz.</i></u></b></p>'>
+                                        data-content='<p>Yoklama alınırken, sisteme <b>"geldi"</b>, <b>"izinli"</b> veya <b>"gelmedi"</b> olarak giriş yapabilirsiniz.</p><p>Yoklamalar sonlandırılmadığı takdirde gün sonunda otomatik olarak sonlanır. İşaretlenmemiş olanlar, sisteme <b>"Tanımsız"</b> şeklinde tanımlanır.</p><p><b className="text-red">Not:</b> Yoklama sonlanana kadar değişiklik yapabilirsiniz. Sonlanılan yoklamalarda değişiklik <b class="text-red"><u><i>yapılamaz.</i></u></b></p>'>
                                         !
                                     </span>
-                                    <Modal />
                                 </div>
                             </div>
                             <div className="card-body">
@@ -380,25 +391,24 @@ export class Detail extends Component {
                                 </div>
                             </div>
                             <div className="card-body p-0">
-                                <div className="table-responsive">
-                                    <table
-                                        id="rollcall-list"
-                                        className="table card-table w-100 table-vcenter table-hover datatable">
-                                        <thead>
-                                            <tr>
-                                                <th>ID</th>
-                                                <th className="w-1 no-sort">T.C.</th>
-                                                <th className="w-1 text-center no-sort"></th>
-                                                <th className="name">AD SOYAD</th>
-                                                <th className="phone">TELEFON</th>
-                                                <th className="position">POZİSYON</th>
-                                                <th className="no-sort rollcalls">SON 3 YOKLAMA</th>
-                                                <th className="w-10 no-sort note">NOT</th>
-                                                <th className="w-2 no-sort daily">DURUM</th>
-                                            </tr>
-                                        </thead>
-                                    </table>
-                                </div>
+                                <table
+                                    id="rollcall-list"
+                                    className="table card-table w-100 table-vcenter table-hover datatable table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th className="w-1 no-sort">T.C.</th>
+                                            <th className="w-1 no-sort control" />
+                                            <th className="w-1 text-center no-sort"></th>
+                                            <th className="name">AD SOYAD</th>
+                                            <th className="phone">TELEFON</th>
+                                            <th className="position">POZİSYON</th>
+                                            <th className="no-sort rollcalls">SON 4 YOKLAMA</th>
+                                            <th className="w-10 no-sort text-wrap note">NOT</th>
+                                            <th className="w-2 no-sort daily">DURUM</th>
+                                        </tr>
+                                    </thead>
+                                </table>
                             </div>
                         </div>
                     </div>

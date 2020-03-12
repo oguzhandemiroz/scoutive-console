@@ -1,35 +1,14 @@
 import React, { Component } from "react";
 import ReactDOM from "react-dom";
 import { fatalSwal, errorSwal, showSwal } from "../Alert.jsx";
-import { BrowserRouter, Link } from "react-router-dom";
-import { datatable_turkish, getCookie } from "../../assets/js/core";
+import { getCookie } from "../../assets/js/core";
+import "../../assets/js/datatables-custom";
 import ep from "../../assets/js/urls";
 import _ from "lodash";
-import { formatDate } from "../../services/Others.jsx";
+import { formatDate, renderForDataTableSearchStructure } from "../../services/Others.jsx";
 import { CancelCampaign, ToggleStatusCampaign } from "../../services/Messages.jsx";
 import moment from "moment";
 const $ = require("jquery");
-$.DataTable = require("datatables.net-responsive");
-
-var _childNodeStore = {};
-function _childNodes(dt, row, col) {
-    var name = row + "-" + col;
-
-    if (_childNodeStore[name]) {
-        return _childNodeStore[name];
-    }
-
-    // https://jsperf.com/childnodes-array-slice-vs-loop
-    var nodes = [];
-    var children = dt.cell(row, col).node().childNodes;
-    for (var i = 0, ien = children.length; i < ien; i++) {
-        nodes.push(children[i]);
-    }
-
-    _childNodeStore[name] = nodes;
-
-    return nodes;
-}
 
 const statusType = {
     0: { bg: "badge-dark", title: "İptal" },
@@ -58,28 +37,7 @@ export class List extends Component {
                 dom: '<"top"<"filterTools">f>rt<"bottom"ilp><"clear">',
                 responsive: {
                     details: {
-                        type: "column",
-                        target: 1,
-                        renderer: function(api, rowIdx, columns) {
-                            var tbl = $('<table class="w-100"/>');
-                            var found = false;
-                            var data = $.map(columns, function(col, i) {
-                                if (col.hidden) {
-                                    $(`<tr data-dt-row="${col.rowIndex}" data-dt-column="${col.columnIndex}">
-                                    <th class="w-1 text-wrap">${col.title}</th> 
-                                    </tr>`)
-                                        .append(
-                                            $("<td class='text-wrap'/>").append(
-                                                _childNodes(api, col.rowIndex, col.columnIndex)
-                                            )
-                                        )
-                                        .appendTo(tbl);
-                                    found = true;
-                                }
-                            });
-
-                            return found ? tbl : false;
-                        }
+                        target: 1
                     }
                 },
                 fixedHeader: true,
@@ -88,12 +46,6 @@ export class List extends Component {
                     [20, 50, 100, -1],
                     [20, 50, 100, "Tümü"]
                 ],
-                stateSave: false, // change true
-                language: {
-                    ...datatable_turkish,
-                    decimal: ",",
-                    thousands: "."
-                },
                 ajax: {
                     url: ep.CAMPAIGN_LIST,
                     type: "POST",
@@ -129,6 +81,10 @@ export class List extends Component {
                 },
                 columnDefs: [
                     {
+                        type: "turkish",
+                        targets: "_all"
+                    },
+                    {
                         targets: [0],
                         visible: false
                     },
@@ -143,37 +99,32 @@ export class List extends Component {
                     },
                     {
                         targets: "title",
-                        responsivePriority: 1,
-                        className: "pl-5",
-                        render: function(data, type, row) {
-                            return data + " " + row.template.template_name;
-                        },
+                        className: "pl-3",
                         createdCell: (td, cellData, rowData) => {
                             const { campaign_id, title, template, segment_id } = rowData;
                             ReactDOM.render(
-                                <>
+                                <div className="d-flex align-items-center">
                                     <div
                                         data-toggle="tooltip"
                                         title={template.template_name}
-                                        className={`icon-placeholder icon-placeholder-xxs bg-${template.color}-lightest mr-3`}>
+                                        className={`icon-placeholder icon-placeholder-xxs bg-${template.color}-lightest mr-3 d-none d-sm-inline-flex`}>
                                         <i className={`${template.icon} text-${template.color}`} />
                                     </div>
                                     <span
                                         data-toggle="tooltip"
                                         title={title}
-                                        className="btn-link cursor-pointer text-inherit font-weight-600 text-wrap"
+                                        className="btn-link cursor-pointer text-inherit font-weight-600 text-wrap text-sm-nowrap"
                                         onClick={() => this.props.history.push(`/app/messages/detail/${campaign_id}`)}>
-                                        {segment_id ? <span className="badge badge-primary mr-2">OTOMATİK</span> : null}
+                                        {segment_id && <span className="badge badge-primary mr-2">OTOMATİK</span>}
                                         {title}
                                     </span>
-                                </>,
+                                </div>,
                                 td
                             );
                         }
                     },
                     {
                         targets: "status",
-                        responsivePriority: 4,
                         render: function(data, type, row) {
                             return data + " " + row.template.template_name;
                         },
@@ -196,7 +147,6 @@ export class List extends Component {
                     },
                     {
                         targets: "action",
-                        responsivePriority: 5,
                         createdCell: (td, cellData, rowData) => {
                             const { campaign_id, status, title, segment_id } = rowData;
                             ReactDOM.render(
@@ -253,19 +203,21 @@ export class List extends Component {
                         data: "title",
                         responsivePriority: 1,
                         render: function(data, type, row) {
+                            if (type === "filter") {
+                                return renderForDataTableSearchStructure(data + row.template.template_name);
+                            }
                             return data + " " + row.template.template_name;
                         }
                     },
                     {
                         data: "person_count",
-                        responsivePriority: 10,
+                        responsivePriority: 4,
                         render: function(data, type, row) {
                             return row.segment_id ? "<span style='font-size:20px;'>∞</span>" : data;
                         }
                     },
                     {
                         data: "created_date",
-                        responsivePriority: 10013,
                         className: "none",
                         render: function(data, type, row) {
                             return formatDate(data, "DD MMMM YYYY, HH:mm");
@@ -273,40 +225,40 @@ export class List extends Component {
                     },
                     {
                         data: "when",
-                        responsivePriority: 10011,
+                        responsivePriority: 5,
                         render: function(data, type, row) {
                             return formatDate(data, "DD MMMM YYYY, HH:mm");
                         }
                     },
                     {
                         data: "end_date",
-                        responsivePriority: 10012,
+                        responsivePriority: 6,
                         render: function(data, type, row) {
                             return formatDate(data, "DD MMMM YYYY, HH:mm");
                         }
                     },
                     {
                         data: "working_days",
-                        responsivePriority: 10015,
                         className: "none",
                         render: function(data, type, row) {
-                            return _.sortBy(data)
+                            const mergedValue = _.sortBy(data)
                                 .map(x => moment.weekdays(parseInt(x)))
                                 .join(", ");
+
+                            return `<span class="text-wrap">${mergedValue}</span>`;
                         }
                     },
                     {
                         data: "status",
-                        responsivePriority: 4
+                        responsivePriority: 2
                     },
                     {
                         data: null,
-                        responsivePriority: 5
+                        responsivePriority: 3
                     }
                 ]
             });
 
-            $.fn.DataTable.ext.errMode = "none";
             table.on("error.dt", function(e, settings, techNote, message) {
                 console.log("An error has been reported by DataTables: ", message, techNote);
             });
@@ -395,12 +347,12 @@ export class List extends Component {
             <div>
                 <table
                     id="messages-list"
-                    className="table card-table w-100 table-vcenter table-striped text-nowrap datatable dataTable">
+                    className="table card-table w-100 table-vcenter table-striped text-nowrap datatable dataTable table-bordered">
                     <thead>
                         <tr>
                             <th className="w-1 campaign_id">ID</th>
                             <th className="w-1 no-sort control" />
-                            <th className="title pl-5">MESAJ ADI</th>
+                            <th className="title">MESAJ ADI</th>
                             <th className="person_count">KİŞİ SAYISI</th>
                             <th className="created_date">OLUŞTURMA TARİHİ</th>
                             <th className="when">BAŞLAMA TARİHİ</th>

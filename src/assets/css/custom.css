@@ -1625,3 +1625,9 @@ a.card:hover {
 .custom-switch-green-input:checked ~ .custom-switch-green-indicator {
     background: #5eba00;
 }
+
+@media (min-width: 576px) {
+    .text-sm-nowrap {
+        white-space: nowrap !important;
+    }
+}

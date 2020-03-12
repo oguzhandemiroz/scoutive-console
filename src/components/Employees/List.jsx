@@ -6,7 +6,14 @@ import { fatalSwal, errorSwal } from "../Alert.jsx";
 import Vacation from "../EmployeeAction/Vacation";
 import Password from "../EmployeeAction/Password";
 import AdvancePayment from "../EmployeeAction/AdvancePayment";
-import { fullnameGenerator, formatDate, renderForDataTableSearchStructure, formatPhone } from "../../services/Others";
+import {
+    fullnameGenerator,
+    formatDate,
+    renderForDataTableSearchStructure,
+    formatPhone,
+    nullCheck,
+    avatarPlaceholder
+} from "../../services/Others";
 import ActionButton from "./ActionButton";
 import ReactDOM from "react-dom";
 import _ from "lodash";
@@ -200,13 +207,13 @@ class Table extends Component {
                         data: "image",
                         class: "text-center px-3",
                         render: function(data, type, row) {
-                            var name = row.name;
-                            var surname = row.surname;
                             var status = row.status;
                             var renderBg = statusType[status].bg;
                             var renderTitle = statusType[status].title + " Personel";
-                            return `<div class="avatar text-uppercase" style="background-image: url(${data || ""})">
-										${data ? "" : name.slice(0, 1) + surname.slice(0, 1)}
+                            return `<div class="avatar text-uppercase" style="background-image: url(${nullCheck(
+                                data
+                            )})">
+                                    ${avatarPlaceholder(row.name, row.surname)}
 										<span class="avatar-status ${renderBg}" data-toggle="tooltip" title="${renderTitle}"></span>
 									</div>`;
                         }

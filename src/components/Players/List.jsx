@@ -160,7 +160,6 @@ class Table extends Component {
                         }
                     },
                     dataSrc: function(d) {
-                        console.log(d);
                         $.fn.dataTable.ext.search = [];
                         if (d.status.code !== 1020) {
                             errorSwal(d.status);
@@ -333,7 +332,9 @@ class Table extends Component {
                             var renderTitle = row.is_trial
                                 ? statusType[status].title + " & Ön Kayıt Öğrenci"
                                 : statusType[status].title + " Öğrenci";
-                            return `<div class="avatar text-uppercase" style="background-image: url(${data || ""})">
+                            return `<div class="avatar text-uppercase" style="background-image: url(${nullCheck(
+                                data
+                            )})">
 										${data ? "" : name.slice(0, 1) + surname.slice(0, 1)}
 										<span class="avatar-status ${renderBg}" data-toggle="tooltip" title="${renderTitle}"></span>
 									</div>`;

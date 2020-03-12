@@ -134,6 +134,10 @@ export class List extends Component {
             ],
             columnDefs: [
                 {
+                    type: "turkish",
+                    targets: "_all"
+                },
+                {
                     className: "control",
                     orderable: false,
                     targets: [0]
@@ -198,7 +202,7 @@ export class List extends Component {
                 </div>
                 <table
                     id="expensetable"
-                    className="table card-table w-100 table-vcenter table-striped text-nowrap datatable">
+                    className="table card-table w-100 table-vcenter table-striped text-nowrap datatable table-bordered">
                     <thead>
                         <tr>
                             <th className="w-1 no-sort control" />

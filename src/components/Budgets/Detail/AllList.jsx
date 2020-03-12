@@ -77,7 +77,7 @@ export class List extends Component {
                 {
                     data: "accounting_id",
                     class: "w-1 text-center",
-                    responsivePriority: 10001,
+                    responsivePriority: 2,
                     render: function(data, type, row, meta) {
                         if (["sort", "type"].indexOf(type) > -1) {
                             return meta.row;
@@ -99,7 +99,7 @@ export class List extends Component {
                 },
                 {
                     data: "amount",
-                    responsivePriority: 2,
+                    responsivePriority: 3,
                     render: function(data, type) {
                         if (["sort", "type"].indexOf(type) > -1) {
                             return data;
@@ -109,7 +109,7 @@ export class List extends Component {
                 },
                 {
                     data: "payment_date",
-                    responsivePriority: 3,
+                    responsivePriority: 4,
                     render: function(data, type) {
                         if (["sort", "type"].indexOf(type) > -1) {
                             return moment(data, "YYYY-MM-DD").unix();
@@ -119,7 +119,7 @@ export class List extends Component {
                 },
                 {
                     data: "created_date",
-                    responsivePriority: 4,
+                    responsivePriority: 5,
                     render: function(data, type) {
                         if (["sort", "type"].indexOf(type) > -1) {
                             return moment(data, "YYYY-MM-DD").unix();
@@ -135,6 +135,10 @@ export class List extends Component {
                 }
             ],
             columnDefs: [
+                {
+                    type: "turkish",
+                    targets: "_all"
+                },
                 {
                     className: "control",
                     orderable: false,
@@ -180,7 +184,6 @@ export class List extends Component {
             ]
         });
 
-        $.fn.DataTable.ext.errMode = "none";
         table.on("error.dt", function(e, settings, techNote, message) {
             console.log("An error has been reported by DataTables: ", message, techNote);
         });
@@ -192,24 +195,22 @@ export class List extends Component {
                 <div className="card-header">
                     <h3 className="card-title">Tüm İşlemler</h3>
                 </div>
-                <div className="table-responsive">
-                    <table
-                        id="budget-transaction-list"
-                        className="table card-table w-100 table-vcenter table-striped text-nowrap datatable">
-                        <thead>
-                            <tr>
-                                <th className="w-1 no-sort control" />
-                                <th className="accounting_id">#</th>
-                                <th className="accounting_type">İşlem</th>
-                                <th className="amount">Tutar</th>
-                                <th className="payment_date">Ödeme Tarihi</th>
-                                <th className="created_date">İşlem Tarihi</th>
-                                <th className="budget no-sort">Kasa/Banka</th>
-                                <th className="detail no-sort w-1"></th>
-                            </tr>
-                        </thead>
-                    </table>
-                </div>
+                <table
+                    id="budget-transaction-list"
+                    className="table card-table w-100 table-vcenter table-striped text-nowrap datatable table-bordered">
+                    <thead>
+                        <tr>
+                            <th className="w-1 no-sort control" />
+                            <th className="accounting_id">#</th>
+                            <th className="accounting_type">İşlem</th>
+                            <th className="amount">Tutar</th>
+                            <th className="payment_date">Ödeme Tarihi</th>
+                            <th className="created_date">İşlem Tarihi</th>
+                            <th className="budget no-sort">Kasa/Banka</th>
+                            <th className="detail no-sort w-1"></th>
+                        </tr>
+                    </thead>
+                </table>
             </div>
         );
     }
