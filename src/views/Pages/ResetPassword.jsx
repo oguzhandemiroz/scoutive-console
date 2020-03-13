@@ -126,11 +126,7 @@ class ResetPassword extends Component {
                                                     className="input-group-append cursor-pointer"
                                                     onClick={this.handleShowPassword}>
                                                     <span className="input-group-text">
-                                                        {showPassword ? (
-                                                            <i className="fe fe-eye-off"></i>
-                                                        ) : (
-                                                            <i className="fe fe-eye"></i>
-                                                        )}
+                                                        <i className={`fe fe-eye${showPassword ? "-off" : ""}`}></i>
                                                     </span>
                                                 </span>
                                             </div>
@@ -151,11 +147,7 @@ class ResetPassword extends Component {
                                                     className="input-group-append cursor-pointer"
                                                     onClick={this.handleShowPassword}>
                                                     <span className="input-group-text">
-                                                        {showPassword ? (
-                                                            <i className="fe fe-eye-off"></i>
-                                                        ) : (
-                                                            <i className="fe fe-eye"></i>
-                                                        )}
+                                                        <i className={`fe fe-eye${showPassword ? "-off" : ""}`}></i>
                                                     </span>
                                                 </span>
                                             </div>

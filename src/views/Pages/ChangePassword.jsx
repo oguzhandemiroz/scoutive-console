@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Change } from "../../services/Password";
+import { nullCheck } from "../../services/Others";
 
 const formValid = ({ formErrors, ...rest }) => {
     let valid = true;
@@ -124,17 +125,16 @@ export class ChangePassword extends Component {
                                                 name="password"
                                                 placeholder="Mevcut Şifre"
                                                 onChange={this.handleChange}
-                                                value={password || ""}
+                                                value={nullCheck(password, "")}
                                             />
                                             <span
                                                 class="input-group-append cursor-pointer"
                                                 onClick={() => this.handleShowPassword("existing")}>
                                                 <span class="input-group-text">
-                                                    {showPassword.existing ? (
-                                                        <i className="fe fe-eye-off"></i>
-                                                    ) : (
-                                                        <i className="fe fe-eye"></i>
-                                                    )}
+                                                    <i
+                                                        className={`fe fe-eye${
+                                                            showPassword.existing ? "-off" : ""
+                                                        }`}></i>
                                                 </span>
                                             </span>
                                         </div>
@@ -152,17 +152,13 @@ export class ChangePassword extends Component {
                                                 name="new_password"
                                                 placeholder="Yeni Şifre"
                                                 onChange={this.handleChange}
-                                                value={new_password || ""}
+                                                value={nullCheck(new_password, "")}
                                             />
                                             <span
                                                 class="input-group-append cursor-pointer"
                                                 onClick={() => this.handleShowPassword("new")}>
                                                 <span class="input-group-text">
-                                                    {showPassword.new ? (
-                                                        <i className="fe fe-eye-off"></i>
-                                                    ) : (
-                                                        <i className="fe fe-eye"></i>
-                                                    )}
+                                                    <i className={`fe fe-eye${showPassword.new ? "-off" : ""}`}></i>
                                                 </span>
                                             </span>
                                         </div>
@@ -180,17 +176,13 @@ export class ChangePassword extends Component {
                                                 name="new_password_again"
                                                 placeholder="Yeni Şifre (Tekrar)"
                                                 onChange={this.handleChange}
-                                                value={new_password_again || ""}
+                                                value={nullCheck(new_password_again, "")}
                                             />
                                             <span
                                                 class="input-group-append cursor-pointer"
                                                 onClick={() => this.handleShowPassword("new")}>
                                                 <span class="input-group-text">
-                                                    {showPassword.new ? (
-                                                        <i className="fe fe-eye-off"></i>
-                                                    ) : (
-                                                        <i className="fe fe-eye"></i>
-                                                    )}
+                                                    <i className={`fe fe-eye${showPassword.new ? "-off" : ""}`}></i>
                                                 </span>
                                             </span>
                                         </div>

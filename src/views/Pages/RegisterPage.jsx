@@ -190,11 +190,7 @@ export class RegisterPage extends Component {
                                                     class="input-group-append cursor-pointer"
                                                     onClick={this.handleShowPassword}>
                                                     <span class="input-group-text">
-                                                        {showPassword ? (
-                                                            <i className="fe fe-eye-off"></i>
-                                                        ) : (
-                                                            <i className="fe fe-eye"></i>
-                                                        )}
+                                                        <i className={`fe fe-eye${showPassword ? "-off" : ""}`}></i>
                                                     </span>
                                                 </span>
                                             </div>
