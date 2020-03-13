@@ -21,7 +21,8 @@ class ResetPassword extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            UID: props.match.params.uid,
+            uid: props.match.params.uid,
+            token: this.props.location.search.replace("?t=", ""),
             newPassword: null,
             newPasswordAgain: null,
             formErrors: {
@@ -34,15 +35,16 @@ class ResetPassword extends Component {
     }
 
     handleSubmit = e => {
+        const { uid, newPassword, newPasswordAgain, token } = this.state;
         e.preventDefault();
 
         if (formValid(this.state)) {
             this.setState({ loadingButton: "btn-loading" });
-
             Reset(
                 {
-                    uid: this.state.UID,
-                    password: this.state.newPassword
+                    uid: uid,
+                    password: newPassword,
+                    token: token
                 },
                 this.props.history
             ).then(() => this.setState({ loadingButton: "" }));
@@ -51,16 +53,12 @@ class ResetPassword extends Component {
             let formErrors = { ...this.state.formErrors };
             console.error("FORM INVALID - DISPLAY ERROR");
 
-            formErrors.newPassword = this.state.newPassword
-                ? this.state.newPassword.length < 3
-                    ? "is-invalid"
-                    : ""
-                : "is-invalid";
+            formErrors.newPassword = newPassword ? (newPassword.length < 3 ? "is-invalid" : "") : "is-invalid";
 
-            formErrors.newPasswordAgain = this.state.newPasswordAgain
-                ? this.state.newPasswordAgain.length < 3
+            formErrors.newPasswordAgain = newPasswordAgain
+                ? newPasswordAgain.length < 3
                     ? "is-invalid"
-                    : this.state.newPasswordAgain === this.state.newPassword
+                    : newPasswordAgain === newPassword
                     ? ""
                     : "is-invalid"
                 : "is-invalid";
@@ -69,6 +67,7 @@ class ResetPassword extends Component {
     };
 
     handleChange = e => {
+        const { newPassword } = this.state;
         e.preventDefault();
         const { name, value } = e.target;
         let formErrors = { ...this.state.formErrors };
@@ -80,7 +79,7 @@ class ResetPassword extends Component {
 
             case "newPasswordAgain":
                 formErrors.newPasswordAgain =
-                    value.length < 3 ? "is-invalid" : this.state.newPassword === value ? "" : "is-invalid";
+                    value.length < 3 ? "is-invalid" : newPassword === value ? "" : "is-invalid";
                 break;
             default:
                 break;
@@ -96,7 +95,7 @@ class ResetPassword extends Component {
     };
 
     render() {
-        const { formErrors, showPassword } = this.state;
+        const { formErrors, showPassword, loadingButton } = this.state;
         return (
             <div className="page">
                 <div className="page-single">
@@ -104,7 +103,7 @@ class ResetPassword extends Component {
                         <div className="row">
                             <div className="col col-login mx-auto">
                                 <div className="text-center mb-4">
-                                    <Link className="header-brand" to="#" tabIndex="-1">
+                                    <Link className="header-brand" to="/" tabIndex="-1">
                                         <img id="ScoutiveLogo" src={logo} alt="" />
                                     </Link>
                                 </div>
@@ -124,9 +123,9 @@ class ResetPassword extends Component {
                                                     onChange={this.handleChange}
                                                 />
                                                 <span
-                                                    class="input-group-append cursor-pointer"
+                                                    className="input-group-append cursor-pointer"
                                                     onClick={this.handleShowPassword}>
-                                                    <span class="input-group-text">
+                                                    <span className="input-group-text">
                                                         {showPassword ? (
                                                             <i className="fe fe-eye-off"></i>
                                                         ) : (
@@ -149,9 +148,9 @@ class ResetPassword extends Component {
                                                     onChange={this.handleChange}
                                                 />
                                                 <span
-                                                    class="input-group-append cursor-pointer"
+                                                    className="input-group-append cursor-pointer"
                                                     onClick={this.handleShowPassword}>
-                                                    <span class="input-group-text">
+                                                    <span className="input-group-text">
                                                         {showPassword ? (
                                                             <i className="fe fe-eye-off"></i>
                                                         ) : (
@@ -164,12 +163,15 @@ class ResetPassword extends Component {
                                         <div className="form-footer">
                                             <button
                                                 type="submit"
-                                                className={`btn btn-primary btn-block ${this.state.loadingButton}`}>
+                                                className={`btn btn-primary btn-block ${loadingButton}`}>
                                                 Şifremi Yenile
                                             </button>
                                         </div>
                                     </div>
                                 </form>
+                                <div className="text-center text-muted">
+                                    Giriş sayfasına, <Link to="/auth/login">geri dön</Link>.
+                                </div>
                             </div>
                         </div>
                     </div>

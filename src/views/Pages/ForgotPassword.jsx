@@ -2,22 +2,7 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import logo from "../../assets/images/logo.svg";
 import { Forgot } from "../../services/Password";
-
-// eslint-disable-next-line
-const emailRegEx = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
-const formValid = ({ formErrors, ...rest }) => {
-    let valid = true;
-
-    Object.values(formErrors).forEach(val => {
-        val.length > 0 && (valid = false);
-    });
-
-    Object.values(rest).forEach(val => {
-        val === null && (valid = false);
-    });
-
-    return valid;
-};
+import { formValid } from "../../assets/js/core";
 
 class ForgotPassword extends Component {
     constructor(props) {
@@ -33,24 +18,21 @@ class ForgotPassword extends Component {
     }
 
     handleSubmit = e => {
+        const { username } = this.state;
         e.preventDefault();
 
         if (formValid(this.state)) {
             this.setState({ loadingButton: "btn-loading" });
 
             Forgot({
-                email: this.state.username
+                username: username
             }).then(() => this.setState({ loadingButton: "" }));
         } else {
             const { value } = e.target;
             let formErrors = { ...this.state.formErrors };
             console.error("FORM INVALID - DISPLAY ERROR");
 
-            formErrors.username = this.state.username
-                ? !emailRegEx.test(this.state.username.toLowerCase())
-                    ? "is-invalid"
-                    : ""
-                : "is-invalid";
+            formErrors.username = username ? "" : "is-invalid";
             this.setState({ formErrors });
         }
     };
@@ -62,7 +44,7 @@ class ForgotPassword extends Component {
 
         switch (name) {
             case "username":
-                formErrors.username = !emailRegEx.test(value.toLowerCase()) ? "is-invalid" : "";
+                formErrors.username = value ? "" : "is-invalid";
                 break;
             default:
                 break;
@@ -113,11 +95,7 @@ class ForgotPassword extends Component {
                                     </div>
                                 </form>
                                 <div className="text-center text-muted">
-                                    Hatırladım,{" "}
-                                    <a href="#" onClick={() => this.props.history.goBack()}>
-                                        geriye dön
-                                    </a>
-                                    .
+                                    Hatırladım, <Link to="/auth/login">geri dön</Link>.
                                 </div>
                             </div>
                         </div>
