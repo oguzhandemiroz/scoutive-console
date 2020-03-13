@@ -92,14 +92,13 @@ const activatePlayer = (uid, to, name, history) => {
                             fee: parseFloat(results[2].split(",").join(".")),
                             attributes: {
                                 fee: parseFloat(results[2].split(",").join("."))
-                            },
-                            is_scholarship: 0
+                            }
                         })
                     ]).then(([responseActivated, responseUpdated]) => {
                         if (responseActivated && responseUpdated) {
                             const statusActivate = responseActivated.status;
                             const statusUpdated = responseUpdated.status;
-                            if (statusActivate.code === 1020 && statusUpdated.code === 1020) {
+                            if (statusActivate.code === 1022 && statusUpdated.code === 1022) {
                                 setTimeout(() => reload(history), 1000);
                             }
                         }

@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Link, withRouter } from "react-router-dom";
 import { CreateRollcall, ListRollcall } from "../../../services/Rollcalls";
-import { Toast, showSwal } from "../../Alert";
+import { Toast, showSwal, showToast } from "../../Alert";
 import { CheckPermissions } from "../../../services/Others";
 import NotPermissions from "../../../components/NotActivate/NotPermissions";
 import moment from "moment";
@@ -111,11 +111,8 @@ export class List extends Component {
                             if (re.value) {
                                 if (re.value) {
                                     const status = re.value.status;
-                                    if (status.code === 1020) {
-                                        Toast.fire({
-                                            type: "success",
-                                            title: "İşlem başarılı..."
-                                        });
+                                    if (status.code === 1021) {
+                                        showToast(status);
                                         this.props.history.push(`/app/rollcalls/player/add/${re.value.rollcall_id}`);
                                     } else if (status.code === 2010) {
                                         showSwal({
@@ -205,7 +202,10 @@ export class List extends Component {
                                                                           to={redirect}>
                                                                           {el.title
                                                                               ? el.title
-                                                                              : formatDate(el.created_date, "DD/MM/YYYY HH:mm")}
+                                                                              : formatDate(
+                                                                                    el.created_date,
+                                                                                    "DD/MM/YYYY HH:mm"
+                                                                                )}
                                                                       </Link>
                                                                   </td>
                                                                   <td className="text-center">

@@ -142,10 +142,10 @@ export class Fast extends Component {
             }).then(response => {
                 if (response) {
                     const status = response.status;
-                    if (status.code === 1020) {
+                    if (status.code === 1021) {
                         showSwal({
                             type: "success",
-                            title: "Başarılı!",
+                            title: "Başarıyla oluşturuldu...",
                             backdrop: false,
                             toast: true,
                             confirmButtonText: "Görüntüle",

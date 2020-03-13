@@ -10,6 +10,10 @@ h.append("Authorization", localStorage.getItem("UID"));
 
 const CreateRecipient = data => {
     try {
+        if (!CheckPermissions(["p_write"])) {
+            return Promise.resolve(null);
+        }
+
         return fetch(ep.RECIPIENT_CREATE, {
             method: "POST",
             body: JSON.stringify(data),
@@ -19,13 +23,10 @@ const CreateRecipient = data => {
             .then(response => {
                 if (response) {
                     const status = response.status;
-                    if (status.code !== 1020) errorSwal(status);
-                    else {
-                        Toast.fire({
-                            type: "success",
-                            title: status.description,
-                            timer: 2500
-                        });
+                    if (status.code !== 1022) {
+                        errorSwal(status);
+                    } else {
+                        showToast(status);
                     }
                     return response;
                 }
@@ -61,6 +62,10 @@ const ListMessageTemplates = () => {
 
 const CreateMessageTemplate = data => {
     try {
+        if (!CheckPermissions(["m_write"])) {
+            return Promise.resolve(null);
+        }
+
         return fetch(ep.MESSAGES_TEMPLATES_CREATE, {
             method: "POST",
             body: JSON.stringify(data),
@@ -103,6 +108,10 @@ const GetMessageTemplate = data => {
 
 const UpdateMessageTemplate = data => {
     try {
+        if (!CheckPermissions(["m_write"])) {
+            return Promise.resolve(null);
+        }
+
         return fetch(ep.MESSAGES_TEMPLATES_UPDATE, {
             method: "POST",
             body: JSON.stringify(data),
@@ -126,7 +135,7 @@ const UpdateMessageTemplate = data => {
 
 const ActivateMessageTemplate = () => {
     try {
-        if (!CheckPermissions(["m_read"])) {
+        if (!CheckPermissions(["m_write"])) {
             return Promise.resolve(null);
         }
 
@@ -141,13 +150,10 @@ const ActivateMessageTemplate = () => {
             .then(response => {
                 if (response) {
                     const status = response.status;
-                    if (status.code !== 1020) errorSwal(status);
-                    else {
-                        Toast.fire({
-                            type: "success",
-                            title: status.description,
-                            timer: 2500
-                        });
+                    if (status.code !== 1020) {
+                        errorSwal(status);
+                    } else {
+                        showToast(status);
                     }
                     return response;
                 }
@@ -171,13 +177,10 @@ const CreateCampaign = data => {
             .then(response => {
                 if (response) {
                     const status = response.status;
-                    if (status.code !== 1020) errorSwal(status);
-                    else {
-                        Toast.fire({
-                            type: "success",
-                            title: status.description,
-                            timer: 2500
-                        });
+                    if (status.code !== 1021) {
+                        errorSwal(status);
+                    } else {
+                        showToast(status);
                     }
                     return response;
                 }
@@ -188,6 +191,10 @@ const CreateCampaign = data => {
 
 const CancelCampaign = data => {
     try {
+        if (!CheckPermissions(["m_write", "m_remove"])) {
+            return Promise.resolve(null);
+        }
+
         return fetch(ep.CAMPAIGN_CANCEL, {
             method: "POST",
             body: JSON.stringify(data),
@@ -197,13 +204,10 @@ const CancelCampaign = data => {
             .then(response => {
                 if (response) {
                     const status = response.status;
-                    if (status.code !== 1020) errorSwal(status);
-                    else {
-                        Toast.fire({
-                            type: "success",
-                            title: status.description,
-                            timer: 2500
-                        });
+                    if (status.code !== 1022) {
+                        errorSwal(status);
+                    } else {
+                        showToast(status);
                     }
                     return response;
                 }
@@ -214,6 +218,10 @@ const CancelCampaign = data => {
 
 const ToggleStatusCampaign = data => {
     try {
+        if (!CheckPermissions(["m_write"])) {
+            return Promise.resolve(null);
+        }
+
         return fetch(ep.CAMPAIGN_STATUS_TOGGLE, {
             method: "POST",
             body: JSON.stringify(data),
@@ -223,13 +231,10 @@ const ToggleStatusCampaign = data => {
             .then(response => {
                 if (response) {
                     const status = response.status;
-                    if (status.code !== 1020) errorSwal(status);
-                    else {
-                        Toast.fire({
-                            type: "success",
-                            title: status.description,
-                            timer: 2500
-                        });
+                    if (status.code !== 1022) {
+                        errorSwal(status);
+                    } else {
+                        showToast(status);
                     }
                     return response;
                 }
@@ -276,13 +281,10 @@ const SendTestMessages = data => {
             .then(response => {
                 if (response) {
                     const status = response.status;
-                    if (status.code !== 1020) errorSwal(status);
-                    else {
-                        Toast.fire({
-                            type: "success",
-                            title: status.description,
-                            timer: 2500
-                        });
+                    if (status.code !== 1023) {
+                        errorSwal(status);
+                    } else {
+                        showToast(status);
                     }
                     return response;
                 }
@@ -331,14 +333,8 @@ const CreateSegment = data => {
             .then(response => {
                 if (response) {
                     const status = response.status;
-                    if (status.code !== 1020) errorSwal(status);
-                    else {
-                        Toast.fire({
-                            type: "success",
-                            title: status.description,
-                            timer: 2500
-                        });
-                    }
+                    if (status.code !== 1021) errorSwal(status);
+
                     return response;
                 }
             })
@@ -380,13 +376,10 @@ const CreateMessage = data => {
             .then(response => {
                 if (response) {
                     const status = response.status;
-                    if (status.code !== 1020) errorSwal(status);
-                    else {
-                        Toast.fire({
-                            type: "success",
-                            title: status.description,
-                            timer: 2500
-                        });
+                    if (status.code !== 1021) {
+                        errorSwal(status);
+                    } else {
+                        showToast(status);
                     }
                     return response;
                 }

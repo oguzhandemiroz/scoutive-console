@@ -820,22 +820,7 @@ export class Add extends Component {
                                 note: value
                             },
                             "player"
-                        ).then(response => {
-                            if (response) {
-                                if (response.status.code === 1020) {
-                                    Toast.fire({
-                                        type: "success",
-                                        title: "Not ekleme başarılı!"
-                                    });
-                                } else {
-                                    Toast.fire({
-                                        type: "danger",
-                                        title: "Not ekleme başarısız!"
-                                    });
-                                }
-                                setTimeout(this.reload, 1000);
-                            }
-                        });
+                        ).then(response => setTimeout(this.reload, 1000));
                     } else {
                         resolve("Hatalı değer!");
                     }
