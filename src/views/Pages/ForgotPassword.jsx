@@ -1,23 +1,8 @@
-import React, {Component} from "react";
-import {Link} from "react-router-dom";
+import React, { Component } from "react";
+import { Link } from "react-router-dom";
 import logo from "../../assets/images/logo.svg";
-import {Forgot} from "../../services/Password";
-
-// eslint-disable-next-line
-const emailRegEx = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
-const formValid = ({formErrors, ...rest}) => {
-    let valid = true;
-
-    Object.values(formErrors).forEach(val => {
-        val.length > 0 && (valid = false);
-    });
-
-    Object.values(rest).forEach(val => {
-        val === null && (valid = false);
-    });
-
-    return valid;
-};
+import { Forgot } from "../../services/Password";
+import { formValid } from "../../assets/js/core";
 
 class ForgotPassword extends Component {
     constructor(props) {
@@ -27,52 +12,49 @@ class ForgotPassword extends Component {
             username: null,
             formErrors: {
                 username: ""
-			},
-			loadingButton: ""
+            },
+            loadingButton: ""
         };
     }
 
     handleSubmit = e => {
+        const { username } = this.state;
         e.preventDefault();
 
         if (formValid(this.state)) {
-            this.setState({loadingButton: "btn-loading"});
+            this.setState({ loadingButton: "btn-loading" });
 
             Forgot({
-                email: this.state.username
-            }).then(() => this.setState({loadingButton: ""}));
+                username: username
+            }).then(() => this.setState({ loadingButton: "" }));
         } else {
-            const {value} = e.target;
-            let formErrors = {...this.state.formErrors};
+            const { value } = e.target;
+            let formErrors = { ...this.state.formErrors };
             console.error("FORM INVALID - DISPLAY ERROR");
 
-            formErrors.username = this.state.username
-                ? !emailRegEx.test(this.state.username.toLowerCase())
-                    ? "is-invalid"
-                    : ""
-                : "is-invalid";
-            this.setState({formErrors});
+            formErrors.username = username ? "" : "is-invalid";
+            this.setState({ formErrors });
         }
     };
 
     handleChange = e => {
         e.preventDefault();
-        const {name, value} = e.target;
-        let formErrors = {...this.state.formErrors};
+        const { name, value } = e.target;
+        let formErrors = { ...this.state.formErrors };
 
         switch (name) {
             case "username":
-                formErrors.username = !emailRegEx.test(value.toLowerCase()) ? "is-invalid" : "";
+                formErrors.username = value ? "" : "is-invalid";
                 break;
             default:
                 break;
         }
 
-        this.setState({formErrors, [name]: value});
+        this.setState({ formErrors, [name]: value });
     };
 
     render() {
-        const {formErrors} = this.state;
+        const { formErrors, loadingButton } = this.state;
         return (
             <div className="page">
                 <div className="page-single">
@@ -88,18 +70,17 @@ class ForgotPassword extends Component {
                                     <div className="card-body p-6">
                                         <div className="card-title">Şifremi Unuttum</div>
                                         <p className="text-muted">
-                                            Lütfen email adresinizi girin, şifre sıfırlama
-                                            bağlantısı gönderilecektir.
+                                            Lütfen email adresinizi girin, şifre sıfırlama bağlantısı gönderilecektir.
                                         </p>
                                         <div className="form-group">
                                             <label className="form-label" htmlFor="username">
-                                                Email
+                                                Güvenlik Numarası veya Email
                                             </label>
                                             <input
                                                 type="text"
                                                 className={`form-control ${formErrors.username}`}
                                                 name="username"
-                                                placeholder="Email"
+                                                placeholder="Güvenlik Numarası veya Email"
                                                 noValidate
                                                 onChange={this.handleChange}
                                             />
@@ -107,20 +88,14 @@ class ForgotPassword extends Component {
                                         <div className="form-footer">
                                             <button
                                                 type="submit"
-                                                className={`btn btn-primary btn-block ${
-                                                    this.state.loadingButton
-                                                }`}>
+                                                className={`btn btn-primary btn-block ${loadingButton}`}>
                                                 Şifremi sıfırla
                                             </button>
                                         </div>
                                     </div>
                                 </form>
                                 <div className="text-center text-muted">
-                                    Hatırladım,{" "}
-                                    <a href="#" onClick={() => this.props.history.goBack()}>
-                                        geriye dön
-                                    </a>
-                                    .
+                                    Hatırladım, <Link to="/auth/login">geri dön</Link>.
                                 </div>
                             </div>
                         </div>
