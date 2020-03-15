@@ -277,10 +277,11 @@ class Table extends Component {
                     {
                         data: "daily",
                         responsivePriority: 10006,
-                        render: function(data, type, row) {
-                            return (
-                                '<span class="status-icon bg-' + dailyType[data][1] + '"></span>' + dailyType[data][0]
-                            );
+                        render: function(data, type) {
+                            if (type === "filter") {
+                                return renderForDataTableSearchStructure(dailyType[data][0]);
+                            }
+                            return `<span class="status-icon bg-${dailyType[data][1]}"></span> ${dailyType[data][0]}`;
                         }
                     },
                     {

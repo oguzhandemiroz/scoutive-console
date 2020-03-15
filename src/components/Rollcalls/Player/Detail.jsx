@@ -304,7 +304,10 @@ export class Detail extends Component {
                     data: "daily",
                     class: "text-center",
                     responsivePriority: 2,
-                    render: function(data, type, row) {
+                    render: function(data, type) {
+                        if (type === "filter") {
+                            return renderForDataTableSearchStructure(dailyType[data].text);
+                        }
                         return `<div
 									data-toggle="tooltip"
 									title="${dailyType[data].text}"
