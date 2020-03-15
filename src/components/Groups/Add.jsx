@@ -167,7 +167,7 @@ export class Add extends Component {
                     formErrors[name] = moment(value, "HH:mm", true).isValid("HH:mm") ? "" : "is-invalid-iconless";
                     break;
                 default:
-                    formErrors[name] = value ? "" : "is-invalid";
+                    formErrors[name] = value ? (value.length <= 30 ? "" : "is-invalid") : "is-invalid";
                     break;
             }
             this.setState({ formErrors, [name]: value });
@@ -330,6 +330,7 @@ export class Add extends Component {
                                         name="name"
                                         onChange={this.handleChange}
                                         className={`form-control ${formErrors.name}`}
+                                        maxLength="30"
                                     />
                                 </div>
                                 <div className="row gutters-xs">
