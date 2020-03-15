@@ -1,20 +1,25 @@
 import React, { Component } from "react";
-import "jquery";
-import { datatable_turkish, getCookie } from "../../assets/js/core";
+import { getCookie } from "../../assets/js/core";
+import "../../assets/js/datatables-custom";
 import ep from "../../assets/js/urls";
 import { fatalSwal, errorSwal } from "../Alert.jsx";
 import Vacation from "../EmployeeAction/Vacation";
 import Password from "../EmployeeAction/Password";
 import AdvancePayment from "../EmployeeAction/AdvancePayment";
-import { fullnameGenerator, formatDate } from "../../services/Others";
+import {
+    fullnameGenerator,
+    formatDate,
+    renderForDataTableSearchStructure,
+    formatPhone,
+    nullCheck,
+    avatarPlaceholder
+} from "../../services/Others";
 import ActionButton from "./ActionButton";
 import ReactDOM from "react-dom";
-import Inputmask from "inputmask";
 import _ from "lodash";
 const $ = require("jquery");
-$.DataTable = require("datatables.net");
 
-var dailyType = {
+const dailyType = {
     "-1": ["Tanımsız", "secondary"],
     "0": ["Gelmedi", "danger"],
     "1": ["Geldi", "success"],
@@ -22,7 +27,7 @@ var dailyType = {
     "3": ["Y. Gün İzinli", "warning"]
 };
 
-var statusType = {
+const statusType = {
     0: { bg: "bg-danger", title: "Pasif" },
     1: { bg: "bg-success", title: "Aktif" },
     2: { bg: "bg-azure", title: "Donuk" },
@@ -33,25 +38,53 @@ class Table extends Component {
     constructor(props) {
         super(props);
 
-        this.state = { data: {} };
+        this.state = {
+            uid: localStorage.getItem("UID"),
+            data: {}
+        };
     }
 
     componentDidMount() {
         try {
-            const UID = localStorage.getItem("UID");
-            $("#employee-list").DataTable({
+            const { uid } = this.state;
+            const table = $("#employee-list").DataTable({
                 dom: '<"top"f>rt<"bottom"ilp><"clear">',
-                responsive: false,
-                order: [3, "asc"],
+                order: [4, "asc"],
                 aLengthMenu: [
-                    [10, 25, 50, 100, -1],
-                    [10, 25, 50, 100, "Tümü"]
+                    [20, 50, 100, -1],
+                    [20, 50, 100, "Tümü"]
                 ],
-                stateSave: false, // change true
-                language: {
-                    ...datatable_turkish,
-                    decimal: ",",
-                    thousands: "."
+                ajax: {
+                    url: ep.LIST_EMPLOYEE,
+                    type: "POST",
+                    beforeSend: function(request) {
+                        request.setRequestHeader("Content-Type", "application/json");
+                        request.setRequestHeader("XIP", getCookie("IPADDR"));
+                        request.setRequestHeader("Authorization", uid);
+                    },
+                    datatype: "json",
+                    data: function(d) {
+                        return JSON.stringify({
+                            uid: uid
+                        });
+                    },
+                    contentType: "application/json",
+                    complete: function(res) {
+                        try {
+                            if (res.responseJSON.status.code !== 1020) {
+                                if (res.status !== 200) fatalSwal();
+                                else errorSwal(res.responseJSON.status);
+                            }
+                        } catch (e) {
+                            fatalSwal();
+                        }
+                    },
+                    dataSrc: function(d) {
+                        if (d.status.code !== 1020) {
+                            errorSwal(d.status);
+                            return [];
+                        } else return d.data;
+                    }
                 },
                 columnDefs: [
                     {
@@ -59,10 +92,14 @@ class Table extends Component {
                         visible: false
                     },
                     {
+                        className: "control",
+                        orderable: false,
+                        targets: [2]
+                    },
+                    {
                         targets: "no-sort",
                         orderable: false
                     },
-
                     {
                         targets: "name",
                         responsivePriority: 1,
@@ -155,40 +192,6 @@ class Table extends Component {
                         }
                     }
                 ],
-                ajax: {
-                    url: ep.LIST_EMPLOYEE,
-                    type: "POST",
-                    beforeSend: function(request) {
-                        request.setRequestHeader("Content-Type", "application/json");
-                        request.setRequestHeader("XIP", getCookie("IPADDR"));
-                        request.setRequestHeader("Authorization", localStorage.getItem("UID"));
-                    },
-                    datatype: "json",
-                    data: function(d) {
-                        return JSON.stringify({
-                            uid: UID
-                        });
-                    },
-                    contentType: "application/json",
-                    complete: function(res) {
-                        try {
-                            console.log(res);
-                            if (res.responseJSON.status.code !== 1020) {
-                                if (res.status !== 200) fatalSwal();
-                                else errorSwal(res.responseJSON.status);
-                            }
-                        } catch (e) {
-                            fatalSwal();
-                        }
-                    },
-                    dataSrc: function(d) {
-                        console.log("dataSrc", d);
-                        if (d.status.code !== 1020) {
-                            errorSwal(d.status);
-                            return [];
-                        } else return d.data;
-                    }
-                },
                 columns: [
                     {
                         data: "uid"
@@ -197,16 +200,20 @@ class Table extends Component {
                         data: "security_id"
                     },
                     {
+                        data: null,
+                        defaultContent: ""
+                    },
+                    {
                         data: "image",
                         class: "text-center px-3",
                         render: function(data, type, row) {
-                            var name = row.name;
-                            var surname = row.surname;
                             var status = row.status;
                             var renderBg = statusType[status].bg;
                             var renderTitle = statusType[status].title + " Personel";
-                            return `<div class="avatar text-uppercase" style="background-image: url(${data || ""})">
-										${data ? "" : name.slice(0, 1) + surname.slice(0, 1)}
+                            return `<div class="avatar text-uppercase" style="background-image: url(${nullCheck(
+                                data
+                            )})">
+                                    ${avatarPlaceholder(row.name, row.surname)}
 										<span class="avatar-status ${renderBg}" data-toggle="tooltip" title="${renderTitle}"></span>
 									</div>`;
                         }
@@ -214,8 +221,12 @@ class Table extends Component {
                     {
                         data: "name",
                         class: "w-1",
+                        responsivePriority: 1,
                         render: function(data, type, row) {
                             const fullname = fullnameGenerator(data, row.surname);
+                            if (type === "filter") {
+                                return renderForDataTableSearchStructure(fullname);
+                            }
                             if (["sort", "type"].indexOf(type) > -1) {
                                 return fullname;
                             }
@@ -225,17 +236,20 @@ class Table extends Component {
                     },
                     {
                         data: "phone",
+                        responsivePriority: 10000,
                         render: function(data, type, row) {
-                            const formatPhone = data ? Inputmask.format(data, { mask: "(999) 999 9999" }) : null;
-                            if (formatPhone) return `<a href="tel:+90${data}" class="text-inherit">${formatPhone}</a>`;
+                            const phone = data ? formatPhone(data) : null;
+                            if (formatPhone) return `<a href="tel:+90${data}" class="text-inherit">${phone}</a>`;
                             else return "&mdash;";
                         }
                     },
                     {
-                        data: "position"
+                        data: "position",
+                        responsivePriority: 10008
                     },
                     {
                         data: "salary",
+                        responsivePriority: 10009,
                         render: function(data, type, row) {
                             if (["sort", "type"].indexOf(type) > -1) {
                                 return data;
@@ -248,7 +262,7 @@ class Table extends Component {
                     },
                     {
                         data: "groups",
-                        responsivePriority: 10008,
+                        responsivePriority: 10007,
                         render: function(data, type) {
                             if (["sort", "type", "display"].indexOf(type) > -1) {
                                 return _(data)
@@ -262,6 +276,7 @@ class Table extends Component {
                     },
                     {
                         data: "daily",
+                        responsivePriority: 10006,
                         render: function(data, type, row) {
                             return (
                                 '<span class="status-icon bg-' + dailyType[data][1] + '"></span>' + dailyType[data][0]
@@ -270,7 +285,7 @@ class Table extends Component {
                     },
                     {
                         data: "created_date",
-                        responsivePriority: 10010,
+                        responsivePriority: 10001,
                         render: function(data, type) {
                             if (["sort", "type"].indexOf(type) > -1) {
                                 return data;
@@ -286,15 +301,15 @@ class Table extends Component {
             });
 
             $.fn.DataTable.ext.errMode = "none";
-            $("#employee-list").on("error.dt", function(e, settings, techNote, message) {
+            table.on("error.dt", function(e, settings, techNote, message) {
                 console.log("An error has been reported by DataTables: ", message, techNote);
             });
 
-            $("#employee-list").on("draw.dt", function() {
+            table.on("draw.dt", function() {
                 $('[data-toggle="tooltip"]').tooltip();
             });
         } catch (e) {
-            fatalSwal();
+            console.log("e", e);
         }
     }
 
@@ -316,6 +331,7 @@ class Table extends Component {
                         <tr>
                             <th>ID</th>
                             <th className="w-1 no-sort">T.C.</th>
+                            <th className="w-1 no-sort control" />
                             <th className="w-1 text-center px-3 no-sort">#</th>
                             <th className="w-1 name">AD SOYAD</th>
                             <th className="phone">TELEFON</th>

@@ -1,17 +1,22 @@
 import React, { Component } from "react";
-import { datatable_turkish, getCookie } from "../../assets/js/core";
+import { getCookie } from "../../assets/js/core";
+import "../../assets/js/datatables-custom";
 import ep from "../../assets/js/urls";
 import { fatalSwal, errorSwal } from "../Alert.jsx";
 import ReactDOM from "react-dom";
-import { fullnameGenerator, nullCheck, formatPhone, formatDate } from "../../services/Others";
+import {
+    fullnameGenerator,
+    nullCheck,
+    formatPhone,
+    formatDate,
+    renderForDataTableSearchStructure
+} from "../../services/Others";
 import { GetPlayerParents } from "../../services/Player";
 import Vacation from "../PlayerAction/Vacation";
 import ActionButton from "../Players/ActionButton";
 import { CheckPermissions } from "../../services/Others";
 import _ from "lodash";
-import "../../assets/css/datatables.responsive.css";
 const $ = require("jquery");
-$.DataTable = require("datatables.net-responsive");
 
 const dailyType = {
     "-1": ["Tanımsız", "secondary"],
@@ -53,26 +58,6 @@ const filteredList = () => {
 
     $("#playerListFilterMenu").modal("hide");
 };
-
-var _childNodeStore = {};
-function _childNodes(dt, row, col) {
-    var name = row + "-" + col;
-
-    if (_childNodeStore[name]) {
-        return _childNodeStore[name];
-    }
-
-    // https://jsperf.com/childnodes-array-slice-vs-loop
-    var nodes = [];
-    var children = dt.cell(row, col).node().childNodes;
-    for (var i = 0, ien = children.length; i < ien; i++) {
-        nodes.push(children[i]);
-    }
-
-    _childNodeStore[name] = nodes;
-
-    return nodes;
-}
 
 class Table extends Component {
     constructor(props) {
@@ -143,40 +128,12 @@ class Table extends Component {
             const { uid } = this.state;
             const table = $("#player-list").DataTable({
                 dom: '<"top"<"filterTools">f>rt<"bottom"ilp><"clear">',
-                responsive: {
-                    details: {
-                        type: "column",
-                        target: 2,
-                        renderer: function(api, rowIdx, columns) {
-                            var tbl = $('<table class="w-100"/>');
-                            var found = false;
-                            var data = $.map(columns, function(col, i) {
-                                if (col.hidden) {
-                                    $(`<tr data-dt-row="${col.rowIndex}" data-dt-column="${col.columnIndex}">
-                                    <th class="w-1">${col.title}</th> 
-                                    </tr>`)
-                                        .append($("<td/>").append(_childNodes(api, col.rowIndex, col.columnIndex)))
-                                        .appendTo(tbl);
-                                    found = true;
-                                }
-                            });
-
-                            return found ? tbl : false;
-                        }
-                    }
-                },
                 fixedHeader: true,
                 order: [4, "asc"],
                 aLengthMenu: [
                     [20, 50, 100, -1],
                     [20, 50, 100, "Tümü"]
                 ],
-                stateSave: false, // change true
-                language: {
-                    ...datatable_turkish,
-                    decimal: ",",
-                    thousands: "."
-                },
                 ajax: {
                     url: ep.PLAYER_LIST,
                     type: "POST",
@@ -203,7 +160,6 @@ class Table extends Component {
                         }
                     },
                     dataSrc: function(d) {
-                        console.log(d);
                         $.fn.dataTable.ext.search = [];
                         if (d.status.code !== 1020) {
                             errorSwal(d.status);
@@ -212,6 +168,10 @@ class Table extends Component {
                     }
                 },
                 columnDefs: [
+                    {
+                        type: "turkish",
+                        targets: "_all"
+                    },
                     {
                         targets: [0, 1],
                         visible: false
@@ -372,7 +332,9 @@ class Table extends Component {
                             var renderTitle = row.is_trial
                                 ? statusType[status].title + " & Ön Kayıt Öğrenci"
                                 : statusType[status].title + " Öğrenci";
-                            return `<div class="avatar text-uppercase" style="background-image: url(${data || ""})">
+                            return `<div class="avatar text-uppercase" style="background-image: url(${nullCheck(
+                                data
+                            )})">
 										${data ? "" : name.slice(0, 1) + surname.slice(0, 1)}
 										<span class="avatar-status ${renderBg}" data-toggle="tooltip" title="${renderTitle}"></span>
 									</div>`;
@@ -383,6 +345,9 @@ class Table extends Component {
                         responsivePriority: 1,
                         render: function(data, type, row) {
                             const fullname = fullnameGenerator(data, row.surname);
+                            if (type === "filter") {
+                                return renderForDataTableSearchStructure(fullname);
+                            }
                             if (["sort", "type"].indexOf(type) > -1) {
                                 return fullname;
                             }
@@ -508,7 +473,6 @@ class Table extends Component {
                 <button type="button" class="btn btn-yellow" data-toggle="modal" data-target="#playerListFilterMenu"><i class="fe fe-filter mr-2"></i>Filtre</button> //filtre
 			`); */
 
-            $.fn.DataTable.ext.errMode = "none";
             table.on("error.dt", function(e, settings, techNote, message) {
                 console.log("An error has been reported by DataTables: ", message, techNote);
             });

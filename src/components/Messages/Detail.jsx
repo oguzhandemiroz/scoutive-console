@@ -359,7 +359,9 @@ export class Detail extends Component {
                             <div className="card-header">
                                 <h3 className="card-title">Kişiler</h3>
                             </div>
-                            <ListRecipient recipients={persons} />
+                            <div>
+                                <ListRecipient recipients={persons} history={this.props.history} />
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -368,4 +370,4 @@ export class Detail extends Component {
     }
 }
 
-export default Detail;
+export default withRouter(Detail);
