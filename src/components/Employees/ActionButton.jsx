@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import deleteEmployee from "../EmployeeAction/DeleteEmployee";
 import activateEmployee from "../EmployeeAction/ActivateEmployee";
+import { CheckPermissions } from "../../services/Others";
 
 export class ActionButton extends Component {
     constructor(props) {
@@ -15,7 +16,6 @@ export class ActionButton extends Component {
         const { uid } = this.state;
         const { data, renderButton, history, dropdown } = this.props;
         const { to, name, status } = data;
-        const fullname = name;
 
         const dropdownDivider = key => <div role="separator" className="dropdown-divider" key={key.toString()} />;
         const lock = (
@@ -36,11 +36,7 @@ export class ActionButton extends Component {
                     className: "dropdown-icon fa fa-paper-plane"
                 },
                 lock: false,
-                condition: true
-            },
-            {
-                divider: key => dropdownDivider(key),
-                condition: true
+                condition: CheckPermissions(["m_write"])
             },
             {
                 tag: "button",
@@ -53,13 +49,13 @@ export class ActionButton extends Component {
                     className: "dropdown-icon fa fa-money-bill-wave"
                 },
                 lock: false,
-                condition: status
+                condition: CheckPermissions(["a_write"]) && status
             },
             {
                 tag: "button",
                 elementAttr: {
                     className: "dropdown-item",
-                    onClick: () => this.props.advancePaymentButton({ name: fullname, uid: to }),
+                    onClick: () => this.props.advancePaymentButton({ name: name, uid: to }),
                     "data-toggle": "modal",
                     "data-target": "#advancePaymentModal"
                 },
@@ -68,17 +64,13 @@ export class ActionButton extends Component {
                     className: "dropdown-icon fa fa-hand-holding-usd"
                 },
                 lock: false,
-                condition: status
-            },
-            {
-                divider: key => dropdownDivider(key),
-                condition: status
+                condition: CheckPermissions(["a_write"]) && status
             },
             {
                 tag: "button",
                 elementAttr: {
                     className: "dropdown-item",
-                    onClick: () => this.props.vacationButton({ name: fullname, uid: to }),
+                    onClick: () => this.props.vacationButton({ name: name, uid: to }),
                     "data-toggle": "modal",
                     "data-target": "#vacationModal"
                 },
@@ -87,62 +79,33 @@ export class ActionButton extends Component {
                     className: "dropdown-icon fa fa-coffee"
                 },
                 lock: false,
-                condition: status
-            },
-            {
-                divider: key => dropdownDivider(key),
-                condition: status
-            },
-            {
-                tag: "button",
-                elementAttr: {
-                    className: "dropdown-item cursor-not-allowed disabled",
-                    onClick: () => "İkaz Et"
-                },
-                childText: "İkaz Et",
-                child: {
-                    className: "dropdown-icon fa fa-exclamation-triangle"
-                },
-                lock: lock,
-                condition: true
-            },
-            {
-                divider: key => dropdownDivider(key),
-                condition: true
+                condition: CheckPermissions(["a_write", "e_write"]) && status
             },
             {
                 tag: "button",
                 elementAttr: {
                     className: "dropdown-item",
-                    onClick: () => activateEmployee(uid, to, fullname, history)
+                    onClick: () => activateEmployee(uid, to, name, history)
                 },
                 childText: "İşe Tekrar Al",
                 child: {
                     className: "dropdown-icon fa fa-redo"
                 },
                 lock: false,
-                condition: status === 0
-            },
-            {
-                divider: key => dropdownDivider(key),
-                condition: status === 0
+                condition: CheckPermissions(["e_write", "e_remove"]) && !status
             },
             {
                 tag: "button",
                 elementAttr: {
                     className: "dropdown-item",
-                    onClick: () => deleteEmployee(uid, to, fullname, history)
+                    onClick: () => deleteEmployee(uid, to, name, history)
                 },
                 childText: "İşten Çıkar",
                 child: {
                     className: "dropdown-icon fa fa-minus-circle"
                 },
                 lock: false,
-                condition: status
-            },
-            {
-                divider: key => dropdownDivider(key),
-                condition: status
+                condition: CheckPermissions(["e_remove"]) && status
             },
             {
                 tag: "button",
@@ -155,13 +118,13 @@ export class ActionButton extends Component {
                     className: "dropdown-icon fa fa-pen"
                 },
                 lock: false,
-                condition: true
+                condition: CheckPermissions(["e_write"])
             },
             {
                 tag: "button",
                 elementAttr: {
                     className: "dropdown-item cursor-not-allowed disabled",
-                    onClick: () => this.props.passwordButton({ name: fullname, uid: uid }),
+                    onClick: () => this.props.passwordButton({ name: name, uid: uid }),
                     "data-toggle": "modal",
                     "data-target": "#passwordModal"
                 },
@@ -170,7 +133,7 @@ export class ActionButton extends Component {
                     className: "dropdown-icon fa fa-key"
                 },
                 lock: lock,
-                condition: true
+                condition: CheckPermissions(["e_write"])
             },
             /* {
                 tag: "button",
@@ -248,7 +211,7 @@ export class ActionButton extends Component {
                     x-placement="top-end">
                     <a className="dropdown-item disabled text-azure">
                         <i className="dropdown-icon fa fa-user text-azure" />
-                        {fullname}
+                        {name}
                     </a>
                     <div role="separator" className="dropdown-divider" />
                     {actionMenu.map((el, key) => {

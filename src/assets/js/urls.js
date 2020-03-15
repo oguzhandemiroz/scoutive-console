@@ -62,6 +62,7 @@ var ep = {
     CHECK_PERMISSION: host + api_version + "check/permission",
     COMPLETE_ROLLCALL: host + api_version + "complete/rollcall",
     CREATE_ROLLCALL: host + api_version + "create/rollcall",
+    CLOSE_ROLLCALL: host + api_version + "close/rollcall",
     LIST_ROLLCALL: host + api_version + "list/rollcalls",
     ROLLCALL_MAKE: host + api_version + "create/rollcall/",
     ROLLCALL_NOTE: host + api_version + "create/rollcall/",

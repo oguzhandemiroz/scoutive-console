@@ -50,15 +50,6 @@ const InputmaskDefaultOptions = {
     placeholder: ""
 };
 
-/* const body_measure_list = [
-    "Göğüs Çevresi",
-    "Bel Çevresi",
-    "Kalça Ölçüsü",
-    "Kol Ölçüsü",
-    "Kol Uzunluğu",
-    "Bacak Uzunluğu"
-]; */
-
 export class Add extends Component {
     constructor(props) {
         super(props);
@@ -110,7 +101,10 @@ export class Add extends Component {
             addContinuously: true,
             parentError: false,
             paymentError: false,
-            installment_amounts: null
+            installment_amounts: null,
+            check_permissions: {
+                group: true
+            }
         };
     }
 
@@ -271,24 +265,23 @@ export class Add extends Component {
                 const status = response.status;
                 const formData = new FormData();
                 var imageUploading = false;
-                if (status.code === 1020) {
-                    const redirect_uid = response.uid;
+                if (status.code === 1021) {
                     if (imagePreview) {
                         this.setState({ loadingImage: "btn-loading" });
                         imageUploading = true;
                         formData.append("image", file);
                         formData.append("uid", uid);
-                        formData.append("to", redirect_uid);
+                        formData.append("to", response.uid);
                         formData.append("type", "player");
                         formData.append("update", true);
-                        UploadFile(formData).then(response => {
+                        UploadFile(formData).then(responseFile => {
                             this.setState({ loadingImage: "", loadingButton: "" });
-                            if (response)
-                                if (!addContinuously) this.props.history.push("/app/players/detail/" + redirect_uid);
+                            if (responseFile)
+                                if (!addContinuously) this.props.history.push("/app/players/detail/" + response.uid);
                                 else this.reload();
                         });
                     } else if (addContinuously) this.reload();
-                    else this.props.history.push("/app/players/detail/" + redirect_uid);
+                    else this.props.history.push("/app/players/detail/" + response.uid);
                 }
                 this.setState({ loadingButton: "" });
             });
@@ -672,12 +665,21 @@ export class Add extends Component {
         });
 
         Groups().then(response => {
-            this.setState(prevState => ({
-                select: {
-                    ...prevState.select,
-                    groups: response
-                }
-            }));
+            if (response) {
+                this.setState(prevState => ({
+                    select: {
+                        ...prevState.select,
+                        groups: response
+                    }
+                }));
+            } else {
+                this.setState(prevState => ({
+                    check_permissions: {
+                        ...prevState.check_permissions,
+                        group: false
+                    }
+                }));
+            }
         });
 
         this.setState(prevState => ({
@@ -720,7 +722,8 @@ export class Add extends Component {
             installment,
             installment_date,
             payment_date,
-            installment_amounts
+            installment_amounts,
+            check_permissions
         } = this.state;
         return (
             <div className="container">
@@ -817,6 +820,10 @@ export class Add extends Component {
                                         selected={birthday}
                                         selectsEnd
                                         startDate={birthday}
+                                        maxDate={moment()
+                                            .subtract(3, "years")
+                                            .endOf("year")
+                                            .toDate()}
                                         name="birthday"
                                         locale="tr"
                                         dateFormat="dd/MM/yyyy"
@@ -1227,12 +1234,14 @@ export class Add extends Component {
                                                 onChange={val => this.handleSelect(val, "groups")}
                                                 options={select.groups}
                                                 name="groups"
-                                                placeholder="Seç..."
+                                                placeholder={check_permissions.group ? "Seç..." : "Yetersiz yetki"}
                                                 styles={selectCustomStyles}
                                                 isClearable={true}
                                                 isSearchable={true}
                                                 isDisabled={select.groups ? false : true}
-                                                isLoading={select.groups ? false : true}
+                                                isLoading={
+                                                    check_permissions.group ? (select.groups ? false : true) : false
+                                                }
                                                 noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
                                             />
                                         </div>

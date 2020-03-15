@@ -252,18 +252,7 @@ export class Monthly extends Component {
             payment_type: 0,
             budget_id: budget_id,
             note: note
-        }).then(response => {
-            if (response) {
-                const status = response.status;
-                if (status.code === 1020) {
-                    Toast.fire({
-                        type: "success",
-                        title: "İşlem başarılı..."
-                    });
-                }
-            }
-            this.reload();
-        });
+        }).then(response => this.reload());
     };
 
     updateSubmit = () => {
@@ -287,18 +276,7 @@ export class Monthly extends Component {
             payment_type: 0,
             budget_id: budget_id,
             note: note
-        }).then(response => {
-            if (response) {
-                const status = response.status;
-                if (status.code === 1020) {
-                    Toast.fire({
-                        type: "success",
-                        title: "İşlem başarılı..."
-                    });
-                }
-            }
-            this.reload();
-        });
+        }).then(response => this.reload());
     };
 
     handleChange = e => {

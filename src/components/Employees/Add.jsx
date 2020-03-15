@@ -204,9 +204,9 @@ export class Add extends Component {
                         formData.append("to", response.uid);
                         formData.append("type", "employee");
                         formData.append("update", true);
-                        UploadFile(formData).then(response => {
+                        UploadFile(formData).then(responseFile => {
                             this.setState({ loadingImage: "", loadingButton: "" });
-                            if (response)
+                            if (responseFile)
                                 if (!addContinuously)
                                     this.props.history.push("/app/persons/employees/detail/" + response.uid);
                                 else this.reload();

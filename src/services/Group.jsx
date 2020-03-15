@@ -1,4 +1,4 @@
-import { errorSwal, fatalSwal, Toast } from "../components/Alert";
+import { errorSwal, fatalSwal, Toast, showToast } from "../components/Alert";
 import ep from "../assets/js/urls";
 import { getCookie } from "../assets/js/core.js";
 
@@ -18,9 +18,10 @@ const CreateGroup = data => {
             .then(response => {
                 if (response) {
                     const status = response.status;
-                    if (status.code !== 1020) {
+                    if (status.code !== 1021) {
                         errorSwal(status);
                     } else {
+                        showToast(status);
                         return response;
                     }
                 }
@@ -115,10 +116,10 @@ const UpdateGroup = data => {
             .then(response => {
                 if (response) {
                     const status = response.status;
-
-                    if (status.code !== 1020) {
+                    if (status.code !== 1022) {
                         errorSwal(status);
                     } else {
+                        showToast(status);
                         return response;
                     }
                 }
@@ -140,7 +141,12 @@ const DeleteGroup = data => {
             .then(response => {
                 if (response) {
                     const status = response.status;
-                    if (status.code !== 1020) errorSwal(status);
+                    if (status.code !== 1022) {
+                        errorSwal(status);
+                    } else {
+                        showToast(status);
+                    }
+
                     return response;
                 }
             })
@@ -161,7 +167,9 @@ const ChangeGroup = data => {
             .then(response => {
                 if (response) {
                     const status = response.status;
-                    if (status.code !== 1020) errorSwal(status);
+                    if (status.code !== 1022) {
+                        errorSwal(status);
+                    }
                     return response;
                 }
             })

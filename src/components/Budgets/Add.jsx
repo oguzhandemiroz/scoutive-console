@@ -172,7 +172,7 @@ export class Add extends Component {
             bank_account_number,
             iban,
             note,
-            formErrors,
+            formErrors
         } = this.state;
         const requiredData = {};
 
@@ -197,11 +197,7 @@ export class Add extends Component {
             }).then(response => {
                 if (response) {
                     const status = response.status;
-                    if (status.code === 1020) {
-                        Toast.fire({
-                            type: "success",
-                            title: "İşlem başarılı..."
-                        });
+                    if (status.code === 1021) {
                         this.props.history.push("/app/budgets");
                     } else {
                         this.setState({ loadingButton: "" });
@@ -392,7 +388,9 @@ export class Add extends Component {
                                 </div>
                             </div>
                             <div className="card-footer d-flex justify-content-between">
-                                <Link to="/app/budgets" className="btn btn-link">İptal</Link>
+                                <Link to="/app/budgets" className="btn btn-link">
+                                    İptal
+                                </Link>
                                 <button className={`btn btn-primary ${loadingButton}`}>Kaydet</button>
                             </div>
                         </form>

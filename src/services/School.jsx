@@ -1,7 +1,8 @@
-import { fatalSwal, errorSwal, Toast, showSwal } from "../components/Alert";
+import { fatalSwal, errorSwal, Toast, showSwal, showToast } from "../components/Alert";
 import ep from "../assets/js/urls";
 import { Start } from "./Starts";
 import { getCookie } from "../assets/js/core.js";
+import { CheckPermissions } from "./Others";
 
 const h = new Headers();
 h.append("Content-Type", "application/json");
@@ -41,13 +42,10 @@ const UpdateSchool = data => {
                 if (response) {
                     const status = response.status;
 
-                    if (status.code !== 1020) {
+                    if (status.code !== 1022) {
                         errorSwal(status);
                     } else {
-                        Toast.fire({
-                            type: "success",
-                            title: "Başarıyla güncellendi..."
-                        });
+                        showToast(status);
                     }
                     return response;
                 }
@@ -119,13 +117,10 @@ const UpdatePermissions = data => {
             .then(response => {
                 if (response) {
                     const status = response.status;
-                    if (status.code !== 1020) {
+                    if (status.code !== 1022) {
                         errorSwal(status);
                     } else {
-                        Toast.fire({
-                            type: "success",
-                            title: "Başarıyla güncellendi..."
-                        });
+                        showToast(status);
                     }
 
                     return response;
@@ -174,12 +169,10 @@ const UpdateAreas = data => {
             .then(response => {
                 if (response) {
                     const status = response.status;
-                    if (status.code !== 1020) errorSwal(status);
-                    else {
-                        Toast.fire({
-                            type: "success",
-                            title: "Başarıyla güncellendi..."
-                        });
+                    if (status.code !== 1022) {
+                        errorSwal(status);
+                    } else {
+                        showToast(status);
                     }
                     return response;
                 }
@@ -206,31 +199,35 @@ const GetSettings = () => {
 };
 
 const SetSettings = data => {
-    return fetch(ep.SCHOOL_SET_SETTINGS, {
-        method: "PATCH",
-        body: JSON.stringify(data),
-        headers: h
-    })
-        .then(res => res.json())
-        .then(response => {
-            if (response) {
-                const status = response.status;
-                if (status.code !== 1020) errorSwal(status);
-                else {
-                    Toast.fire({
-                        type: "success",
-                        title: "Başarıyla güncellendi..."
-                    });
-                    Start();
-                }
-                return response;
-            }
+    try {
+        return fetch(ep.SCHOOL_SET_SETTINGS, {
+            method: "PATCH",
+            body: JSON.stringify(data),
+            headers: h
         })
-        .catch(e => fatalSwal(true));
+            .then(res => res.json())
+            .then(response => {
+                if (response) {
+                    const status = response.status;
+                    if (status.code !== 1022) {
+                        errorSwal(status);
+                    } else {
+                        showToast(status);
+                        Start();
+                    }
+                    return response;
+                }
+            })
+            .catch(e => fatalSwal(true));
+    } catch (e) {}
 };
 
 const GetSchoolFees = () => {
     try {
+        if (!CheckPermissions(["m_read"])) {
+            return Promise.resolve(null);
+        }
+
         return fetch(ep.SCHOOL_GET_FEES, {
             method: "POST",
             body: JSON.stringify({

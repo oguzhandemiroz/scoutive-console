@@ -4,7 +4,6 @@ import Menu from "../components/includes/Menu.jsx";
 import HeaderMenu from "../components/includes/HeaderMenu.jsx";
 import Warnings from "../components/includes/Warnings.jsx";
 import Footer from "../components/includes/Footer.jsx";
-import FABs from "../components/Others/FABs";
 import indexRoutes from "../routes/index.jsx";
 import { Start } from "../services/Starts.jsx";
 const $ = require("jquery");
@@ -36,7 +35,7 @@ class App extends Component {
                 <div className="flex-fill">
                     <Warnings />
                     <HeaderMenu />
-                    <Menu layout={this.props.match.url} />
+                    <Menu />
                     {/*  <CommunicationService /> */}
                     <div className="my-3 my-md-5">
                         <Switch>
@@ -50,7 +49,13 @@ class App extends Component {
                                             {...route.prop}
                                             key={key}
                                             path={route.layout + route.path}
-                                            component={route.component}
+                                            render={props =>
+                                                route.condition ? (
+                                                    <route.component {...props} />
+                                                ) : (
+                                                    <Redirect to="/app/" />
+                                                )
+                                            }
                                         />
                                     );
                                 } else return null;
@@ -58,7 +63,6 @@ class App extends Component {
                         </Switch>
                     </div>
                 </div>
-                <FABs />
                 <Footer />
             </div>
         );

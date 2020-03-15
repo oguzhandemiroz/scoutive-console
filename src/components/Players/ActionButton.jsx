@@ -3,6 +3,7 @@ import deletePlayer from "../PlayerAction/DeletePlayer";
 import freezePlayer from "../PlayerAction/FreezePlayer";
 import refreshPlayer from "../PlayerAction/RefreshPlayer";
 import activatePlayer from "../PlayerAction/ActivatePlayer";
+import { CheckPermissions } from "../../services/Others";
 
 export class ActionButton extends Component {
     constructor(props) {
@@ -17,8 +18,7 @@ export class ActionButton extends Component {
     renderActionButton = () => {
         const { uid } = this.state;
         const { data, renderButton, history, dropdown, hide } = this.props;
-        const { to, name, is_trial, status, group } = data;
-        const fullname = name;
+        const { to, name, status, group } = data;
 
         const dropdownDivider = key => <div role="separator" className="dropdown-divider" key={key.toString()} />;
         const lock = (
@@ -41,12 +41,7 @@ export class ActionButton extends Component {
                     className: "dropdown-icon fa fa-paper-plane"
                 },
                 lock: false,
-                condition: true
-            },
-            {
-                name: "payment",
-                divider: key => dropdownDivider(key),
-                condition: true
+                condition: CheckPermissions(["m_write"])
             },
             {
                 name: "payment",
@@ -60,94 +55,70 @@ export class ActionButton extends Component {
                     className: "dropdown-icon fa fa-hand-holding-usd"
                 },
                 lock: false,
-                condition: !is_trial
-            },
-            {
-                name: "payment",
-                divider: key => dropdownDivider(key),
-                condition: !is_trial && status !== 0
+                condition: CheckPermissions(["p_write", "a_write"])
             },
             {
                 name: "freeze",
                 tag: "button",
                 elementAttr: {
                     className: "dropdown-item",
-                    onClick: () => freezePlayer(uid, to, fullname, history)
+                    onClick: () => freezePlayer(uid, to, name, history)
                 },
                 childText: "Kaydı Dondur",
                 child: {
                     className: "dropdown-icon fa fa-snowflake"
                 },
                 lock: false,
-                condition: !is_trial && status === 1
-            },
-            {
-                name: "start",
-                tag: "button",
-                elementAttr: {
-                    className: "dropdown-item",
-                    onClick: () => history.push(`/app/players/trial/activate/${to}`)
-                },
-                childText: "Kaydı Başlat",
-                child: {
-                    className: "dropdown-icon fa fa-play-circle"
-                },
-                lock: false,
-                condition: is_trial === 1 && status === 1
+                condition: CheckPermissions(["p_remove"]) && status === 1
             },
             {
                 name: "active",
                 tag: "button",
                 elementAttr: {
                     className: "dropdown-item",
-                    onClick: () => activatePlayer(uid, to, fullname, history)
+                    onClick: () => activatePlayer(uid, to, name, history)
                 },
                 childText: "Kaydı Aktifleştir",
                 child: {
                     className: "dropdown-icon fa fa-redo"
                 },
                 lock: false,
-                condition: !is_trial && status === 0
+                condition: CheckPermissions(["p_write", "p_remove"]) && status === 0
             },
             {
                 name: "refresh",
                 tag: "button",
                 elementAttr: {
                     className: "dropdown-item",
-                    onClick: () => refreshPlayer(uid, to, fullname, history)
+                    onClick: () => refreshPlayer(uid, to, name, history)
                 },
                 childText: "Kaydı Yenile",
                 child: {
                     className: "dropdown-icon fa fa-sync-alt"
                 },
                 lock: false,
-                condition: !is_trial && status === 2
+                condition: CheckPermissions(["p_write", "p_remove"]) && status === 2
             },
             {
                 name: "passive",
                 tag: "button",
                 elementAttr: {
                     className: "dropdown-item",
-                    onClick: () => deletePlayer(uid, to, fullname, history)
+                    onClick: () => deletePlayer(uid, to, name, history)
                 },
                 childText: "Kaydı Pasifleştir",
                 child: {
                     className: "dropdown-icon fa fa-user-times"
                 },
                 lock: false,
-                condition: status !== 0
-            },
-            {
-                name: "vacation",
-                divider: key => dropdownDivider(key),
-                condition: status !== 0
+                condition: CheckPermissions(["p_remove"]) && status !== 0
             },
             {
                 name: "vacation",
                 tag: "button",
                 elementAttr: {
                     className: "dropdown-item",
-                    onClick: () => this.props.vacationButton({ name: fullname, uid: to }),
+                    onClick: () => this.props.vacationButton({ name: name, uid: to }),
                     "data-toggle": "modal",
                     "data-target": "#vacationModal"
                 },
@@ -156,12 +127,7 @@ export class ActionButton extends Component {
                     className: "dropdown-icon fa fa-coffee"
                 },
                 lock: false,
-                condition: !is_trial && status === 1
-            },
-            {
-                name: "edit",
-                divider: key => dropdownDivider(key),
-                condition: !is_trial && status === 1
+                condition: CheckPermissions(["p_write"]) && status === 1
             },
             /* {
                 name: "point",
@@ -193,7 +159,7 @@ export class ActionButton extends Component {
                     className: "dropdown-icon fa fa-pen"
                 },
                 lock: false,
-                condition: is_trial === 0
+                condition: CheckPermissions(["p_write"])
             },
             /* {
                 name: "group",
@@ -202,7 +168,7 @@ export class ActionButton extends Component {
                     className: "dropdown-item cursor-not-allowed disabled",
                     onClick: () =>
                         this.props.groupChangeButton({
-                            name: fullname,
+                            name: name,
                             uid: to,
                             group: typeof group === "string" ? group : group ? group.label : null,
                             group_id: group ? group.value : null
@@ -219,11 +185,6 @@ export class ActionButton extends Component {
             }, */
             {
                 name: "certificate",
-                divider: key => dropdownDivider(key),
-                condition: !is_trial && status !== 0
-            },
-            {
-                name: "certificate",
                 tag: "button",
                 elementAttr: {
                     className: "dropdown-item cursor-not-allowed disabled",
@@ -234,12 +195,7 @@ export class ActionButton extends Component {
                     className: "dropdown-icon fa fa-id-card-alt"
                 },
                 lock: lock,
-                condition: true
-            },
-            {
-                name: "fee",
-                divider: key => dropdownDivider(key),
-                condition: true
+                condition: CheckPermissions(["p_read"])
             },
             {
                 name: "fee",
@@ -253,8 +209,8 @@ export class ActionButton extends Component {
                     className: "dropdown-icon fa fa-receipt"
                 },
                 lock: false,
-                condition: true
-            }
+                condition: CheckPermissions(["p_read", "a_read"])
+            },
             /* {
                 name: "messages",
                 tag: "button",
@@ -296,7 +252,7 @@ export class ActionButton extends Component {
                 },
                 lock: false,
                 condition: true
-            },
+            }, */
             {
                 name: "detail",
                 tag: "button",
@@ -309,8 +265,8 @@ export class ActionButton extends Component {
                     className: "dropdown-icon fa fa-info-circle"
                 },
                 lock: false,
-                condition: true
-            } */
+                condition: CheckPermissions(["p_read"])
+            }
         ];
 
         return (
@@ -334,7 +290,7 @@ export class ActionButton extends Component {
                     x-placement="top-end">
                     <a className="dropdown-item disabled text-azure">
                         <i className="dropdown-icon fa fa-user text-azure" />
-                        {fullname}
+                        {name}
                     </a>
                     <div role="separator" className="dropdown-divider" />
                     {actionMenu.map((el, key) => {

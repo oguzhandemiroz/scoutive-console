@@ -684,14 +684,14 @@ export class PlayerForm extends Component {
         super(props);
 
         this.state = {
-            sname: localStorage.getItem("sName"),
+            sSettings: JSON.parse(localStorage.getItem("sSettings")),
             simage: localStorage.getItem("sImage")
         };
     }
 
     render() {
-        const { sname, simage } = this.state;
-        const { name, phone, fee } = this.props.match.params;
+        const { sSettings, simage } = this.state;
+        const { name, phone, fee, hear } = this.props.match.params;
         return (
             <article className="A4">
                 <style>{papercss}</style>
@@ -712,7 +712,7 @@ export class PlayerForm extends Component {
                                         {moment()
                                             .add(1, "years")
                                             .format("YYYY")}{" "}
-                                        {sname} Öğrenci Bilgi Formu
+                                        {sSettings && sSettings.employee.detail.school_name} Öğrenci Bilgi Formu
                                     </strong>
                                 </td>
                                 <td className="fs-9 pt-sm text-right text-uppercase">
@@ -748,12 +748,12 @@ export class PlayerForm extends Component {
                                 <th className="text-right">T.C. Kimlik Numarası *</th>
                                 <td colSpan="2"></td>
                             </tr>
-                            {fee === "1" ? (
+                            {fee === "1" && (
                                 <tr>
                                     <th className="text-right">Aidat *</th>
                                     <td colSpan="2"></td>
                                 </tr>
-                            ) : null}
+                            )}
                             <tr>
                                 <th className="text-right">Cinsiyet</th>
                                 <td className="text-center">
@@ -810,6 +810,12 @@ export class PlayerForm extends Component {
                                 <th className="text-right">Giydiği Beden (XS, S, M, L, XL)</th>
                                 <td colSpan="2"></td>
                             </tr>
+                            {hear === "1" && (
+                                <tr>
+                                    <th className="text-right">Bizi Nereden Duydunuz?</th>
+                                    <td colSpan="2"></td>
+                                </tr>
+                            )}
                             <tr>
                                 <th colSpan="3" className="fs-10 text-center">
                                     Veli Bilgileri

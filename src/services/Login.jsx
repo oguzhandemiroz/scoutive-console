@@ -2,6 +2,7 @@ import ep from "../assets/js/urls";
 import { getCookie } from "../assets/js/core.js";
 import { errorSwal, fatalSwal } from "../components/Alert.jsx";
 import { SetSession } from "./Session";
+const CryptoJS = require("crypto-js");
 
 const h = new Headers();
 h.append("Content-Type", "application/json");
@@ -20,7 +21,7 @@ const RequestLogin = (data, remember) => {
             .then(res => res.json())
             .then(response => {
                 const status = response.status;
-                if ((status.code !== 1020) & (status.code !== 1082)) errorSwal(status);
+                if (status.code !== 1012 && status.code !== 1017) errorSwal(status);
                 return response;
             })
             .catch(err => fatalSwal(true));
@@ -41,7 +42,9 @@ const Logout = () => {
                 "sPosition",
                 "sBranch",
                 "sSettings",
-                "t"
+                "t",
+                "S:P",
+                "S:G"
             ];
             localeStorageList.map(el => localStorage.removeItem(el));
             setTimeout(() => {
@@ -66,4 +69,11 @@ const SetSchoolInfoToLocalStorage = (data, redirect) => {
     } catch (e) {}
 };
 
-export { RequestLogin, Logout, SetSchoolInfoToLocalStorage };
+const SetPermissionsKeys = keys => {
+    try {
+        const ciphertext = CryptoJS.AES.encrypt(JSON.stringify(keys), "sc_prm");
+        localStorage.setItem("S:P", ciphertext);
+    } catch (e) {}
+};
+
+export { RequestLogin, Logout, SetSchoolInfoToLocalStorage, SetPermissionsKeys };

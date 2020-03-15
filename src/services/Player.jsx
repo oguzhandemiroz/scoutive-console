@@ -1,6 +1,7 @@
-import { fatalSwal, errorSwal, Toast } from "../components/Alert.jsx";
+import { fatalSwal, errorSwal, Toast, showToast } from "../components/Alert.jsx";
 import ep from "../assets/js/urls";
 import { getCookie } from "../assets/js/core.js";
+import { CheckPermissions } from "../services/Others";
 
 const h = new Headers();
 h.append("Content-Type", "application/json");
@@ -9,6 +10,10 @@ h.append("Authorization", localStorage.getItem("UID"));
 
 const CreatePlayer = data => {
     try {
+        if (!CheckPermissions(["p_write"])) {
+            return Promise.resolve(null);
+        }
+
         return fetch(ep.PLAYER_CREATE, {
             method: "POST",
             body: JSON.stringify(data),
@@ -19,45 +24,12 @@ const CreatePlayer = data => {
                 console.log(response);
                 const status = response.status;
 
-                if (status.code !== 1020) {
+                if (status.code !== 1021) {
                     errorSwal(status);
                 } else {
-                    Toast.fire({
-                        type: "success",
-                        title: "Başarıyla oluşturuldu...",
-                        timer: 3500
-                    });
+                    showToast(status);
                 }
 
-                return response;
-            })
-            .catch(e => fatalSwal(true));
-    } catch (e) {
-        fatalSwal(true);
-    }
-};
-
-const CreateTrialPlayer = data => {
-    try {
-        return fetch(ep.PLAYER_TRIAL_CREATE, {
-            method: "POST",
-            body: JSON.stringify(data),
-            headers: h
-        })
-            .then(res => res.json())
-            .then(response => {
-                console.log(response);
-                const status = response.status;
-
-                if (status.code !== 1020) {
-                    errorSwal(status);
-                } else {
-                    Toast.fire({
-                        type: "success",
-                        title: "Başarıyla oluşturuldu...",
-                        timer: 3500
-                    });
-                }
                 return response;
             })
             .catch(e => fatalSwal(true));
@@ -68,6 +40,10 @@ const CreateTrialPlayer = data => {
 
 const DetailPlayer = data => {
     try {
+        if (!CheckPermissions(["p_read"])) {
+            return Promise.resolve(null);
+        }
+
         return fetch(ep.GET_PLAYER, {
             method: "POST",
             body: JSON.stringify(data),
@@ -91,6 +67,10 @@ const DetailPlayer = data => {
 
 const UpdatePlayer = data => {
     try {
+        if (!CheckPermissions(["p_write"])) {
+            return Promise.resolve(null);
+        }
+
         return fetch(ep.UPDATE_PLAYER, {
             method: "PATCH",
             body: JSON.stringify(data),
@@ -101,13 +81,10 @@ const UpdatePlayer = data => {
                 console.log(response);
                 const status = response.status;
 
-                if (status.code !== 1020) {
+                if (status.code !== 1022) {
                     errorSwal(status);
                 } else {
-                    Toast.fire({
-                        type: "success",
-                        title: "Başarıyla güncellendi..."
-                    });
+                    showToast(status);
                 }
                 return response;
             })
@@ -153,7 +130,11 @@ const DeletePlayer = data => {
             .then(response => {
                 if (response) {
                     const status = response.status;
-                    if (status.code !== 1020) errorSwal(status);
+                    if (status.code !== 1022) {
+                        errorSwal(status);
+                    } else {
+                        showToast(status);
+                    }
 
                     return response;
                 }
@@ -175,7 +156,11 @@ const FreezePlayer = data => {
             .then(response => {
                 if (response) {
                     const status = response.status;
-                    if (status.code !== 1020) errorSwal(status);
+                    if (status.code !== 1022) {
+                        errorSwal(status);
+                    } else {
+                        showToast(status);
+                    }
 
                     return response;
                 }
@@ -197,7 +182,11 @@ const RefreshPlayer = data => {
             .then(response => {
                 if (response) {
                     const status = response.status;
-                    if (status.code !== 1020) errorSwal(status);
+                    if (status.code !== 1022) {
+                        errorSwal(status);
+                    } else {
+                        showToast(status);
+                    }
 
                     return response;
                 }
@@ -219,7 +208,11 @@ const ActivatePlayer = data => {
             .then(response => {
                 if (response) {
                     const status = response.status;
-                    if (status.code !== 1020) errorSwal(status);
+                    if (status.code !== 1022) {
+                        errorSwal(status);
+                    } else {
+                        showToast(status);
+                    }
 
                     return response;
                 }
@@ -232,6 +225,10 @@ const ActivatePlayer = data => {
 
 const ListPlayers = () => {
     try {
+        if (!CheckPermissions(["p_read"])) {
+            return Promise.resolve(null);
+        }
+
         return fetch(ep.PLAYER_LIST, {
             method: "POST",
             body: JSON.stringify({
@@ -317,7 +314,6 @@ const GetPlayerParents = data => {
 
 export {
     CreatePlayer,
-    CreateTrialPlayer,
     DetailPlayer,
     UpdatePlayer,
     UpdatePlayers,

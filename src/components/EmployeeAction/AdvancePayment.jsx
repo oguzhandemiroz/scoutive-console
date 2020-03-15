@@ -183,11 +183,7 @@ export class AdvancePayment extends Component {
             }).then(response => {
                 if (response) {
                     const status = response.status;
-                    if (status.code === 1020) {
-                        Toast.fire({
-                            type: "success",
-                            title: "İşlem Başarılı..."
-                        });
+                    if (status.code === 1021) {
                         setTimeout(() => this.reload(), 1000);
                     }
                 }
@@ -331,7 +327,9 @@ export class AdvancePayment extends Component {
                                         <div className="form-group">
                                             <label className="form-label">Personel Bilgisi:</label>
                                             <div className="form-control-plaintext">
-                                                <Link to={`/app/persons/employees/detail/${data.uid}`}>{data.name}</Link>
+                                                <Link to={`/app/persons/employees/detail/${data.uid}`}>
+                                                    {data.name}
+                                                </Link>
                                             </div>
                                         </div>
                                         <div className="form-group">

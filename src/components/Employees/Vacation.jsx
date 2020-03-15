@@ -108,18 +108,7 @@ export class Vacation extends Component {
                     DeleteVacation({
                         uid: uid,
                         vacation_id: vid
-                    }).then(response => {
-                        if (response) {
-                            const status = response.status;
-                            if (status.code === 1020) {
-                                Toast.fire({
-                                    type: "success",
-                                    title: "İşlem başarılı..."
-                                });
-                                this.reload();
-                            }
-                        }
-                    });
+                    }).then(response => this.reload());
                 }
             });
         } catch (e) {}

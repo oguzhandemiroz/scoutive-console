@@ -3,8 +3,7 @@ import { selectCustomStyles, datatable_turkish } from "../../assets/js/core";
 import Select from "react-select";
 import { Groups } from "../../services/FillSelect";
 import { ListRollcallType } from "../../services/Rollcalls";
-import "../../assets/css/datatables.responsive.css";
-import { fullnameGenerator, avatarPlaceholder } from "../../services/Others";
+import { fullnameGenerator, avatarPlaceholder, nullCheck } from "../../services/Others";
 import _ from "lodash";
 const $ = require("jquery");
 $.DataTable = require("datatables.net-responsive");
@@ -117,7 +116,7 @@ export class RollcallForm extends Component {
                     render: function(data, type, row) {
                         var name = row.name;
                         var surname = row.surname;
-                        return `<div class="avatar text-uppercase" style="background-image: url(${data || ""})">
+                        return `<div class="avatar text-uppercase" style="background-image: url(${nullCheck(data)})">
 									${data ? "" : avatarPlaceholder(name, surname)}
 								</div>`;
                     }

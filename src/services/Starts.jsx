@@ -21,26 +21,23 @@ const Start = () => {
             .then(res => res.json())
             .then(response => {
                 if (response) {
-                    console.log("Settings Request");
                     const status = response.status;
-                    if (status.code === 1090) {
+                    if (status.code !== 1020) {
                         showSwal({
-                            allowOutsideClick: false,
                             type: "error",
                             title: "Hata Kodu: " + status.code,
                             text: status.description
                         }).then(re => {
                             if (re.value) Logout();
                         });
-                    } else if (status.code !== 1020) errorSwal(status);
-                    else {
+                    } else {
                         localStorage.setItem("sSettings", JSON.stringify(response.data));
                         SetSchoolInfoToLocalStorage(response.data.employee.detail, true);
                     }
                     return response;
                 }
             })
-            .catch(e => fatalSwal(true));
+            .catch(e => fatalSwal());
     } catch (e) {}
 };
 

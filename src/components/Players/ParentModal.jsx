@@ -103,15 +103,15 @@ export class ParentModal extends Component {
 
             CreateParent({
                 uid: uid,
-                name: name,
-                surname: surname,
+                name: name.capitalize(),
+                surname: surname.toLocaleUpperCase("tr-TR"),
                 phone: phone,
                 email: email === "" ? null : email,
                 password: "151117"
             }).then(response => {
                 if (response) {
                     const status = response.status;
-                    if (status.code === 1020) {
+                    if (status.code === 1021) {
                         this.setState(prevState => ({
                             ...initialState,
                             parents: [
@@ -120,8 +120,8 @@ export class ParentModal extends Component {
                                     uid: response.data.uid,
                                     parent_id: response.data.parent_id,
                                     kinship: kinship.value,
-                                    name: name,
-                                    surname: surname,
+                                    name: name.capitalize(),
+                                    surname: surname.toLocaleUpperCase("tr-TR"),
                                     phone: phone,
                                     email: email
                                 }

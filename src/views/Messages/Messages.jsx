@@ -2,7 +2,9 @@ import React, { Component } from "react";
 import { Link, withRouter } from "react-router-dom";
 import { GetSettings } from "../../services/School";
 import MessagesNotActivate from "../../components/NotActivate/Messages";
+import NotPermissions from "../../components/NotActivate/NotPermissions";
 import List from "../../components/Messages/List";
+import { CheckPermissions } from "../../services/Others";
 
 export class Messages extends Component {
     constructor(props) {
@@ -26,22 +28,39 @@ export class Messages extends Component {
                 <div className="container">
                     <div className="page-header">
                         <h1 className="page-title">İletişim Merkezi</h1>
-                        <Link to="/app/messages/select" className="btn btn-icon btn-sm btn-success ml-auto">
-                            Yeni Mesaj Oluştur
-                        </Link>
+                        {CheckPermissions(["m_write"]) && (
+                            <Link to="/app/messages/select" className="btn btn-icon btn-sm btn-success ml-auto">
+                                Yeni Mesaj Oluştur
+                            </Link>
+                        )}
                     </div>
-                    <div className="row row-cards">
-                        <div className="col">
-                            <div className="card">
-                                <div className="card-header">
-                                    <h3 className="card-title">Geçmiş Mesajlar</h3>
-                                </div>
-                                <div className="table-responsive messages-list">
-                                    <List history={this.props.history} />
+                    {CheckPermissions(["m_read"]) ? (
+                        <div className="row row-cards">
+                            <div className="col">
+                                <div className="card">
+                                    <div className="card-header">
+                                        <h3 className="card-title">Geçmiş Mesajlar</h3>
+                                    </div>
+                                    <div className="messages-list">
+                                        <List history={this.props.history} />
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    ) : (
+                        <NotPermissions
+                            title="Üzgünüz 😣"
+                            imageAlt="Yetersiz Yetki"
+                            content={() => (
+                                <p className="text-muted text-center">
+                                    İletişim Merkezini görüntülemek için yetkiniz bulunmamaktadır.
+                                    <br />
+                                    Eğer farklı bir sorun olduğunu düşünüyorsanız lütfen yöneticiniz ile iletişime
+                                    geçiniz...
+                                </p>
+                            )}
+                        />
+                    )}
                 </div>
             );
         } else {

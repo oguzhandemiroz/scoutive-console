@@ -1,23 +1,26 @@
 import React, { Component } from "react";
 import ReactDOM from "react-dom";
-import { BrowserRouter, Link } from "react-router-dom";
-import { MakeRollcall, SetNoteRollcall, DeleteRollcall } from "../../../services/Rollcalls";
+import { Link } from "react-router-dom";
+import { MakeRollcall, SetNoteRollcall, DeleteRollcall, CloseRollcall } from "../../../services/Rollcalls";
 import { CreateVacation, UpdateVacation } from "../../../services/PlayerAction";
 import { GetPlayerParents } from "../../../services/Player";
-import { fullnameGenerator, nullCheck, formatPhone } from "../../../services/Others";
-import { WarningModal as Modal } from "../WarningModal";
-import { datatable_turkish, getCookie } from "../../../assets/js/core";
+import {
+    fullnameGenerator,
+    nullCheck,
+    formatPhone,
+    renderForDataTableSearchStructure,
+    avatarPlaceholder,
+    CheckPermissions
+} from "../../../services/Others";
+import { getCookie } from "../../../assets/js/core";
+import "../../../assets/js/datatables-custom";
 import { fatalSwal, errorSwal, Toast, showSwal } from "../../Alert.jsx";
-import GroupChange from "../../PlayerAction/GroupChange";
 import Vacation from "../../PlayerAction/Vacation";
 import ep from "../../../assets/js/urls";
 import ActionButton from "../../Players/ActionButton";
 import _ from "lodash";
 import moment from "moment";
-import "moment/locale/tr";
-import "../../../assets/css/datatables.responsive.css";
 const $ = require("jquery");
-$.DataTable = require("datatables.net-responsive");
 
 const statusType = {
     0: { bg: "bg-danger", title: "Pasif" },
@@ -49,26 +52,6 @@ const feeType = {
         color: "text-primary"
     }
 };
-
-var _childNodeStore = {};
-function _childNodes(dt, row, col) {
-    var name = row + "-" + col;
-
-    if (_childNodeStore[name]) {
-        return _childNodeStore[name];
-    }
-
-    // https://jsperf.com/childnodes-array-slice-vs-loop
-    var nodes = [];
-    var children = dt.cell(row, col).node().childNodes;
-    for (var i = 0, ien = children.length; i < ien; i++) {
-        nodes.push(children[i]);
-    }
-
-    _childNodeStore[name] = nodes;
-
-    return nodes;
-}
 
 export class Add extends Component {
     constructor(props) {
@@ -124,37 +107,15 @@ export class Add extends Component {
             dom: '<"top"f>rt<"bottom"ilp><"clear">',
             responsive: {
                 details: {
-                    type: "column",
-                    target: 2,
-                    renderer: function(api, rowIdx, columns) {
-                        var tbl = $('<table class="w-100"/>');
-                        var found = false;
-                        $.map(columns, function(col, i) {
-                            if (col.hidden) {
-                                $(`<tr data-dt-row="${col.rowIndex}" data-dt-column="${col.columnIndex}">
-                                <th class="w-1">${col.title}</th> 
-								</tr>`)
-                                    .append($("<td/>").append(_childNodes(api, col.rowIndex, col.columnIndex)))
-                                    .appendTo(tbl);
-                                found = true;
-                            }
-                        });
-
-                        return found ? tbl : false;
-                    }
+                    target: 2
                 }
             },
             order: [4, "asc"],
             aLengthMenu: [
-                [20, 50, 100, -1],
-                [20, 50, 100, "Tümü"]
+                [30, 50, 100, -1],
+                [30, 50, 100, "Tümü"]
             ],
-            stateSave: true, // change true
-            language: {
-                ...datatable_turkish,
-                decimal: ",",
-                thousands: "."
-            },
+            stateSave: true,
             ajax: {
                 url: ep.ROLLCALL_LIST_TYPE + "players",
                 type: "POST",
@@ -182,7 +143,6 @@ export class Add extends Component {
                     }
                 },
                 dataSrc: d => {
-                    console.log(d);
                     if (d.status.code !== 1020) {
                         errorSwal(d.status);
                         return [];
@@ -204,6 +164,10 @@ export class Add extends Component {
             },
             columnDefs: [
                 {
+                    type: "turkish",
+                    targets: "_all"
+                },
+                {
                     targets: [0, 1],
                     visible: false
                 },
@@ -218,13 +182,6 @@ export class Add extends Component {
                 },
                 {
                     targets: "name",
-                    responsivePriority: 1,
-                    render: function(data, type, row) {
-                        const fullname = fullnameGenerator(data, row.surname);
-                        if (["sort", "type"].indexOf(type) > -1) {
-                            return fullname;
-                        }
-                    },
                     createdCell: (td, cellData, rowData) => {
                         const { uid, name, surname } = rowData;
                         const fullname = fullnameGenerator(name, surname);
@@ -240,7 +197,6 @@ export class Add extends Component {
                 },
                 {
                     targets: "parents",
-                    responsivePriority: 3,
                     createdCell: (td, cellData, rowData) => {
                         const { player_id } = rowData;
                         ReactDOM.render(
@@ -255,7 +211,6 @@ export class Add extends Component {
                 },
                 {
                     targets: "groups",
-                    responsivePriority: 10007,
                     createdCell: (td, cellData, rowData) => {
                         const { groups } = rowData;
                         ReactDOM.render(
@@ -278,7 +233,7 @@ export class Add extends Component {
                 },
                 {
                     targets: "rollcalls",
-                    responsivePriority: 10002,
+                    responsivePriority: 3,
                     createdCell: (td, cellData, rowData) => {
                         ReactDOM.render(
                             <div>
@@ -363,8 +318,8 @@ export class Add extends Component {
                 }, */
                 {
                     targets: "status",
+                    class: "w-1 px-3",
                     responsivePriority: 2,
-                    class: "w-1 pr-0",
                     createdCell: (td, cellData, rowData) => {
                         const { uid } = rowData;
                         const { statuses, loadingButtons } = this.state;
@@ -390,7 +345,7 @@ export class Add extends Component {
                                             statuses.find(x => x.uid === uid).status === 3
                                                 ? "btn-warning"
                                                 : "btn-secondary"
-                                        } mx-2 ${loadingButtons.find(x => x === uid) ? "btn-loading" : ""}`}>
+                                        } mx-1 ${loadingButtons.find(x => x === uid) ? "btn-loading" : ""}`}>
                                         <i className="fe fe-alert-circle" />
                                     </button>
                                     <div className="dropdown-menu">
@@ -420,41 +375,12 @@ export class Add extends Component {
                     }
                 },
                 {
-                    targets: "note",
-                    responsivePriority: 10003,
-                    class: "py-1 text-center",
-                    createdCell: (td, cellData, rowData) => {
-                        const { uid, name, surname, note, daily } = rowData;
-                        ReactDOM.render(
-                            <>
-                                {daily !== -1 ? (
-                                    <span
-                                        onClick={() => this.removeRollcallStatus(uid)}
-                                        className="icon cursor-pointer"
-                                        data-toggle="tooltip"
-                                        title="Yoklamayı Kaldır">
-                                        <i className="fe fe-x" />
-                                    </span>
-                                ) : null}
-                                <span
-                                    onClick={() => this.setRollcallNote(fullnameGenerator(name, surname), uid)}
-                                    className="icon cursor-pointer ml-2"
-                                    data-toggle="tooltip"
-                                    title={note ? "Not: " + note : "Not Gir"}>
-                                    <i className={`fe fe-edit ${note ? "text-orange" : ""}`} />
-                                </span>
-                            </>,
-                            td
-                        );
-                    }
-                },
-                {
                     targets: "action",
-                    responsivePriority: 10003,
-                    class: "pr-4 pl-1 w-1",
+                    class: "w-1 px-3",
+                    responsivePriority: 3,
                     createdCell: (td, cellData, rowData) => {
                         const fullname = fullnameGenerator(rowData.name, rowData.surname);
-                        const { uid, group, status, is_trial } = rowData;
+                        const { uid, name, surname, group, status, note, daily } = rowData;
                         ReactDOM.render(
                             <ActionButton
                                 hide={["edit"]}
@@ -473,18 +399,40 @@ export class Add extends Component {
                                 data={{
                                     to: uid,
                                     name: fullname,
-                                    is_trial: is_trial,
                                     status: status,
                                     group: group
                                 }}
                                 renderButton={() => (
-                                    <a
-                                        className="icon"
-                                        data-toggle="dropdown"
-                                        aria-haspopup="true"
-                                        aria-expanded="false">
-                                        <i className="fe fe-more-vertical"></i>
-                                    </a>
+                                    <>
+                                        {CheckPermissions(["r_write"]) && daily !== -1 && (
+                                            <button
+                                                className="btn btn-icon btn-sm btn-secondary mr-1"
+                                                data-toggle="tooltip"
+                                                onClick={() => this.removeRollcallStatus(uid)}
+                                                title="Yoklamayı Kaldır">
+                                                <i className="fe fe-x text-danger" />
+                                            </button>
+                                        )}
+                                        {CheckPermissions(["r_write"]) && (
+                                            <button
+                                                className="btn btn-icon btn-sm btn-secondary mr-1"
+                                                data-toggle="tooltip"
+                                                onClick={() =>
+                                                    this.setRollcallNote(fullnameGenerator(name, surname), uid)
+                                                }
+                                                title={note ? "Not: " + note : "Not Gir"}>
+                                                <i className={`fe fe-edit ${note ? "text-orange" : ""}`} />
+                                            </button>
+                                        )}
+                                        <a
+                                            title="İşlem Menüsü"
+                                            className="btn btn-icon btn-sm btn-secondary"
+                                            data-toggle="dropdown"
+                                            aria-haspopup="true"
+                                            aria-expanded="false">
+                                            <i className="fe fe-menu" />
+                                        </a>
+                                    </>
                                 )}
                             />,
                             td
@@ -506,16 +454,15 @@ export class Add extends Component {
                 {
                     data: "image",
                     class: "text-center",
+                    responsivePriority: 5,
                     render: function(data, type, row) {
-                        var name = row.name;
-                        var surname = row.surname;
                         var status = row.status;
                         var renderBg = row.is_trial ? statusType[3].bg : statusType[status].bg;
                         var renderTitle = row.is_trial
                             ? statusType[status].title + " & Ön Kayıt Öğrenci"
                             : statusType[status].title + " Öğrenci";
-                        return `<div class="avatar text-uppercase" style="background-image: url(${data || ""})">
-									${data ? "" : name.slice(0, 1) + surname.slice(0, 1)}
+                        return `<div class="avatar text-uppercase" style="background-image: url(${nullCheck(data)})">
+									${avatarPlaceholder(row.name, row.surname)}
 									<span class="avatar-status ${renderBg}" data-toggle="tooltip" title="${renderTitle}"></span>
 								</div>`;
                     }
@@ -525,9 +472,13 @@ export class Add extends Component {
                     responsivePriority: 1,
                     render: function(data, type, row) {
                         const fullname = fullnameGenerator(data, row.surname);
+                        if (type === "filter") {
+                            return renderForDataTableSearchStructure(fullname);
+                        }
                         if (["sort", "type"].indexOf(type) > -1) {
                             return fullname;
                         }
+
                         if (data)
                             return `<a class="text-inherit font-weight-600" href="/app/players/detail/${row.uid}">${fullname}</a>`;
                     }
@@ -537,7 +488,7 @@ export class Add extends Component {
                 },
                 {
                     data: "birthday",
-                    responsivePriority: 10005,
+                    responsivePriority: 6,
                     render: function(data, type, row) {
                         if (["sort", "type"].indexOf(type) > -1) {
                             return data ? data.split(".")[0] : data;
@@ -549,7 +500,7 @@ export class Add extends Component {
                 },
                 {
                     data: "groups",
-                    responsivePriority: 10008,
+                    responsivePriority: 2,
                     render: function(data, type) {
                         if (["sort", "type", "display"].indexOf(type) > -1) {
                             return _(data)
@@ -563,25 +514,15 @@ export class Add extends Component {
                 },
                 { data: null },
                 { data: null },
-                { data: null },
                 { data: null }
             ]
         });
 
-        $.fn.DataTable.ext.errMode = "none";
-        $("#rollcall-list").on("error.dt", function(e, settings, techNote, message) {
+        table.on("error.dt", function(e, settings, techNote, message) {
             console.log("An error has been reported by DataTables: ", message, techNote);
         });
 
-        $("#rollcall-list").on("draw.dt", function() {
-            $('[data-toggle="tooltip"]').tooltip();
-            $('[data-toggle="popover"]').popover({
-                html: true,
-                trigger: "hover"
-            });
-        });
-
-        table.on("responsive-display", function(e, datatable, row, showHide, update) {
+        table.on("draw.dt", function() {
             $('[data-toggle="tooltip"]').tooltip();
             $('[data-toggle="popover"]').popover({
                 html: true,
@@ -822,22 +763,7 @@ export class Add extends Component {
                                 note: value
                             },
                             "player"
-                        ).then(response => {
-                            if (response) {
-                                if (response.status.code === 1020) {
-                                    Toast.fire({
-                                        type: "success",
-                                        title: "Not ekleme başarılı!"
-                                    });
-                                } else {
-                                    Toast.fire({
-                                        type: "danger",
-                                        title: "Not ekleme başarısız!"
-                                    });
-                                }
-                                setTimeout(this.reload, 1000);
-                            }
-                        });
+                        ).then(response => setTimeout(this.reload, 1000));
                     } else {
                         resolve("Hatalı değer!");
                     }
@@ -949,19 +875,58 @@ export class Add extends Component {
         });
     };
 
+    closeRollcall = () => {
+        const { uid } = this.state;
+        const { rcid } = this.props.match.params;
+        showSwal({
+            type: "warning",
+            title: "Uyarı",
+            html: `Yoklama sonlandırılacaktır!
+            <br>Yoklama sonlandıktan sonra <u>değişiklik yapamazsınız.</u>
+            <br><br>
+            İşaretlenmemiş öğrenciler sisteme<br>
+            <strong class="text-orange">Tanımsız</strong> olarak tanımlanacaktır.
+            <br>Yoklamayı sonlandırmak istediğinize emin misiniz?
+            <br><br>
+            <u class="bg-red p-1">Bu işlem geri alınamaz.</u>
+            <br><br>
+            <span class="font-italic">Not: Sonlandırılmayan yoklamalar gün sonunda otomatik olarak sonlanır.</span>`,
+            confirmButtonText: "Eminim, Sonlandır",
+            cancelButtonText: "İptal",
+            confirmButtonColor: "#cd201f",
+            cancelButtonColor: "#868e96",
+            showCancelButton: true,
+            reverseButtons: true
+        }).then(re => {
+            if (re.value) {
+                CloseRollcall({
+                    uid: uid,
+                    rollcall_id: rcid
+                }).then(response => {
+                    if (response) {
+                        const status = response.status;
+                        if (status.code === 1020) {
+                            this.props.history.push("/app/rollcalls/player");
+                        }
+                    }
+                });
+            }
+        });
+    };
+
     render() {
         const { data } = this.state;
         return (
             <div className="container">
-                <Modal />
                 <div className="page-header">
-                    <h1 className="page-title">
-                        Yoklamalar &mdash; Öğrenci &mdash; Yoklama Al (#{this.props.match.params.rcid})
-                    </h1>
-                    <button onClick={this.printableRollcallForm} className="btn btn-icon btn-secondary ml-auto mr-2">
+                    <h1 className="page-title">Yoklamalar &mdash; Öğrenciler &mdash; Yoklama Al</h1>
+                    <Link className="btn btn-link ml-auto" to={"/app/rollcalls/player"}>
+                        Yoklamalara Geri Dön
+                    </Link>
+                    {/* <button onClick={this.printableRollcallForm} className="btn btn-icon btn-secondary ml-auto mr-2">
                         <i className="fe fe-printer mr-1"></i>
                         Yoklama Formu
-                    </button>
+                    </button> */}
                 </div>
                 <div className="row row-cards">
                     <div className="col">
@@ -970,21 +935,23 @@ export class Add extends Component {
                                 <div className="card-status bg-teal" />
                                 <h3 className="card-title">Öğrenci Listesi</h3>
                                 <div className="card-options">
+                                    <button onClick={this.closeRollcall} className="btn btn-sm btn-danger mr-2">
+                                        Yoklamayı Sonlandır
+                                    </button>
                                     <span
                                         className="form-help bg-gray-dark text-white"
                                         data-toggle="popover"
                                         data-placement="bottom"
-                                        data-content='<p>Yoklama yapılırken, sisteme <b>"geldi"</b>, <b>"izinli"</b> veya <b>"gelmedi"</b> olarak giriş yapabilirsiniz.</p><p>Yoklamalar gün sonunda otomatik olarak tamamlanır. İşaretlenmemiş olanlar, sisteme <b>"Tanımsız"</b> şeklinde tanımlanır.</p><p><b className="text-red">Not:</b> Yoklama tamamlana kadar değişiklik yapabilirsiniz. Tamamlanan yoklamalarda değişiklik <b><u><i>yapılamaz.</i></u></b></p>'>
+                                        data-content='<p>Yoklama alınırken, sisteme <b>"geldi"</b>, <b>"izinli"</b> veya <b>"gelmedi"</b> olarak giriş yapabilirsiniz.</p><p>Yoklamalar sonlandırılmadığı takdirde gün sonunda otomatik olarak sonlanır. İşaretlenmemiş olanlar, sisteme <b>"Tanımsız"</b> şeklinde tanımlanır.</p><p><b className="text-red">Not:</b> Yoklama sonlanana kadar değişiklik yapabilirsiniz. Sonlanılan yoklamalarda değişiklik <b class="text-red"><u><i>yapılamaz.</i></u></b></p>'>
                                         !
                                     </span>
-                                    <Modal />
                                 </div>
                             </div>
                             <div className="card-body p-0">
                                 <div>
                                     <table
                                         id="rollcall-list"
-                                        className="table card-table w-100 table-vcenter table-hover text-nowrap datatable">
+                                        className="table card-table w-100 table-vcenter table-hover text-nowrap datatable table-bordered">
                                         <thead>
                                             <tr>
                                                 <th>ID</th>
@@ -995,11 +962,10 @@ export class Add extends Component {
                                                 <th className="parents">VELİSİ</th>
                                                 <th className="birthday">DOĞUM YILI</th>
                                                 <th className="groups">GRUP</th>
-                                                <th className="no-sort rollcalls">SON 3 YOKLAMA</th>
+                                                <th className="w-1 no-sort rollcalls">SON 4 YOKLAMA</th>
                                                 {/* <th className="no-sort fees">SON 3 ÖDEME</th> */}
-                                                <th className="w-1 pr-0 no-sort status">DURUM</th>
-                                                <th className="pr-2 no-sort note"></th>
-                                                <th className="pr-0 w-1 no-sort action"></th>
+                                                <th className="w-1 no-sort status">DURUM</th>
+                                                <th className="w-1 no-sort action">İŞLEM</th>
                                             </tr>
                                         </thead>
                                     </table>

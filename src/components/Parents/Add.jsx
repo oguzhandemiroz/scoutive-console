@@ -71,8 +71,8 @@ export class Add extends Component {
 
             CreateParent({
                 uid: uid,
-                name: name,
-                surname: surname,
+                name: name.capitalize(),
+                surname: surname.toLocaleUpperCase("tr-TR"),
                 phone: phone,
                 email: email === "" ? null : email,
                 password: "151117",
@@ -81,7 +81,7 @@ export class Add extends Component {
             }).then(response => {
                 if (response) {
                     const status = response.status;
-                    if (status.code === 1020) {
+                    if (status.code === 1021) {
                         this.props.history.push("/app/persons/parents/detail/" + response.data.uid);
                     }
                 }

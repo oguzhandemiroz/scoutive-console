@@ -1,11 +1,13 @@
 import ep from "../assets/js/urls";
-import { fatalSwal, errorSwal, showSwal, Toast } from "../components/Alert";
+import { fatalSwal, errorSwal, showSwal, Toast, showToast } from "../components/Alert";
 import { ActivationSchool } from "./School";
-import { RequestLogin, SetSchoolInfoToLocalStorage } from "./Login";
+import { RequestLogin, SetSchoolInfoToLocalStorage, SetPermissionsKeys } from "./Login";
 import { SetSession, GenerateSessionData } from "./Session";
 import Inputmask from "inputmask";
+import _ from "lodash";
 import moment from "moment";
 import "moment/locale/tr";
+const CryptoJS = require("crypto-js");
 
 const SplitBirthday = date => {
     try {
@@ -150,6 +152,15 @@ const avatarPlaceholder = (name, surname) => {
     }
 };
 
+const renderForDataTableSearchStructure = value => {
+    try {
+        const mergedValue = value.toLocaleLowerCase("tr-TR") + value.toLocaleUpperCase("tr-TR");
+        return mergedValue;
+    } catch (e) {
+        return value;
+    }
+};
+
 const groupAgeSplit = age => {
     try {
         var result = {};
@@ -245,7 +256,7 @@ const ActivateSchool = (title, loginInfo, data) => {
                                                 if (response) {
                                                     const data = response.data;
                                                     const status = response.status;
-                                                    if (status.code === 1020) {
+                                                    if (status.code === 1012) {
                                                         GenerateSessionData().then(r =>
                                                             SetSession({
                                                                 uid: data.uid,
@@ -253,14 +264,13 @@ const ActivateSchool = (title, loginInfo, data) => {
                                                                 type: 1,
                                                                 ...r
                                                             }).then(res => {
-                                                                Toast.fire({
-                                                                    type: "success",
-                                                                    title: "Giriş yapılıyor..."
-                                                                });
+                                                                showToast(status);
+
+                                                                SetPermissionsKeys(data.permissions);
                                                                 SetSchoolInfoToLocalStorage(data);
                                                             })
                                                         );
-                                                    } else if (status.code === 1082) {
+                                                    } else {
                                                         errorSwal(status);
                                                     }
                                                 }
@@ -276,6 +286,26 @@ const ActivateSchool = (title, loginInfo, data) => {
                 });
             }
         });
+    } catch (e) {}
+};
+
+const CheckPermissions = (keys, condition_operator) => {
+    try {
+        if (!condition_operator) condition_operator = "&&";
+
+        // decrypt (S:C "Scoutive:Permission") storage
+        const getPermissions = localStorage.getItem("S:P");
+        const decryptPermissions = CryptoJS.AES.decrypt(getPermissions.toString(), "sc_prm");
+        const plainPermissons = JSON.parse(decryptPermissions.toString(CryptoJS.enc.Utf8));
+
+        if (keys.length > 0) {
+            if (condition_operator === "&&") {
+                return _.isEqual(_.sortBy(_.intersection(plainPermissons, keys)), _.sortBy(keys));
+            } else if (condition_operator === "||") {
+                return _.intersection(plainPermissons, keys).length > 0;
+            }
+        }
+        return false;
     } catch (e) {}
 };
 
@@ -299,5 +329,7 @@ export {
     avatarPlaceholder,
     parseJSON,
     isMobile,
-    isChrome
+    isChrome,
+    CheckPermissions,
+    renderForDataTableSearchStructure
 };

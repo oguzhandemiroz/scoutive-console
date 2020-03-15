@@ -17,8 +17,9 @@ import { formValid, selectCustomStyles, selectCustomStylesError } from "../../as
 import DatePicker, { registerLocale } from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import tr from "date-fns/locale/tr";
-import { formatDate, formatPhone, fullnameGenerator } from "../../services/Others";
+import { formatDate, formatPhone, fullnameGenerator, CheckPermissions } from "../../services/Others";
 import { GetSettings, GetSchoolFees } from "../../services/School";
+import NotPermissions from "../../components/NotActivate/NotPermissions";
 import { MessagesAllTime } from "../../services/Report";
 import { ListEmployees } from "../../services/Employee";
 import { Groups } from "../../services/FillSelect";
@@ -139,7 +140,9 @@ export class RecurringAdd extends Component {
     }
 
     componentDidMount() {
-        this.listStaticSegments();
+        if (CheckPermissions(["m_write"])) {
+            this.listStaticSegments();
+        }
     }
 
     handleSendTestMessage = () => {
@@ -179,6 +182,7 @@ export class RecurringAdd extends Component {
 
     handleSubmit = () => {
         const { uid, title, select_template, when, end_date, segment_id, working_days } = this.state;
+        this.setState({ loadingButton: "btn-loading" });
         CreateCampaign({
             uid: uid,
             title: title,
@@ -191,10 +195,11 @@ export class RecurringAdd extends Component {
             end_date: formatDate(end_date, "YYYY-MM-DD ") + formatDate(when, "HH:mm:00")
         }).then(response => {
             if (response) {
-                if (response.status.code === 1020) {
+                if (response.status.code === 1021) {
                     this.props.history.push("/app/messages/detail/" + response.campaign_id);
                 }
             }
+            this.setState({ loadingButton: "" });
         });
     };
 
@@ -330,7 +335,7 @@ export class RecurringAdd extends Component {
                 values: values
             }).then(response => {
                 if (response) {
-                    if (response.status.code === 1020) {
+                    if (response.status.code === 1021) {
                         this.handleNextStep(0);
                         this.listMessageTemplates();
                         this.setState({ segment_id: response.segment_id });
@@ -870,7 +875,7 @@ export class RecurringAdd extends Component {
     };
 
     sendPreviewStep = () => {
-        const { start, school_fees, all_time_messages } = this.state;
+        const { start, school_fees, all_time_messages, loadingButton } = this.state;
         return (
             <>
                 <div className="card-body">
@@ -914,7 +919,10 @@ export class RecurringAdd extends Component {
                             className="btn btn-info btn-icon mr-2">
                             Test Mesajı Gönder<i className="fa fa-flask ml-2"></i>
                         </button>
-                        <button type="button" onClick={this.handleSubmit} className="btn btn-success btn-icon">
+                        <button
+                            type="button"
+                            onClick={this.handleSubmit}
+                            className={`btn btn-success btn-icon ${loadingButton}`}>
                             Onayla ve Gönder<i className="fa fa-check ml-2"></i>
                         </button>
                     </div>
@@ -1144,12 +1152,14 @@ export class RecurringAdd extends Component {
         const { select } = this.state;
         if (!select.groups) {
             Groups().then(response => {
-                this.setState(prevState => ({
-                    select: {
-                        ...prevState.select,
-                        groups: response
-                    }
-                }));
+                if (response) {
+                    this.setState(prevState => ({
+                        select: {
+                            ...prevState.select,
+                            groups: response
+                        }
+                    }));
+                }
             });
         }
     };
@@ -1221,35 +1231,50 @@ export class RecurringAdd extends Component {
             <div className="container">
                 <div className="page-header">
                     <h1 className="page-title">Otomatik (Tekrarlayan) Mesaj Oluştur</h1>
-                    <Link className="btn btn-link ml-auto" to={"/app/messages"}>
-                        İletişim Merkezine Geri Dön
+                    <Link className="btn btn-link ml-auto" to={"/app/messages/select"}>
+                        Mesaj Tipi Seçme Ekranına Geri Dön
                     </Link>
                 </div>
-                <div className="row">
-                    <div className="col-12">
-                        <div className="steps steps-lime">
-                            {steps.map(el => (
-                                <span key={el.key} className={`step-item ${el.active ? "active" : ""}`}>
-                                    {el.name}
-                                </span>
-                            ))}
-                        </div>
-                    </div>
-                    <div className="col-lg-12">
-                        <div className="card">
-                            <div className="card-header">
-                                <h3 className="card-title">
-                                    {steps.find(x => x.active).title}
-                                    {segments && selected_segment
-                                        ? " — #" +
-                                          segments.find(x => x.static_segment_id === selected_segment).segment_name
-                                        : ""}
-                                </h3>
+                {CheckPermissions(["m_read", "m_write"]) ? (
+                    <div className="row">
+                        <div className="col-12">
+                            <div className="steps steps-lime">
+                                {steps.map(el => (
+                                    <span key={el.key} className={`step-item ${el.active ? "active" : ""}`}>
+                                        {el.name}
+                                    </span>
+                                ))}
                             </div>
-                            {steps.find(x => x.active).components()}
+                        </div>
+                        <div className="col-lg-12">
+                            <div className="card">
+                                <div className="card-header">
+                                    <h3 className="card-title">
+                                        {steps.find(x => x.active).title}
+                                        {segments && selected_segment
+                                            ? " — #" +
+                                              segments.find(x => x.static_segment_id === selected_segment).segment_name
+                                            : ""}
+                                    </h3>
+                                </div>
+                                {steps.find(x => x.active).components()}
+                            </div>
                         </div>
                     </div>
-                </div>
+                ) : (
+                    <NotPermissions
+                        title="Üzgünüz 😣"
+                        imageAlt="Yetersiz Yetki"
+                        content={() => (
+                            <p className="text-muted text-center">
+                                Otomatik (Tekrarlayan) Mesaj oluşturabilmek için yetkiniz bulunmamaktadır.
+                                <br />
+                                Eğer farklı bir sorun olduğunu düşünüyorsanız lütfen yöneticiniz ile iletişime
+                                geçiniz...
+                            </p>
+                        )}
+                    />
+                )}
             </div>
         );
     }

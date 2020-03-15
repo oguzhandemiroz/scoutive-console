@@ -1,6 +1,7 @@
-import { errorSwal, fatalSwal } from "../components/Alert";
+import { errorSwal, fatalSwal, showToast } from "../components/Alert";
 import ep from "../assets/js/urls";
 import { getCookie } from "../assets/js/core.js";
+import { CheckPermissions } from "./Others";
 
 const h = new Headers();
 h.append("Content-Type", "application/json");
@@ -19,7 +20,11 @@ const CreateVacation = (data, type) => {
             .then(response => {
                 if (response) {
                     const status = response.status;
-                    if (status.code !== 1020 && status.code !== 1037) errorSwal(status);
+                    if (status.code !== 1021 && status.code !== 1030) {
+                        errorSwal(status);
+                    } else {
+                        showToast(status);
+                    }
                     return response;
                 }
             })
@@ -40,7 +45,11 @@ const UpdateVacation = data => {
             .then(response => {
                 if (response) {
                     const status = response.status;
-                    if (status.code !== 1020) errorSwal(status);
+                    if (status.code !== 1022) {
+                        errorSwal(status);
+                    } else {
+                        showToast(status);
+                    }
                     return response;
                 }
             })
@@ -82,7 +91,11 @@ const DeleteVacation = data => {
             .then(response => {
                 if (response) {
                     const status = response.status;
-                    if (status.code !== 1020) errorSwal(status);
+                    if (status.code !== 1022) {
+                        errorSwal(status);
+                    } else {
+                        showToast(status);
+                    }
                     return response;
                 }
             })
@@ -101,7 +114,11 @@ const CreateAdvancePayment = data => {
             .then(response => {
                 if (response) {
                     const status = response.status;
-                    if (status.code !== 1020) errorSwal(status);
+                    if (status.code !== 1021) {
+                        errorSwal(status);
+                    } else {
+                        showToast(status);
+                    }
                     return response;
                 }
             })
@@ -129,6 +146,10 @@ const ListAdvancePayments = data => {
 
 const CreateSalary = data => {
     try {
+        if (!CheckPermissions(["e_write", "a_write"])) {
+            return Promise.resolve(null);
+        }
+
         return fetch(ep.SALARY_CREATE, {
             method: "POST",
             body: JSON.stringify(data),
@@ -138,7 +159,11 @@ const CreateSalary = data => {
             .then(response => {
                 if (response) {
                     const status = response.status;
-                    if (status.code !== 1020) errorSwal(status);
+                    if (status.code !== 1021) {
+                        errorSwal(status);
+                    } else {
+                        showToast(status);
+                    }
                     return response;
                 }
             })

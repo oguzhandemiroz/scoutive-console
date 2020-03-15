@@ -1,35 +1,14 @@
 import React, { Component } from "react";
 import ReactDOM from "react-dom";
-import { datatable_turkish, getCookie } from "../../../assets/js/core";
+import { getCookie } from "../../../assets/js/core";
+import "../../../assets/js/datatables-custom";
 import ep from "../../../assets/js/urls";
-import { nullCheck, formatMoney, formatDate } from "../../../services/Others";
-import "../../../assets/css/datatables.responsive.css";
+import { nullCheck, formatMoney, formatDate, renderForDataTableSearchStructure } from "../../../services/Others";
 import { fatalSwal, errorSwal } from "../../Alert.jsx";
-import { withRouter, Link, BrowserRouter } from "react-router-dom";
+import { withRouter } from "react-router-dom";
 import moment from "moment";
 import "moment/locale/tr";
 const $ = require("jquery");
-$.DataTable = require("datatables.net-responsive");
-
-var _childNodeStore = {};
-function _childNodes(dt, row, col) {
-    var name = row + "-" + col;
-
-    if (_childNodeStore[name]) {
-        return _childNodeStore[name];
-    }
-
-    // https://jsperf.com/childnodes-array-slice-vs-loop
-    var nodes = [];
-    var children = dt.cell(row, col).node().childNodes;
-    for (var i = 0, ien = children.length; i < ien; i++) {
-        nodes.push(children[i]);
-    }
-
-    _childNodeStore[name] = nodes;
-
-    return nodes;
-}
 
 export class List extends Component {
     constructor(props) {
@@ -42,44 +21,17 @@ export class List extends Component {
 
     componentDidMount() {
         const { uid } = this.state;
-        $(this.refs.expensetable).DataTable({
+        const table = $("#expensetable").DataTable({
             dom: '<"top"<"filterTools">f>rt<"bottom"ilp><"clear">',
             responsive: {
                 details: {
-                    type: "column",
-                    target: 0,
-                    renderer: function(api, rowIdx, columns) {
-                        var tbl = $('<table class="w-100"/>');
-                        var found = false;
-                        var data = $.map(columns, function(col, i) {
-                            if (col.hidden) {
-                                $(`<tr data-dt-row="${col.rowIndex}" data-dt-column="${col.columnIndex}">
-                                <th class="w-1 text-wrap">${col.title}</th> 
-                                </tr>`)
-                                    .append(
-                                        $("<td class='text-wrap'/>").append(
-                                            _childNodes(api, col.rowIndex, col.columnIndex)
-                                        )
-                                    )
-                                    .appendTo(tbl);
-                                found = true;
-                            }
-                        });
-
-                        return found ? tbl : false;
-                    }
+                    target: 0
                 }
             },
             aLengthMenu: [
                 [20, 50, 100, -1],
                 [20, 50, 100, "Tümü"]
             ],
-            stateSave: false, // change true
-            language: {
-                ...datatable_turkish,
-                decimal: ",",
-                thousands: "."
-            },
             order: [1, "asc"],
             ajax: {
                 url: ep.ACCOUNTING_LIST,
@@ -122,7 +74,7 @@ export class List extends Component {
                 },
                 {
                     data: "record_no",
-                    class: "w-1",
+                    class: "w-1 text-center",
                     responsivePriority: 10001,
                     render: function(data, type, row, meta) {
                         if (["sort", "type"].indexOf(type) > -1) {
@@ -135,6 +87,10 @@ export class List extends Component {
                     data: "accounting_type",
                     responsivePriority: 1,
                     render: function(data, type, row) {
+                        if (type === "filter") {
+                            return renderForDataTableSearchStructure(data + nullCheck(row.note, ""));
+                        }
+
                         return `<div class="font-weight-600">${data}</div>
                         <div class="small text-muted text-break">${nullCheck(row.note, "")}</div>`;
                     }
@@ -177,6 +133,10 @@ export class List extends Component {
                 }
             ],
             columnDefs: [
+                {
+                    type: "turkish",
+                    targets: "_all"
+                },
                 {
                     className: "control",
                     orderable: false,
@@ -221,6 +181,17 @@ export class List extends Component {
                 }
             ]
         });
+
+        table.on("error.dt", function(e, settings, techNote, message) {
+            console.log("An error has been reported by DataTables: ", message, techNote);
+        });
+    }
+
+    componentWillUnmount() {
+        $(".data-table-wrapper")
+            .find("table")
+            .DataTable()
+            .destroy(true);
     }
 
     render() {
@@ -229,24 +200,22 @@ export class List extends Component {
                 <div className="card-header">
                     <h3 className="card-title">Tüm Gider İşlemleri</h3>
                 </div>
-                <div className="table-responsive">
-                    <table
-                        ref="expensetable"
-                        className="table card-table w-100 table-vcenter table-striped text-nowrap datatable">
-                        <thead>
-                            <tr>
-                                <th className="w-1 no-sort control" />
-                                <th className="record_no">#</th>
-                                <th className="accounting_type">İşlem</th>
-                                <th className="amount">Tutar</th>
-                                <th className="payment_date">Ödeme Tarihi</th>
-                                <th className="created_date">İşlem Tarihi</th>
-                                <th className="budget no-sort">Kasa/Banka</th>
-                                <th className="detail no-sort w-1"></th>
-                            </tr>
-                        </thead>
-                    </table>
-                </div>
+                <table
+                    id="expensetable"
+                    className="table card-table w-100 table-vcenter table-striped text-nowrap datatable table-bordered">
+                    <thead>
+                        <tr>
+                            <th className="w-1 no-sort control" />
+                            <th className="record_no text-center">#</th>
+                            <th className="accounting_type">İşlem</th>
+                            <th className="amount">Tutar</th>
+                            <th className="payment_date">Ödeme Tarihi</th>
+                            <th className="created_date">İşlem Tarihi</th>
+                            <th className="budget no-sort">Kasa/Banka</th>
+                            <th className="detail no-sort w-1"></th>
+                        </tr>
+                    </thead>
+                </table>
             </div>
         );
     }

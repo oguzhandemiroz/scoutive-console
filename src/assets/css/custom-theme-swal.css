@@ -1479,7 +1479,3 @@ body.swal2-toast-column .swal2-toast .swal2-validation-message {
 .swal2-container.swal2-shown {
     background-color: rgba(54, 70, 93, 0.92) !important;
 }
-
-.swal2-container.swal2-shown :not(.swal2-container.swal2-shown > .swal2-toast) {
-    background-color: red !important;
-}

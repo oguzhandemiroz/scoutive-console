@@ -17,7 +17,8 @@ import {
 } from "../../services/Messages";
 import { ListEmployees } from "../../services/Employee";
 import { ListPlayers } from "../../services/Player";
-import { formatDate, fullnameGenerator, avatarPlaceholder, formatPhone } from "../../services/Others";
+import NotPermissions from "../../components/NotActivate/NotPermissions";
+import { formatDate, fullnameGenerator, avatarPlaceholder, formatPhone, CheckPermissions } from "../../services/Others";
 import _ from "lodash";
 const $ = require("jquery");
 
@@ -134,22 +135,25 @@ export class BulkAdd extends Component {
     }
 
     componentDidMount() {
-        GetSettings().then(resSettings => this.setState({ start: resSettings }));
-        GetSchoolFees().then(response => {
-            if (response) {
-                this.setState({ school_fees: response.data.reverse(), loading: "" });
-            }
-        });
-        MessagesAllTime().then(response => {
-            if (response) {
-                this.setState({ all_time_messages: response.data });
-            }
-        });
-        this.developLoad();
+        if (CheckPermissions(["m_write"])) {
+            GetSettings().then(resSettings => this.setState({ start: resSettings }));
+            GetSchoolFees().then(response => {
+                if (response) {
+                    this.setState({ school_fees: response.data.reverse(), loading: "" });
+                }
+            });
+            MessagesAllTime().then(response => {
+                if (response) {
+                    this.setState({ all_time_messages: response.data });
+                }
+            });
+            this.developLoad();
+        }
     }
 
     handleSubmit = () => {
         const { uid, title, players, select_template, when } = this.state;
+        this.setState({ loadingButton: "btn-loading" });
         CreateCampaign({
             uid: uid,
             title: title,
@@ -160,10 +164,11 @@ export class BulkAdd extends Component {
             working_days: [0, 1, 2, 3, 4, 5, 6]
         }).then(response => {
             if (response) {
-                if (response.status.code === 1020) {
+                if (response.status.code === 1021) {
                     this.props.history.push("/app/messages/detail/" + response.campaign_id);
                 }
             }
+            this.setState({ loadingButton: "" });
         });
     };
 
@@ -930,7 +935,7 @@ export class BulkAdd extends Component {
     };
 
     sendPreviewStep = () => {
-        const { start, school_fees, all_time_messages } = this.state;
+        const { start, school_fees, all_time_messages, loadingButton } = this.state;
         return (
             <>
                 <div className="card-body">
@@ -977,7 +982,10 @@ export class BulkAdd extends Component {
                             className="btn btn-info btn-icon mr-2">
                             Test Mesajı Gönder<i className="fa fa-flask ml-2"></i>
                         </button>
-                        <button type="button" onClick={this.handleSubmit} className="btn btn-success btn-icon">
+                        <button
+                            type="button"
+                            onClick={this.handleSubmit}
+                            className={`btn btn-success btn-icon ${loadingButton}`}>
                             Onayla ve Gönder<i className="fa fa-check ml-2"></i>
                         </button>
                     </div>
@@ -1324,29 +1332,49 @@ export class BulkAdd extends Component {
             <div className="container">
                 <div className="page-header">
                     <h1 className="page-title">Toplu Mesaj Oluştur</h1>
-                    <Link className="btn btn-link ml-auto" to={"/app/messages"}>
-                        İletişim Merkezine Geri Dön
+                    <Link className="btn btn-link ml-auto" to={"/app/messages/select"}>
+                        Mesaj Tipi Seçme Ekranına Geri Dön
                     </Link>
                 </div>
-                <div className="row">
-                    <div className="col-12">
-                        <div className="steps steps-lime">
-                            {steps.map(el => (
-                                <span key={el.key} className={`step-item ${el.active ? "active" : ""}`}>
-                                    {el.name}
-                                </span>
-                            ))}
-                        </div>
-                    </div>
-                    <div className="col-lg-12">
-                        <div className="card">
-                            <div className="card-header">
-                                <h3 className="card-title">{steps.find(x => x.active).title}</h3>
+                {CheckPermissions(["p_read"]) ? (
+                    <div className="row">
+                        <div className="col-12">
+                            <div className="steps steps-lime">
+                                {steps.map(el => (
+                                    <span key={el.key} className={`step-item ${el.active ? "active" : ""}`}>
+                                        {el.name}
+                                    </span>
+                                ))}
                             </div>
-                            {steps.find(x => x.active).components()}
+                        </div>
+                        <div className="col-lg-12">
+                            <div className="card">
+                                <div className="card-header">
+                                    <h3 className="card-title">{steps.find(x => x.active).title}</h3>
+                                </div>
+                                {steps.find(x => x.active).components()}
+                            </div>
                         </div>
                     </div>
-                </div>
+                ) : (
+                    <div className="row">
+                        <div className="col-12">
+                            <NotPermissions
+                                title="Üzgünüz 😣"
+                                imageAlt="Yetersiz Yetki"
+                                content={() => (
+                                    <p className="text-muted text-center">
+                                        Toplu Mesaj oluşturabilmek için öğrencileri ve velileri görüntüleme yetkinizin
+                                        olması gerekiyor.
+                                        <br />
+                                        Eğer farklı bir sorun olduğunu düşünüyorsanız lütfen yöneticiniz ile iletişime
+                                        geçiniz...
+                                    </p>
+                                )}
+                            />
+                        </div>
+                    </div>
+                )}
             </div>
         );
     }

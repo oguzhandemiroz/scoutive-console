@@ -30,7 +30,6 @@ const InputmaskDefaultOptions = {
 const { Option } = components;
 const ImageOptionEmployee = props => (
     <Option {...props}>
-        <span className="avatar avatar-sm mr-2" style={{ backgroundImage: `url(${props.data.image})` }} />
         {props.data.label}
         <div className="small text-muted mt-1">
             Pozisyon: <b className="text-blue">{props.data.position}</b>
@@ -128,7 +127,7 @@ export class Edit extends Component {
                 work_days: _.join(work_days, ",")
             }).then(response => {
                 if (response) {
-                    if (response.status.code === 1020) {
+                    if (response.status.code === 1022) {
                         const group_id = response.group_id;
                         ChangeGroup({
                             uid: uid,
@@ -138,7 +137,7 @@ export class Edit extends Component {
                         }).then(response => {
                             if (response) {
                                 const status = response.status;
-                                if (status.code === 1020) {
+                                if (status.code === 1022) {
                                     this.props.history.push("/app/groups/detail/" + group_id);
                                 }
                             }

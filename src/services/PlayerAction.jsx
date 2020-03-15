@@ -1,4 +1,4 @@
-import { errorSwal, fatalSwal, Toast } from "../components/Alert";
+import { errorSwal, fatalSwal, Toast, showToast } from "../components/Alert";
 import ep from "../assets/js/urls";
 import { getCookie } from "../assets/js/core.js";
 
@@ -19,7 +19,11 @@ const CreateVacation = (data, type) => {
             .then(response => {
                 if (response) {
                     const status = response.status;
-                    if (status.code !== 1020 && status.code !== 1037) errorSwal(status);
+                    if (status.code !== 1021 && status.code !== 1030) {
+                        errorSwal(status);
+                    } else {
+                        showToast(status);
+                    }
                     return response;
                 }
             })
@@ -82,11 +86,12 @@ const CreatePaymentFee = data => {
             .then(response => {
                 if (response) {
                     const status = response.status;
-                    if (status.code !== 1020)
-                        errorSwal(status, {
-                            title: "Uyarı",
-                            text: "Tamamlanmamış ödeme bulunmaktadır. Ödemeleri tamamladıktan sonra tekrar deneyiniz!"
-                        });
+                    if (status.code !== 4020) {
+                        errorSwal(status);
+                    } else {
+                        showToast(status);
+                    }
+
                     return response;
                 }
             })
@@ -107,12 +112,10 @@ const UpdatePaymentFee = data => {
             .then(response => {
                 if (response) {
                     const status = response.status;
-                    if (status.code !== 1020) errorSwal(status);
-                    else {
-                        Toast.fire({
-                            type: "success",
-                            title: status.description
-                        });
+                    if (status.code !== 4020) {
+                        errorSwal(status);
+                    } else {
+                        showToast(status);
                     }
                     return response;
                 }
@@ -182,7 +185,11 @@ const DeleteVacation = data => {
             .then(response => {
                 if (response) {
                     const status = response.status;
-                    if (status.code !== 1020) errorSwal(status);
+                    if (status.code !== 1022) {
+                        errorSwal(status);
+                    } else {
+                        showToast(status);
+                    }
                     return response;
                 }
             })

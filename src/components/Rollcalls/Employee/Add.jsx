@@ -1,22 +1,28 @@
 import React, { Component } from "react";
 import ReactDOM from "react-dom";
-import { BrowserRouter, withRouter, Link } from "react-router-dom";
+import { withRouter, Link } from "react-router-dom";
 import Inputmask from "inputmask";
 import moment from "moment";
 import "moment/locale/tr";
-import { MakeRollcall, SetNoteRollcall, DeleteRollcall } from "../../../services/Rollcalls";
+import { MakeRollcall, SetNoteRollcall, DeleteRollcall, CloseRollcall } from "../../../services/Rollcalls";
 import { CreateVacation, UpdateVacation } from "../../../services/EmployeeAction";
-import { WarningModal as Modal } from "../WarningModal";
-import { datatable_turkish, getCookie } from "../../../assets/js/core";
+import { getCookie } from "../../../assets/js/core";
 import ep from "../../../assets/js/urls";
+import "../../../assets/js/datatables-custom";
 import AdvancePayment from "../../EmployeeAction/AdvancePayment";
 import { fatalSwal, errorSwal, Toast, showSwal } from "../../Alert.jsx";
 import Vacation from "../../EmployeeAction/Vacation";
 import Password from "../../EmployeeAction/Password";
 import ActionButton from "../../Employees/ActionButton";
-import { fullnameGenerator } from "../../../services/Others";
+import {
+    fullnameGenerator,
+    renderForDataTableSearchStructure,
+    nullCheck,
+    formatPhone,
+    avatarPlaceholder,
+    CheckPermissions
+} from "../../../services/Others";
 const $ = require("jquery");
-$.DataTable = require("datatables.net");
 
 const statusType = {
     0: { bg: "bg-danger", title: "Pasif" },
@@ -69,18 +75,17 @@ export class Add extends Component {
         const { rcid } = this.props.match.params;
         const table = $("#rollcall-list").DataTable({
             dom: '<"top"f>rt<"bottom"ilp><"clear">',
-            responsive: false,
-            order: [3, "asc"],
+            responsive: {
+                details: {
+                    target: 2
+                }
+            },
+            order: [4, "asc"],
             aLengthMenu: [
                 [30, 50, 100, -1],
                 [30, 50, 100, "Tümü"]
             ],
-            stateSave: true, // change true
-            language: {
-                ...datatable_turkish,
-                decimal: ",",
-                thousands: "."
-            },
+            stateSave: true,
             ajax: {
                 url: ep.ROLLCALL_LIST_TYPE + "employees",
                 type: "POST",
@@ -99,7 +104,6 @@ export class Add extends Component {
                 contentType: "application/json",
                 complete: function(res) {
                     try {
-                        console.log(res);
                         if (res.responseJSON.status.code !== 1020) {
                             if (res.status !== 200) fatalSwal();
                             else errorSwal(res.responseJSON.status);
@@ -109,7 +113,6 @@ export class Add extends Component {
                     }
                 },
                 dataSrc: d => {
-                    console.log(d);
                     if (d.status.code !== 1020) {
                         errorSwal(d.status);
                         return [];
@@ -129,8 +132,17 @@ export class Add extends Component {
             },
             columnDefs: [
                 {
+                    type: "turkish",
+                    targets: "_all"
+                },
+                {
                     targets: [0, 1],
                     visible: false
+                },
+                {
+                    className: "control",
+                    orderable: false,
+                    targets: [2]
                 },
                 {
                     targets: "no-sort",
@@ -138,13 +150,6 @@ export class Add extends Component {
                 },
                 {
                     targets: "name",
-                    responsivePriority: 1,
-                    render: function(data, type, row) {
-                        const fullname = fullnameGenerator(data, row.surname);
-                        if (["sort", "type"].indexOf(type) > -1) {
-                            return fullname;
-                        }
-                    },
                     createdCell: (td, cellData, rowData) => {
                         const { uid, name, surname } = rowData;
                         const fullname = fullnameGenerator(name, surname);
@@ -160,7 +165,7 @@ export class Add extends Component {
                 },
                 {
                     targets: "rollcalls",
-                    responsivePriority: 10002,
+                    responsivePriority: 5,
                     createdCell: (td, cellData, rowData) => {
                         ReactDOM.render(
                             <div>
@@ -193,7 +198,8 @@ export class Add extends Component {
                 },
                 {
                     targets: "status",
-                    class: "w-1",
+                    class: "w-1 px-3",
+                    responsivePriority: 2,
                     createdCell: (td, cellData, rowData) => {
                         const { uid } = rowData;
                         const { statuses, loadingButtons } = this.state;
@@ -219,7 +225,7 @@ export class Add extends Component {
                                             statuses.find(x => x.uid === uid).status === 3
                                                 ? "btn-warning"
                                                 : "btn-secondary"
-                                        } mx-2 ${loadingButtons.find(x => x === uid) ? "btn-loading" : ""}`}>
+                                        } mx-1 ${loadingButtons.find(x => x === uid) ? "btn-loading" : ""}`}>
                                         <i className="fe fe-alert-circle" />
                                     </button>
                                     <div className="dropdown-menu">
@@ -249,38 +255,12 @@ export class Add extends Component {
                     }
                 },
                 {
-                    targets: "note",
-                    class: "py-1 text-center",
-                    createdCell: (td, cellData, rowData) => {
-                        const { uid, name, surname, note, daily } = rowData;
-                        ReactDOM.render(
-                            <>
-                                {daily !== -1 ? (
-                                    <span
-                                        onClick={() => this.removeRollcallStatus(uid)}
-                                        className="icon cursor-pointer"
-                                        data-toggle="tooltip"
-                                        title="Yoklamayı Kaldır">
-                                        <i className="fe fe-x" />
-                                    </span>
-                                ) : null}
-                                <span
-                                    onClick={() => this.setRollcallNote(fullnameGenerator(name, surname), uid)}
-                                    className="icon cursor-pointer ml-2"
-                                    data-toggle="tooltip"
-                                    title={note ? "Not: " + note : "Not Gir"}>
-                                    <i className={`fe fe-edit ${note ? "text-orange" : ""}`} />
-                                </span>
-                            </>,
-                            td
-                        );
-                    }
-                },
-                {
                     targets: "action",
+                    class: "w-1 px-3",
+                    responsivePriority: 4,
                     createdCell: (td, cellData, rowData) => {
                         const fullname = fullnameGenerator(rowData.name, rowData.surname);
-                        const { uid, status } = rowData;
+                        const { uid, status, daily, note, name, surname } = rowData;
                         ReactDOM.render(
                             <ActionButton
                                 advancePaymentButton={data =>
@@ -306,13 +286,36 @@ export class Add extends Component {
                                     status: status
                                 }}
                                 renderButton={() => (
-                                    <a
-                                        className="icon"
-                                        data-toggle="dropdown"
-                                        aria-haspopup="true"
-                                        aria-expanded="false">
-                                        <i className="fe fe-more-vertical"></i>
-                                    </a>
+                                    <>
+                                        {CheckPermissions(["r_write"]) && daily !== -1 && (
+                                            <button
+                                                className="btn btn-icon btn-sm btn-secondary mr-1"
+                                                data-toggle="tooltip"
+                                                onClick={() => this.removeRollcallStatus(uid)}
+                                                title="Yoklamayı Kaldır">
+                                                <i className="fe fe-x text-danger" />
+                                            </button>
+                                        )}
+                                        {CheckPermissions(["r_write"]) && (
+                                            <button
+                                                className="btn btn-icon btn-sm btn-secondary mr-1"
+                                                data-toggle="tooltip"
+                                                onClick={() =>
+                                                    this.setRollcallNote(fullnameGenerator(name, surname), uid)
+                                                }
+                                                title={note ? "Not: " + note : "Not Gir"}>
+                                                <i className={`fe fe-edit ${note ? "text-orange" : ""}`} />
+                                            </button>
+                                        )}
+                                        <a
+                                            title="İşlem Menüsü"
+                                            className="btn btn-icon btn-sm btn-secondary"
+                                            data-toggle="dropdown"
+                                            aria-haspopup="true"
+                                            aria-expanded="false">
+                                            <i className="fe fe-menu" />
+                                        </a>
+                                    </>
                                 )}
                             />,
                             td
@@ -328,45 +331,52 @@ export class Add extends Component {
                     data: "security_id"
                 },
                 {
+                    data: null,
+                    defaultContent: ""
+                },
+                {
                     data: "image",
                     class: "text-center",
+                    responsivePriority: 5,
                     render: function(data, type, row) {
-                        var name = row.name;
-                        var surname = row.surname;
                         var status = row.status;
                         var renderBg = row.is_trial ? statusType[3].bg : statusType[status].bg;
                         var renderTitle = row.is_trial
                             ? statusType[status].title + " & Ön Kayıt Personel"
                             : statusType[status].title + " Personel";
-                        return `<div class="avatar text-uppercase" style="background-image: url(${data || ""})">
-									${data ? "" : name.slice(0, 1) + surname.slice(0, 1)}
+                        return `<div class="avatar text-uppercase" style="background-image: url(${nullCheck(data)})">
+                                    ${avatarPlaceholder(row.name, row.surname)}
 									<span class="avatar-status ${renderBg}" data-toggle="tooltip" title="${renderTitle}"></span>
 								</div>`;
                     }
                 },
                 {
                     data: "name",
+                    responsivePriority: 1,
                     render: function(data, type, row) {
                         const fullname = fullnameGenerator(data, row.surname);
+                        if (type === "filter") {
+                            return renderForDataTableSearchStructure(fullname);
+                        }
                         if (["sort", "type"].indexOf(type) > -1) {
                             return fullname;
                         }
+
                         if (data)
                             return `<a class="text-inherit font-weight-600" href="/app/persons/employees/detail/${row.uid}">${fullname}</a>`;
                     }
                 },
                 {
                     data: "phone",
+                    responsivePriority: 3,
                     render: function(data, type, row) {
-                        const formatPhone = data ? Inputmask.format(data, { mask: "(999) 999 9999" }) : null;
-                        if (formatPhone) return `<a href="tel:+90${data}" class="text-inherit">${formatPhone}</a>`;
-                        else return "&mdash;";
+                        return `<a href="tel:+90${data}" class="text-inherit">${formatPhone(data)}</a>`;
                     }
                 },
                 {
-                    data: "position"
+                    data: "position",
+                    responsivePriority: 4
                 },
-                { data: null },
                 { data: null },
                 { data: null },
                 { data: null }
@@ -379,7 +389,6 @@ export class Add extends Component {
         });
 
         $("#rollcall-list").on("draw.dt", function() {
-            console.log("draw.dt");
             $('[data-toggle="tooltip"]').tooltip();
             $('[data-toggle="popover"]').popover({
                 html: true,
@@ -620,22 +629,7 @@ export class Add extends Component {
                                 note: value
                             },
                             "employee"
-                        ).then(response => {
-                            if (response) {
-                                if (response.status.code === 1020) {
-                                    Toast.fire({
-                                        type: "success",
-                                        title: "Not ekleme başarılı!"
-                                    });
-                                } else {
-                                    Toast.fire({
-                                        type: "danger",
-                                        title: "Not ekleme başarısız!"
-                                    });
-                                }
-                                setTimeout(this.reload, 1000);
-                            }
-                        });
+                        ).then(response => setTimeout(this.reload, 1000));
                     } else {
                         resolve("Hatalı değer!");
                     }
@@ -652,14 +646,54 @@ export class Add extends Component {
         );
     };
 
+    closeRollcall = () => {
+        const { uid } = this.state;
+        const { rcid } = this.props.match.params;
+        showSwal({
+            type: "warning",
+            title: "Uyarı",
+            html: `Yoklama sonlandırılacaktır!
+            <br>Yoklama sonlandıktan sonra <u>değişiklik yapamazsınız.</u>
+            <br><br>
+            İşaretlenmemiş personeller sisteme<br>
+            <strong class="text-orange">Tanımsız</strong> olarak tanımlanacaktır.
+            <br>Yoklamayı sonlandırmak istediğinize emin misiniz?
+            <br><br>
+            <u class="bg-red p-1">Bu işlem geri alınamaz.</u>
+            <br><br>
+            <span class="font-italic">Not: Sonlandırılmayan yoklamalar gün sonunda otomatik olarak sonlanır.</span>`,
+            confirmButtonText: "Eminim, Sonlandır",
+            cancelButtonText: "İptal",
+            confirmButtonColor: "#cd201f",
+            cancelButtonColor: "#868e96",
+            showCancelButton: true,
+            reverseButtons: true
+        }).then(re => {
+            if (re.value) {
+                CloseRollcall({
+                    uid: uid,
+                    rollcall_id: rcid
+                }).then(response => {
+                    if (response) {
+                        const status = response.status;
+                        if (status.code === 1020) {
+                            this.props.history.push("/app/rollcalls/employee");
+                        }
+                    }
+                });
+            }
+        });
+    };
+
     render() {
         const { data } = this.state;
         return (
             <div className="container">
                 <div className="page-header">
-                    <h1 className="page-title">
-                        Yoklamalar &mdash; Personel &mdash; Yoklama Al (#{this.props.match.params.rcid})
-                    </h1>
+                    <h1 className="page-title">Yoklamalar &mdash; Personeller &mdash; Yoklama Al</h1>
+                    <Link className="btn btn-link ml-auto" to={"/app/rollcalls/employee"}>
+                        Yoklamalara Geri Dön
+                    </Link>
                 </div>
                 <div className="row">
                     <div className="col-lg-12">
@@ -668,33 +702,35 @@ export class Add extends Component {
                                 <div className="card-status bg-azure" />
                                 <h3 className="card-title">Personel Listesi</h3>
                                 <div className="card-options">
+                                    <button onClick={this.closeRollcall} className="btn btn-sm btn-danger mr-2">
+                                        Yoklamayı Sonlandır
+                                    </button>
                                     <span
                                         className="form-help bg-gray-dark text-white"
                                         data-toggle="popover"
                                         data-placement="bottom"
-                                        data-content='<p>Yoklama yapılırken, sisteme <b>"geldi"</b>, <b>"izinli"</b> veya <b>"gelmedi"</b> olarak giriş yapabilirsiniz.</p><p>Yoklamalar gün sonunda otomatik olarak tamamlanır. İşaretlenmemiş olanlar, sisteme <b>"gelmedi"</b> şeklinde tanımlanır.</p><p><b className="text-red">Not:</b> Yoklama tamamlana kadar değişiklik yapabilirsiniz. Tamamlanan yoklamalarda değişiklik <b><u><i>yapılamaz.</i></u></b></p>'>
+                                        data-content='<p>Yoklama alınırken, sisteme <b>"geldi"</b>, <b>"izinli"</b> veya <b>"gelmedi"</b> olarak giriş yapabilirsiniz.</p><p>Yoklamalar sonlandırılmadığı takdirde gün sonunda otomatik olarak sonlanır. İşaretlenmemiş olanlar, sisteme <b>"Tanımsız"</b> şeklinde tanımlanır.</p><p><b className="text-red">Not:</b> Yoklama sonlanana kadar değişiklik yapabilirsiniz. Sonlanılan yoklamalarda değişiklik <b class="text-red"><u><i>yapılamaz.</i></u></b></p>'>
                                         !
                                     </span>
-                                    <Modal />
                                 </div>
                             </div>
                             <div className="card-body p-0">
                                 <div className="table-responsive">
                                     <table
                                         id="rollcall-list"
-                                        className="table card-table w-100 table-vcenter table-hover text-nowrap datatable">
+                                        className="table card-table w-100 table-vcenter table-hover text-nowrap datatable table-bordered">
                                         <thead>
                                             <tr>
                                                 <th>ID</th>
                                                 <th className="w-1 no-sort">T.C.</th>
+                                                <th className="w-1 no-sort control" />
                                                 <th className="w-1 text-center no-sort"></th>
                                                 <th className="name">AD SOYAD</th>
                                                 <th className="phone">TELEFON</th>
                                                 <th className="position">POZİSYON</th>
-                                                <th className="no-sort rollcalls">SON 3 YOKLAMA</th>
+                                                <th className="no-sort rollcalls">SON 4 YOKLAMA</th>
                                                 <th className="w-1 no-sort status">DURUM</th>
-                                                <th className="pr-2 no-sort note"></th>
-                                                <th className="pr-2 w-1 no-sort action"></th>
+                                                <th className="w-1 no-sort action">İŞLEM</th>
                                             </tr>
                                         </thead>
                                     </table>

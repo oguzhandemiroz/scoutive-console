@@ -1,31 +1,15 @@
 import React, { Component } from "react";
 import ReactDOM from "react-dom";
-import { BrowserRouter, Link, withRouter } from "react-router-dom";
-import { datatable_turkish } from "../../assets/js/core";
-import { formatDate, fullnameGenerator, nullCheck, avatarPlaceholder, formatPhone } from "../../services/Others.jsx";
-import "../../assets/css/datatables.responsive.css";
+import "../../assets/js/datatables-custom";
+import {
+    formatDate,
+    fullnameGenerator,
+    nullCheck,
+    avatarPlaceholder,
+    formatPhone,
+    renderForDataTableSearchStructure
+} from "../../services/Others.jsx";
 const $ = require("jquery");
-$.DataTable = require("datatables.net-responsive");
-
-var _childNodeStore = {};
-function _childNodes(dt, row, col) {
-    var name = row + "-" + col;
-
-    if (_childNodeStore[name]) {
-        return _childNodeStore[name];
-    }
-
-    // https://jsperf.com/childnodes-array-slice-vs-loop
-    var nodes = [];
-    var children = dt.cell(row, col).node().childNodes;
-    for (var i = 0, ien = children.length; i < ien; i++) {
-        nodes.push(children[i]);
-    }
-
-    _childNodeStore[name] = nodes;
-
-    return nodes;
-}
 
 const personTypeToText = {
     1: "players",
@@ -74,44 +58,20 @@ export class ListRecipient extends Component {
                 dom: '<"top"<"filterTools">f>rt<"bottom"ilp><"clear">',
                 responsive: {
                     details: {
-                        type: "column",
-                        target: 1,
-                        renderer: function(api, rowIdx, columns) {
-                            var tbl = $('<table class="w-100"/>');
-                            var found = false;
-                            var data = $.map(columns, function(col, i) {
-                                if (col.hidden) {
-                                    $(`<tr data-dt-row="${col.rowIndex}" data-dt-column="${col.columnIndex}">
-                                    <th class="w-1 text-wrap">${col.title}</th> 
-                                    </tr>`)
-                                        .append(
-                                            $("<td class='text-wrap'/>").append(
-                                                _childNodes(api, col.rowIndex, col.columnIndex)
-                                            )
-                                        )
-                                        .appendTo(tbl);
-                                    found = true;
-                                }
-                            });
-
-                            return found ? tbl : false;
-                        }
+                        target: 1
                     }
                 },
-                fixedHeader: true,
                 order: [0, "desc"],
                 aLengthMenu: [
                     [20, 50, 100, -1],
                     [20, 50, 100, "Tümü"]
                 ],
-                stateSave: false, // change true
-                language: {
-                    ...datatable_turkish,
-                    decimal: ",",
-                    thousands: "."
-                },
                 data: data,
                 columnDefs: [
+                    {
+                        type: "turkish",
+                        targets: "_all"
+                    },
                     {
                         targets: [0],
                         visible: false
@@ -127,13 +87,6 @@ export class ListRecipient extends Component {
                     },
                     {
                         targets: "name",
-                        responsivePriority: 1,
-                        render: function(data, type, row) {
-                            const fullname = fullnameGenerator(data, row.surname);
-                            if (["sort", "type"].indexOf(type) > -1) {
-                                return fullname;
-                            }
-                        },
                         createdCell: (td, cellData, rowData) => {
                             const { uid, name, surname, person_type } = rowData;
                             const fullname = fullnameGenerator(name, surname);
@@ -160,11 +113,13 @@ export class ListRecipient extends Component {
                     },
                     {
                         data: "image",
-                        responsivePriority: 6,
+                        responsivePriority: 5,
                         class: "text-center",
                         render: function(data, type, row) {
                             const { name, surname } = row;
-                            return `<div class="avatar text-uppercase" style="background-image: url(${data || ""})">
+                            return `<div class="avatar text-uppercase" style="background-image: url(${nullCheck(
+                                data
+                            )})">
                                     ${avatarPlaceholder(name, surname)}
                                 </div>`;
                         }
@@ -174,6 +129,14 @@ export class ListRecipient extends Component {
                         responsivePriority: 1,
                         render: function(data, type, row) {
                             const fullname = fullnameGenerator(data, row.surname);
+                            if (type === "filter") {
+                                return renderForDataTableSearchStructure(fullname);
+                            }
+
+                            if (["sort", "type"].indexOf(type) > -1) {
+                                return fullname;
+                            }
+
                             return fullname;
                         }
                     },
@@ -181,39 +144,46 @@ export class ListRecipient extends Component {
                         data: "message.to",
                         responsivePriority: 2,
                         render: function(data, type, row) {
-                            return formatPhone(data);
+                            return data !== "None" && data !== null ? formatPhone(data) : "—";
                         }
                     },
                     {
                         data: "message.operator",
-                        responsivePriority: 10011,
+                        responsivePriority: 6,
                         render: function(data, type, row) {
                             return nullCheck(data);
                         }
                     },
                     {
                         data: "message.sent_date",
-                        responsivePriority: 4,
+                        responsivePriority: 3,
                         render: function(data, type, row) {
                             return formatDate(data, "DD MMMM YYYY, HH:mm");
                         }
                     },
                     {
                         data: "message.content",
-                        responsivePriority: 10012,
                         className: "none",
                         render: function(data, type, row) {
-                            return nullCheck(data);
+                            if (type === "filter") {
+                                return renderForDataTableSearchStructure(data);
+                            }
+                            return `<span class="text-wrap">${nullCheck(data)}</span>`;
                         }
                     },
                     {
                         data: "message.status",
+                        responsivePriority: 4,
                         render: function(data, type, row) {
+                            const badgeColor = data.code === "0" ? "warning" : data.code === "1" ? "success" : "danger";
+                            const messageText =
+                                data.code === "0" ? "kuyrukta" : data.code === "1" ? "iletildi" : "iletilemedi";
+
+                            if (type === "filter") {
+                                return renderForDataTableSearchStructure(messageText);
+                            }
+
                             if (Object.keys(row.message).length > 0) {
-                                const badgeColor =
-                                    data.code === "0" ? "warning" : data.code === "1" ? "success" : "danger";
-                                const messageText =
-                                    data.code === "0" ? "kuyrukta" : data.code === "1" ? "iletildi" : "iletilemedi";
                                 return `<span class="badge badge-${badgeColor}" data-toggle="popover" data-content="
                                     <p><strong>Durum Açıklaması:</strong></p><span class='text-${badgeColor}'>${data.description}</span>
                                 ">${messageText}</span>`;
@@ -225,7 +195,6 @@ export class ListRecipient extends Component {
                 ]
             });
 
-            $.fn.DataTable.ext.errMode = "none";
             table.on("error.dt", function(e, settings, techNote, message) {
                 console.log("An error has been reported by DataTables: ", message, techNote);
             });
@@ -236,10 +205,10 @@ export class ListRecipient extends Component {
 
     render() {
         return (
-            <div className="table-responsive">
+            <div>
                 <table
                     id="message-recipient-list"
-                    className="table card-table w-100 table-vcenter table-striped text-nowrap datatable dataTable">
+                    className="table card-table w-100 table-vcenter table-striped text-nowrap datatable dataTable table-bordered">
                     <thead>
                         <tr>
                             <th className="uid">UID</th>
@@ -259,4 +228,4 @@ export class ListRecipient extends Component {
     }
 }
 
-export default withRouter(ListRecipient);
+export default ListRecipient;

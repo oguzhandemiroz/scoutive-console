@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { ListGroups } from "../../services/Group";
 import { Link, withRouter } from "react-router-dom";
 import moment from "moment";
-import { fullnameGenerator, avatarPlaceholder } from "../../services/Others";
+import { fullnameGenerator, avatarPlaceholder, CheckPermissions } from "../../services/Others";
 const $ = require("jquery");
 
 export class List extends Component {
@@ -100,13 +100,15 @@ export class List extends Component {
                                                 data-toggle="tooltip">
                                                 {this.getWorkDays(el.work_days)}
                                             </div>
-                                            <div className="col-auto">
-                                                <Link
-                                                    to={"/app/groups/edit/" + el.group_id}
-                                                    className="btn btn-secondary btn-sm">
-                                                    Düzenle
-                                                </Link>
-                                            </div>
+                                            {CheckPermissions(["g_write"]) && (
+                                                <div className="col-auto">
+                                                    <Link
+                                                        to={"/app/groups/edit/" + el.group_id}
+                                                        className="btn btn-secondary btn-sm">
+                                                        Düzenle
+                                                    </Link>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                 </div>

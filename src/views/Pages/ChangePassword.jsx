@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Change } from "../../services/Password";
+import { nullCheck } from "../../services/Others";
 
 const formValid = ({ formErrors, ...rest }) => {
     let valid = true;
@@ -29,7 +30,11 @@ export class ChangePassword extends Component {
             uid: localStorage.getItem("UID"),
             ...initialState,
             loadingButton: "",
-            formErrors: { password: "", new_password: "", new_password_again: "" }
+            formErrors: { password: "", new_password: "", new_password_again: "" },
+            showPassword: {
+                existing: false,
+                new: false
+            }
         };
     }
 
@@ -44,7 +49,14 @@ export class ChangePassword extends Component {
                     uid: uid,
                     current_password: password,
                     new_password: new_password_again
-                }).then(response => this.props.history.push("/app/dashboard"));
+                }).then(response => {
+                    if (response) {
+                        if (response.status.code === 1022) {
+                            this.props.history.push("/app/dashboard");
+                        }
+                    }
+                    this.setState({ loadingButton: "" });
+                });
             } else {
                 console.error("FORM INVALID - DISPLAY ERROR");
                 let formErrors = { ...this.state.formErrors };
@@ -87,8 +99,19 @@ export class ChangePassword extends Component {
         } catch (e) {}
     };
 
+    handleShowPassword = type => {
+        const { showPassword } = this.state;
+        const showPasswordToggle = !showPassword[type];
+        this.setState(prevState => ({
+            showPassword: {
+                ...prevState.showPassword,
+                [type]: showPasswordToggle
+            }
+        }));
+    };
+
     render() {
-        const { formErrors, loadingButton, password, new_password, new_password_again } = this.state;
+        const { formErrors, loadingButton, password, new_password, new_password_again, showPassword } = this.state;
         return (
             <div className="page-single">
                 <div className="container">
@@ -102,14 +125,26 @@ export class ChangePassword extends Component {
                                             Mevcut Şifre
                                             <span className="form-required">*</span>
                                         </label>
-                                        <input
-                                            type="password"
-                                            className={`form-control ${formErrors.password}`}
-                                            name="password"
-                                            placeholder="Mevcut Şifre"
-                                            onChange={this.handleChange}
-                                            value={password || ""}
-                                        />
+                                        <div className="input-group">
+                                            <input
+                                                type={showPassword.existing ? "text" : "password"}
+                                                className={`form-control ${formErrors.password}`}
+                                                name="password"
+                                                placeholder="Mevcut Şifre"
+                                                onChange={this.handleChange}
+                                                value={nullCheck(password, "")}
+                                            />
+                                            <span
+                                                class="input-group-append cursor-pointer"
+                                                onClick={() => this.handleShowPassword("existing")}>
+                                                <span class="input-group-text">
+                                                    <i
+                                                        className={`fe fe-eye${
+                                                            showPassword.existing ? "-off" : ""
+                                                        }`}></i>
+                                                </span>
+                                            </span>
+                                        </div>
                                     </div>
 
                                     <div className="form-group">
@@ -117,14 +152,23 @@ export class ChangePassword extends Component {
                                             Yeni Şifre
                                             <span className="form-required">*</span>
                                         </label>
-                                        <input
-                                            type="password"
-                                            className={`form-control ${formErrors.new_password}`}
-                                            name="new_password"
-                                            placeholder="Yeni Şifre"
-                                            onChange={this.handleChange}
-                                            value={new_password || ""}
-                                        />
+                                        <div className="input-group">
+                                            <input
+                                                type={showPassword.new ? "text" : "password"}
+                                                className={`form-control ${formErrors.new_password}`}
+                                                name="new_password"
+                                                placeholder="Yeni Şifre"
+                                                onChange={this.handleChange}
+                                                value={nullCheck(new_password, "")}
+                                            />
+                                            <span
+                                                class="input-group-append cursor-pointer"
+                                                onClick={() => this.handleShowPassword("new")}>
+                                                <span class="input-group-text">
+                                                    <i className={`fe fe-eye${showPassword.new ? "-off" : ""}`}></i>
+                                                </span>
+                                            </span>
+                                        </div>
                                     </div>
 
                                     <div className="form-group">
@@ -132,14 +176,23 @@ export class ChangePassword extends Component {
                                             Yeni Şifre (Tekrar)
                                             <span className="form-required">*</span>
                                         </label>
-                                        <input
-                                            type="password"
-                                            className={`form-control ${formErrors.new_password_again}`}
-                                            name="new_password_again"
-                                            placeholder="Yeni Şifre (Tekrar)"
-                                            onChange={this.handleChange}
-                                            value={new_password_again || ""}
-                                        />
+                                        <div className="input-group">
+                                            <input
+                                                type={showPassword.new ? "text" : "password"}
+                                                className={`form-control ${formErrors.new_password_again}`}
+                                                name="new_password_again"
+                                                placeholder="Yeni Şifre (Tekrar)"
+                                                onChange={this.handleChange}
+                                                value={nullCheck(new_password_again, "")}
+                                            />
+                                            <span
+                                                class="input-group-append cursor-pointer"
+                                                onClick={() => this.handleShowPassword("new")}>
+                                                <span class="input-group-text">
+                                                    <i className={`fe fe-eye${showPassword.new ? "-off" : ""}`}></i>
+                                                </span>
+                                            </span>
+                                        </div>
                                     </div>
                                     <div className="form-footer">
                                         <button className={`btn btn-primary btn-block ${loadingButton}`}>
