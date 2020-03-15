@@ -98,11 +98,15 @@ export class List extends Component {
                 {
                     data: "amount",
                     responsivePriority: 2,
-                    render: function(data, type, row) {
+                    render: function(data, type) {
+                        if (type === "filter") {
+                            return renderForDataTableSearchStructure(data + " " + formatMoney(data));
+                        }
+
                         if (["sort", "type"].indexOf(type) > -1) {
                             return data;
                         }
-                        if (data !== null && data !== "") return formatMoney(data);
+                        return formatMoney(data);
                     }
                 },
                 {

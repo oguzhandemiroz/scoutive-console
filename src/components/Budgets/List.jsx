@@ -4,7 +4,7 @@ import "../../assets/js/datatables-custom";
 import { getCookie } from "../../assets/js/core";
 import { fatalSwal, errorSwal } from "../Alert.jsx";
 import ReactDOM from "react-dom";
-import { renderForDataTableSearchStructure } from "../../services/Others";
+import { renderForDataTableSearchStructure, formatMoney } from "../../services/Others";
 const $ = require("jquery");
 
 const budgetType = {
@@ -148,13 +148,14 @@ export class List extends Component {
                         data: "balance",
                         responsivePriority: 2,
                         render: function(data, type, row) {
+                            if (type === "filter") {
+                                return renderForDataTableSearchStructure(data + " " + formatMoney(data));
+                            }
+
                             if (["sort", "type"].indexOf(type) > -1) {
                                 return data;
-                            } else {
-                                var convert = typeof data === "number" ? data.format(2, 3, ".", ",") : data;
-                                convert = convert ? convert + " " + currencyType[row.currency].sign : "&mdash;";
-                                return convert;
                             }
+                            return formatMoney(data, currencyType[row.currency].sign);
                         }
                     },
                     {

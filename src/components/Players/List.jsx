@@ -9,7 +9,8 @@ import {
     nullCheck,
     formatPhone,
     formatDate,
-    renderForDataTableSearchStructure
+    renderForDataTableSearchStructure,
+    formatMoney
 } from "../../services/Others";
 import { GetPlayerParents } from "../../services/Player";
 import Vacation from "../PlayerAction/Vacation";
@@ -362,26 +363,24 @@ class Table extends Component {
                         data: "fee",
                         responsivePriority: 10010,
                         render: function(data, type, row) {
-                            const { is_trial, payment_type } = row;
+                            const { payment_type } = row;
+
+                            const renderData =
+                                payment_type !== 1 && data
+                                    ? formatMoney(data)
+                                    : payment_type === 1
+                                    ? "<b>BURSLU</b>"
+                                    : "&mdash;";
+
+                            if (type === "filter") {
+                                return renderForDataTableSearchStructure(renderData + nullCheck(data, ""));
+                            }
+
                             if (["sort", "type"].indexOf(type) > -1) {
                                 return data;
                             }
 
-                            if (type === "display") {
-                                if (!is_trial && (payment_type !== 1) & (data !== null)) {
-                                    return data.format() + " ₺";
-                                } else if (is_trial) {
-                                    return "<b>ÖN KAYIT</b>";
-                                } else if (payment_type === 1) {
-                                    return "<b>BURSLU</b>";
-                                } else if (data === null) {
-                                    return "&mdash;";
-                                } else {
-                                    return "&mdash;";
-                                }
-                            }
-
-                            return data;
+                            return renderData;
                         }
                     },
                     {
