@@ -71,8 +71,8 @@ export class Add extends Component {
 
             CreateParent({
                 uid: uid,
-                name: name,
-                surname: surname,
+                name: name.capitalize(),
+                surname: surname.toLocaleUpperCase("tr-TR"),
                 phone: phone,
                 email: email === "" ? null : email,
                 password: "151117",
