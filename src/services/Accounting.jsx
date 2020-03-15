@@ -23,7 +23,7 @@ const CreateAccountingRecord = data => {
             .then(response => {
                 if (response) {
                     const status = response.status;
-                    if (status.code !== 1020) errorSwal(status);
+                    if (status.code !== 1021) errorSwal(status);
                     return response;
                 }
             })

@@ -103,7 +103,7 @@ export class Edit extends Component {
             }).then(response => {
                 if (response) {
                     const status = response.status;
-                    if (status.code === 1020) {
+                    if (status.code === 1022) {
                         this.props.history.push("/app/persons/parents/detail/" + response.uid);
                     }
                 }

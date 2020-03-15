@@ -1,4 +1,4 @@
-import { errorSwal, fatalSwal, Toast } from "../components/Alert";
+import { errorSwal, fatalSwal, Toast, showToast } from "../components/Alert";
 import ep from "../assets/js/urls";
 import { getCookie } from "../assets/js/core.js";
 import { CheckPermissions } from "../services/Others";
@@ -10,6 +10,10 @@ h.append("Authorization", localStorage.getItem("UID"));
 
 const GetBudget = data => {
     try {
+        if (!CheckPermissions(["a_read"])) {
+            return Promise.resolve(null);
+        }
+
         return fetch(ep.BUDGET_GET, {
             method: "POST",
             body: JSON.stringify(data),
@@ -31,6 +35,10 @@ const GetBudget = data => {
 
 const CreateBudget = data => {
     try {
+        if (!CheckPermissions(["a_write"])) {
+            return Promise.resolve(null);
+        }
+
         return fetch(ep.BUDGET_CREATE, {
             method: "POST",
             body: JSON.stringify(data),
@@ -40,7 +48,11 @@ const CreateBudget = data => {
             .then(response => {
                 if (response) {
                     const status = response.status;
-                    if (status.code !== 1020) errorSwal(status);
+                    if (status.code !== 1021) {
+                        errorSwal(status);
+                    } else {
+                        showToast(status);
+                    }
                     return response;
                 }
             })
@@ -79,6 +91,10 @@ const ListBudgets = uid => {
 
 const MakeDefaultBudget = data => {
     try {
+        if (!CheckPermissions(["a_write"])) {
+            return Promise.resolve(null);
+        }
+
         return fetch(ep.BUDGET_DEFAULT, {
             method: "POST",
             body: JSON.stringify(data),
@@ -88,12 +104,12 @@ const MakeDefaultBudget = data => {
             .then(response => {
                 if (response) {
                     const status = response.status;
-                    if (status.code !== 1020) errorSwal(status);
-                    else
-                        Toast.fire({
-                            type: "success",
-                            title: "İşlem başarılı..."
-                        });
+                    if (status.code !== 1022) {
+                        errorSwal(status);
+                    } else {
+                        showToast(status);
+                    }
+
                     return response;
                 }
             })
@@ -105,6 +121,10 @@ const MakeDefaultBudget = data => {
 
 const UpdateBudget = data => {
     try {
+        if (!CheckPermissions(["a_write"])) {
+            return Promise.resolve(null);
+        }
+
         return fetch(ep.BUDGET_UPDATE, {
             method: "PATCH",
             body: JSON.stringify(data),
@@ -114,12 +134,11 @@ const UpdateBudget = data => {
             .then(response => {
                 if (response) {
                     const status = response.status;
-                    if (status.code !== 1020) errorSwal(status);
-                    else
-                        Toast.fire({
-                            type: "success",
-                            title: "İşlem başarılı..."
-                        });
+                    if (status.code !== 1022) {
+                        errorSwal(status);
+                    } else {
+                        showToast(status);
+                    }
                     return response;
                 }
             })
@@ -131,6 +150,10 @@ const UpdateBudget = data => {
 
 const TransferBudget = data => {
     try {
+        if (!CheckPermissions(["a_write"])) {
+            return Promise.resolve(null);
+        }
+
         return fetch(ep.BUDGET_TRANSFER, {
             method: "POST",
             body: JSON.stringify(data),
@@ -140,12 +163,11 @@ const TransferBudget = data => {
             .then(response => {
                 if (response) {
                     const status = response.status;
-                    if (status.code !== 1020) errorSwal(status);
-                    else
-                        Toast.fire({
-                            type: "success",
-                            title: "İşlem başarılı..."
-                        });
+                    if (status.code !== 1020) {
+                        errorSwal(status);
+                    } else {
+                        showToast(status);
+                    }
                     return response;
                 }
             })
@@ -157,6 +179,10 @@ const TransferBudget = data => {
 
 const BalanceHistoryBudget = data => {
     try {
+        if (!CheckPermissions(["a_read"])) {
+            return Promise.resolve(null);
+        }
+
         return fetch(ep.BUDGET_BALANCE_HISTORY, {
             method: "POST",
             body: JSON.stringify(data),

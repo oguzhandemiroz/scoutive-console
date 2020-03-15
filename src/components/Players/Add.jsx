@@ -265,24 +265,23 @@ export class Add extends Component {
                 const status = response.status;
                 const formData = new FormData();
                 var imageUploading = false;
-                if (status.code === 1020) {
-                    const redirect_uid = response.uid;
+                if (status.code === 1021) {
                     if (imagePreview) {
                         this.setState({ loadingImage: "btn-loading" });
                         imageUploading = true;
                         formData.append("image", file);
                         formData.append("uid", uid);
-                        formData.append("to", redirect_uid);
+                        formData.append("to", response.uid);
                         formData.append("type", "player");
                         formData.append("update", true);
-                        UploadFile(formData).then(response => {
+                        UploadFile(formData).then(responseFile => {
                             this.setState({ loadingImage: "", loadingButton: "" });
-                            if (response)
-                                if (!addContinuously) this.props.history.push("/app/players/detail/" + redirect_uid);
+                            if (responseFile)
+                                if (!addContinuously) this.props.history.push("/app/players/detail/" + response.uid);
                                 else this.reload();
                         });
                     } else if (addContinuously) this.reload();
-                    else this.props.history.push("/app/players/detail/" + redirect_uid);
+                    else this.props.history.push("/app/players/detail/" + response.uid);
                 }
                 this.setState({ loadingButton: "" });
             });

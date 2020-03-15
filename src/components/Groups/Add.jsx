@@ -116,7 +116,7 @@ export class Add extends Component {
                 work_days: _.join(work_days, ",")
             }).then(response => {
                 if (response) {
-                    if (response.status.code === 1020) {
+                    if (response.status.code === 1021) {
                         const group_id = response.group_id;
                         if (players.length > 0) {
                             ChangeGroup({
@@ -127,7 +127,7 @@ export class Add extends Component {
                             }).then(response => {
                                 if (response) {
                                     const status = response.status;
-                                    if (status.code === 1020) {
+                                    if (status.code === 1022) {
                                         this.props.history.push("/app/groups/detail/" + group_id);
                                     }
                                 }

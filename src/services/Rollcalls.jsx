@@ -1,4 +1,4 @@
-import { fatalSwal, errorSwal, Toast } from "../components/Alert";
+import { fatalSwal, errorSwal, Toast, showToast } from "../components/Alert";
 import ep from "../assets/js/urls";
 import { getCookie } from "../assets/js/core.js";
 import { CheckPermissions } from "./Others";
@@ -35,6 +35,10 @@ const ListRollcall = data => {
 
 const ListRollcallType = (data, type) => {
     try {
+        if (!CheckPermissions(["r_read"])) {
+            return Promise.resolve(null);
+        }
+
         return fetch(ep.ROLLCALL_LIST_TYPE + type, {
             method: "POST",
             body: JSON.stringify(data),
@@ -59,7 +63,12 @@ const CreateRollcall = data => {
         /*
 			- type 0 -> player
 			- type 1 -> employee
-		*/
+        */
+
+        if (!CheckPermissions(["r_write"])) {
+            return Promise.resolve(null);
+        }
+
         return fetch(ep.CREATE_ROLLCALL, {
             method: "POST",
             body: JSON.stringify(data),
@@ -69,7 +78,7 @@ const CreateRollcall = data => {
             .then(response => {
                 if (response) {
                     const status = response.status;
-                    if (status.code !== 1020 && status.code !== 2010) errorSwal(status);
+                    if (status.code !== 1021 && status.code !== 2010) errorSwal(status);
                     return response;
                 }
             })
@@ -84,7 +93,12 @@ const MakeRollcall = (data, type) => {
         /*
 			- type 0 -> player
 			- type 1 -> employee
-		*/
+        */
+
+        if (!CheckPermissions(["r_write"])) {
+            return Promise.resolve(null);
+        }
+
         return fetch(ep.ROLLCALL_MAKE + type, {
             method: "POST",
             body: JSON.stringify(data),
@@ -94,12 +108,11 @@ const MakeRollcall = (data, type) => {
             .then(response => {
                 if (response) {
                     const status = response.status;
-                    if (status.code !== 1020) errorSwal(status);
-                    else if (status.code === 1020)
-                        Toast.fire({
-                            type: "success",
-                            title: "İşlem başarılı..."
-                        });
+                    if (status.code !== 1022) {
+                        errorSwal(status);
+                    } else {
+                        showToast(status);
+                    }
                     return response;
                 }
             })
@@ -113,6 +126,11 @@ const SetNoteRollcall = (data, type) => {
 			- type 0 -> player
 			- type 1 -> employee
 		*/
+
+        if (!CheckPermissions(["r_write"])) {
+            return Promise.resolve(null);
+        }
+
         return fetch(ep.ROLLCALL_NOTE + type + "/note", {
             method: "POST",
             body: JSON.stringify(data),
@@ -122,8 +140,11 @@ const SetNoteRollcall = (data, type) => {
             .then(response => {
                 if (response) {
                     const status = response.status;
-                    if (status.code !== 1020) errorSwal(status);
-                    return response;
+                    if (status.code !== 1022) {
+                        errorSwal(status);
+                    } else {
+                        showToast(status);
+                    }
                 }
             })
             .catch(e => fatalSwal(true));
@@ -136,6 +157,11 @@ const DeleteRollcall = (data, type) => {
 			- type 0 -> player
 			- type 1 -> employee
 		*/
+
+        if (!CheckPermissions(["r_write"])) {
+            return Promise.resolve(null);
+        }
+
         return fetch(ep.ROLLCALL_DELETE + type, {
             method: "POST",
             body: JSON.stringify(data),
@@ -145,12 +171,11 @@ const DeleteRollcall = (data, type) => {
             .then(response => {
                 if (response) {
                     const status = response.status;
-                    if (status.code !== 1020) errorSwal(status);
-                    else if (status.code === 1020)
-                        Toast.fire({
-                            type: "success",
-                            title: "İşlem başarılı..."
-                        });
+                    if (status.code !== 1022) {
+                        errorSwal(status);
+                    } else {
+                        showToast(status);
+                    }
                     return response;
                 }
             })
@@ -195,6 +220,10 @@ const ActiveRollcall = (data, type) => {
 
 const CloseRollcall = data => {
     try {
+        if (!CheckPermissions(["r_remove"])) {
+            return Promise.resolve(null);
+        }
+
         return fetch(ep.CLOSE_ROLLCALL, {
             method: "POST",
             body: JSON.stringify(data),
@@ -204,12 +233,11 @@ const CloseRollcall = data => {
             .then(response => {
                 if (response) {
                     const status = response.status;
-                    if (status.code !== 1020) errorSwal(status);
-                    else
-                        Toast.fire({
-                            type: "success",
-                            title: "İşlem başarılı..."
-                        });
+                    if (status.code !== 1020) {
+                        errorSwal(status);
+                    } else {
+                        showToast(status);
+                    }
                     return response;
                 }
             })

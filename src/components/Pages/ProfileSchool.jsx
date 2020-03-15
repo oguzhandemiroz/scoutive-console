@@ -122,7 +122,7 @@ export class Profile extends Component {
                 }).then(response => {
                     if (response) {
                         const status = response.status;
-                        if (status.code === 1020) {
+                        if (status.code === 1022) {
                             localStorage.setItem("sImage", image);
                             localStorage.setItem("sName", name);
                             this.reload();

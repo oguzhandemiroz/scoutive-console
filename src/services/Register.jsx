@@ -19,7 +19,7 @@ const RequestRegister = data => {
             })
             .then(response => {
                 const status = response.status;
-                if (status.code !== 1020) errorSwal(status);
+                if (status.code !== 1021) errorSwal(status);
 
                 return response;
             })

@@ -112,14 +112,14 @@ export class Vacation extends Component {
             ).then(response => {
                 if (response) {
                     const status = response.status;
-                    if (status.code === 1020) {
+                    if (status.code === 1021) {
                         console.log(response);
                         Toast.fire({
                             type: "success",
                             title: "Başarıyla kaydedildi..."
                         });
                         setTimeout(() => this.reload(), 1000);
-                    } else if (status.code === 1037) {
+                    } else if (status.code === 1030) {
                         showSwal({
                             type: "warning",
                             title: "Uyarı!",

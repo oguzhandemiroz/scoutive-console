@@ -161,7 +161,7 @@ export class SingleAdd extends Component {
             when: formatDate(when, "YYYY-MM-DD HH:mm:00")
         }).then(response => {
             if (response) {
-                if (response.status.code === 1020) {
+                if (response.status.code === 1021) {
                     this.props.history.push("/app/messages/detail/" + response.campaign_id);
                 }
             }
@@ -1049,7 +1049,7 @@ export class SingleAdd extends Component {
     };
 
     sendPreviewStep = () => {
-        const { start, school_fees, all_time_messages } = this.state;
+        const { start, school_fees, all_time_messages, loadingButton } = this.state;
         return (
             <>
                 <div className="card-body">
@@ -1096,7 +1096,10 @@ export class SingleAdd extends Component {
                             className="btn btn-info btn-icon mr-2">
                             Test Mesajı Gönder<i className="fa fa-flask ml-2"></i>
                         </button>
-                        <button type="button" onClick={this.handleSubmit} className="btn btn-success btn-icon">
+                        <button
+                            type="button"
+                            onClick={this.handleSubmit}
+                            className={`btn btn-success btn-icon ${loadingButton}`}>
                             Onayla ve Gönder<i className="fa fa-check ml-2"></i>
                         </button>
                     </div>

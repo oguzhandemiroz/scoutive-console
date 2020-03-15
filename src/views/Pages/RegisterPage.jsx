@@ -44,7 +44,7 @@ export class RegisterPage extends Component {
                     const data = response.data;
                     const status = response.status;
 
-                    if (status.code === 1020) {
+                    if (status.code === 1021) {
                         localStorage.setItem("sRemember", tax_no);
                         ActivateSchool("Hesabınız Oluşturuldu", { username: tax_no, password: password }, data);
                     }

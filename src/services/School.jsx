@@ -1,4 +1,4 @@
-import { fatalSwal, errorSwal, Toast, showSwal } from "../components/Alert";
+import { fatalSwal, errorSwal, Toast, showSwal, showToast } from "../components/Alert";
 import ep from "../assets/js/urls";
 import { Start } from "./Starts";
 import { getCookie } from "../assets/js/core.js";
@@ -42,13 +42,10 @@ const UpdateSchool = data => {
                 if (response) {
                     const status = response.status;
 
-                    if (status.code !== 1020) {
+                    if (status.code !== 1022) {
                         errorSwal(status);
                     } else {
-                        Toast.fire({
-                            type: "success",
-                            title: "Başarıyla güncellendi..."
-                        });
+                        showToast(status);
                     }
                     return response;
                 }
@@ -120,13 +117,10 @@ const UpdatePermissions = data => {
             .then(response => {
                 if (response) {
                     const status = response.status;
-                    if (status.code !== 1020) {
+                    if (status.code !== 1022) {
                         errorSwal(status);
                     } else {
-                        Toast.fire({
-                            type: "success",
-                            title: "Başarıyla güncellendi..."
-                        });
+                        showToast(status);
                     }
 
                     return response;
@@ -175,12 +169,10 @@ const UpdateAreas = data => {
             .then(response => {
                 if (response) {
                     const status = response.status;
-                    if (status.code !== 1020) errorSwal(status);
-                    else {
-                        Toast.fire({
-                            type: "success",
-                            title: "Başarıyla güncellendi..."
-                        });
+                    if (status.code !== 1022) {
+                        errorSwal(status);
+                    } else {
+                        showToast(status);
                     }
                     return response;
                 }
@@ -217,12 +209,10 @@ const SetSettings = data => {
             .then(response => {
                 if (response) {
                     const status = response.status;
-                    if (status.code !== 1020) errorSwal(status);
-                    else {
-                        Toast.fire({
-                            type: "success",
-                            title: "Başarıyla güncellendi..."
-                        });
+                    if (status.code !== 1022) {
+                        errorSwal(status);
+                    } else {
+                        showToast(status);
                         Start();
                     }
                     return response;

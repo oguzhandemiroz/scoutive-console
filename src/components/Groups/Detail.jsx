@@ -138,11 +138,7 @@ export class Detail extends Component {
                     }).then(response => {
                         if (response) {
                             const status = response.status;
-                            if (status.code === 1020) {
-                                Toast.fire({
-                                    type: "success",
-                                    title: "İşlem başarılı..."
-                                });
+                            if (status.code === 1022) {
                                 setTimeout(() => this.props.history.push("/app/groups"), 1000);
                             }
                         }

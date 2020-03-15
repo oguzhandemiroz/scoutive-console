@@ -21,7 +21,7 @@ const RequestLogin = (data, remember) => {
             .then(res => res.json())
             .then(response => {
                 const status = response.status;
-                if ((status.code !== 1020) & (status.code !== 1082)) errorSwal(status);
+                if (status.code !== 1012 && status.code !== 1017) errorSwal(status);
                 return response;
             })
             .catch(err => fatalSwal(true));

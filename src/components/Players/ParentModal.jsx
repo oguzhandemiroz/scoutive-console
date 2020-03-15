@@ -111,7 +111,7 @@ export class ParentModal extends Component {
             }).then(response => {
                 if (response) {
                     const status = response.status;
-                    if (status.code === 1020) {
+                    if (status.code === 1021) {
                         this.setState(prevState => ({
                             ...initialState,
                             parents: [

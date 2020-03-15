@@ -24,8 +24,6 @@ import RollcallEmployee from "../components/Employees/Rollcall";
 import MessageDetailEmployee from "../components/Employees/MessageDetail";
 
 import AddPlayer from "../components/Players/Add";
-import TrialPlayer from "../components/Players/Trial";
-import ActivateTrial from "../components/Players/ActivateTrial";
 import DetailPlayer from "../components/Players/Detail";
 import EditPlayer from "../components/Players/Edit";
 import PaymentPlayer from "../components/Players/Payment";

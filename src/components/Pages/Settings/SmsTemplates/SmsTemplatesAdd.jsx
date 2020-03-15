@@ -49,7 +49,7 @@ export class SmsTemplatesAdd extends Component {
             }).then(response => {
                 if (response) {
                     this.setState({ loadingButton: "" });
-                    if (response.status.code === 1020)
+                    if (response.status.code === 1021)
                         this.props.history.push(`/account/settings/sms-templates/${uid}`);
                 }
             });

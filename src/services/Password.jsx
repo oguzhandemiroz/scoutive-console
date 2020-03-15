@@ -1,5 +1,5 @@
 import ep from "../assets/js/urls";
-import { errorSwal, fatalSwal, showSwal, Toast } from "../components/Alert.jsx";
+import { errorSwal, fatalSwal, showSwal, Toast, showToast } from "../components/Alert.jsx";
 import { getCookie } from "../assets/js/core.js";
 
 const h = new Headers();
@@ -78,12 +78,11 @@ const Change = data => {
                 if (response) {
                     console.log(response);
                     const status = response.status;
-                    if (status.code !== 1020) errorSwal(status);
-                    else if (status.code === 1020)
-                        Toast.fire({
-                            type: "success",
-                            title: "Şifreniz başarıyla güncellenmiştir..."
-                        });
+                    if (status.code !== 1022) {
+                        errorSwal(status);
+                    } else {
+                        showToast(status);
+                    }
 
                     return response;
                 }

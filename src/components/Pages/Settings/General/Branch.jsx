@@ -36,7 +36,7 @@ export class Branch extends Component {
         }).then(response => {
             if (response) {
                 const status = response.status;
-                if (status.code === 1020) {
+                if (status.code === 1022) {
                     this.setState({ show: false, error: false });
                 }
             }
