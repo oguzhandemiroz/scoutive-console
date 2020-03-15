@@ -48,9 +48,9 @@ const Reset = (data, history) => {
                 if (response) {
                     console.log(response);
                     const status = response.status;
-                    if (status.code !== 1020) {
+                    if (status.code !== 1022) {
                         errorSwal(status);
-                    } else if (status.code === 1020) {
+                    } else if (status.code === 1022) {
                         showSwal({
                             type: "success",
                             title: "Başarılı",

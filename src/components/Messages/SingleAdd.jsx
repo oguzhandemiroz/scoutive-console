@@ -161,7 +161,7 @@ export class SingleAdd extends Component {
             when: formatDate(when, "YYYY-MM-DD HH:mm:00")
         }).then(response => {
             if (response) {
-                if (response.status.code === 1021) {
+                if (response.status.code === 1023) {
                     this.props.history.push("/app/messages/detail/" + response.campaign_id);
                 }
             }

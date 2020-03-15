@@ -376,7 +376,7 @@ const CreateMessage = data => {
             .then(response => {
                 if (response) {
                     const status = response.status;
-                    if (status.code !== 1021) {
+                    if (status.code !== 1023) {
                         errorSwal(status);
                     } else {
                         showToast(status);
