@@ -154,7 +154,7 @@ const avatarPlaceholder = (name, surname) => {
 
 const renderForDataTableSearchStructure = value => {
     try {
-        const mergedValue = value.toLocaleLowerCase("tr-TR") + value.toLocaleUpperCase("tr-TR");
+        const mergedValue = value.toString().toLocaleLowerCase("tr-TR") + value.toString().toLocaleUpperCase("tr-TR");
         return mergedValue;
     } catch (e) {
         return value;
