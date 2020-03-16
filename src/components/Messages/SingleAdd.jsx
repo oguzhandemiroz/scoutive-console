@@ -1020,7 +1020,7 @@ export class SingleAdd extends Component {
                                 />
                             </div>
                             {dateError ? (
-                                <div className="alert alert-warning alert-icon">
+                                <div className="alert alert-warning alert-icon mb-0">
                                     <i className="fe fe-alert-circle mr-2"></i>
                                     <p>
                                         <strong>Geçmiş Tarih Uyarısı</strong>

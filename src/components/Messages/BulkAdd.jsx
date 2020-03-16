@@ -94,6 +94,7 @@ export class BulkAdd extends Component {
             loadingButton: "",
             loadingTestButton: "",
             employee: null,
+            dateError: false,
             select: {
                 players: null,
                 initialPlayers: null,
@@ -267,6 +268,7 @@ export class BulkAdd extends Component {
                 ...prevState.formErrors,
                 [name]: date ? "" : "is-invalid"
             },
+            dateError: date < new Date() ? true : false,
             [name]: date
         }));
     };
@@ -500,7 +502,7 @@ export class BulkAdd extends Component {
     };
 
     messagesStep = () => {
-        const { when, title, formErrors, start } = this.state;
+        const { when, title, formErrors, start, dateError } = this.state;
         return (
             <>
                 <div className="card-body">
@@ -554,7 +556,6 @@ export class BulkAdd extends Component {
                                     autoComplete="off"
                                     selected={when}
                                     selectsEnd
-                                    minDate={when}
                                     name="when"
                                     locale="tr"
                                     dateFormat="dd/MM/yyyy HH:mm:ss"
@@ -564,6 +565,15 @@ export class BulkAdd extends Component {
                                     className={`form-control ${formErrors.when}`}
                                 />
                             </div>
+                            {dateError ? (
+                                <div className="alert alert-warning alert-icon mb-0">
+                                    <i className="fe fe-alert-circle mr-2"></i>
+                                    <p>
+                                        <strong>Geçmiş Tarih Uyarısı</strong>
+                                    </p>
+                                    Geçmiş zamanlı bir tarih seçtiniz, mesaj anında gönderilecektir!
+                                </div>
+                            ) : null}
                         </div>
                     </div>
                 </div>
