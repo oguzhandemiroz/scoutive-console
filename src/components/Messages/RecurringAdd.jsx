@@ -332,7 +332,7 @@ export class RecurringAdd extends Component {
             values.passed_day = passed_day;
         }
         if (selected_segment === 5) {
-            required.groups = groups ? (groups.length !== 0 ? groups : null) : null;
+            required.groups = groups && groups.length !== 0 ? groups : null;
             values.group_id = groups ? `(${groups.map(x => x.value).join(",")})` : "";
         }
 
@@ -364,7 +364,7 @@ export class RecurringAdd extends Component {
                     title: nullCheck(title, "").trim() ? "" : "is-invalid",
                     when: when ? "" : "is-invalid",
                     end_date: end_date ? "" : "is-invalid",
-                    groups: groups ? (groups.length !== 0 ? false : true) : true
+                    groups: groups && groups.length !== 0 ? false : true
                 }
             }));
         }
