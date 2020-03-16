@@ -396,7 +396,7 @@ export class Edit extends Component {
         return (
             <div className="container">
                 <div className="page-header">
-                    <h1 className="page-title">Gruplar &mdash; Grup Oluştur</h1>
+                    <h1 className="page-title">Gruplar &mdash; Grup Düzenle</h1>
                 </div>
                 <form className="row" onSubmit={this.handleSubmit}>
                     <div className="col-lg-4">
