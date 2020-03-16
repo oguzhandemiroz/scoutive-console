@@ -144,7 +144,7 @@ export class Add extends Component {
                 formErrors: {
                     ...prevState.formErrors,
                     employee: employee ? false : true,
-                    name: name ? "" : "is-invalid",
+                    name: name && name.length <= 30 ? "" : "is-invalid",
                     start_time: moment(start_time, "HH:mm", true).isValid("HH:mm") ? "" : "is-invalid-iconless",
                     end_time: moment(end_time, "HH:mm", true).isValid("HH:mm") ? "" : "is-invalid-iconless",
                     start_age: start_age ? "" : "is-invalid",
@@ -166,8 +166,11 @@ export class Add extends Component {
                 case "end_time":
                     formErrors[name] = moment(value, "HH:mm", true).isValid("HH:mm") ? "" : "is-invalid-iconless";
                     break;
+                case "name":
+                    formErrors[name] = value && value.length <= 30 ? "" : "is-invalid";
+                    break;
                 default:
-                    formErrors[name] = value ? (value.length <= 30 ? "" : "is-invalid") : "is-invalid";
+                    formErrors[name] = value ? "" : "is-invalid";
                     break;
             }
             this.setState({ formErrors, [name]: value });
