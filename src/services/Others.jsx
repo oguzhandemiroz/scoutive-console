@@ -161,6 +161,32 @@ const renderForDataTableSearchStructure = value => {
     }
 };
 
+const searchStructureForDate = (value, format) => {
+    try {
+        if (!format) format = "YYYY-MM-DD";
+        if (moment(value).isValid()) {
+            const formats = [
+                "",
+                "LL",
+                "DD/MM/YYYY",
+                "DD MM YYYY",
+                "DD.MM.YYYY",
+                "DD-MM-YYYY",
+                "MM/DD/YYYY",
+                "MM DD YYYY",
+                "MM.DD.YYYY",
+                "MM-DD-YYYY"
+            ];
+            return `${value} ${formats
+                .reduce((total, item) => total + " " + moment(value, format).format(item))
+                .trim()}`;
+        }
+        return value;
+    } catch (e) {
+        return value;
+    }
+};
+
 const groupAgeSplit = age => {
     try {
         var result = {};
@@ -331,5 +357,6 @@ export {
     isMobile,
     isChrome,
     CheckPermissions,
-    renderForDataTableSearchStructure
+    renderForDataTableSearchStructure,
+    searchStructureForDate
 };
