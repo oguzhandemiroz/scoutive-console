@@ -716,8 +716,7 @@ export class SingleAdd extends Component {
                                                                 style={{
                                                                     position: "absolute",
                                                                     top: 0,
-                                                                    left: 0,
-                                                                    right: 0
+                                                                    left: 0
                                                                 }}>
                                                                 <i className="fa fa-star text-info small font-weight-600" />
                                                             </div>
