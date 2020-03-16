@@ -17,7 +17,7 @@ import { formValid, selectCustomStyles, selectCustomStylesError } from "../../as
 import DatePicker, { registerLocale } from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import tr from "date-fns/locale/tr";
-import { formatDate, formatPhone, fullnameGenerator, CheckPermissions } from "../../services/Others";
+import { formatDate, formatPhone, fullnameGenerator, CheckPermissions, nullCheck } from "../../services/Others";
 import { GetSettings, GetSchoolFees } from "../../services/School";
 import NotPermissions from "../../components/NotActivate/NotPermissions";
 import { MessagesAllTime } from "../../services/Report";
@@ -185,7 +185,7 @@ export class RecurringAdd extends Component {
         this.setState({ loadingButton: "btn-loading" });
         CreateCampaign({
             uid: uid,
-            title: title,
+            title: title.trim(),
             person_type: 1,
             segment_id: segment_id,
             persons: null,
@@ -210,7 +210,7 @@ export class RecurringAdd extends Component {
             this.setState(prevState => ({
                 formErrors: {
                     ...prevState.formErrors,
-                    [name]: value ? "" : "is-invalid"
+                    [name]: value.trim() ? "" : "is-invalid"
                 },
                 [name]: value
             }));
@@ -218,6 +218,14 @@ export class RecurringAdd extends Component {
     };
 
     handleSelect = (value, name) => {
+        if (name === "groups") {
+            this.setState(prevState => ({
+                formErrors: {
+                    ...prevState.formErrors,
+                    [name]: value ? "" : "is-invalid"
+                }
+            }));
+        }
         this.setState(prevState => ({
             [name]: value
         }));
@@ -294,11 +302,16 @@ export class RecurringAdd extends Component {
             is_active,
             status,
             passed_day,
-            groups
+            groups,
+            formErrors,
+            end_date
         } = this.state;
+
         const required = {
             title: title,
-            when: when
+            when: when,
+            end_date: end_date,
+            formErrors: { ...formErrors }
         };
 
         const values = {
@@ -319,18 +332,19 @@ export class RecurringAdd extends Component {
             values.passed_day = passed_day;
         }
         if (selected_segment === 5) {
-            required.groups = groups;
-            values.group_id = `(${groups.map(x => x.value).join(",")})`;
+            required.groups = groups ? (groups.length !== 0 ? groups : null) : null;
+            values.group_id = groups ? `(${groups.map(x => x.value).join(",")})` : "";
         }
 
         if (selected_segment && formValid(required)) {
             this.setState({ loadingButton: "btn-loading" });
             CreateSegment({
                 uid: uid,
-                segment_name:
+                segment_name: (
                     segments.find(x => x.static_segment_id === selected_segment).segment_name +
                     " - " +
-                    moment(when).format("DDMMYY"),
+                    moment(when).format("DDMMYY")
+                ).trim(),
                 static_segment_id: selected_segment,
                 values: values
             }).then(response => {
@@ -344,7 +358,15 @@ export class RecurringAdd extends Component {
                 this.setState({ loadingButton: "" });
             });
         } else {
-            console.error("HATA");
+            this.setState(prevState => ({
+                formErrors: {
+                    ...prevState.formErrors,
+                    title: nullCheck(title, "").trim() ? "" : "is-invalid",
+                    when: when ? "" : "is-invalid",
+                    end_date: end_date ? "" : "is-invalid",
+                    groups: groups ? (groups.length !== 0 ? false : true) : true
+                }
+            }));
         }
     };
 

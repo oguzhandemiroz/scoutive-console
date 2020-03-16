@@ -18,7 +18,14 @@ import {
 import { ListEmployees } from "../../services/Employee";
 import { ListPlayers } from "../../services/Player";
 import NotPermissions from "../../components/NotActivate/NotPermissions";
-import { formatDate, fullnameGenerator, avatarPlaceholder, formatPhone, CheckPermissions } from "../../services/Others";
+import {
+    formatDate,
+    fullnameGenerator,
+    avatarPlaceholder,
+    formatPhone,
+    CheckPermissions,
+    nullCheck
+} from "../../services/Others";
 import _ from "lodash";
 const $ = require("jquery");
 
@@ -156,7 +163,7 @@ export class BulkAdd extends Component {
         this.setState({ loadingButton: "btn-loading" });
         CreateCampaign({
             uid: uid,
-            title: title,
+            title: title.trim(),
             person_type: 1,
             persons: players.map(el => el),
             template_id: select_template,
@@ -214,7 +221,7 @@ export class BulkAdd extends Component {
             this.setState(prevState => ({
                 formErrors: {
                     ...prevState.formErrors,
-                    [name]: value ? "" : "is-invalid"
+                    [name]: value.trim() ? "" : "is-invalid"
                 },
                 [name]: value
             }));
@@ -462,7 +469,6 @@ export class BulkAdd extends Component {
     handleMessagesStep = () => {
         const { title, when, formErrors } = this.state;
         const required = { title: title, when: when, formErrors: { ...formErrors } };
-        console.log(required);
         if (formValid(required)) {
             this.handleNextStep(0);
             this.listMessageTemplates();
@@ -471,7 +477,7 @@ export class BulkAdd extends Component {
             this.setState(prevState => ({
                 formErrors: {
                     ...prevState.formErrors,
-                    title: title ? "" : "is-invalid",
+                    title: nullCheck(title, "").trim() ? "" : "is-invalid",
                     when: when ? "" : "is-invalid"
                 }
             }));
