@@ -151,7 +151,7 @@ export class Edit extends Component {
                 formErrors: {
                     ...prevState.formErrors,
                     employee: employee ? false : true,
-                    name: name ? "" : "is-invalid",
+                    name: nullCheck(name, "").trim() ? "" : "is-invalid",
                     start_time: moment(start_time, "HH:mm", true).isValid("HH:mm") ? "" : "is-invalid-iconless",
                     end_time: moment(end_time, "HH:mm", true).isValid("HH:mm") ? "" : "is-invalid-iconless",
                     start_age: start_age ? "" : "is-invalid",
@@ -174,7 +174,7 @@ export class Edit extends Component {
                     formErrors[name] = moment(value, "HH:mm", true).isValid("HH:mm") ? "" : "is-invalid-iconless";
                     break;
                 default:
-                    formErrors[name] = value ? "" : "is-invalid";
+                    formErrors[name] = value.trim() ? "" : "is-invalid";
                     break;
             }
             this.setState({ formErrors, [name]: value });

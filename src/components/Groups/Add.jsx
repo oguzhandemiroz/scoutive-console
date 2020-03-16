@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import Select, { components } from "react-select";
 import { Areas, GetEmployees } from "../../services/FillSelect";
 import { selectCustomStyles, selectCustomStylesError, formValid } from "../../assets/js/core";
-import { avatarPlaceholder, formatDate, fullnameGenerator, CheckPermissions } from "../../services/Others";
+import { avatarPlaceholder, formatDate, fullnameGenerator, CheckPermissions, nullCheck } from "../../services/Others";
 import { ListPlayers } from "../../services/Player";
 import { CreateGroup, ChangeGroup } from "../../services/Group";
 import _ from "lodash";
@@ -144,7 +144,7 @@ export class Add extends Component {
                 formErrors: {
                     ...prevState.formErrors,
                     employee: employee ? false : true,
-                    name: name ? "" : "is-invalid",
+                    name: nullCheck(name, "").trim() ? "" : "is-invalid",
                     start_time: moment(start_time, "HH:mm", true).isValid("HH:mm") ? "" : "is-invalid-iconless",
                     end_time: moment(end_time, "HH:mm", true).isValid("HH:mm") ? "" : "is-invalid-iconless",
                     start_age: start_age ? "" : "is-invalid",
@@ -167,7 +167,7 @@ export class Add extends Component {
                     formErrors[name] = moment(value, "HH:mm", true).isValid("HH:mm") ? "" : "is-invalid-iconless";
                     break;
                 default:
-                    formErrors[name] = value ? "" : "is-invalid";
+                    formErrors[name] = value.trim() ? "" : "is-invalid";
                     break;
             }
             this.setState({ formErrors, [name]: value });
