@@ -2,7 +2,13 @@ import React, { Component } from "react";
 import Select, { components } from "react-select";
 import { Areas, GetEmployees } from "../../services/FillSelect";
 import { selectCustomStyles, selectCustomStylesError, formValid } from "../../assets/js/core";
-import { avatarPlaceholder, formatDate, fullnameGenerator, CheckPermissions } from "../../services/Others";
+import {
+    avatarPlaceholder,
+    formatDate,
+    fullnameGenerator,
+    CheckPermissions,
+    searchStructureForDate
+} from "../../services/Others";
 import { ListPlayers } from "../../services/Player";
 import { CreateGroup, ChangeGroup } from "../../services/Group";
 import _ from "lodash";
@@ -195,29 +201,39 @@ export class Add extends Component {
     };
 
     handleSearch = e => {
-        const { value } = e.target;
-        const { players } = this.state.select;
+        try {
+            const { value } = e.target;
+            const { players } = this.state.select;
 
-        const searched = _(players)
-            .map(item => JSON.stringify(item).toLocaleLowerCase("tr-TR"))
-            .value();
+            //pick specific keys
+            const pickedKeys = players.map(x => {
+                const pick = _.pick(x, ["player_id", "position", "security_id", "uid", "groups"]);
+                pick.fullname = fullnameGenerator(x.name, x.surname);
+                pick.birthday = searchStructureForDate(x.birthday);
+                return pick;
+            });
 
-        const filtered = _.filter(searched, x => x.indexOf(value.toLocaleLowerCase("tr-TR")) > -1);
+            const searched = _(pickedKeys)
+                .map(item => JSON.stringify(item).toLocaleLowerCase("tr-TR"))
+                .value();
 
-        const parsed = _(filtered)
-            .map(objs => JSON.parse(objs))
-            .value();
+            const filtered = _.filter(searched, x => x.indexOf(value.trim().toLocaleLowerCase("tr-TR")) > -1);
 
-        const result = _(parsed)
-            .map(objs => players.find(x => x.player_id === objs.player_id))
-            .value();
+            const parsed = _(filtered)
+                .map(objs => JSON.parse(objs))
+                .value();
 
-        this.setState(prevState => ({
-            select: {
-                ...prevState.select,
-                initialPlayers: result
-            }
-        }));
+            const result = _(parsed)
+                .map(objs => players.find(x => x.player_id === objs.player_id))
+                .value();
+
+            this.setState(prevState => ({
+                select: {
+                    ...prevState.select,
+                    initialPlayers: result
+                }
+            }));
+        } catch (e) {}
     };
 
     handleCard = player_id => {
@@ -537,7 +553,7 @@ export class Add extends Component {
                                                     </div>
                                                 ))
                                             ) : (
-                                                <div className="text-center w-100 text-muted font-italic">
+                                                <div className="text-center w-100 text-muted font-italic mb-5">
                                                     Sistemde kayıtlı öğrenci bulunamadı...
                                                 </div>
                                             )

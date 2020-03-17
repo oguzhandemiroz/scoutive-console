@@ -2,12 +2,17 @@ import React, { Component } from "react";
 import Select, { components } from "react-select";
 import { Areas, GetEmployees } from "../../services/FillSelect";
 import { selectCustomStyles, selectCustomStylesError, formValid } from "../../assets/js/core";
-import { avatarPlaceholder, formatDate, fullnameGenerator, nullCheck } from "../../services/Others";
+import {
+    avatarPlaceholder,
+    formatDate,
+    fullnameGenerator,
+    nullCheck,
+    searchStructureForDate
+} from "../../services/Others";
 import { ListPlayers } from "../../services/Player";
-import { CreateGroup, DetailGroup, ChangeGroup, UpdateGroup } from "../../services/Group";
+import { DetailGroup, ChangeGroup, UpdateGroup } from "../../services/Group";
 import _ from "lodash";
 import moment from "moment";
-import "moment/locale/tr";
 import Inputmask from "inputmask";
 const $ = require("jquery");
 
@@ -202,29 +207,39 @@ export class Edit extends Component {
     };
 
     handleSearch = e => {
-        const { value } = e.target;
-        const { players } = this.state.select;
+        try {
+            const { value } = e.target;
+            const { players } = this.state.select;
 
-        const searched = _(players)
-            .map(item => JSON.stringify(item).toLocaleLowerCase("tr-TR"))
-            .value();
+            //pick specific keys
+            const pickedKeys = players.map(x => {
+                const pick = _.pick(x, ["player_id", "position", "security_id", "uid", "groups"]);
+                pick.fullname = fullnameGenerator(x.name, x.surname);
+                pick.birthday = searchStructureForDate(x.birthday);
+                return pick;
+            });
 
-        const filtered = _.filter(searched, x => x.indexOf(value.toLocaleLowerCase("tr-TR")) > -1);
+            const searched = _(pickedKeys)
+                .map(item => JSON.stringify(item).toLocaleLowerCase("tr-TR"))
+                .value();
 
-        const parsed = _(filtered)
-            .map(objs => JSON.parse(objs))
-            .value();
+            const filtered = _.filter(searched, x => x.indexOf(value.trim().toLocaleLowerCase("tr-TR")) > -1);
 
-        const result = _(parsed)
-            .map(objs => players.find(x => x.player_id === objs.player_id))
-            .value();
+            const parsed = _(filtered)
+                .map(objs => JSON.parse(objs))
+                .value();
 
-        this.setState(prevState => ({
-            select: {
-                ...prevState.select,
-                initialPlayers: result
-            }
-        }));
+            const result = _(parsed)
+                .map(objs => players.find(x => x.player_id === objs.player_id))
+                .value();
+
+            this.setState(prevState => ({
+                select: {
+                    ...prevState.select,
+                    initialPlayers: result
+                }
+            }));
+        } catch (e) {}
     };
 
     handleCard = player_id => {
@@ -381,7 +396,7 @@ export class Edit extends Component {
         return (
             <div className="container">
                 <div className="page-header">
-                    <h1 className="page-title">Gruplar &mdash; Grup Oluştur</h1>
+                    <h1 className="page-title">Gruplar &mdash; Grup Düzenle</h1>
                 </div>
                 <form className="row" onSubmit={this.handleSubmit}>
                     <div className="col-lg-4">
