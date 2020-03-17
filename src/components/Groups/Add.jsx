@@ -107,7 +107,7 @@ export class Add extends Component {
 
             CreateGroup({
                 uid: uid,
-                name: name.capitalize(),
+                name: name.capitalize().trim(),
                 start_time: start_time,
                 end_time: end_time,
                 employee_id: employee.value,
