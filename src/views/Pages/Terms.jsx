@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import logo from "../../assets/images/logo.svg";
+import logo_circle from "../../assets/images/logo-circle.png";
 import terms from "../../assets/images/illustrations/terms.svg";
 
 export class Terms extends Component {
@@ -11,9 +12,9 @@ export class Terms extends Component {
                     <div className="container">
                         <div className="row">
                             <div className="col-12 mx-auto">
-                                <div className="text-center mb-4">
+                                <div className="text-center my-5">
                                     <Link className="header-brand" to="#" tabIndex="-1">
-                                        <img id="ScoutiveLogo" src={logo} alt="Scoutive" />
+                                        <img style={{ width: "200px" }} src={logo} alt="Scoutive" />
                                     </Link>
                                 </div>
 
@@ -371,15 +372,480 @@ export class Terms extends Component {
                                                     ilan edilen güncel fiyatlar geçerli olacaktır.
                                                 </div>
                                             </div>
-
+                                            <div className="row gutters-xs mb-2">
+                                                <div className="col-auto">
+                                                    <strong>5.3.</strong>
+                                                </div>
+                                                <div className="col">
+                                                    Ücretler, ödeme koşulları, ücretlerin yürürlük tarihleri Site’de
+                                                    veya Platform’un ilgili bölümlerinde ilan edilecektir.
+                                                </div>
+                                            </div>
+                                            <div className="row gutters-xs mb-2">
+                                                <div className="col-auto">
+                                                    <strong>5.4.</strong>
+                                                </div>
+                                                <div className="col">
+                                                    <strong>Kullanıcı</strong>, isteğine bağlı olarak üyelik paketini
+                                                    yükseltebilecek veya düşürebilecektir. Buna ilişkin talepler, Şirket
+                                                    tarafından aksi belirtilmedikçe ilgili üyelik döneminin sonunda
+                                                    gerçekleşecektir. Yapılan değişiklikler üyelik döneminin sona
+                                                    ermesine dek uygulanmayacak, yeni ücretler ve ödeme koşulları yeni
+                                                    üyelik döneminin başlamasıyla geçerli olacaktır. 5.5. Ücretsiz
+                                                    deneme süresinin sona ermesinden sonra <strong>Kullanıcı</strong>
+                                                    ’nın üyeliğinin hizmet seviyesi ve türü, işlevsellik, kampanyalar ya
+                                                    da sözleşme süresine göre belirlenecek ücretli üyelik haline
+                                                    gelecektir.
+                                                </div>
+                                            </div>
+                                            <div className="row gutters-xs mb-2">
+                                                <div className="col-auto">
+                                                    <strong>5.5.</strong>
+                                                </div>
+                                                <div className="col">
+                                                    Ücretsiz deneme süresinin sona ermesinden sonra
+                                                    <strong> Kullanıcı</strong>’nın üyeliğinin hizmet seviyesi ve türü,
+                                                    işlevsellik, kampanyalar ya da sözleşme süresine göre belirlenecek
+                                                    ücretli üyelik haline gelecektir.
+                                                </div>
+                                            </div>
+                                            <div className="row gutters-xs mb-2">
+                                                <div className="col-auto">
+                                                    <strong>5.6.</strong>
+                                                </div>
+                                                <div className="col">
+                                                    <strong>Kullanıcı</strong> eksiksiz ve doğru faturalandırma ve
+                                                    iletişim bilgileri temin etmekle ve söz konusu bilgilerdeki herhangi
+                                                    bir değişikliği bildirmekle yükümlüdür. <strong>SCOUTIVE</strong>,
+                                                    ödemeye ilişkin işlemler veya banka entegrasyonu ve ilgili
+                                                    güncellemeleri gerçekleştirmek için <strong>Kullanıcı</strong>’nın
+                                                    kredi kartı ve ödeme bilgilerini saklayabilecektir.
+                                                    <strong> SCOUTIVE</strong> tarafından düzenlenecek faturalar üyelik
+                                                    dönemine ilişkin ücretleri içerecektir. İlgili ücretlere ilişkin
+                                                    vergi ve harçların ödenmesinden <strong>Kullanıcı </strong>
+                                                    sorumludur. Yabancı para birimi üzerinden yapılan anlaşmalarda,
+                                                    faturanın tanzim tarihindeki Merkez Bankası döviz alış kuru
+                                                    üzerinden TL olarak düzenlenir. Hizmet bedeli
+                                                    <strong> Kullanıcı</strong> tarafından faturanın kendisine
+                                                    tebliğinden itibaren 30 (otuz) gün içinde <strong>SCOUTIVE</strong>
+                                                    ’in Garanti Bankası Ortaköy Şubesinde (135) bulunan 6295542 nolu
+                                                    hesabına (TR43 0006 2000 1350 0006 2955 42) yatırılacaktır.
+                                                </div>
+                                            </div>
+                                            <div className="row gutters-xs mb-2">
+                                                <div className="col-auto">
+                                                    <strong>5.7.</strong>
+                                                </div>
+                                                <div className="col">
+                                                    <strong>Kullanıcı</strong>'nın işbu sözleşme kapsamında aldığı
+                                                    hizmetin bedellerini zamanında ödememesi halinde SCOUTIVE’in ödeme
+                                                    yapılana kadar hizmeti dondurma veya tamamen durdurma ve sözleşmeyi
+                                                    tek taraflı derhal fesih hakları saklıdır. Böyle bir durumda
+                                                    <strong> Kullanıcı</strong> herhangi bir hak öne süremeyeceğini
+                                                    kabul ve beyan eder. <strong>SCOUTIVE</strong>’in işbu maddeye
+                                                    dayanarak Sözleşmeyi haklı nedenle feshetmesi halinde,
+                                                    <strong> Kullanıcı</strong> işbu Sözleşme’nin 6.6 maddesinde
+                                                    belirtilen yükümlülüklerini yerine getirecektir.
+                                                </div>
+                                            </div>
                                             {/* <!-- ### MADDE 5 ### --> */}
+
+                                            <div className="w-100 h-2"></div>
+
+                                            {/* <!-- ### MADDE 6 ### --> */}
+                                            <div className="hr-text">Madde 6</div>
+                                            <h3 className="mt-0">Sözleşmenin Süresi ve Fesih</h3>
+                                            <div className="row gutters-xs mb-2">
+                                                <div className="col-auto">
+                                                    <strong>6.1.</strong>
+                                                </div>
+                                                <div className="col">
+                                                    İşbu sözleşme elektronik ortamda kabul edildiği tarih itibarıyla
+                                                    başlamaktadır ve işbu Sözleşme’ye uygun olarak satın alınan veya
+                                                    deneme süresi ile <strong>SCOUTIVE</strong> tarafından bedelsiz
+                                                    şekilde sağlanan tüm <strong>Kullanıcı</strong> abonelikleri bitene
+                                                    kadar veya sonlandırılana kadar veya <strong>Kullanıcı</strong>’nın
+                                                    hesabı kapatılana kadar devam edecektir.
+                                                </div>
+                                            </div>
+                                            <div className="row gutters-xs mb-2">
+                                                <div className="col-auto">
+                                                    <strong>6.2.</strong>
+                                                </div>
+                                                <div className="col">
+                                                    <strong>Ek-1</strong> de belirtilen ek hizmetlerin aşılması
+                                                    durumunda deneme sürümünde olsa dahi hizmet kullanım bedeli
+                                                    uygulanacaktır.
+                                                </div>
+                                            </div>
+                                            <div className="row gutters-xs mb-2">
+                                                <div className="col-auto">
+                                                    <strong>6.3.</strong>
+                                                </div>
+                                                <div className="col">
+                                                    Taraflardan biri işbu sözleşmeyi, sözleşmenin süresi dolmadan en az
+                                                    1 (hafta) gün öncesinden feshettiğini yazılı olarak bildirimle işbu
+                                                    Sözleşme’yi dilediği zaman herhangi bir gerekçe göstermeksizin ve
+                                                    tazminat ödemeksizin feshedebilir. <strong>Kullanıcı </strong>
+                                                    hesabının 6 ay boyunca pasif olması halinde,
+                                                    <strong> SCOUTIVE</strong> işbu Sözleşme’yi tek taraflı olarak
+                                                    feshedebilecektir.
+                                                </div>
+                                            </div>
+                                            <div className="row gutters-xs mb-2">
+                                                <div className="col-auto">
+                                                    <strong>6.4.</strong>
+                                                </div>
+                                                <div className="col">
+                                                    İşbu Sözleşme’nin haklı gerekçe ile <strong>Kullanıcı </strong>
+                                                    tarafından feshedilmesi halinde, fesih tarihine kadar olan hak ve
+                                                    yükümlülükler ortadan kalkmaz, bu nedenle Sözleşme’nin fesih
+                                                    tarihine kadar doğmuş olan tüm ücret ve masraflardan
+                                                    <strong> Kullanıcı</strong> sorumludur. Sözleşme’nin
+                                                    <strong> SCOUTIVE</strong> tarafından haklı gerekçe ile feshedilmesi
+                                                    durumunda ise ilgili fesih tarihinden sonra, tüm ilgili aboneliğin
+                                                    geri kalan süresini kapsayan herhangi bir ödenmemiş tutar
+                                                    <strong> SCOUTIVE</strong>’e ödenmelidir. Hiçbir durumda herhangi
+                                                    bir fesih, fesih tarihinden önceki dönem için
+                                                    <strong> SCOUTIVE</strong>‘e ödenmesi gereken herhangi bir tutarı ve
+                                                    ücreti ödeme yükümlülüğünü ortadan kaldırmayacaktır.
+                                                </div>
+                                            </div>
+                                            <div className="row gutters-xs mb-2">
+                                                <div className="col-auto">
+                                                    <strong>6.5.</strong>
+                                                </div>
+                                                <div className="col">
+                                                    Taraflardan herhangi birinin, işbu sözleşme hükümlerini ihlal etmesi
+                                                    halinde, ihlalin niteliğine göre hakları ihlal edilen Taraf ihlalin
+                                                    sona erdirilmesini yazılı olarak bildirerek ihlalin giderilmesi için
+                                                    3 günü aşmayacak bir süre verecektir. Bu süre içerisinde ihlal
+                                                    giderilmezse, hakları ihlal edilen Taraf yazılı bildirim yapmak
+                                                    kaydıyla işbu Sözleşmeyi feshedebilir.
+                                                </div>
+                                            </div>
+                                            <div className="row gutters-xs mb-2">
+                                                <div className="col-auto">
+                                                    <strong>6.6.</strong>
+                                                </div>
+                                                <div className="col">
+                                                    <strong>Kullanıcı</strong>, işbu Sözleşme’de belirtilen hizmet
+                                                    bedellerinin, madde 6.1’de yer alan hizmet süresi boyunca,
+                                                    Sözleşmeye bağlı kalacağı taahhüdüne karşılık olarak belirlendiğinin
+                                                    bilincinde olduğunu beyan eder. Bu nedenle, işbu sözleşmenin
+                                                    <strong> Kullanıcı</strong> tarafından Madde 6’da belirtilen
+                                                    sürelere uyulmaksızın feshedilmesi halinde,
+                                                    <strong> Kullanıcı </strong> taahhüt ettiği ancak ücretlendirilmesi
+                                                    gerçekleşmeyen kalan hizmet bedelinden veya sözleşme süresince
+                                                    yararlandığı indirim bedelinden hangisi daha düşük ise bu bedeli
+                                                    herhangi bir ihtara gerek olmaksızın <strong>SCOUTIVE </strong>
+                                                    tarafından düzenlenecek hizmet faturası karşılığında ilk talepte ve
+                                                    nakden <strong>SCOUTIVE</strong>’e ödeyeceğini gayri kabili rücu
+                                                    olarak kabul, beyan ve taahhüt eder.
+                                                </div>
+                                            </div>
+                                            {/* <!-- ### MADDE 6 ### --> */}
+
+                                            <div className="w-100 h-2"></div>
+
+                                            {/* <!-- ### MADDE 7 ### --> */}
+                                            <div className="hr-text">Madde 7</div>
+                                            <h3 className="mt-0">
+                                                Kişisel Verilerin Korunması, Sır Saklama ve Gizlilik Hükümleri
+                                            </h3>
+                                            <div className="row gutters-xs mb-2">
+                                                <div className="col-auto">
+                                                    <strong>7.1.</strong>
+                                                </div>
+                                                <div className="col">
+                                                    İşbu sözleşme kapsamında <strong>Kullanıcı</strong> tarafından
+                                                    <strong> SCOUTIVE</strong>’a yazılı olarak veya elektronik ortamda
+                                                    teslim edilen her türlü veritabanı bilgileri ile
+                                                    <strong> SCOUTIVE</strong> tarafından <strong>Kullanıcı</strong>'ya
+                                                    sözlü, yazılı veya elektronik olarak teslim edilen uygulama,
+                                                    yazılım, kod, program, eğitim, doküman, bilgi ve materyaller gizli
+                                                    bilgi ve ifşa yasağı kapsamındadır.
+                                                </div>
+                                            </div>
+                                            <div className="row gutters-xs mb-2">
+                                                <div className="col-auto">
+                                                    <strong>7.2.</strong>
+                                                </div>
+                                                <div className="col">
+                                                    Taraflar, gizli bilgiyi yalnızca veriliş amacına uygun ve bu amaçla
+                                                    sınırlı olarak kullanacak ve ilgili tarafın yazılı izni olmaksızın
+                                                    gizli bilgileri hiçbir gerekçe ile kısmen veya tamamen gerçek veya
+                                                    tüzel üçüncü şahısların bilgisine sunmayacak veya herhangi bir
+                                                    şekilde ifşa etmeyecektir.
+                                                </div>
+                                            </div>
+                                            <div className="row gutters-xs mb-2">
+                                                <div className="col-auto">
+                                                    <strong>7.3.</strong>
+                                                </div>
+                                                <div className="col">
+                                                    Taraflar, gizli bilgiyi ancak zorunlu hallerde ve iş gereği bu gizli
+                                                    bilgiyi öğrenmesi gereken personeline ve işbu sözleşme kapsamında
+                                                    işbirliği yapılan üçüncü kişilere verebilecek ancak bu bilginin
+                                                    gizli olduğu konusunda personelini ve üçüncü kişileri uyaracak ve
+                                                    gizli bilginin korunması için gerekli her türlü önlemi alacaklardır.
+                                                </div>
+                                            </div>
+                                            <div className="row gutters-xs mb-2">
+                                                <div className="col-auto">
+                                                    <strong>7.4.</strong>
+                                                </div>
+                                                <div className="col">
+                                                    Gizli bilginin tarafların bir kusuru olmaksızın kamuya mal olması,
+                                                    gizli bilginin tarafların dışında bir kaynak tarafından kamuya ifşa
+                                                    edilmesi, gizli bilginin yürürlükte olan mevzuat veya verilmiş
+                                                    mahkeme kararı ya da idari emir gereğince açıklanmasının kanunen
+                                                    zorunlu olması ve gizli bilginin zaten önceden kamuya ifşa olması
+                                                    halleri gizli bilgi ve ifşa yasağı kapsamı dışındadır.
+                                                </div>
+                                            </div>
+                                            <div className="row gutters-xs mb-2">
+                                                <div className="col-auto">
+                                                    <strong>7.5.</strong>
+                                                </div>
+                                                <div className="col">
+                                                    <strong>Kullanıcı</strong>, Veri Sorumlusu sıfatı ile 6698 sayılı
+                                                    Kanun kapsamında öngörülmüş her türlü yükümlülüğü eksiksiz yerine
+                                                    getireceğini kabul, beyan ve taahhüt eder.
+                                                    <strong> Kullanıcı</strong>, elde etmiş olduğu ve Sözleşme
+                                                    kapsamında paylaşacağı kişisel verilerin 3. Kişilere aktarılması ve
+                                                    işlenmesi için gerekli izinlerin veri sahiplerinden 6698 sayılı
+                                                    Kanun’a uygun olarak alındığını kabul beyan ve taahhüt eder.
+                                                </div>
+                                            </div>
+                                            <div className="row gutters-xs mb-2">
+                                                <div className="col-auto">
+                                                    <strong>7.6.</strong>
+                                                </div>
+                                                <div className="col">
+                                                    Sözleşmede yer alan hizmetlerin ifası sırasında
+                                                    <strong> SCOUTIVE</strong>’in “Veri İşleyen” sıfatını haiz olması
+                                                    koşulu ile <strong>SCOUTIVE</strong>, 6698 sayılı Kanun’da Veri
+                                                    İşleyen tanımı kapsamında yüklenen tüm sorumluluk ve yükümlülükleri
+                                                    yerine getirmeyi kabul etmektedir.
+                                                </div>
+                                            </div>
+                                            <div className="row gutters-xs mb-2">
+                                                <div className="col-auto">
+                                                    <strong>7.7.</strong>
+                                                </div>
+                                                <div className="col">
+                                                    <strong>SCOUTIVE</strong>, 6698 sayılı Kanun ‘da tanımlı olduğu
+                                                    şekilde kendi kusuru nedeniyle kişisel verilerin amacı dışında
+                                                    kullanılması veya yine kusuru dahilinde 3. kişilere kanunsuz olarak
+                                                    ifşa edilmiş olması halleri dışında doğrudan veya dolaylı hiçbir
+                                                    zararın muhatabı değildir.
+                                                </div>
+                                            </div>
+                                            <div className="row gutters-xs mb-2">
+                                                <div className="col-auto">
+                                                    <strong>7.8.</strong>
+                                                </div>
+                                                <div className="col">
+                                                    Herhangi bir resmi kurumun <strong>SCOUTIVE</strong>’e işbu Sözleşme
+                                                    kapsamında sahip olduğu kişisel verilerin hukuka aykırı olarak elde
+                                                    edilmesi veya hukuka uygun olarak muhafazasının sağlanmaması gibi
+                                                    6698 Sayılı Kanun kapsamında Veri Sorumlusu’na ilişkin
+                                                    yükümlülüklerin ihlalinden kaynaklı olarak idari para cezası
+                                                    öngörmesi halinde <strong>Kullanıcı</strong>, işbu idari para cezası
+                                                    bedelini <strong>SCOUTIVE</strong>’e ilk talepte nakden ödeyeceğini
+                                                    kabul beyan ve taahhüt eder.
+                                                </div>
+                                            </div>
+                                            <div className="row gutters-xs mb-2">
+                                                <div className="col-auto">
+                                                    <strong>7.9.</strong>
+                                                </div>
+                                                <div className="col">
+                                                    <strong>SCOUTIVE</strong>, herhangi bir resmi kurumdan madde 7.8.
+                                                    kapsamında gelecek bildirim neticesinde tüm tazminat talebi hakları
+                                                    saklı kalmak kaydıyla Sözleşmeyi derhal feshetmeye yetkilidir.
+                                                </div>
+                                            </div>
+                                            {/* <!-- ### MADDE 7 ### --> */}
+
+                                            <div className="w-100 h-2"></div>
+
+                                            {/* <!-- ### MADDE 8 ### --> */}
+                                            <div className="hr-text">Madde 8</div>
+                                            <h3 className="mt-0">Lisans ve Telif Hakları</h3>
+                                            <div className="row gutters-xs mb-2">
+                                                <div className="col-auto">
+                                                    <strong>8.1.</strong>
+                                                </div>
+                                                <div className="col">
+                                                    <strong>Kullanıcı</strong>, Scoutive Servisinde kullanılan ve tüm
+                                                    hakları münhasıran <strong>SCOUTIVE</strong>’e ait olan web
+                                                    sitesini, yazılımları, programları, sistem mimarisini ve sistem
+                                                    kodlarını sadece işbu sözleşme süresince ve sözleşme hükümlerine
+                                                    uygun olarak kullanacağını, yazılımlara ait kaynak kodlarını, ara
+                                                    yüzleri, sistem mimarisini ve sistem kodlarını tamamen veya kısmen,
+                                                    doğrudan veya dolaylı olarak herhangi bir şekilde kopyalamayacağını,
+                                                    çoğaltmayacağını, satmayacağını, ücretli veya ücretsiz olarak
+                                                    devretmeyeceğini, değiştirmeyeceğini, yaymayacağını, umuma
+                                                    sunmayacağını, herhangi bir şekilde üçüncü şahısların kullanımına
+                                                    açmayacağını, içeriğinde değişiklik yapmayacağını, kaynak kodu
+                                                    dönüştürme veya ters mühendislik işlemleri uygulamayacağını ve işbu
+                                                    sözleşme kapsamı dışında kullanmayacağını, işbu madde hükmüne aykırı
+                                                    hareket etmesi <strong>SCOUTIVE</strong>’in uğrayacağı tüm zararları
+                                                    karşılayacağını kabul ve taahhüt eder.
+                                                </div>
+                                            </div>
+                                            <div className="row gutters-xs mb-2">
+                                                <div className="col-auto">
+                                                    <strong>8.2.</strong>
+                                                </div>
+                                                <div className="col">
+                                                    <strong>Kullanıcı</strong>, Scoutive Servisine ilişkin teknik ve
+                                                    ticari fikirleri hukuka aykırı olarak kullanmayacağını, üçüncü
+                                                    kişilerle paylaşılmayacağını, haksız rekabet teşkil edecek şekilde
+                                                    kopyalamayacağını ve benzer ürünler üretmeyeceğini kabul ve taahhüt
+                                                    eder.
+                                                </div>
+                                            </div>
+                                            <div className="row gutters-xs mb-2">
+                                                <div className="col-auto">
+                                                    <strong>8.3.</strong>
+                                                </div>
+                                                <div className="col">
+                                                    İşbu sözleşmenin feshedilme veya sona erme tarihinden itibaren
+                                                    geçerli olmak üzere, sözleşmenin diğer hükümlerine bakılmaksızın,
+                                                    <strong>Kullanıcı</strong> artık Yazılımın herhangi bir bölümünü
+                                                    kullanma hakkına sahip olmayacaktır.
+                                                </div>
+                                            </div>
+                                            {/* <!-- ### MADDE 8 ### --> */}
+
+                                            <div className="w-100 h-2"></div>
+
+                                            {/* <!-- ### MADDE 9 ### --> */}
+                                            <div className="hr-text">Madde 9</div>
+                                            <h3 className="mt-0">Mücbir Sebepler</h3>
+                                            <div className="row gutters-xs mb-2">
+                                                <div className="col-auto">
+                                                    <strong>9.1.</strong>
+                                                </div>
+                                                <div className="col">
+                                                    Taraflar, deprem, sel, yangın, doğal afet, savaş, seferberlik,
+                                                    sıkıyönetim, grev, lokavt, isyan, ayaklanma, terör ve benzeri mücbir
+                                                    sebeplerin ortaya çıkması nedeniyle işbu sözleşme kapsamındaki
+                                                    yükümlülüklerini yerine getirememeleri halinde sorumlu
+                                                    olmayacaklardır.
+                                                </div>
+                                            </div>
+                                            <div className="row gutters-xs mb-2">
+                                                <div className="col-auto">
+                                                    <strong>9.2.</strong>
+                                                </div>
+                                                <div className="col">
+                                                    Mücbir sebep durumunun 30 (otuz) günden fazla devam etmesi halinde
+                                                    taraflar bir araya gelerek, işbu sözleşmenin devamını, askıya
+                                                    alınmasını veya feshedilmesini müzakere edeceklerdir. Fesih halinde
+                                                    taraflar, mücbir sebepler nedeniyle işbu sözleşmenin uygulanamamış
+                                                    hükümleri nedeniyle birbirlerinden herhangi bir talepte
+                                                    bulunmayacaktır.
+                                                </div>
+                                            </div>
+                                            {/* <!-- ### MADDE 9 ### --> */}
+
+                                            <div className="w-100 h-2"></div>
+
+                                            {/* <!-- ### EK-1 ### --> */}
+                                            <div className="hr-text">Ek</div>
+                                            <h3 className="mt-0">Ek-1</h3>
+                                            <strong>Gönderim Hacmi Kullanım Ücreti</strong>
+                                            <p>
+                                                <strong>Kullanıcı</strong>’nın aylık olarak 250 adet SMS gönderim hakkı
+                                                bulunmaktadır. 250 adet SMS’in aşılması durumunda gönderilecek SMS’ler
+                                                Ek Hizmetlerimiz kapsamında değerlendirilecektir.
+                                            </p>
+                                            <strong>İsteğe Bağlı Ek Hizmetler</strong>
+                                            <p>
+                                                <strong>SCOUTIVE</strong> talebinize göre teklifte belirtilen hizmet
+                                                bedelinden ayrı olarak aşağıda detayları belirtilen alanlarda hizmet
+                                                verebilir.
+                                            </p>
+                                            {/* <!-- ### EK-1 ### --> */}
+
+                                            <div className="w-100 h-2"></div>
+
+                                            {/* <!-- ### Ek Paketler (SMS) ### --> */}
+                                            <div className="hr-text">Ek Paketler</div>
+                                            <h3 className="mt-0">Ek Paketler (SMS)</h3>
+                                            <table className="table text-dark table-vcenter">
+                                                <thead>
+                                                    <tr>
+                                                        <td align="center" className="font-weight-600" colSpan="4">
+                                                            SMS BAKİYE AŞIM DURUMUNDA
+                                                        </td>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <th>PAKET</th>
+                                                        <th>PAKET ADETİ</th>
+                                                        <th>PAKET TUTARI (+KDV)</th>
+                                                        <th>PAKET TUTARI (KDV DAHİL)</th>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>100'lük Paket</td>
+                                                        <td>
+                                                            <strong>100</strong> Adet
+                                                        </td>
+                                                        <td className="font-weight-600">10 TL+KDV</td>
+                                                        <td className="font-weight-600">11,80 TL</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>250'lik Paket</td>
+                                                        <td>
+                                                            <strong>250</strong> Adet
+                                                        </td>
+                                                        <td className="font-weight-600">20 TL+KDV</td>
+                                                        <td className="font-weight-600">23,60 TL</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>500'lük Paket</td>
+                                                        <td>
+                                                            <strong>500</strong> Adet
+                                                        </td>
+                                                        <td className="font-weight-600">35 TL+KDV</td>
+                                                        <td className="font-weight-600">41,30 TL</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                            {/* <!-- ### Ek Paketler (SMS) ### --> */}
+
+                                            <div className="w-100 h-2"></div>
+
+                                            {/* <!-- ### Teşekkürler ### --> */}
+                                            <div className="hr-text hr-text-center">Teşekkürler</div>
+
+                                            <div className="row leading-normal mt-5">
+                                                <div className="col-12 text-center mb-2">
+                                                    <div
+                                                        className="avatar avatar-md avatar-transparent"
+                                                        style={{ backgroundImage: `url(${logo_circle})` }}></div>
+                                                </div>
+                                                <div className="col-12 text-center">
+                                                    <h4 className="text-body mb-0">Scoutive</h4>
+                                                    <a
+                                                        className="small text-muted d-block"
+                                                        href="mailto:info@scoutive.net">
+                                                        info@scoutive.net
+                                                    </a>
+                                                    <a className="small text-muted d-block" href="tel:08508001234">
+                                                        0850 800 1234
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            {/* <!-- ### Teşekkürler ### --> */}
                                         </div>
                                     </div>
-                                </div>
-                                <div className="text-center text-muted">
-                                    <a href="#" onClick={() => this.props.history.goBack()}>
-                                        Geriye dön
-                                    </a>
                                 </div>
                             </div>
                         </div>
