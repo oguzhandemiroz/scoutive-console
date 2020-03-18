@@ -152,7 +152,7 @@ export class SingleAdd extends Component {
         const { uid, person, sender, personType, select_template, content, when } = this.state;
         CreateMessage({
             uid: uid,
-            campaign_name: person.label + " - " + moment(when).format("DDMMYY"),
+            campaign_name: `${person.label.slice(0, 40)} - ${moment(when).format("DDMMYY")}`,
             to: person.value,
             person_type: personTypeToType[personType],
             content: content,

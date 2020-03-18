@@ -205,12 +205,19 @@ export class RecurringAdd extends Component {
 
     handleChange = e => {
         try {
-            e.preventDefault();
             const { name, value } = e.target;
+
             this.setState(prevState => ({
                 formErrors: {
                     ...prevState.formErrors,
-                    [name]: value.trim() ? "" : "is-invalid"
+                    [name]:
+                        name === "title"
+                            ? value.trim().length <= 50
+                                ? ""
+                                : "is-invalid"
+                            : value.trim().length <= 3
+                            ? ""
+                            : "is-invalid"
                 },
                 [name]: value
             }));
@@ -361,7 +368,7 @@ export class RecurringAdd extends Component {
             this.setState(prevState => ({
                 formErrors: {
                     ...prevState.formErrors,
-                    title: nullCheck(title, "").trim() ? "" : "is-invalid",
+                    title: nullCheck(title, "").trim().length <= 50 ? "" : "is-invalid",
                     when: when ? "" : "is-invalid",
                     end_date: end_date ? "" : "is-invalid",
                     groups: groups && groups.length !== 0 ? false : true
@@ -449,7 +456,8 @@ export class RecurringAdd extends Component {
                                             name="title"
                                             onChange={this.handleChange}
                                             className={`form-control ${formErrors.title}`}
-                                            value={title || ""}
+                                            value={nullCheck(title, "")}
+                                            maxLength="50"
                                         />
                                     </div>
                                 </div>
@@ -685,6 +693,7 @@ export class RecurringAdd extends Component {
                                     name="passed_day"
                                     value={passed_day}
                                     onChange={this.handleChange}
+                                    max="365"
                                 />
                             </div>
                         </div>
@@ -1165,7 +1174,9 @@ export class RecurringAdd extends Component {
         this.setState({
             ...initialState,
             selected_segment: k,
-            title: segments.find(x => x.static_segment_id === k).segment_name + " - " + moment(when).format("DDMMYY")
+            title: `${segments.find(x => x.static_segment_id === k).segment_name.slice(0, 40)} - ${moment(when).format(
+                "DDMMYY"
+            )}`
         });
     };
 

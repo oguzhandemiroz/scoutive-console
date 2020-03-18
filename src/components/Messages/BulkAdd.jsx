@@ -222,7 +222,7 @@ export class BulkAdd extends Component {
             this.setState(prevState => ({
                 formErrors: {
                     ...prevState.formErrors,
-                    [name]: value.trim() ? "" : "is-invalid"
+                    [name]: value.trim().length <= 50 ? "" : "is-invalid"
                 },
                 [name]: value
             }));
@@ -479,7 +479,7 @@ export class BulkAdd extends Component {
             this.setState(prevState => ({
                 formErrors: {
                     ...prevState.formErrors,
-                    title: nullCheck(title, "").trim() ? "" : "is-invalid",
+                    title: nullCheck(title, "").trim().length <= 50 ? "" : "is-invalid",
                     when: when ? "" : "is-invalid"
                 }
             }));
@@ -549,7 +549,7 @@ export class BulkAdd extends Component {
                                     name="title"
                                     onChange={this.handleChange}
                                     className={`form-control ${formErrors.title}`}
-                                    value={title || ""}
+                                    maxLength="50"
                                 />
                             </div>
                         </div>
