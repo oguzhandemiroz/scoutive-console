@@ -151,8 +151,16 @@ export class Add extends Component {
                     ...prevState.formErrors,
                     employee: employee ? false : true,
                     name: name && name.length <= 30 ? "" : "is-invalid",
-                    start_time: moment(start_time, "HH:mm", true).isValid("HH:mm") ? "" : "is-invalid-iconless",
-                    end_time: moment(end_time, "HH:mm", true).isValid("HH:mm") ? "" : "is-invalid-iconless",
+                    start_time:
+                        moment(start_time, "HH:mm", true).isValid("HH:mm") &&
+                        moment(start_time, "HH:mm").isSameOrBefore(moment(end_time, "HH:mm"))
+                            ? ""
+                            : "is-invalid-iconless",
+                    end_time:
+                        moment(end_time, "HH:mm", true).isValid("HH:mm") &&
+                        moment(start_time, "HH:mm").isSameOrBefore(moment(end_time, "HH:mm"))
+                            ? ""
+                            : "is-invalid-iconless",
                     start_age: start_age ? "" : "is-invalid",
                     end_age: end_age ? "" : "is-invalid"
                 }
@@ -162,15 +170,40 @@ export class Add extends Component {
 
     handleChange = e => {
         try {
-            e.preventDefault();
+            const { start_time, end_time } = this.state;
             const { value, name } = e.target;
             let formErrors = { ...this.state.formErrors };
             switch (name) {
                 case "start_time":
-                    formErrors[name] = moment(value, "HH:mm", true).isValid("HH:mm") ? "" : "is-invalid-iconless";
+                    formErrors =
+                        moment(value, "HH:mm", true).isValid("HH:mm") &&
+                        moment(value, "HH:mm").isSameOrBefore(moment(end_time, "HH:mm"))
+                            ? {
+                                  ...formErrors,
+                                  [name]: "",
+                                  end_time: ""
+                              }
+                            : {
+                                  ...formErrors,
+                                  [name]: "is-invalid-iconless",
+                                  end_time: "is-invalid-iconless"
+                              };
                     break;
                 case "end_time":
-                    formErrors[name] = moment(value, "HH:mm", true).isValid("HH:mm") ? "" : "is-invalid-iconless";
+                    formErrors =
+                        moment(value, "HH:mm", true).isValid("HH:mm") &&
+                        moment(start_time, "HH:mm").isSameOrBefore(moment(value, "HH:mm"))
+                            ? {
+                                  ...formErrors,
+                                  [name]: "",
+                                  start_time: ""
+                              }
+                            : {
+                                  ...formErrors,
+                                  [name]: "is-invalid-iconless",
+                                  start_time: "is-invalid-iconless"
+                              };
+
                     break;
                 case "name":
                     formErrors[name] = value && value.length <= 30 ? "" : "is-invalid";
