@@ -126,7 +126,15 @@ export class List extends Component {
                     {
                         targets: "status",
                         render: function(data, type, row) {
-                            return data + " " + row.template.template_name;
+                            const { status, template, segment_id } = row;
+
+                            if (type === "filter") {
+                                return renderForDataTableSearchStructure(
+                                    statusType[segment_id && status === 1 ? 999 : status].title
+                                );
+                            }
+
+                            return data + " " + template.template_name;
                         },
                         createdCell: (td, cellData, rowData) => {
                             const { status, segment_id } = rowData;
