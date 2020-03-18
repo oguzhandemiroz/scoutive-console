@@ -51,7 +51,8 @@ export class SmsTemplatesEdit extends Component {
             UpdateMessageTemplate({
                 uid: uid,
                 ...detail,
-                content: detail.content.trim()
+                content: detail.content.trim(),
+                template_name: detail.template_name.trim()
             }).then(response => {
                 if (response) {
                     if (response.status.code === 1022) this.reload();
@@ -63,7 +64,7 @@ export class SmsTemplatesEdit extends Component {
                 formErrors: {
                     ...prevState.formErrors,
                     content: detail.content.trim() ? "" : "is-invalid",
-                    template_name: detail.template_name ? "" : "is-invalid"
+                    template_name: detail.template_name.trim() ? "" : "is-invalid"
                 }
             }));
         }
@@ -245,7 +246,7 @@ export class SmsTemplatesEdit extends Component {
                                     rows="2"
                                     placeholder="Şablon İçeriği..."
                                     onChange={this.handleChange}
-                                    value={nullCheck(detail.content, "")}
+                                    value={detail.content}
                                 />
                             </div>
                             <div className="alert alert-info alert-dismissible">
