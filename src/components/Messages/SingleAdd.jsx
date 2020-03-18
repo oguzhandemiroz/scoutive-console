@@ -596,11 +596,13 @@ export class SingleAdd extends Component {
 
     deliveryRecipient = () => {
         const { person, personType, to } = this.state;
+        const redirectUri =
+            personType === "player" ? `/app/${personType}s/detail/${to}` : `/app/persons/${personType}s/detail/${to}`;
         return (
             <div className="form-group">
                 <label className="form-label">Gönderim Yapılacak Kişi</label>
                 <div className="tags">
-                    <Link to={`/app/${personType}s/detail/${to}`} target="_blank" className="tag">
+                    <Link to={redirectUri} target="_blank" className="tag">
                         {person.label}
                     </Link>
                 </div>
