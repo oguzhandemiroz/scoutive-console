@@ -232,6 +232,11 @@ export class RecurringAdd extends Component {
     };
 
     handleDate = (date, name) => {
+        const { end_date } = this.state;
+        if (name === "when" && moment(date).isSameOrAfter(end_date)) {
+            this.setState({ end_date: date });
+        }
+
         this.setState(prevState => ({
             formErrors: {
                 ...prevState.formErrors,
@@ -497,6 +502,7 @@ export class RecurringAdd extends Component {
                                         <DatePicker
                                             autoComplete="off"
                                             selected={end_date}
+                                            minDate={when}
                                             dateFormat="dd MMMM yyyy"
                                             name="end_date"
                                             locale="tr"
