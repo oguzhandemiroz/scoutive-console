@@ -61,6 +61,7 @@ const GenerateSessionData = () => {
             cookie_enabled: GetCookieEnabled(),
             city: response.city,
             country: response.country_name,
+            country_code: response.country_code,
             device: GetDevice(),
             os_name: GetOsName(),
             os_version: GetOsVersion(),
