@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Link, withRouter } from "react-router-dom";
 import { CreateMessageTemplate } from "../../../../services/Messages";
-import { nullCheck } from "../../../../services/Others";
+import { nullCheck, spaceTrim } from "../../../../services/Others";
 import { formValid } from "../../../../assets/js/core";
 
 const initialState = {
@@ -41,8 +41,8 @@ export class SmsTemplatesAdd extends Component {
             CreateMessageTemplate({
                 uid: uid,
                 title: null,
-                template_name: template_name.trim(),
-                content: content.trim(),
+                template_name: spaceTrim(template_name),
+                content: spaceTrim(content),
                 color: color,
                 icon: icon,
                 type: 2
@@ -57,8 +57,8 @@ export class SmsTemplatesAdd extends Component {
             this.setState(prevState => ({
                 formErrors: {
                     ...prevState.formErrors,
-                    content: nullCheck(content, "").trim() ? "" : "is-invalid",
-                    template_name: nullCheck(template_name, "").trim() ? "" : "is-invalid"
+                    template_name: spaceTrim(template_name) ? "" : "is-invalid",
+                    content: spaceTrim(content) ? "" : "is-invalid"
                 },
                 iconError: icon ? false : true,
                 colorError: color ? false : true
@@ -87,10 +87,10 @@ export class SmsTemplatesAdd extends Component {
             });
         }
         this.setState(prevState => ({
-            [name]: name === "content" ? value.slice(0, 883) : value.trim(),
+            [name]: name === "content" ? value.slice(0, 883) : value,
             formErrors: {
                 ...prevState.formErrors,
-                [name]: value.trim() ? "" : "is-invalid"
+                [name]: spaceTrim(value) ? "" : "is-invalid"
             }
         }));
     };

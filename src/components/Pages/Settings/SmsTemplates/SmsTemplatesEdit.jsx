@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Link, withRouter } from "react-router-dom";
 import { GetMessageTemplate, UpdateMessageTemplate } from "../../../../services/Messages";
-import { nullCheck } from "../../../../services/Others";
+import { nullCheck, spaceTrim } from "../../../../services/Others";
 import { formValid } from "../../../../assets/js/core";
 
 const $ = require("jquery");
@@ -47,12 +47,12 @@ export class SmsTemplatesEdit extends Component {
 
     handleSubmit = () => {
         const { uid, detail } = this.state;
-        if (detail.content.trim() && formValid(this.state)) {
+        if (formValid(this.state)) {
             UpdateMessageTemplate({
                 uid: uid,
                 ...detail,
-                content: detail.content.trim(),
-                template_name: detail.template_name.trim()
+                content: spaceTrim(detail.content),
+                template_name: spaceTrim(detail.template_name)
             }).then(response => {
                 if (response) {
                     if (response.status.code === 1022) this.reload();
@@ -63,8 +63,8 @@ export class SmsTemplatesEdit extends Component {
             this.setState(prevState => ({
                 formErrors: {
                     ...prevState.formErrors,
-                    content: detail.content.trim() ? "" : "is-invalid",
-                    template_name: detail.template_name.trim() ? "" : "is-invalid"
+                    content: spaceTrim(detail.content) ? "" : "is-invalid",
+                    template_name: spaceTrim(detail.template_name) ? "" : "is-invalid"
                 }
             }));
         }
@@ -97,7 +97,7 @@ export class SmsTemplatesEdit extends Component {
             },
             formErrors: {
                 ...prevState.formErrors,
-                [name]: value.trim() ? "" : "is-invalid"
+                [name]: spaceTrim(value) ? "" : "is-invalid"
             }
         }));
     };
