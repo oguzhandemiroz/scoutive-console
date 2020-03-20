@@ -23,7 +23,10 @@ export class Sessions extends Component {
                                     <td>
                                         <i className="fa fa-laptop" />
                                     </td>
-                                    <td>Windows, Chrome</td>
+                                    <td>
+                                        <div>Windows</div>
+                                        <div className="small text-muted">Chrome</div>
+                                    </td>
                                     <td>
                                         <i className="flag flag-tr"></i>
                                     </td>
@@ -41,7 +44,10 @@ export class Sessions extends Component {
                                     <td>
                                         <i className="fa fa-laptop" />
                                     </td>
-                                    <td>Windows, Chrome</td>
+                                    <td>
+                                        <div>Windows</div>
+                                        <div className="small text-muted">Chrome</div>
+                                    </td>
                                     <td>
                                         <i className="flag flag-tr"></i>
                                     </td>
@@ -59,7 +65,10 @@ export class Sessions extends Component {
                                     <td>
                                         <i className="fa fa-laptop" />
                                     </td>
-                                    <td>Windows, Chrome</td>
+                                    <td>
+                                        <div>Windows</div>
+                                        <div className="small text-muted">Chrome</div>
+                                    </td>
                                     <td>
                                         <i className="flag flag-tr"></i>
                                     </td>
