@@ -150,16 +150,18 @@ export class SingleAdd extends Component {
 
     handleSubmit = () => {
         const { uid, person, sender, personType, select_template, content, when } = this.state;
+        this.setState({ loadingButton: "btn-loading" });
         CreateMessage({
             uid: uid,
             campaign_name: person.label + " - " + moment(when).format("DDMMYY"),
             to: person.value,
             person_type: personTypeToType[personType],
-            content: content,
+            content: content.trim(),
             sender: sender,
             template_id: select_template ? select_template : 0,
             when: formatDate(when, "YYYY-MM-DD HH:mm:00")
         }).then(response => {
+            this.setState({ loadingButton: "btn-loading" });
             if (response) {
                 if (response.status.code === 1023) {
                     this.props.history.push("/app/messages/detail/" + response.campaign_id);
@@ -331,7 +333,7 @@ export class SingleAdd extends Component {
                 messagesStepError: true,
                 formErrors: {
                     ...prevState.formErrors,
-                    content: contentType === "-1" ? (content ? "" : "is-invalid") : ""
+                    content: contentType === "-1" ? (nullCheck(content, "").trim() ? "" : "is-invalid") : ""
                 }
             }));
         }
@@ -841,7 +843,7 @@ export class SingleAdd extends Component {
                                     name="content"
                                     placeholder="Mesaj İçeriği..."
                                     onChange={this.handleChange}
-                                    value={content || ""}
+                                    value={nullCheck(content, "")}
                                 />
                             </div>
                             <div className="col-lg-6 col-md-6">
