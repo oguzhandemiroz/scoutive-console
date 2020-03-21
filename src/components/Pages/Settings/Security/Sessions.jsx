@@ -138,7 +138,7 @@ export class Sessions extends Component {
                                                 ) : (
                                                     <i
                                                         className="fa fa-info-circle fa-lg"
-                                                        title="Bu Aktif Oturum"
+                                                        title="Şu an ki Aktif Oturum"
                                                         data-toggle="tooltip"
                                                     />
                                                 )}
