@@ -123,7 +123,7 @@ export class Edit extends Component {
             UpdateGroup({
                 uid: uid,
                 group_id: gid,
-                name: name.capitalize(),
+                name: name.capitalize().trim(),
                 start_time: start_time,
                 end_time: end_time,
                 employee_id: employee.value,
@@ -156,7 +156,7 @@ export class Edit extends Component {
                 formErrors: {
                     ...prevState.formErrors,
                     employee: employee ? false : true,
-                    name: name && name.length <= 30 ? "" : "is-invalid",
+                    name: nullCheck(name, "").trim() && name.length <= 30 ? "" : "is-invalid",
                     start_time:
                         moment(start_time, "HH:mm", true).isValid("HH:mm") &&
                         moment(start_time, "HH:mm").isSameOrBefore(moment(end_time, "HH:mm"))
@@ -212,10 +212,10 @@ export class Edit extends Component {
 
                     break;
                 case "name":
-                    formErrors[name] = value && value.length <= 30 ? "" : "is-invalid";
+                    formErrors[name] = nullCheck(value, "").trim() && value.length <= 30 ? "" : "is-invalid";
                     break;
                 default:
-                    formErrors[name] = value ? "" : "is-invalid";
+                    formErrors[name] = value.trim() ? "" : "is-invalid";
                     break;
             }
             this.setState({ formErrors, [name]: value });

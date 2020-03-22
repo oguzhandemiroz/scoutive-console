@@ -7,7 +7,8 @@ import {
     formatDate,
     fullnameGenerator,
     CheckPermissions,
-    searchStructureForDate
+    searchStructureForDate,
+    nullCheck
 } from "../../services/Others";
 import { ListPlayers } from "../../services/Player";
 import { CreateGroup, ChangeGroup } from "../../services/Group";
@@ -113,7 +114,7 @@ export class Add extends Component {
 
             CreateGroup({
                 uid: uid,
-                name: name.capitalize(),
+                name: name.capitalize().trim(),
                 start_time: start_time,
                 end_time: end_time,
                 employee_id: employee.value,
@@ -150,7 +151,7 @@ export class Add extends Component {
                 formErrors: {
                     ...prevState.formErrors,
                     employee: employee ? false : true,
-                    name: name && name.length <= 30 ? "" : "is-invalid",
+                    name: nullCheck(name, "").trim() && name.length <= 30 ? "" : "is-invalid",
                     start_time:
                         moment(start_time, "HH:mm", true).isValid("HH:mm") &&
                         moment(start_time, "HH:mm").isSameOrBefore(moment(end_time, "HH:mm"))
@@ -206,10 +207,10 @@ export class Add extends Component {
 
                     break;
                 case "name":
-                    formErrors[name] = value && value.length <= 30 ? "" : "is-invalid";
+                    formErrors[name] = nullCheck(value, "").trim() && value.length <= 30 ? "" : "is-invalid";
                     break;
                 default:
-                    formErrors[name] = value ? "" : "is-invalid";
+                    formErrors[name] = value.trim() ? "" : "is-invalid";
                     break;
             }
             this.setState({ formErrors, [name]: value });
