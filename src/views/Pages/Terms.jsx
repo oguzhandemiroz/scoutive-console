@@ -39,7 +39,7 @@ export class Terms extends Component {
                                                 siteye <strong>(“Site”)</strong> kullanıcı olarak kaydolan kişi
                                                 <strong> (“Kullanıcı”)</strong> arasında aşağıda belirtilen hüküm ve
                                                 şartlar çerçevesinde elektronik ortamda imzalanmıştır. Sözleşme’de
-                                                belirtilen usuller doğrultusunda sona erdirilmediği sürece yürürlükte
+                                                belirtilen usuller doğrultusunda sona erdirilmediği taktirde yürürlükte
                                                 kalmaya devam edecektir.
                                             </p>
                                             <p>
@@ -60,7 +60,7 @@ export class Terms extends Component {
                                                 </div>
                                                 <div className="col">
                                                     İşbu sözleşme hükümleri çerçevesinde, <strong>Kullanıcı</strong>'nın
-                                                    <strong> SCOUTIVE</strong>
+                                                    <strong> SCOUTIVE </strong>
                                                     tarafından sunulan CRM sistemine bilgileri işlenen ve hizmet
                                                     kapsamında olması halinde e-posta ve SMS yoluyla bilgilendirme
                                                     yapacağı <strong>Kullanıcı</strong> ile bilgilerini rıza göstererek
@@ -179,10 +179,10 @@ export class Terms extends Component {
                                                     <strong>4.1.</strong>
                                                 </div>
                                                 <div className="col">
-                                                    <strong>Kullanıcı</strong> Scoutive Servisini kullanabilmek için
+                                                    <strong>Kullanıcı</strong> Scoutive Servisini kullanabilmek için{" "}
                                                     <a href="https://scoutive.app/auth/register" target="_blank">
                                                         https://scoutive.app/auth/register
-                                                    </a>
+                                                    </a>{" "}
                                                     linki üzerinden sayfada yer alan bilgileri doldurarak üye olacaktır.
                                                     Üyelik için siteye girilen gerekli hesap bilgilerinin güvenliği
                                                     tamamen <strong>Kullanıcı</strong>'nın sorumluluğunda olup, bu
