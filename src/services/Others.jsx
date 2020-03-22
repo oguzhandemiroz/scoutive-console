@@ -96,6 +96,14 @@ const nullCheck = (data, instead) => {
     }
 };
 
+const spaceTrim = value => {
+    try {
+        return value ? value.trim() : "";
+    } catch (e) {
+        return "";
+    }
+};
+
 const formatDate = (date, format) => {
     try {
         if (!format) format = "DD/MM/YYYY";
@@ -358,5 +366,6 @@ export {
     isChrome,
     CheckPermissions,
     renderForDataTableSearchStructure,
-    searchStructureForDate
+    searchStructureForDate,
+    spaceTrim
 };
