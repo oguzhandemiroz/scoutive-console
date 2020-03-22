@@ -31,6 +31,7 @@ export class Sessions extends Component {
     deactiveSession = session_id => {
         const { uid } = this.state;
         this.setState({ loadingButton: "btn-loading" });
+        $('[data-toggle="tooltip"]').tooltip("hide");
         DeactiveSession({
             uid: uid,
             sessions: [session_id]
@@ -94,7 +95,9 @@ export class Sessions extends Component {
                                             <td>
                                                 <i
                                                     data-toggle="tooltip"
-                                                    title={`${session.city}, ${session.country}`}
+                                                    title={`${nullCheck(session.city, "[Tanımsız Şehir]")}, ${
+                                                        session.country
+                                                    }`}
                                                     className={`flag flag-${nullCheck(
                                                         session.country_code,
                                                         ""
