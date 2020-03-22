@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Link } from "react-router-dom";
 import { formatMoney } from "../../../../services/Others";
 import _ from "lodash";
 
@@ -7,6 +8,7 @@ export class Monthly extends Component {
         super(props);
 
         this.state = {
+            uid: localStorage.getItem("UID"),
             monthly: "0,00 ₺",
             sms: 0,
             total: 0
@@ -61,16 +63,18 @@ export class Monthly extends Component {
     };
 
     render() {
-        const { monthly, sms, total } = this.state;
+        const { monthly, sms, total, uid } = this.state;
+        const { disablePayButton } = this.props;
         return (
             <div className="card">
                 <div className="card-body">
                     <div className="d-flex">
                         Ödenecek Tutar
-                        <button className="ml-auto btn btn-sm btn-success cursor-not-allowed disabled" disabled>
-                            <i className="fe fe-lock mr-2" />
-                            Ödeme Yap
-                        </button>
+                        {!disablePayButton && (
+                            <Link to={`/account/settings/billing/${uid}`} className="ml-auto btn btn-sm btn-success">
+                                Ödeme Yap
+                            </Link>
+                        )}
                     </div>
                     <div className="h1 text-dark">{formatMoney(total)}</div>
                 </div>
