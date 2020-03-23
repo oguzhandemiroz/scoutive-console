@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import Monthly from "../UsageDetail/Monthly";
+import PastTransaction from "./PastTransaction";
 import Banks from "./Banks";
 import { GetSettings, GetSchoolFees } from "../../../../services/School";
 import { formatDate } from "../../../../services/Others";
@@ -50,6 +51,9 @@ export class Billing extends Component {
                     </div>
                     <div className="col-12">
                         <Banks />
+                    </div>
+                    <div className="col-12">
+                        <PastTransaction fees={school_fees} />
                     </div>
                 </div>
             </>
