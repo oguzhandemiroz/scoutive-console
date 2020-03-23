@@ -86,7 +86,7 @@ export class Terms extends Component {
                                                 </div>
                                                 <div className="col">
                                                     www.scoutive.app alan adı üzerinden yayın yapan ve Scoutive
-                                                    servisinin internet üzerinden kullanılmasına olanak sağlayan
+                                                    Servisinin internet üzerinden kullanılmasına olanak sağlayan
                                                     <strong> SCOUTIVE</strong>’e ait web sitesini,
                                                 </div>
                                             </div>
@@ -96,7 +96,8 @@ export class Terms extends Component {
                                                 </div>
                                                 <div className="col">
                                                     <strong>Kullanıcı</strong>'nın işbu sözleşme hükümleri çerçevesinde
-                                                    SCOUTIVE hizmet ve servisleri karşılığında ödeyeceği ücretleri,
+                                                    <strong> SCOUTIVE </strong> hizmet ve servisleri karşılığında
+                                                    ödeyeceği ücretleri,
                                                 </div>
                                             </div>
                                             <div className="row gutters-xs mb-3">
@@ -104,8 +105,8 @@ export class Terms extends Component {
                                                     <strong>Hizmet</strong>
                                                 </div>
                                                 <div className="col">
-                                                    SCOUTIVE’in işbu sözleşme kapsamında <strong>Kullanıcı</strong>'ya
-                                                    sağlayacağı hizmetleri,
+                                                    <strong>SCOUTIVE</strong>’in işbu sözleşme kapsamında
+                                                    <strong> Kullanıcı</strong>'ya sağlayacağı hizmetleri,
                                                 </div>
                                             </div>
                                             <div className="row gutters-xs mb-3">
@@ -262,12 +263,12 @@ export class Terms extends Component {
                                                     <strong> SCOUTIVE</strong>’in kontrolü dışında ortaya çıkabilecek
                                                     internet altyapısında yaşanabilecek arızalar ya da idari veya adli
                                                     karar sonucu internet erişiminin tamamen veya kısmen engellenmesi ve
-                                                    benzer teknik problemler ya da nedeniyle zamanında
-                                                    gerçekleştirememesinden hiçbir surette sorumlu tutulamaz. Bununla
-                                                    birlikte hizmetin aksamasına veya zamanında yerine getirilememesine
-                                                    neden olan üçüncü kişiler kaynaklı teknik arızaların sona ermesinden
-                                                    itibaren, eksik veya zamanında yapılamayan hizmet ve taahhütler
-                                                    SCOUTIVE tarafından yerine getirilecektir.
+                                                    benzer teknik problemler nedeniyle zamanında gerçekleştirememesinden
+                                                    hiçbir surette sorumlu tutulamaz. Bununla birlikte hizmetin
+                                                    aksamasına veya zamanında yerine getirilememesine neden olan üçüncü
+                                                    kişiler kaynaklı teknik arızaların sona ermesinden itibaren, eksik
+                                                    veya zamanında yapılamayan hizmet ve taahhütler
+                                                    <strong> SCOUTIVE</strong> tarafından yerine getirilecektir.
                                                 </div>
                                             </div>
                                             <div className="row gutters-xs mb-2">
@@ -456,7 +457,7 @@ export class Terms extends Component {
                                                     <strong>6.1.</strong>
                                                 </div>
                                                 <div className="col">
-                                                    İşbu sözleşme elektronik ortamda kabul edildiği tarih itibarıyla
+                                                    İşbu Sözleşme elektronik ortamda kabul edildiği tarih itibarıyla
                                                     başlamaktadır ve işbu Sözleşme’ye uygun olarak satın alınan veya
                                                     deneme süresi ile <strong>SCOUTIVE</strong> tarafından bedelsiz
                                                     şekilde sağlanan tüm <strong>Kullanıcı</strong> abonelikleri bitene
@@ -631,7 +632,7 @@ export class Terms extends Component {
                                                     <strong>7.7.</strong>
                                                 </div>
                                                 <div className="col">
-                                                    <strong>SCOUTIVE</strong>, 6698 sayılı Kanun ‘da tanımlı olduğu
+                                                    <strong>SCOUTIVE</strong>, 6698 sayılı Kanun‘da tanımlı olduğu
                                                     şekilde kendi kusuru nedeniyle kişisel verilerin amacı dışında
                                                     kullanılması veya yine kusuru dahilinde 3. kişilere kanunsuz olarak
                                                     ifşa edilmiş olması halleri dışında doğrudan veya dolaylı hiçbir
