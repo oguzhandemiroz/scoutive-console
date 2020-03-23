@@ -166,7 +166,7 @@ export class List extends Component {
                                         onClick={() => this.props.history.push(`/app/messages/detail/${campaign_id}`)}>
                                         <i className="fe fe-eye" />
                                     </button>
-                                    {segment_id && status === 1 ? (
+                                    {segment_id && status === 1 && (
                                         <button
                                             className="btn btn-icon btn-sm btn-gray mx-1"
                                             data-toggle="tooltip"
@@ -174,8 +174,8 @@ export class List extends Component {
                                             onClick={() => this.toggleStatusCampaign(campaign_id, title, 3)}>
                                             <i className="fe fe-pause" />
                                         </button>
-                                    ) : null}
-                                    {segment_id && status === 3 ? (
+                                    )}
+                                    {segment_id && status === 3 && (
                                         <button
                                             className="btn btn-icon btn-sm btn-orange mx-1"
                                             data-toggle="tooltip"
@@ -183,8 +183,8 @@ export class List extends Component {
                                             onClick={() => this.toggleStatusCampaign(campaign_id, title, 1)}>
                                             <i className="fe fe-play" />
                                         </button>
-                                    ) : null}
-                                    {status !== 2 && status !== 0 ? (
+                                    )}
+                                    {status !== 2 && status !== 0 && (
                                         <button
                                             className="btn btn-icon btn-sm btn-dark mx-1"
                                             data-toggle="tooltip"
@@ -192,7 +192,7 @@ export class List extends Component {
                                             onClick={() => this.cancelCampaign(campaign_id, title)}>
                                             <i className="fe fe-x" />
                                         </button>
-                                    ) : null}
+                                    )}
                                 </>,
                                 td
                             );
