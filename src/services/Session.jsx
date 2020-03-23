@@ -1,4 +1,4 @@
-import { fatalSwal, errorSwal, Toast } from "../components/Alert.jsx";
+import { fatalSwal, errorSwal, Toast, showToast } from "../components/Alert.jsx";
 import ep from "../assets/js/urls";
 import { setCookie, getCookie } from "../assets/js/core";
 import "clientjs";
@@ -61,6 +61,7 @@ const GenerateSessionData = () => {
             cookie_enabled: GetCookieEnabled(),
             city: response.city,
             country: response.country_name,
+            country_code: response.country_code,
             device: GetDevice(),
             os_name: GetOsName(),
             os_version: GetOsVersion(),
@@ -87,6 +88,46 @@ const SetSession = data => {
     } catch (e) {}
 };
 
+const ListSessions = () => {
+    try {
+        return fetch(ep.SESSION_LIST, {
+            method: "POST",
+            body: JSON.stringify({
+                uid: localStorage.getItem("UID")
+            }),
+            headers: h
+        })
+            .then(res => res.json())
+            .then(response => {
+                const status = response.status;
+                if (status.code !== 1020) errorSwal(status);
+                return response;
+            })
+            .catch(err => fatalSwal());
+    } catch (e) {}
+};
+
+const DeactiveSession = data => {
+    try {
+        return fetch(ep.SESSION_DEACITVE, {
+            method: "POST",
+            body: JSON.stringify(data),
+            headers: h
+        })
+            .then(res => res.json())
+            .then(response => {
+                const status = response.status;
+                if (status.code !== 1020) {
+                    errorSwal(status);
+                } else {
+                    showToast(status);
+                }
+                return response;
+            })
+            .catch(err => fatalSwal());
+    } catch (e) {}
+};
+
 export {
     GeoRequest,
     GetIP,
@@ -103,5 +144,7 @@ export {
     GetBrowserVersion,
     GetDevice,
     SetSession,
+    ListSessions,
+    DeactiveSession,
     GenerateSessionData
 };

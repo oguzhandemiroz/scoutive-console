@@ -108,6 +108,8 @@ var ep = {
     PARENT_PLAYERS: host + api_version + "get/parent/players",
     START: host + api_version + "start",
     SESSION: host + api_version + "session",
+    SESSION_LIST: host + api_version + "list/sessions",
+    SESSION_DEACITVE: host + api_version + "deactive/session",
     RECIPIENT_CREATE: host + api_version + "create/recipient",
     MESSAGES_CREATE: host + api_version + "create/message",
     MESSAGES_SEND_TEST: host + api_version + "send/test/message",

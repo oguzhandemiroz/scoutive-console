@@ -7,6 +7,7 @@ import UsageDetail from "../../components/Pages/Settings/UsageDetail";
 import SmsTemplates from "./Settings/SmsTemplates/SmsTemplates";
 import SmsTemplatesEdit from "./Settings/SmsTemplates/SmsTemplatesEdit";
 import SmsTemplatesAdd from "./Settings/SmsTemplates/SmsTemplatesAdd";
+import Security from "./Settings/Security/Security";
 
 const lock = (
     <span className="ml-1">
@@ -94,6 +95,7 @@ const settingsMenu = [
 
 const settingsComponentRender = {
     general: <General />,
+    security: <Security />,
     notifications: <Notifications />,
     permission: <Permissions />,
     membership: <UsageDetail />,
