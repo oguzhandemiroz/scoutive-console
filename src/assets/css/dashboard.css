@@ -15475,6 +15475,10 @@ button.bg-green:focus {
     color: #8ecf4d !important;
 }
 
+.text-green-dark {
+    color: #4b9500 !important;
+}
+
 .bg-teal {
     background-color: #2bcbba !important;
 }

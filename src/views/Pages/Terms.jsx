@@ -75,7 +75,7 @@ export class Terms extends Component {
                                                 <div className="col">
                                                     <strong>SCOUTIVE</strong>’in sunduğu altyapı ve yazılım desteği ile
                                                     Kullanıcı'nın İlgili Kişilerin bilgilerini kaydedebildiği,
-                                                    düzenleyebildiği, analiz edebildiği ve SMS ve e-posta gönderebildiği
+                                                    düzenleyebildiği, analiz edebildiği, SMS ve e-posta gönderebildiği
                                                     bulut tabanlı yönetim sistemini,
                                                 </div>
                                             </div>
@@ -212,7 +212,7 @@ export class Terms extends Component {
                                                     <strong>4.3.</strong>
                                                 </div>
                                                 <div className="col">
-                                                    Scoutive Sistemine yüklenen verilerin hukuka uygun ve İlgili
+                                                    Scoutive Servisine yüklenen verilerin hukuka uygun ve İlgili
                                                     Kişi’nin bilgisi, eğer gerekliyse açık rızası ile elde edilmiş
                                                     olması münhasıran 6698 Sayılı Kanun kapsamında Veri Sorumlusu
                                                     sıfatını haiz <strong>Kullanıcı</strong>'nın sorumluluğundadır.
@@ -237,7 +237,7 @@ export class Terms extends Component {
                                                 </div>
                                                 <div className="col">
                                                     <strong>Kullanıcı</strong>, İlgililere göndereceği e-posta/SMS
-                                                    mesajların yalnızca bilgilendirme amaçlı olduğunu; reklam amaçlı
+                                                    mesajlarının yalnızca bilgilendirme amaçlı olduğunu; reklam amaçlı
                                                     ticari içeriğe yer vermeyeceğini, yer alan içeriklerin hukuka, kamu
                                                     düzenine, genel ahlaka, rekabet kurallarına, üçüncü kişilere ait
                                                     fikri ve sınai hakları ihlal etmeyeceğini kabul ve taahhüt eder.
@@ -391,11 +391,7 @@ export class Terms extends Component {
                                                     tarafından aksi belirtilmedikçe ilgili üyelik döneminin sonunda
                                                     gerçekleşecektir. Yapılan değişiklikler üyelik döneminin sona
                                                     ermesine dek uygulanmayacak, yeni ücretler ve ödeme koşulları yeni
-                                                    üyelik döneminin başlamasıyla geçerli olacaktır. 5.5. Ücretsiz
-                                                    deneme süresinin sona ermesinden sonra <strong>Kullanıcı</strong>
-                                                    ’nın üyeliğinin hizmet seviyesi ve türü, işlevsellik, kampanyalar ya
-                                                    da sözleşme süresine göre belirlenecek ücretli üyelik haline
-                                                    gelecektir.
+                                                    üyelik döneminin başlamasıyla geçerli olacaktır.
                                                 </div>
                                             </div>
                                             <div className="row gutters-xs mb-2">
@@ -484,9 +480,9 @@ export class Terms extends Component {
                                                 </div>
                                                 <div className="col">
                                                     Taraflardan biri işbu sözleşmeyi, sözleşmenin süresi dolmadan en az
-                                                    1 (hafta) gün öncesinden feshettiğini yazılı olarak bildirimle işbu
-                                                    Sözleşme’yi dilediği zaman herhangi bir gerekçe göstermeksizin ve
-                                                    tazminat ödemeksizin feshedebilir. <strong>Kullanıcı </strong>
+                                                    1 (hafta) gün öncesinden feshettiğini yazılı olarak bildirmesiyle
+                                                    işbu Sözleşme’yi dilediği zaman herhangi bir gerekçe göstermeksizin
+                                                    ve tazminat ödemeksizin feshedebilir. <strong>Kullanıcı </strong>
                                                     hesabının 6 ay boyunca pasif olması halinde,
                                                     <strong> SCOUTIVE</strong> işbu Sözleşme’yi tek taraflı olarak
                                                     feshedebilecektir.
@@ -703,7 +699,7 @@ export class Terms extends Component {
                                                 <div className="col">
                                                     <strong>Kullanıcı</strong>, Scoutive Servisine ilişkin teknik ve
                                                     ticari fikirleri hukuka aykırı olarak kullanmayacağını, üçüncü
-                                                    kişilerle paylaşılmayacağını, haksız rekabet teşkil edecek şekilde
+                                                    kişilerle paylaşmayacağını, haksız rekabet teşkil edecek şekilde
                                                     kopyalamayacağını ve benzer ürünler üretmeyeceğini kabul ve taahhüt
                                                     eder.
                                                 </div>
@@ -715,7 +711,7 @@ export class Terms extends Component {
                                                 <div className="col">
                                                     İşbu sözleşmenin feshedilme veya sona erme tarihinden itibaren
                                                     geçerli olmak üzere, sözleşmenin diğer hükümlerine bakılmaksızın,
-                                                    <strong>Kullanıcı</strong> artık Yazılımın herhangi bir bölümünü
+                                                    <strong> Kullanıcı</strong> artık Yazılımın herhangi bir bölümünü
                                                     kullanma hakkına sahip olmayacaktır.
                                                 </div>
                                             </div>
@@ -777,53 +773,129 @@ export class Terms extends Component {
                                             {/* <!-- ### Ek Paketler (SMS) ### --> */}
                                             <div className="hr-text">Ek Paketler</div>
                                             <h3 className="mt-0">Ek Paketler (SMS)</h3>
-                                            <table className="table text-dark table-vcenter">
-                                                <thead>
-                                                    <tr>
-                                                        <td align="center" className="font-weight-600" colSpan="4">
-                                                            SMS BAKİYE AŞIM DURUMUNDA
-                                                        </td>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <tr>
-                                                        <th>PAKET</th>
-                                                        <th>PAKET ADETİ</th>
-                                                        <th>PAKET TUTARI (+KDV)</th>
-                                                        <th>PAKET TUTARI (KDV DAHİL)</th>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>100'lük Paket</td>
-                                                        <td>
-                                                            <strong>100</strong> Adet
-                                                        </td>
-                                                        <td className="font-weight-600">10 TL+KDV</td>
-                                                        <td className="font-weight-600">11,80 TL</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>250'lik Paket</td>
-                                                        <td>
-                                                            <strong>250</strong> Adet
-                                                        </td>
-                                                        <td className="font-weight-600">20 TL+KDV</td>
-                                                        <td className="font-weight-600">23,60 TL</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>500'lük Paket</td>
-                                                        <td>
-                                                            <strong>500</strong> Adet
-                                                        </td>
-                                                        <td className="font-weight-600">35 TL+KDV</td>
-                                                        <td className="font-weight-600">41,30 TL</td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
+                                            <div className="table-responsive">
+                                                <table className="table text-dark table-vcenter text-nowrap">
+                                                    <thead>
+                                                        <tr>
+                                                            <td align="center" className="font-weight-600" colSpan="4">
+                                                                SMS BAKİYE AŞIM DURUMUNDA
+                                                            </td>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <th>PAKET</th>
+                                                            <th>PAKET ADETİ</th>
+                                                            <th>PAKET TUTARI (+KDV)</th>
+                                                            <th>PAKET TUTARI (KDV DAHİL)</th>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>100'lük Paket</td>
+                                                            <td>
+                                                                <strong>100</strong> Adet
+                                                            </td>
+                                                            <td className="font-weight-600">10,00 TL + KDV</td>
+                                                            <td className="font-weight-600 text-green-dark">
+                                                                11,80 TL
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>250'lik Paket</td>
+                                                            <td>
+                                                                <strong>250</strong> Adet
+                                                            </td>
+                                                            <td className="font-weight-600">20,00 TL + KDV</td>
+                                                            <td className="font-weight-600 text-green-dark">
+                                                                23,60 TL
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>500'lük Paket</td>
+                                                            <td>
+                                                                <strong>500</strong> Adet
+                                                            </td>
+                                                            <td className="font-weight-600">35,00 TL + KDV</td>
+                                                            <td className="font-weight-600 text-green-dark">
+                                                                41,30 TL
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            {/* <!-- ### Ek Paketler (SMS) ### --> */}
+
+                                            <div className="w-100 h-2"></div>
+
+                                            {/* <!-- ### Panel (Abonelik Fiyatları) ### --> */}
+                                            <div className="hr-text">Abonelik Paketleri ve Fiyatları</div>
+                                            <h3 className="mt-0">Abonelik Paketleri</h3>
+                                            <div className="table-responsive">
+                                                <table className="table text-dark table-vcenter text-nowrap">
+                                                    <thead>
+                                                        <tr>
+                                                            <td align="center" className="font-weight-600" colSpan="4">
+                                                                ABONELİK PAKETLERİ
+                                                            </td>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <th>PAKET ADI</th>
+                                                            <th>ÖĞRENCİ SINIRI</th>
+                                                            <th>AYLIK ÜCRET (+KDV)</th>
+                                                            <th>AYLIK ÜCRET (KDV DAHİL)</th>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Standart</td>
+                                                            <td>
+                                                                <strong>100</strong> Öğrenci
+                                                            </td>
+                                                            <td className="font-weight-600">249,00 TL + KDV</td>
+                                                            <td className="font-weight-600 text-green-dark">
+                                                                293,82 TL
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Orta</td>
+                                                            <td>
+                                                                <strong>150</strong> Öğrenci
+                                                            </td>
+                                                            <td className="font-weight-600">329,00 TL + KDV</td>
+                                                            <td className="font-weight-600 text-green-dark">
+                                                                388,22 TL
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Gelişmiş</td>
+                                                            <td>
+                                                                <strong>200</strong> Öğrenci
+                                                            </td>
+                                                            <td className="font-weight-600">399,00 TL + KDV</td>
+                                                            <td className="font-weight-600 text-green-dark">
+                                                                470,82 TL
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Kurumsal</td>
+                                                            <td>
+                                                                <strong>300+</strong> Öğrenci
+                                                            </td>
+                                                            <td className="font-weight-600">469,00 TL + KDV</td>
+                                                            <td className="font-weight-600 text-green-dark">
+                                                                553,42 TL
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
                                             {/* <!-- ### Ek Paketler (SMS) ### --> */}
 
                                             <div className="w-100 h-2"></div>
 
                                             {/* <!-- ### Teşekkürler ### --> */}
-                                            <div className="hr-text hr-text-center">Teşekkürler</div>
+                                            <div className="hr-text hr-text-center">
+                                                Okuduğunuz için Teşekkür ederiz 😊
+                                            </div>
 
                                             <div className="row leading-normal mt-5">
                                                 <div className="col-12 text-center mb-2">
