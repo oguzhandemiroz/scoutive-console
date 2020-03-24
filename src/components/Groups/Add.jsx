@@ -422,15 +422,15 @@ export class Add extends Component {
                                 </div>
                                 <div className="form-group">
                                     <label className="form-label">
-                                        Grup Yaş Aralığı<span className="form-required">*</span>
+                                        Grup Yaş Aralığı (Doğum Yılı)<span className="form-required">*</span>
                                     </label>
                                     <div className="row gutters-xs">
                                         <div className="col">
                                             <input
-                                                placeholder="Başlangıç"
+                                                placeholder="Başlangıç Yılı"
                                                 type="number"
-                                                min="1980"
-                                                max="2019"
+                                                min="1990"
+                                                max={moment().format("YYYY")}
                                                 className={`form-control ${formErrors.start_age}`}
                                                 name="start_age"
                                                 onChange={this.handleChange}
@@ -438,10 +438,10 @@ export class Add extends Component {
                                         </div>
                                         <div className="col">
                                             <input
-                                                placeholder="Bitiş"
+                                                placeholder="Bitiş Yılı"
                                                 type="number"
-                                                min={start_age || "1981"}
-                                                max="2019"
+                                                min={start_age || "1990"}
+                                                max={moment().format("YYYY")}
                                                 className={`form-control ${formErrors.end_age}`}
                                                 name="end_age"
                                                 onChange={this.handleChange}
