@@ -10,7 +10,9 @@ import {
     formatPhone,
     renderForDataTableSearchStructure,
     avatarPlaceholder,
-    CheckPermissions
+    CheckPermissions,
+    formatDate,
+    formatMoney
 } from "../../../services/Others";
 import { getCookie } from "../../../assets/js/core";
 import "../../../assets/js/datatables-custom";
@@ -264,58 +266,60 @@ export class Add extends Component {
                         );
                     }
                 },
-                /* {
-                    targets: "fees",
-                    responsivePriority: 10001,
+                {
+                    targets: "last_payment",
+                    responsivePriority: 3,
+                    className: "text-center",
                     createdCell: (td, cellData, rowData) => {
-                        if (cellData.payment_type !== 1) {
-                            ReactDOM.render(
-                                <div>
-                                    {cellData.fees.map((el, key) => {
-                                        return (
-                                            <span
-                                                key={key.toString()}
-                                                data-placement="top"
-                                                data-content={`
-												<p>${this.formatPaidDate(el.month)}</p>
-												<b class="${feeType[this.getPaidStatus(el.fee, el.amount)].color}">
-													${feeType[this.getPaidStatus(el.fee, el.amount)].text}
-												</b>
-												<hr class="my-2"/>
-												<b>Ödemesi Gereken:</b> ${el.fee ? el.fee.format() + " ₺" : "0,00 ₺"} <br>
-												<b>Ödenen:</b> ${el.amount ? el.amount.format() + " ₺" : "0,00 ₺"} <br>
-												<hr class="my-1"/>
-												<b>Borç:</b> ${(el.fee - (el.amount || 0)).format()} <br>
-											`}
-                                                data-toggle="popover"
-                                                className={`d-inline-flex justify-content-center align-items-center mr-1 badge ${
-                                                    feeType[this.getPaidStatus(el.fee, el.amount)].badge
-                                                }`}>
-                                                <i
-                                                    className={`fe ${
-                                                        feeType[this.getPaidStatus(el.fee, el.amount)].icon
-                                                    }`}
-                                                />
-                                            </span>
-                                        );
-                                    })}
-                                </div>,
-                                td
+                        const { name, surname, last_payment } = rowData;
+                        const fullname = fullnameGenerator(name, surname);
+
+                        if (last_payment) {
+                            const delay = moment(new Date(), "YYYY-MM-DD").diff(
+                                moment(last_payment.required_payment_date, "YYYY-MM-DD"),
+                                "days"
                             );
-                        } else {
+
                             ReactDOM.render(
                                 <span
-                                    data-placement="top"
-                                    data-content={`<b class="${feeType[3].color}">${feeType[3].text}</b> `}
                                     data-toggle="popover"
-                                    className={`d-inline-flex justify-content-center align-items-center mr-1 badge ${feeType[3].badge}`}>
-                                    <i className={`fa ${feeType[3].icon}`} />
+                                    data-placement="top"
+                                    data-content={`
+                                        <p class="font-weight-600 text-info">
+                                            <i class="fa fa-user mr-2"></i>${fullname}
+                                        </p>
+                                        <p class="font-weight-600">
+                                            Ödemesi <span class="text-red h5">${delay}</span> gün gecikmiş.
+                                        </p>
+                                        <div>
+                                            <b>${formatDate(last_payment.required_payment_date, "LL, dddd")}</b> 
+                                            tarihine kadar ödenmesi gereken <b>${formatMoney(last_payment.fee)}</b>'lik 
+                                            ödeme gecikmiş veya eksik ödenmiştir.
+                                        </div>
+                                        <hr class="my-3"/>
+                                        <div class="mb-2">
+                                            Son Ödeme Tarihi<br/>
+                                            <b>→ ${formatDate(last_payment.required_payment_date, "LL, dddd")}</b>
+                                        </div>
+                                        <div class="mb-2">
+                                            Ödeme Tutarı<br/>
+                                            <b>→ ${formatMoney(last_payment.fee)}</b>
+                                        </div>
+                                        <div class="mb-2">
+                                            Ödenen Tutar<br/>
+                                            <b class="${last_payment.amount ? "text-green-dark" : ""}">
+                                                → ${formatMoney(last_payment.amount)}
+                                            </b>
+                                        </div>
+                                
+                                    `}>
+                                    <i className="fa fa-exclamation-triangle text-red fa-lg"></i>
                                 </span>,
                                 td
                             );
                         }
                     }
-                }, */
+                },
                 {
                     targets: "status",
                     class: "w-1 px-3",
@@ -513,6 +517,12 @@ export class Add extends Component {
                     }
                 },
                 { data: null },
+                {
+                    data: "last_payment",
+                    render: function(data, type, row) {
+                        return data && 1;
+                    }
+                },
                 { data: null },
                 { data: null }
             ]
@@ -963,7 +973,7 @@ export class Add extends Component {
                                                 <th className="birthday">DOĞUM YILI</th>
                                                 <th className="groups">GRUP</th>
                                                 <th className="w-1 no-sort rollcalls">SON 4 YOKLAMA</th>
-                                                {/* <th className="no-sort fees">SON 3 ÖDEME</th> */}
+                                                <th className="w-1 last_payment">GECİKMİŞ ÖDEME</th>
                                                 <th className="w-1 no-sort status">DURUM</th>
                                                 <th className="w-1 no-sort action">İŞLEM</th>
                                             </tr>
