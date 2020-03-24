@@ -3,8 +3,9 @@ import { Banks } from "../../services/FillSelect";
 import { CreateBudget } from "../../services/Budget";
 import Select, { components } from "react-select";
 import { Link, withRouter } from "react-router-dom";
-import { Toast } from "../Alert";
 import Inputmask from "inputmask";
+import { formValid, selectCustomStyles, selectCustomStylesError } from "../../assets/js/core";
+import { spaceTrim, clearMoney } from "../../services/Others";
 const $ = require("jquery");
 
 const currencies = [
@@ -61,33 +62,6 @@ const InputmaskDefaultOptions = {
     autoUnmask: true
 };
 
-const formValid = ({ formErrors, ...rest }) => {
-    let valid = true;
-
-    Object.values(formErrors).forEach(val => {
-        val.length > 0 && (valid = false);
-    });
-
-    Object.values(rest).forEach(val => {
-        val === null && (valid = false);
-    });
-
-    return valid;
-};
-
-const customStyles = {
-    control: styles => ({ ...styles, borderColor: "rgba(0, 40, 100, 0.12)", borderRadius: 3 })
-};
-
-const customStylesError = {
-    control: styles => ({
-        ...styles,
-        borderColor: "#cd201f",
-        borderRadius: 3,
-        ":hover": { ...styles[":hover"], borderColor: "#cd201f" }
-    })
-};
-
 const { Option } = components;
 const IconOption = props => (
     <Option {...props}>
@@ -129,9 +103,11 @@ export class Add extends Component {
             loadingButton: ""
         };
     }
+
     fieldMasked = () => {
         Inputmask({ alias: "try", ...InputmaskDefaultOptions, suffix: "" }).mask($("[name=balance]"));
     };
+
     componentDidMount() {
         this.fieldMasked();
         let select = { ...this.state.select };
@@ -140,24 +116,6 @@ export class Add extends Component {
             this.setState({ select });
         });
     }
-
-    handleChange = e => {
-        e.preventDefault();
-        const { name, value } = e.target;
-        let formErrors = { ...this.state.formErrors };
-        switch (name) {
-            case "budget_name":
-                formErrors.budget_name = value ? "" : "is-invalid";
-                break;
-            case "currency":
-                formErrors.currency = value ? "" : "is-invalid";
-                break;
-            default:
-                break;
-        }
-
-        this.setState({ formErrors, [name]: value });
-    };
 
     handleSubmit = e => {
         e.preventDefault();
@@ -178,17 +136,17 @@ export class Add extends Component {
 
         requiredData.budget_name = budget_name;
         requiredData.currency = currency;
-        if (budget_type === 1) requiredData.bank = bank;
+        if (budget_type) requiredData.bank = bank;
         requiredData.formErrors = formErrors;
 
         if (formValid(requiredData)) {
             this.setState({ loadingButton: "btn-loading" });
             CreateBudget({
                 uid: uid,
-                budget_name: budget_name,
+                budget_name: spaceTrim(budget_name),
                 budget_type: budget_type,
                 currency: currency.value,
-                balance: parseFloat(balance.replace(",", ".")),
+                balance: clearMoney(balance),
                 note: note,
                 bank_id: bank ? parseInt(bank.value) : null,
                 bank_branch: bank_branch,
@@ -199,18 +157,35 @@ export class Add extends Component {
                     const status = response.status;
                     if (status.code === 1021) {
                         this.props.history.push("/app/budgets");
-                    } else {
-                        this.setState({ loadingButton: "" });
                     }
                 }
+                this.setState({ loadingButton: "" });
             });
         } else {
             let formErrors = { ...this.state.formErrors };
-            formErrors.budget_name = budget_name ? "" : "is-invalid";
+            formErrors.budget_name = spaceTrim(budget_name) && budget_name.length <= 30 ? "" : "is-invalid";
             formErrors.currency = currency ? false : true;
-            if (budget_type === 1) formErrors.bank = bank ? false : true;
+            if (budget_type) formErrors.bank = bank ? false : true;
             this.setState({ formErrors });
         }
+    };
+
+    handleChange = e => {
+        e.preventDefault();
+        const { name, value } = e.target;
+        let formErrors = { ...this.state.formErrors };
+        switch (name) {
+            case "budget_name":
+                formErrors.budget_name = spaceTrim(value) && value.length <= 30 ? "" : "is-invalid";
+                break;
+            case "currency":
+                formErrors.currency = value ? "" : "is-invalid";
+                break;
+            default:
+                break;
+        }
+
+        this.setState({ formErrors, [name]: value });
     };
 
     handleSelect = (value, name) => {
@@ -222,9 +197,7 @@ export class Add extends Component {
 
     handleRadio = e => {
         const { value, name } = e.target;
-        if (parseInt(value) === 0) {
-            this.setState({ initialState });
-        } else {
+        if (parseInt(value)) {
             setTimeout(
                 () =>
                     Inputmask({
@@ -235,7 +208,7 @@ export class Add extends Component {
                 100
             );
         }
-        this.setState({ [name]: parseInt(value) });
+        this.setState({ [name]: parseInt(value), ...initialState });
     };
 
     render() {
@@ -262,6 +235,7 @@ export class Add extends Component {
                                         className={`form-control ${formErrors.budget_name}`}
                                         onChange={this.handleChange}
                                         name="budget_name"
+                                        maxLength="30"
                                     />
                                 </div>
 
@@ -275,7 +249,7 @@ export class Add extends Component {
                                                 type="radio"
                                                 name="budget_type"
                                                 value="0"
-                                                checked={budget_type === 0 ? true : false}
+                                                checked={!budget_type ? true : false}
                                                 onChange={this.handleRadio}
                                                 className="selectgroup-input"
                                             />
@@ -286,7 +260,7 @@ export class Add extends Component {
                                                 type="radio"
                                                 name="budget_type"
                                                 value="1"
-                                                checked={budget_type === 1 ? true : false}
+                                                checked={budget_type ? true : false}
                                                 onChange={this.handleRadio}
                                                 className="selectgroup-input"
                                             />
@@ -295,7 +269,7 @@ export class Add extends Component {
                                     </div>
                                 </div>
 
-                                {budget_type === 1 ? (
+                                {budget_type ? (
                                     <div>
                                         <div className="form-group">
                                             <label className="form-label">
@@ -306,7 +280,11 @@ export class Add extends Component {
                                                     options={select.banks}
                                                     name="bank"
                                                     placeholder="Banka Seç..."
-                                                    styles={formErrors.bank === true ? customStylesError : customStyles}
+                                                    styles={
+                                                        formErrors.bank === true
+                                                            ? selectCustomStylesError
+                                                            : selectCustomStyles
+                                                    }
                                                     isClearable={true}
                                                     isSearchable={true}
                                                     autoSize
@@ -354,7 +332,11 @@ export class Add extends Component {
                                             options={select.currencies}
                                             name="currency"
                                             placeholder="Para Birimi Seç..."
-                                            styles={formErrors.currency === true ? customStylesError : customStyles}
+                                            styles={
+                                                formErrors.currency === true
+                                                    ? selectCustomStylesError
+                                                    : selectCustomStyles
+                                            }
                                             isClearable={true}
                                             isSearchable={true}
                                             autoSize
