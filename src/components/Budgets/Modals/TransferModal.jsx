@@ -4,6 +4,7 @@ import { TransferBudget } from "../../../services/Budget";
 import { selectCustomStyles, formValid, selectCustomStylesError } from "../../../assets/js/core";
 import Select, { components } from "react-select";
 import { GetBudgets } from "../../../services/FillSelect";
+import { clearMoney } from "../../../services/Others";
 const $ = require("jquery");
 
 Inputmask.extendDefaults({
@@ -56,15 +57,15 @@ export class TransferModal extends Component {
         this.state = {
             uid: localStorage.getItem("UID"),
             amount: null,
-            from_budget_id: null,
-            to_budget_id: null,
+            from_budget: null,
+            to_budget: null,
             select: {
                 budgets: null
             },
             formErrors: {
                 note: "",
-                from_budget_id: "",
-                to_budget_id: ""
+                from_budget: "",
+                to_budget: ""
             },
             loadingButton: ""
         };
@@ -97,15 +98,15 @@ export class TransferModal extends Component {
 
     handleSubmit = e => {
         e.preventDefault();
-        const { uid, amount, note, from_budget_id, to_budget_id } = this.state;
+        const { uid, amount, note, from_budget, to_budget } = this.state;
 
         if (formValid(this.state)) {
             this.setState({ loadingButton: "btn-loading" });
             TransferBudget({
                 uid: uid,
-                from_budget_id: from_budget_id.value,
-                to_budget_id: to_budget_id.value,
-                amount: parseFloat(amount.replace(",", ".")),
+                from_budget_id: from_budget.value,
+                to_budget_id: to_budget.value,
+                amount: clearMoney(amount),
                 note: note
             }).then(response => {
                 if (response) {
@@ -115,12 +116,11 @@ export class TransferModal extends Component {
                 this.setState({ loadingButton: "" });
             });
         } else {
-            console.error("ERRROR");
             this.setState(prevState => ({
                 formErrors: {
                     ...prevState.formErrors,
-                    from_budget_id: from_budget_id ? false : true,
-                    to_budget_id: to_budget_id ? false : true,
+                    from_budget: from_budget ? false : true,
+                    to_budget: to_budget ? false : true,
                     amount: amount ? "" : "is-invalid"
                 }
             }));
@@ -140,6 +140,9 @@ export class TransferModal extends Component {
     };
 
     handleSelect = (value, name) => {
+        if (name === "from_budget") {
+            this.setState({ to_budget: null });
+        }
         this.setState(prevState => ({
             formErrors: {
                 ...prevState.formErrors,
@@ -160,7 +163,7 @@ export class TransferModal extends Component {
                             ...prevState.select, // keep all other key-value pairs
                             budgets: response // update the value of specific key
                         },
-                        from_budget_id: response.find(x => x.value === parseInt(this.props.bid))
+                        from_budget: response.find(x => x.value === parseInt(this.props.bid))
                     }));
                 }
             });
@@ -168,7 +171,7 @@ export class TransferModal extends Component {
     };
 
     render() {
-        const { select, from_budget_id, to_budget_id, formErrors, loadingButton } = this.state;
+        const { select, from_budget, to_budget, formErrors, loadingButton } = this.state;
         return (
             <div>
                 <div className="modal fade" id="transferModal" tabIndex="-1" role="dialog">
@@ -188,13 +191,13 @@ export class TransferModal extends Component {
                                             Gönderen Hesap <span className="form-required">*</span>
                                         </label>
                                         <Select
-                                            value={from_budget_id}
-                                            onChange={val => this.handleSelect(val, "from_budget_id")}
+                                            value={from_budget}
+                                            onChange={val => this.handleSelect(val, "from_budget")}
                                             options={select.budgets}
-                                            name="from_budget_id"
+                                            name="from_budget"
                                             placeholder="Kasa/Banka Seç..."
                                             styles={
-                                                formErrors.from_budget_id ? selectCustomStylesError : selectCustomStyles
+                                                formErrors.from_budget ? selectCustomStylesError : selectCustomStyles
                                             }
                                             isSearchable={true}
                                             isDisabled={select.budgets ? false : true}
@@ -209,14 +212,16 @@ export class TransferModal extends Component {
                                             Alıcı Hesap <span className="form-required">*</span>
                                         </label>
                                         <Select
-                                            value={to_budget_id}
-                                            onChange={val => this.handleSelect(val, "to_budget_id")}
-                                            options={select.budgets}
-                                            name="to_budget_id"
-                                            placeholder="Kasa/Banka Seç..."
-                                            styles={
-                                                formErrors.to_budget_id ? selectCustomStylesError : selectCustomStyles
+                                            value={to_budget}
+                                            onChange={val => this.handleSelect(val, "to_budget")}
+                                            options={
+                                                from_budget
+                                                    ? select.budgets.filter(x => x.value !== from_budget.value)
+                                                    : select.budgets
                                             }
+                                            name="to_budget"
+                                            placeholder="Kasa/Banka Seç..."
+                                            styles={formErrors.to_budget ? selectCustomStylesError : selectCustomStyles}
                                             isSearchable={true}
                                             isDisabled={select.budgets ? false : true}
                                             isLoading={select.budgets ? false : true}
