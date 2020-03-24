@@ -45,7 +45,7 @@ export class List extends Component {
                 data: function(d) {
                     return JSON.stringify({
                         uid: uid,
-                        filter: { type: 0 }
+                        filter: { type: 0, accounting_type_id__gt: 3 },
                     });
                 },
                 contentType: "application/json",
@@ -80,7 +80,7 @@ export class List extends Component {
                         if (["sort", "type"].indexOf(type) > -1) {
                             return meta.row;
                         }
-                        return `<div class="text-muted">#${data}</div>`;
+                        return `<div class="text-muted">${data}</div>`;
                     }
                 },
                 {
