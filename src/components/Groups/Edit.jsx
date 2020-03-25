@@ -127,7 +127,7 @@ export class Edit extends Component {
                 start_time: start_time,
                 end_time: end_time,
                 employee_id: employee.value,
-                age: `${start_age}-${end_age}`,
+                age: `${parseInt(start_age)}-${parseInt(end_age)}`,
                 area_id: area ? area.value : 1,
                 work_days: _.join(work_days, ",")
             }).then(response => {
