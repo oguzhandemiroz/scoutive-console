@@ -71,8 +71,7 @@ export class Rollcall extends Component {
         const rollcallStatus = {
             0: { color: "bg-red-light", text: "Gelmedi", icon: "fe fe-x" },
             1: { color: "bg-green-light", text: "Geldi", icon: "fe fe-check" },
-            2: { color: "bg-yellow-light", text: "Y. Gün İzinli", icon: "fe fe-alert-circle" },
-            3: { color: "bg-yellow-light", text: "T. Gün İzinli", icon: "fe fe-alert-circle" }
+            2: { color: "bg-yellow-light", text: "İzinli", icon: "fe fe-alert-circle" }
         };
 
         return (
@@ -90,11 +89,7 @@ export class Rollcall extends Component {
         let total = 0;
         if (rollcalls) {
             Object.keys(rollcalls).map(el => {
-                if (Array.isArray(status)) {
-                    if (status.indexOf(rollcalls[el].status) > -1) total++;
-                } else {
-                    if (rollcalls[el].status === status) total++;
-                }
+                if (rollcalls[el].status === status) total++;
             });
         }
         return (
@@ -170,7 +165,7 @@ export class Rollcall extends Component {
                                                     <i class="fe fe-alert-circle"></i>
                                                 </span>
                                                 <div>
-                                                    {this.generateRollcallTotalCount(rollcalls, [2, 3], "İzinli")}
+                                                    {this.generateRollcallTotalCount(rollcalls, 2, "İzinli")}
                                                     {this.generateRollcallDate(rollcalls)}
                                                 </div>
                                             </div>

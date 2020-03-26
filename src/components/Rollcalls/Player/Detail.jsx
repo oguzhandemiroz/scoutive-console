@@ -22,15 +22,13 @@ const dailyType = {
     "-1": { icon: "help-circle", color: "gray", text: "Tanımsız" },
     "0": { icon: "x", color: "danger", text: "Gelmedi" },
     "1": { icon: "check", color: "success", text: "Geldi" },
-    "2": { icon: "alert-circle", color: "warning", text: "T. Gün İzinli" },
-    "3": { icon: "alert-circle", color: "warning", text: "Y. Gün İzinli" }
+    "2": { icon: "alert-circle", color: "warning", text: "İzinli" }
 };
 
 const rollcallType = {
     0: { icon: "fe-x", badge: "bg-red-light", text: "Gelmedi", color: "text-red" },
     1: { icon: "fe-check", badge: "bg-green-light", text: "Geldi", color: "text-green" },
-    2: { icon: "fe-alert-circle", badge: "bg-yellow-light", text: "Tam Gün", color: "text-yellow" },
-    3: { icon: "fe-alert-circle", badge: "bg-yellow-light", text: "Yarın Gün", color: "text-yellow" }
+    2: { icon: "fe-alert-circle", badge: "bg-yellow-light", text: "İzinli", color: "text-yellow" }
 };
 
 var statusType = {
@@ -360,11 +358,7 @@ export class Detail extends Component {
         let total = 0;
         if (rollcall) {
             rollcall.map(el => {
-                if (Array.isArray(status)) {
-                    if (status.indexOf(el.daily) > -1) total++;
-                } else {
-                    if (el.daily === status) total++;
-                }
+                if (el.daily === status) total++;
             });
         }
 
@@ -505,9 +499,7 @@ export class Detail extends Component {
                                                 </span>
                                                 <div className="d-flex flex-column">
                                                     <div className="small text-muted">Toplam</div>
-                                                    <div>
-                                                        {this.generateRollcallTotalCount(rollcall, [2, 3], "İzinli")}
-                                                    </div>
+                                                    <div>{this.generateRollcallTotalCount(rollcall, 2, "İzinli")}</div>
                                                 </div>
                                             </div>
                                         </div>
