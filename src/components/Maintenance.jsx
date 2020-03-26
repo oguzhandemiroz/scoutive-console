@@ -10,7 +10,7 @@ export class Maintenance extends Component {
                         <div className="px-5 pb-5">
                             <img src={MaintenanceImg} alt="Bakım" width="600" />
                         </div>
-                        <h1 className="h3 mb-3">Servis şu an bakımda!</h1>
+                        <h1 className="h3 mb-3">Scoutive şu an bakımda!</h1>
                         <p className="h5 text-muted font-weight-normal leading-tight mb-5">
                             Bu süreç içerisinde sizlere hizmet veremediğimiz için üzgünüz. <br />
                             Sabrınız için teşekkür ederiz...
