@@ -5,12 +5,11 @@ import Inputmask from "inputmask";
 import moment from "moment";
 import "moment/locale/tr";
 import { MakeRollcall, SetNoteRollcall, DeleteRollcall, CloseRollcall } from "../../../services/Rollcalls";
-import { CreateVacation, UpdateVacation } from "../../../services/EmployeeAction";
 import { getCookie } from "../../../assets/js/core";
 import ep from "../../../assets/js/urls";
 import "../../../assets/js/datatables-custom";
 import AdvancePayment from "../../EmployeeAction/AdvancePayment";
-import { fatalSwal, errorSwal, Toast, showSwal } from "../../Alert.jsx";
+import { fatalSwal, errorSwal, showSwal } from "../../Alert.jsx";
 import Vacation from "../../EmployeeAction/Vacation";
 import Password from "../../EmployeeAction/Password";
 import ActionButton from "../../Employees/ActionButton";
@@ -25,17 +24,14 @@ import {
 const $ = require("jquery");
 
 const statusType = {
-    0: { bg: "bg-danger", title: "Pasif" },
-    1: { bg: "bg-success", title: "Aktif" },
-    2: { bg: "bg-azure", title: "Donuk" },
-    3: { bg: "bg-indigo", title: "Ön Kayıt" }
+    0: { bg: "bg-danger", title: "Pasif Personel" },
+    1: { bg: "bg-success", title: "Aktif Personel" }
 };
 
 const dailyType = {
     0: { icon: "fe-x", badge: "bg-red-light", text: "Gelmedi", color: "text-red" },
     1: { icon: "fe-check", badge: "bg-green-light", text: "Geldi", color: "text-green" },
-    2: { icon: "fe-alert-circle", badge: "bg-yellow-light", text: "Tam Gün", color: "text-yellow" },
-    3: { icon: "fe-alert-circle", badge: "bg-yellow-light", text: "Yarın Gün", color: "text-yellow" }
+    2: { icon: "fe-alert-circle", badge: "bg-yellow-light", text: "İzinli", color: "text-yellow" }
 };
 
 export class Add extends Component {
@@ -203,49 +199,24 @@ export class Add extends Component {
                     createdCell: (td, cellData, rowData) => {
                         const { uid } = rowData;
                         const { statuses, loadingButtons } = this.state;
+                        const status = statuses.find(x => x.uid === uid).status;
                         ReactDOM.render(
                             <div>
                                 <button
                                     onClick={el => this.takeRollcall(uid, 1, el)}
                                     title="Geldi"
                                     data-toggle="tooltip"
-                                    className={`btn btn-icon btn-sm ${
-                                        statuses.find(x => x.uid === uid).status === 1
-                                            ? "disable-overlay btn-success"
-                                            : "btn-secondary"
+                                    className={`btn btn-icon btn-sm mr-1 ${
+                                        status === 1 ? "disable-overlay btn-success" : "btn-secondary"
                                     } ${loadingButtons.find(x => x === uid) ? "btn-loading" : ""}`}>
                                     <i className="fe fe-check" />
                                 </button>
-
-                                <span data-toggle="tooltip" title="İzinli">
-                                    <button
-                                        data-toggle="dropdown"
-                                        className={`btn btn-icon btn-sm ${
-                                            statuses.find(x => x.uid === uid).status === 2 ||
-                                            statuses.find(x => x.uid === uid).status === 3
-                                                ? "btn-warning"
-                                                : "btn-secondary"
-                                        } mx-1 ${loadingButtons.find(x => x === uid) ? "btn-loading" : ""}`}>
-                                        <i className="fe fe-alert-circle" />
-                                    </button>
-                                    <div className="dropdown-menu">
-                                        <button onClick={el => this.takeRollcall(uid, 2, el)} className="dropdown-item">
-                                            Tam Gün
-                                        </button>
-                                        <button onClick={el => this.takeRollcall(uid, 3, el)} className="dropdown-item">
-                                            Yarım Gün
-                                        </button>
-                                    </div>
-                                </span>
-
                                 <button
                                     onClick={el => this.takeRollcall(uid, 0, el)}
-                                    title="Gelmedi"
+                                    title={status === 2 ? "Gelmedi (İzinli)" : "Gelmedi"}
                                     data-toggle="tooltip"
                                     className={`btn btn-icon btn-sm ${
-                                        statuses.find(x => x.uid === uid).status === 0
-                                            ? "disable-overlay btn-danger"
-                                            : "btn-secondary"
+                                        [0, 2].indexOf(status) > -1 ? "disable-overlay btn-danger" : "btn-secondary"
                                     } ${loadingButtons.find(x => x === uid) ? "btn-loading" : ""}`}>
                                     <i className="fe fe-x" />
                                 </button>
@@ -340,10 +311,8 @@ export class Add extends Component {
                     responsivePriority: 5,
                     render: function(data, type, row) {
                         var status = row.status;
-                        var renderBg = row.is_trial ? statusType[3].bg : statusType[status].bg;
-                        var renderTitle = row.is_trial
-                            ? statusType[status].title + " & Ön Kayıt Personel"
-                            : statusType[status].title + " Personel";
+                        var renderBg = statusType[status].bg;
+                        var renderTitle = statusType[status].title;
                         return `<div class="avatar text-uppercase" style="background-image: url(${nullCheck(data)})">
                                     ${avatarPlaceholder(row.name, row.surname)}
 									<span class="avatar-status ${renderBg}" data-toggle="tooltip" title="${renderTitle}"></span>
@@ -383,7 +352,6 @@ export class Add extends Component {
             ]
         });
 
-        $.fn.DataTable.ext.errMode = "none";
         $("#rollcall-list").on("error.dt", function(e, settings, techNote, message) {
             console.log("An error has been reported by DataTables: ", message, techNote);
         });
@@ -411,141 +379,53 @@ export class Add extends Component {
             const { rcid } = this.props.match.params;
 
             this.setState({ loadingButtons: [...loadingButtons, to] });
-            this.addButtonLoading(element, type);
+            this.addButtonLoading(element);
 
-            if (type === 2 || type === 3) {
-                Promise.all([
-                    CreateVacation(
-                        {
-                            uid: uid,
-                            to: to,
-                            start: moment(new Date()).format("YYYY-MM-DD"),
-                            end: moment(new Date()).format("YYYY-MM-DD"),
-                            day: type === 2 ? 1 : 0.5,
-                            no_cost: 0
-                        },
-                        "employee"
-                    ),
-                    MakeRollcall(
-                        {
-                            uid: uid,
-                            to: to,
-                            status: parseInt(type),
-                            rollcall_id: parseInt(rcid)
-                        },
-                        "employee"
-                    )
-                ]).then(([responseVacation, responseRollcall]) => {
-                    if (responseVacation && responseRollcall) {
-                        const vacationStatus = responseVacation.status;
-                        const rollcallStatus = responseRollcall.status;
-                        if (rollcallStatus.code === 1020) {
-                            if (vacationStatus.code === 1037) {
-                                UpdateVacation({
-                                    uid: uid,
-                                    vacation_id: responseVacation.data.vacation_id,
-                                    update: {
-                                        start: moment(new Date()).format("YYYY-MM-DD"),
-                                        end: moment(new Date()).format("YYYY-MM-DD"),
-                                        day: type === 2 ? 1 : 0.5,
-                                        no_cost: 0
-                                    }
-                                });
-                            }
-                            this.changeStatus(element, type);
-                        }
-                        this.removeButtonLoading(element, type);
-                    }
-                });
-            } else {
-                MakeRollcall(
-                    {
-                        uid: uid,
-                        to: to,
-                        status: parseInt(type),
-                        rollcall_id: parseInt(rcid)
-                    },
-                    "employee"
-                ).then(response => {
-                    if (response) {
-                        this.removeButtonLoading(element, type);
-                        this.changeStatus(element, type);
-                    }
-                });
-            }
+            MakeRollcall(
+                {
+                    uid: uid,
+                    to: to,
+                    status: parseInt(type),
+                    rollcall_id: parseInt(rcid)
+                },
+                "employee"
+            ).then(response => {
+                if (response) {
+                    this.removeButtonLoading(element);
+                    this.changeStatus(element, type);
+                }
+            });
         } catch (e) {}
     };
 
-    addButtonLoading = (element, type) => {
-        if (type === 2 || type === 3) {
-            $(element)
-                .parent()
-                .siblings("button")
-                .addClass("btn-loading");
-            $(element)
-                .parent()
-                .siblings("button")
-                .parent()
-                .siblings()
-                .map(function() {
-                    if (this.tagName === "SPAN") {
-                        $("button", this).addClass("btn-loading");
-                    } else {
-                        $(this).addClass("btn-loading");
-                    }
-                });
-        } else {
-            $(element).addClass("btn-loading");
-            $(element)
-                .siblings()
-                .map(function() {
-                    if (this.tagName === "SPAN") {
-                        $("button", this).addClass("btn-loading");
-                    } else {
-                        $(this).addClass("btn-loading");
-                    }
-                });
-        }
+    addButtonLoading = element => {
+        $(element).addClass("btn-loading");
+        $(element)
+            .siblings()
+            .map(function() {
+                if (this.tagName === "SPAN") {
+                    $("button", this).addClass("btn-loading");
+                } else {
+                    $(this).addClass("btn-loading");
+                }
+            });
     };
 
-    removeButtonLoading = (element, type) => {
-        if (type === 2 || type === 3) {
-            $(element)
-                .parent()
-                .siblings("button")
-                .removeClass("btn-loading");
-            $(element)
-                .parent()
-                .siblings("button")
-                .parent()
-                .siblings()
-                .map(function() {
-                    if (this.tagName === "SPAN") {
-                        $("button", this)
-                            .removeClass("btn-loading")
-                            .removeClass("disable-overlay");
-                    } else {
-                        $(this)
-                            .removeClass("btn-loading")
-                            .removeClass("disable-overlay");
-                    }
-                });
-        } else {
-            $(element).removeClass("btn-loading");
-            $(element)
-                .siblings()
-                .map(function() {
-                    if (this.tagName === "SPAN") {
-                        $("button", this)
-                            .removeClass("btn-loading")
-                            .removeClass("disable-overlay");
-                    } else {
-                        $(this)
-                            .removeClass("btn-loading")
-                            .removeClass("disable-overlay");
-                    }
-                });
-        }
+    removeButtonLoading = element => {
+        $(element).removeClass("btn-loading");
+        $(element)
+            .siblings()
+            .map(function() {
+                if (this.tagName === "SPAN") {
+                    $("button", this)
+                        .removeClass("btn-loading")
+                        .removeClass("disable-overlay");
+                } else {
+                    $(this)
+                        .removeClass("btn-loading")
+                        .removeClass("disable-overlay");
+                }
+            });
     };
 
     changeStatus = (element, type) => {
@@ -553,52 +433,20 @@ export class Add extends Component {
             0: "btn-danger",
             1: "btn-success",
             2: "btn-warning",
-            3: "btn-warning",
             x: "btn-secondary"
         };
-        if (type === 2 || type === 3) {
-            $(element)
-                .parent()
-                .siblings("button")
-                .removeClass(status_type.x)
-                .addClass(status_type[type]);
+        $(element)
+            .removeClass(status_type.x)
+            .addClass(status_type[type])
+            .addClass("disable-overlay");
 
-            $(element)
-                .parent()
-                .siblings("button")
-                .parent()
-                .siblings()
-                .map(function() {
-                    if (this.tagName === "SPAN") {
-                        $("button", this)
-                            .removeClass(status_type[2])
-                            .addClass(status_type.x);
-                    } else {
-                        $(this)
-                            .removeClass(status_type[0])
-                            .addClass(status_type.x);
-                    }
-                });
-        } else {
-            $(element)
-                .removeClass(status_type.x)
-                .addClass(status_type[type])
-                .addClass("disable-overlay");
-
-            $(element)
-                .siblings()
-                .map(function() {
-                    if (this.tagName === "SPAN") {
-                        $("button", this)
-                            .removeClass(status_type[2])
-                            .addClass(status_type.x);
-                    } else {
-                        $(this)
-                            .removeClass(status_type[0])
-                            .addClass(status_type.x);
-                    }
-                });
-        }
+        $(element)
+            .siblings()
+            .map(function() {
+                $(this)
+                    .removeClass(status_type[0])
+                    .addClass(status_type.x);
+            });
     };
 
     setRollcallNote = (name, to) => {

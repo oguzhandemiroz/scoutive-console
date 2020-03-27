@@ -46,11 +46,7 @@ export class PlayerRollcall extends Component {
         let total = 0;
         if (rollcall) {
             rollcall.map(el => {
-                if (Array.isArray(status)) {
-                    if (status.indexOf(el.daily) > -1) total++;
-                } else {
-                    if (el.daily === status) total++;
-                }
+                if (el.daily === status) total++;
             });
         }
 
@@ -106,7 +102,7 @@ export class PlayerRollcall extends Component {
                                 </span>
                                 <div className="d-flex flex-column">
                                     <div className="small text-muted">Toplam</div>
-                                    <div>{this.generateRollcallTotalCount(rollcall, [2, 3], "İzinli")}</div>
+                                    <div>{this.generateRollcallTotalCount(rollcall, 2, "İzinli")}</div>
                                 </div>
                             </div>
                         </div>
