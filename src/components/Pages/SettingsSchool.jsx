@@ -7,6 +7,7 @@ import UsageDetail from "../../components/Pages/Settings/UsageDetail";
 import SmsTemplates from "./Settings/SmsTemplates/SmsTemplates";
 import SmsTemplatesEdit from "./Settings/SmsTemplates/SmsTemplatesEdit";
 import SmsTemplatesAdd from "./Settings/SmsTemplates/SmsTemplatesAdd";
+import Security from "./Settings/Security/Security";
 
 const lock = (
     <span className="ml-1">
@@ -28,11 +29,11 @@ const settingsMenu = [
         pathname: "/security",
         active: "security",
         icon: "fa fa-shield-alt",
-        class: "cursor-not-allowed disabled",
-        lock: lock
+        class: "",
+        lock: false
     },
     {
-        title: "SMS Şablonları (Beta)",
+        title: "SMS Şablonları",
         pathname: "/sms-templates",
         active: "sms-templates",
         icon: "fa fa-sms",
@@ -63,7 +64,8 @@ const settingsMenu = [
         active: "notifications",
         icon: "fa fa-bell",
         class: "cursor-not-allowed disabled",
-        lock: lock
+        lock: lock,
+        hide: true
     },
     {
         title: "Yetkilendirme",
@@ -78,8 +80,8 @@ const settingsMenu = [
         pathname: "/billing",
         active: "billing",
         icon: "fa fa-credit-card",
-        class: "cursor-not-allowed disabled",
-        lock: lock
+        class: "",
+        lock: false
     },
     {
         title: "Kullanım Detayı",
@@ -93,6 +95,7 @@ const settingsMenu = [
 
 const settingsComponentRender = {
     general: <General />,
+    security: <Security />,
     notifications: <Notifications />,
     permission: <Permissions />,
     membership: <UsageDetail />,

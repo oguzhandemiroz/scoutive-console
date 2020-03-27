@@ -108,7 +108,7 @@ export class AccountingChart extends Component {
                 payment_date__lte: moment()
                     .endOf("week")
                     .format("YYYY-MM-DD"),
-                accounting_type_id__gt: 2
+                accounting_type_id__gt: 3
             }
         }).then(response => {
             if (response) {

@@ -37,7 +37,7 @@ export class Income extends Component {
         const { uid } = this.state;
         ListAccountingRecords({
             uid: uid,
-            filter: { type: 1, accounting_type_id__gt: 2 },
+            filter: { type: 1, accounting_type_id__gt: 3 },
             count: 5
         }).then(response => {
             if (response) {
@@ -102,7 +102,7 @@ export class Income extends Component {
                             <h3 className="card-title">Son 5 İşlem</h3>
                         </div>
                         <div className="table-responsive">
-                            <table className="table card-table table-striped table-vcenter table-bordered">
+                            <table className="table card-table table-striped text-nowrap table-vcenter table-bordered">
                                 <thead>
                                     <tr>
                                         <th className="pl-3 text-center">#</th>
@@ -119,7 +119,7 @@ export class Income extends Component {
                                               return (
                                                   <tr key={record.record_no.toString()}>
                                                       <td className="pl-3 w-1 text-center text-muted">
-                                                          #{record.record_no}
+                                                          {record.record_no}
                                                       </td>
                                                       <td>
                                                           {record.accounting_type}

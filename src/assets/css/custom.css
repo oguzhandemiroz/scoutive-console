@@ -940,6 +940,10 @@ a.badge {
     color: #fff;
     background-color: #6574cd !important;
 }
+.badge.badge-purple {
+    color: #fff;
+    background-color: #a55eea !important;
+}
 .badge.badge-lime {
     color: #fff;
     background-color: #7bd235 !important;

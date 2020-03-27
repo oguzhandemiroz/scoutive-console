@@ -45,7 +45,7 @@ export class List extends Component {
                 data: function(d) {
                     return JSON.stringify({
                         uid: uid,
-                        filter: { type: 0 }
+                        filter: { type: 0, accounting_type_id__gt: 3 },
                     });
                 },
                 contentType: "application/json",
@@ -80,7 +80,7 @@ export class List extends Component {
                         if (["sort", "type"].indexOf(type) > -1) {
                             return meta.row;
                         }
-                        return `<div class="text-muted">#${data}</div>`;
+                        return `<div class="text-muted">${data}</div>`;
                     }
                 },
                 {
@@ -98,11 +98,15 @@ export class List extends Component {
                 {
                     data: "amount",
                     responsivePriority: 2,
-                    render: function(data, type, row) {
+                    render: function(data, type) {
+                        if (type === "filter") {
+                            return renderForDataTableSearchStructure(data + " " + formatMoney(data));
+                        }
+
                         if (["sort", "type"].indexOf(type) > -1) {
                             return data;
                         }
-                        if (data !== null && data !== "") return formatMoney(data);
+                        return formatMoney(data);
                     }
                 },
                 {

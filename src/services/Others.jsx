@@ -96,6 +96,14 @@ const nullCheck = (data, instead) => {
     }
 };
 
+const spaceTrim = value => {
+    try {
+        return value ? value.trim() : "";
+    } catch (e) {
+        return "";
+    }
+};
+
 const formatDate = (date, format) => {
     try {
         if (!format) format = "DD/MM/YYYY";
@@ -154,8 +162,35 @@ const avatarPlaceholder = (name, surname) => {
 
 const renderForDataTableSearchStructure = value => {
     try {
-        const mergedValue = value.toLocaleLowerCase("tr-TR") + value.toLocaleUpperCase("tr-TR");
+        const mergedValue =
+            value + value.toString().toLocaleLowerCase("tr-TR") + value.toString().toLocaleUpperCase("tr-TR");
         return mergedValue;
+    } catch (e) {
+        return value;
+    }
+};
+
+const searchStructureForDate = (value, format) => {
+    try {
+        if (!format) format = "YYYY-MM-DD";
+        if (moment(value).isValid()) {
+            const formats = [
+                "",
+                "LL",
+                "DD/MM/YYYY",
+                "DD MM YYYY",
+                "DD.MM.YYYY",
+                "DD-MM-YYYY",
+                "MM/DD/YYYY",
+                "MM DD YYYY",
+                "MM.DD.YYYY",
+                "MM-DD-YYYY"
+            ];
+            return `${value} ${formats
+                .reduce((total, item) => total + " " + moment(value, format).format(item))
+                .trim()}`;
+        }
+        return value;
     } catch (e) {
         return value;
     }
@@ -331,5 +366,7 @@ export {
     isMobile,
     isChrome,
     CheckPermissions,
-    renderForDataTableSearchStructure
+    renderForDataTableSearchStructure,
+    searchStructureForDate,
+    spaceTrim
 };

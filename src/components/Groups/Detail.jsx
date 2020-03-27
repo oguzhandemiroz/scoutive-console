@@ -188,18 +188,9 @@ export class Detail extends Component {
                                             </div>
                                         </div>
                                         <div className="form-group">
-                                            <label className="form-label">Grup Yaş Aralığı</label>
-                                            <div className="row gutters-xs">
-                                                <div className="col">
-                                                    <div className="form-control-plaintext">
-                                                        {groupAgeSplit(age).start}
-                                                    </div>
-                                                </div>
-                                                <div className="col">
-                                                    <div className="form-control-plaintext">
-                                                        {groupAgeSplit(age).end}
-                                                    </div>
-                                                </div>
+                                            <label className="form-label">Grup Yaş Aralığı (Doğum Yılı)</label>
+                                            <div className="form-control-plaintext">
+                                                {groupAgeSplit(age).start} &mdash; {groupAgeSplit(age).end}
                                             </div>
                                         </div>
                                         <div className="form-group">

@@ -12,7 +12,8 @@ import {
     renderForDataTableSearchStructure,
     formatPhone,
     nullCheck,
-    avatarPlaceholder
+    avatarPlaceholder,
+    formatMoney
 } from "../../services/Others";
 import ActionButton from "./ActionButton";
 import ReactDOM from "react-dom";
@@ -251,13 +252,15 @@ class Table extends Component {
                         data: "salary",
                         responsivePriority: 10009,
                         render: function(data, type, row) {
+                            if (type === "filter") {
+                                return renderForDataTableSearchStructure(data + " " + formatMoney(data));
+                            }
+
                             if (["sort", "type"].indexOf(type) > -1) {
                                 return data;
-                            } else {
-                                var convert = typeof data === "number" ? data.format(2, 3, ".", ",") : data;
-                                convert = convert ? convert + " ₺" : "&mdash;";
-                                return convert;
                             }
+
+                            return formatMoney(data);
                         }
                     },
                     {
@@ -277,10 +280,11 @@ class Table extends Component {
                     {
                         data: "daily",
                         responsivePriority: 10006,
-                        render: function(data, type, row) {
-                            return (
-                                '<span class="status-icon bg-' + dailyType[data][1] + '"></span>' + dailyType[data][0]
-                            );
+                        render: function(data, type) {
+                            if (type === "filter") {
+                                return renderForDataTableSearchStructure(dailyType[data][0]);
+                            }
+                            return `<span class="status-icon bg-${dailyType[data][1]}"></span> ${dailyType[data][0]}`;
                         }
                     },
                     {

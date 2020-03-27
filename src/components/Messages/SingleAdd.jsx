@@ -150,16 +150,18 @@ export class SingleAdd extends Component {
 
     handleSubmit = () => {
         const { uid, person, sender, personType, select_template, content, when } = this.state;
+        this.setState({ loadingButton: "btn-loading" });
         CreateMessage({
             uid: uid,
-            campaign_name: person.label + " - " + moment(when).format("DDMMYY"),
+            campaign_name: `${person.label.slice(0, 40)} - ${moment(when).format("DDMMYY")}`,
             to: person.value,
             person_type: personTypeToType[personType],
-            content: content,
+            content: content.trim(),
             sender: sender,
             template_id: select_template ? select_template : 0,
             when: formatDate(when, "YYYY-MM-DD HH:mm:00")
         }).then(response => {
+            this.setState({ loadingButton: "btn-loading" });
             if (response) {
                 if (response.status.code === 1023) {
                     this.props.history.push("/app/messages/detail/" + response.campaign_id);
@@ -331,7 +333,7 @@ export class SingleAdd extends Component {
                 messagesStepError: true,
                 formErrors: {
                     ...prevState.formErrors,
-                    content: contentType === "-1" ? (content ? "" : "is-invalid") : ""
+                    content: contentType === "-1" ? (nullCheck(content, "").trim() ? "" : "is-invalid") : ""
                 }
             }));
         }
@@ -596,11 +598,13 @@ export class SingleAdd extends Component {
 
     deliveryRecipient = () => {
         const { person, personType, to } = this.state;
+        const redirectUri =
+            personType === "player" ? `/app/${personType}s/detail/${to}` : `/app/persons/${personType}s/detail/${to}`;
         return (
             <div className="form-group">
                 <label className="form-label">Gönderim Yapılacak Kişi</label>
                 <div className="tags">
-                    <Link to={`/app/${personType}s/detail/${to}`} target="_blank" className="tag">
+                    <Link to={redirectUri} target="_blank" className="tag">
                         {person.label}
                     </Link>
                 </div>
@@ -716,8 +720,7 @@ export class SingleAdd extends Component {
                                                                 style={{
                                                                     position: "absolute",
                                                                     top: 0,
-                                                                    left: 0,
-                                                                    right: 0
+                                                                    left: 0
                                                                 }}>
                                                                 <i className="fa fa-star text-info small font-weight-600" />
                                                             </div>
@@ -842,7 +845,7 @@ export class SingleAdd extends Component {
                                     name="content"
                                     placeholder="Mesaj İçeriği..."
                                     onChange={this.handleChange}
-                                    value={content || ""}
+                                    value={nullCheck(content, "")}
                                 />
                             </div>
                             <div className="col-lg-6 col-md-6">
@@ -1020,7 +1023,7 @@ export class SingleAdd extends Component {
                                 />
                             </div>
                             {dateError ? (
-                                <div className="alert alert-warning alert-icon">
+                                <div className="alert alert-warning alert-icon mb-0">
                                     <i className="fe fe-alert-circle mr-2"></i>
                                     <p>
                                         <strong>Geçmiş Tarih Uyarısı</strong>

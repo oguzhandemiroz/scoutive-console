@@ -2,12 +2,17 @@ import React, { Component } from "react";
 import Select, { components } from "react-select";
 import { Areas, GetEmployees } from "../../services/FillSelect";
 import { selectCustomStyles, selectCustomStylesError, formValid } from "../../assets/js/core";
-import { avatarPlaceholder, formatDate, fullnameGenerator, nullCheck } from "../../services/Others";
+import {
+    avatarPlaceholder,
+    formatDate,
+    fullnameGenerator,
+    nullCheck,
+    searchStructureForDate
+} from "../../services/Others";
 import { ListPlayers } from "../../services/Player";
-import { CreateGroup, DetailGroup, ChangeGroup, UpdateGroup } from "../../services/Group";
+import { DetailGroup, ChangeGroup, UpdateGroup } from "../../services/Group";
 import _ from "lodash";
 import moment from "moment";
-import "moment/locale/tr";
 import Inputmask from "inputmask";
 const $ = require("jquery");
 
@@ -118,11 +123,11 @@ export class Edit extends Component {
             UpdateGroup({
                 uid: uid,
                 group_id: gid,
-                name: name.capitalize(),
+                name: name.capitalize().trim(),
                 start_time: start_time,
                 end_time: end_time,
                 employee_id: employee.value,
-                age: `${start_age}-${end_age}`,
+                age: `${parseInt(start_age)}-${parseInt(end_age)}`,
                 area_id: area ? area.value : 1,
                 work_days: _.join(work_days, ",")
             }).then(response => {
@@ -151,9 +156,17 @@ export class Edit extends Component {
                 formErrors: {
                     ...prevState.formErrors,
                     employee: employee ? false : true,
-                    name: name ? "" : "is-invalid",
-                    start_time: moment(start_time, "HH:mm", true).isValid("HH:mm") ? "" : "is-invalid-iconless",
-                    end_time: moment(end_time, "HH:mm", true).isValid("HH:mm") ? "" : "is-invalid-iconless",
+                    name: nullCheck(name, "").trim() && name.length <= 30 ? "" : "is-invalid",
+                    start_time:
+                        moment(start_time, "HH:mm", true).isValid("HH:mm") &&
+                        moment(start_time, "HH:mm").isSameOrBefore(moment(end_time, "HH:mm"))
+                            ? ""
+                            : "is-invalid-iconless",
+                    end_time:
+                        moment(end_time, "HH:mm", true).isValid("HH:mm") &&
+                        moment(start_time, "HH:mm").isSameOrBefore(moment(end_time, "HH:mm"))
+                            ? ""
+                            : "is-invalid-iconless",
                     start_age: start_age ? "" : "is-invalid",
                     end_age: end_age ? "" : "is-invalid"
                 }
@@ -163,18 +176,46 @@ export class Edit extends Component {
 
     handleChange = e => {
         try {
-            e.preventDefault();
+            const { start_time, end_time } = this.state;
             const { value, name } = e.target;
             let formErrors = { ...this.state.formErrors };
             switch (name) {
                 case "start_time":
-                    formErrors[name] = moment(value, "HH:mm", true).isValid("HH:mm") ? "" : "is-invalid-iconless";
+                    formErrors =
+                        moment(value, "HH:mm", true).isValid("HH:mm") &&
+                        moment(value, "HH:mm").isSameOrBefore(moment(end_time, "HH:mm"))
+                            ? {
+                                  ...formErrors,
+                                  [name]: "",
+                                  end_time: ""
+                              }
+                            : {
+                                  ...formErrors,
+                                  [name]: "is-invalid-iconless",
+                                  end_time: "is-invalid-iconless"
+                              };
                     break;
                 case "end_time":
-                    formErrors[name] = moment(value, "HH:mm", true).isValid("HH:mm") ? "" : "is-invalid-iconless";
+                    formErrors =
+                        moment(value, "HH:mm", true).isValid("HH:mm") &&
+                        moment(start_time, "HH:mm").isSameOrBefore(moment(value, "HH:mm"))
+                            ? {
+                                  ...formErrors,
+                                  [name]: "",
+                                  start_time: ""
+                              }
+                            : {
+                                  ...formErrors,
+                                  [name]: "is-invalid-iconless",
+                                  start_time: "is-invalid-iconless"
+                              };
+
+                    break;
+                case "name":
+                    formErrors[name] = nullCheck(value, "").trim() && value.length <= 30 ? "" : "is-invalid";
                     break;
                 default:
-                    formErrors[name] = value ? "" : "is-invalid";
+                    formErrors[name] = value.trim() ? "" : "is-invalid";
                     break;
             }
             this.setState({ formErrors, [name]: value });
@@ -202,29 +243,39 @@ export class Edit extends Component {
     };
 
     handleSearch = e => {
-        const { value } = e.target;
-        const { players } = this.state.select;
+        try {
+            const { value } = e.target;
+            const { players } = this.state.select;
 
-        const searched = _(players)
-            .map(item => JSON.stringify(item).toLocaleLowerCase("tr-TR"))
-            .value();
+            //pick specific keys
+            const pickedKeys = players.map(x => {
+                const pick = _.pick(x, ["player_id", "position", "security_id", "uid", "groups"]);
+                pick.fullname = fullnameGenerator(x.name, x.surname);
+                pick.birthday = searchStructureForDate(x.birthday);
+                return pick;
+            });
 
-        const filtered = _.filter(searched, x => x.indexOf(value.toLocaleLowerCase("tr-TR")) > -1);
+            const searched = _(pickedKeys)
+                .map(item => JSON.stringify(item).toLocaleLowerCase("tr-TR"))
+                .value();
 
-        const parsed = _(filtered)
-            .map(objs => JSON.parse(objs))
-            .value();
+            const filtered = _.filter(searched, x => x.indexOf(value.trim().toLocaleLowerCase("tr-TR")) > -1);
 
-        const result = _(parsed)
-            .map(objs => players.find(x => x.player_id === objs.player_id))
-            .value();
+            const parsed = _(filtered)
+                .map(objs => JSON.parse(objs))
+                .value();
 
-        this.setState(prevState => ({
-            select: {
-                ...prevState.select,
-                initialPlayers: result
-            }
-        }));
+            const result = _(parsed)
+                .map(objs => players.find(x => x.player_id === objs.player_id))
+                .value();
+
+            this.setState(prevState => ({
+                select: {
+                    ...prevState.select,
+                    initialPlayers: result
+                }
+            }));
+        } catch (e) {}
     };
 
     handleCard = player_id => {
@@ -381,7 +432,7 @@ export class Edit extends Component {
         return (
             <div className="container">
                 <div className="page-header">
-                    <h1 className="page-title">Gruplar &mdash; Grup Oluştur</h1>
+                    <h1 className="page-title">Gruplar &mdash; Grup Düzenle</h1>
                 </div>
                 <form className="row" onSubmit={this.handleSubmit}>
                     <div className="col-lg-4">
@@ -403,6 +454,7 @@ export class Edit extends Component {
                                                 onChange={this.handleChange}
                                                 className={`form-control ${formErrors.name}`}
                                                 value={nullCheck(name, "")}
+                                                maxLength="30"
                                             />
                                         </div>
                                         <div className="row gutters-xs">
@@ -443,15 +495,15 @@ export class Edit extends Component {
                                         </div>
                                         <div className="form-group">
                                             <label className="form-label">
-                                                Grup Yaş Aralığı<span className="form-required">*</span>
+                                                Grup Yaş Aralığı (Doğum Yılı)<span className="form-required">*</span>
                                             </label>
                                             <div className="row gutters-xs">
                                                 <div className="col">
                                                     <input
-                                                        placeholder="Başlangıç"
+                                                        placeholder="Başlangıç Yılı"
                                                         type="number"
-                                                        min="1980"
-                                                        max="2019"
+                                                        min="1990"
+                                                        max={moment().format("YYYY")}
                                                         className={`form-control ${formErrors.start_age}`}
                                                         name="start_age"
                                                         onChange={this.handleChange}
@@ -460,10 +512,10 @@ export class Edit extends Component {
                                                 </div>
                                                 <div className="col">
                                                     <input
-                                                        placeholder="Bitiş"
+                                                        placeholder="Bitiş Yılı"
                                                         type="number"
-                                                        min={start_age || "1981"}
-                                                        max="2019"
+                                                        min={start_age || "1990"}
+                                                        max={moment().format("YYYY")}
                                                         className={`form-control ${formErrors.end_age}`}
                                                         name="end_age"
                                                         onChange={this.handleChange}

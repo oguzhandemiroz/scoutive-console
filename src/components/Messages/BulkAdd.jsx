@@ -18,7 +18,14 @@ import {
 import { ListEmployees } from "../../services/Employee";
 import { ListPlayers } from "../../services/Player";
 import NotPermissions from "../../components/NotActivate/NotPermissions";
-import { formatDate, fullnameGenerator, avatarPlaceholder, formatPhone, CheckPermissions } from "../../services/Others";
+import {
+    formatDate,
+    fullnameGenerator,
+    avatarPlaceholder,
+    formatPhone,
+    CheckPermissions,
+    nullCheck
+} from "../../services/Others";
 import _ from "lodash";
 const $ = require("jquery");
 
@@ -94,6 +101,7 @@ export class BulkAdd extends Component {
             loadingButton: "",
             loadingTestButton: "",
             employee: null,
+            dateError: false,
             select: {
                 players: null,
                 initialPlayers: null,
@@ -156,7 +164,7 @@ export class BulkAdd extends Component {
         this.setState({ loadingButton: "btn-loading" });
         CreateCampaign({
             uid: uid,
-            title: title,
+            title: title.trim(),
             person_type: 1,
             persons: players.map(el => el),
             template_id: select_template,
@@ -214,7 +222,7 @@ export class BulkAdd extends Component {
             this.setState(prevState => ({
                 formErrors: {
                     ...prevState.formErrors,
-                    [name]: value ? "" : "is-invalid"
+                    [name]: value.trim().length <= 50 ? "" : "is-invalid"
                 },
                 [name]: value
             }));
@@ -267,6 +275,7 @@ export class BulkAdd extends Component {
                 ...prevState.formErrors,
                 [name]: date ? "" : "is-invalid"
             },
+            dateError: date < new Date() ? true : false,
             [name]: date
         }));
     };
@@ -462,7 +471,6 @@ export class BulkAdd extends Component {
     handleMessagesStep = () => {
         const { title, when, formErrors } = this.state;
         const required = { title: title, when: when, formErrors: { ...formErrors } };
-        console.log(required);
         if (formValid(required)) {
             this.handleNextStep(0);
             this.listMessageTemplates();
@@ -471,7 +479,7 @@ export class BulkAdd extends Component {
             this.setState(prevState => ({
                 formErrors: {
                     ...prevState.formErrors,
-                    title: title ? "" : "is-invalid",
+                    title: nullCheck(title, "").trim().length <= 50 ? "" : "is-invalid",
                     when: when ? "" : "is-invalid"
                 }
             }));
@@ -500,7 +508,7 @@ export class BulkAdd extends Component {
     };
 
     messagesStep = () => {
-        const { when, title, formErrors, start } = this.state;
+        const { when, title, formErrors, start, dateError } = this.state;
         return (
             <>
                 <div className="card-body">
@@ -541,7 +549,7 @@ export class BulkAdd extends Component {
                                     name="title"
                                     onChange={this.handleChange}
                                     className={`form-control ${formErrors.title}`}
-                                    value={title || ""}
+                                    maxLength="50"
                                 />
                             </div>
                         </div>
@@ -554,7 +562,6 @@ export class BulkAdd extends Component {
                                     autoComplete="off"
                                     selected={when}
                                     selectsEnd
-                                    minDate={when}
                                     name="when"
                                     locale="tr"
                                     dateFormat="dd/MM/yyyy HH:mm:ss"
@@ -564,6 +571,15 @@ export class BulkAdd extends Component {
                                     className={`form-control ${formErrors.when}`}
                                 />
                             </div>
+                            {dateError ? (
+                                <div className="alert alert-warning alert-icon mb-0">
+                                    <i className="fe fe-alert-circle mr-2"></i>
+                                    <p>
+                                        <strong>Geçmiş Tarih Uyarısı</strong>
+                                    </p>
+                                    Geçmiş zamanlı bir tarih seçtiniz, mesaj anında gönderilecektir!
+                                </div>
+                            ) : null}
                         </div>
                     </div>
                 </div>
@@ -604,8 +620,7 @@ export class BulkAdd extends Component {
                                                             style={{
                                                                 position: "absolute",
                                                                 top: 0,
-                                                                left: 0,
-                                                                right: 0
+                                                                left: 0
                                                             }}>
                                                             <i className="fa fa-star text-info small font-weight-600" />
                                                         </div>
