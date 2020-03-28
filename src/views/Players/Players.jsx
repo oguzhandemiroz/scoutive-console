@@ -52,13 +52,19 @@ class Players extends Component {
                     type: "question",
                     title: "Form İletişim Bilgisi",
                     text: "Form üzerine yazılacak iletişim bilgisi için yetkili ismini giriniz:",
-                    input: "text"
+                    input: "text",
+                    inputAttributes: {
+                        maxLength: 40
+                    }
                 },
                 {
                     type: "question",
                     title: "Form İletişim Bilgisi",
                     text: "Form üzerine yazılacak iletişim bilgisi için yetkili telefon numarası giriniz:",
-                    input: "text"
+                    input: "text",
+                    inputAttributes: {
+                        maxLength: 15
+                    }
                 },
                 {
                     type: "question",
