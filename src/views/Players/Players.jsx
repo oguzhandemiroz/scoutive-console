@@ -63,7 +63,7 @@ class Players extends Component {
                     text: "Form üzerine yazılacak iletişim bilgisi için yetkili telefon numarası giriniz:",
                     input: "text",
                     inputAttributes: {
-                        maxLength: 15
+                        maxLength: 20
                     }
                 },
                 {
