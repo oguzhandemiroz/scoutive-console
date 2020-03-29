@@ -8,6 +8,7 @@ import SmsTemplates from "./Settings/SmsTemplates/SmsTemplates";
 import SmsTemplatesEdit from "./Settings/SmsTemplates/SmsTemplatesEdit";
 import SmsTemplatesAdd from "./Settings/SmsTemplates/SmsTemplatesAdd";
 import Security from "./Settings/Security/Security";
+import Billing from "./Settings/Billing/Billing";
 
 const lock = (
     <span className="ml-1">
@@ -101,7 +102,8 @@ const settingsComponentRender = {
     membership: <UsageDetail />,
     "sms-templates": <SmsTemplates />,
     "sms-templates-edit": <SmsTemplatesEdit />,
-    "sms-templates-add": <SmsTemplatesAdd />
+    "sms-templates-add": <SmsTemplatesAdd />,
+    billing: <Billing />
 };
 
 export class SettingsSchool extends Component {
