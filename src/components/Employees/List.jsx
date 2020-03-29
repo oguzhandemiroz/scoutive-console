@@ -24,8 +24,7 @@ const dailyType = {
     "-1": ["Tanımsız", "secondary"],
     "0": ["Gelmedi", "danger"],
     "1": ["Geldi", "success"],
-    "2": ["T. Gün İzinli", "warning"],
-    "3": ["Y. Gün İzinli", "warning"]
+    "2": ["İzinli", "warning"]
 };
 
 const statusType = {

@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import Monthly from "./UsageDetail/Monthly";
 import SmsUsage from "./UsageDetail/SmsUsage";
-import PastTransaction from "./UsageDetail/PastTransaction";
+import PastTransaction from "./Billing/PastTransaction";
 import { GetSettings, GetSchoolFees } from "../../../services/School";
 import { MessagesAllTime } from "../../../services/Report";
 import { formatDate } from "../../../services/Others";

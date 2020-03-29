@@ -21,8 +21,7 @@ const dailyType = {
     "-1": { icon: "help-circle", color: "gray", text: "Tanımsız" },
     "0": { icon: "x", color: "danger", text: "Gelmedi" },
     "1": { icon: "check", color: "success", text: "Geldi" },
-    "2": { icon: "alert-circle", color: "warning", text: "T. Gün İzinli" },
-    "3": { icon: "alert-circle", color: "warning", text: "Y. Gün İzinli" }
+    "2": { icon: "alert-circle", color: "warning", text: "İzinli" }
 };
 var statusType = {
     0: { bg: "bg-danger", title: "Pasif" },
@@ -338,7 +337,7 @@ export class List extends Component {
                         </p>
                         <p>
                             <strong class="d-block">Kayıt Durumu</strong> 
-                            <span class="text-${dailyType[el.daily].color}">
+                            <span>
                                 <span class="status-icon ${
                                     el.is_trial ? statusType[3].bg : statusType[el.status].bg
                                 } mr-1"/>

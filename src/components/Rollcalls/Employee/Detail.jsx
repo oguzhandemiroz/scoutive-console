@@ -20,14 +20,11 @@ const dailyType = {
     "-1": { icon: "help-circle", color: "gray", text: "Tanımsız" },
     "0": { icon: "x", color: "danger", text: "Gelmedi" },
     "1": { icon: "check", color: "success", text: "Geldi" },
-    "2": { icon: "alert-circle", color: "warning", text: "T. Gün İzinli" },
-    "3": { icon: "alert-circle", color: "warning", text: "Y. Gün İzinli" }
+    "2": { icon: "alert-circle", color: "warning", text: "İzinli" }
 };
 var statusType = {
-    0: { bg: "bg-danger", title: "Pasif" },
-    1: { bg: "bg-success", title: "Aktif" },
-    2: { bg: "bg-azure", title: "Donuk" },
-    3: { bg: "bg-indigo", title: "Ön Kayıt" }
+    0: { bg: "bg-danger", title: "Pasif Personel" },
+    1: { bg: "bg-success", title: "Aktif Personel" }
 };
 
 const initialState = {
@@ -165,8 +162,7 @@ export class Detail extends Component {
                         const status_type = {
                             0: { icon: "fe-x", badge: "bg-red-light", text: "Gelmedi" },
                             1: { icon: "fe-check", badge: "bg-green-light", text: "Geldi" },
-                            2: { icon: "fe-alert-circle", badge: "bg-yellow-light", text: "Tam Gün" },
-                            3: { icon: "fe-alert-circle", badge: "bg-yellow-light", text: "Yarın Gün" }
+                            2: { icon: "fe-alert-circle", badge: "bg-yellow-light", text: "İzinli" }
                         };
                         ReactDOM.render(
                             <div>
@@ -210,10 +206,8 @@ export class Detail extends Component {
                     class: "text-center",
                     render: function(data, type, row) {
                         var status = row.status;
-                        var renderBg = row.is_trial ? statusType[3].bg : statusType[status].bg;
-                        var renderTitle = row.is_trial
-                            ? statusType[status].title + " & Ön Kayıt Personel"
-                            : statusType[status].title + " Personel";
+                        var renderBg = statusType[status].bg;
+                        var renderTitle = statusType[status].title;
                         return `<div class="avatar text-uppercase" style="background-image: url(${nullCheck(data)})">
 									${avatarPlaceholder(row.name, row.surname)}
 									<span class="avatar-status ${renderBg}" data-toggle="tooltip" title="${renderTitle}"></span>
@@ -238,7 +232,7 @@ export class Detail extends Component {
                 {
                     data: "phone",
                     responsivePriority: 4,
-                    render: function(data, type, row) {
+                    render: function(data) {
                         return `<a href="tel:+90${data}" class="text-inherit">${formatPhone(data)}</a>`;
                     }
                 },
@@ -252,7 +246,7 @@ export class Detail extends Component {
                 {
                     data: "note",
                     responsivePriority: 3,
-                    render: function(data, type, row) {
+                    render: function(data, type) {
                         if (type === "filter") {
                             return renderForDataTableSearchStructure(data);
                         }
@@ -292,11 +286,7 @@ export class Detail extends Component {
         let total = 0;
         if (rollcall) {
             rollcall.map(el => {
-                if (Array.isArray(status)) {
-                    if (status.indexOf(el.daily) > -1) total++;
-                } else {
-                    if (el.daily === status) total++;
-                }
+                if (el.daily === status) total++;
             });
         }
 
@@ -369,9 +359,7 @@ export class Detail extends Component {
                                                 </span>
                                                 <div className="d-flex flex-column">
                                                     <div className="small text-muted">Toplam</div>
-                                                    <div>
-                                                        {this.generateRollcallTotalCount(rollcall, [2, 3], "İzinli")}
-                                                    </div>
+                                                    <div>{this.generateRollcallTotalCount(rollcall, 2, "İzinli")}</div>
                                                 </div>
                                             </div>
                                         </div>

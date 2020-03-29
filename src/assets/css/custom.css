@@ -1635,3 +1635,21 @@ a.card:hover {
         white-space: nowrap !important;
     }
 }
+
+.bank-group > .bank {
+    cursor: not-allowed;
+    filter: grayscale(1);
+    margin-right: 0;
+    border-right: 0 !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-top: 0 !important;
+    pointer-events: none;
+}
+
+.bank-group .bank.bank-active {
+    cursor: pointer;
+    filter: grayscale(0);
+    pointer-events: all;
+}
