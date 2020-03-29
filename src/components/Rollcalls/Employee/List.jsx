@@ -78,7 +78,7 @@ export class List extends Component {
                 reverseButtons: true,
                 input: "text",
                 inputAttributes: {
-                    max: 50,
+                    maxLength: 20,
                     autocapitalize: "off"
                 },
                 inputValidator: value => {
