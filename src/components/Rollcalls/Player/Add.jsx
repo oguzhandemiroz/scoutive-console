@@ -267,16 +267,16 @@ export class Add extends Component {
                     }
                 },
                 {
-                    targets: "last_payment",
+                    targets: "delayed_payment",
                     responsivePriority: 3,
                     className: "text-center",
                     createdCell: (td, cellData, rowData) => {
-                        const { name, surname, last_payment } = rowData;
+                        const { name, surname, delayed_payment } = rowData;
                         const fullname = fullnameGenerator(name, surname);
 
-                        if (last_payment) {
+                        if (delayed_payment) {
                             const delay = moment(new Date(), "YYYY-MM-DD").diff(
-                                moment(last_payment.required_payment_date, "YYYY-MM-DD"),
+                                moment(delayed_payment.required_payment_date, "YYYY-MM-DD"),
                                 "days"
                             );
 
@@ -292,23 +292,23 @@ export class Add extends Component {
                                             Ödemesi <span class="text-red h5">${delay}</span> gün gecikmiş.
                                         </p>
                                         <div>
-                                            <b>${formatDate(last_payment.required_payment_date, "LL, dddd")}</b> 
-                                            tarihine kadar ödenmesi gereken <b>${formatMoney(last_payment.fee)}</b>'lik 
+                                            <b>${formatDate(delayed_payment.required_payment_date, "LL, dddd")}</b> 
+                                            tarihine kadar ödenmesi gereken <b>${formatMoney(delayed_payment.fee)}</b>'lik 
                                             ödeme gecikmiş veya eksik ödenmiştir.
                                         </div>
                                         <hr class="my-3"/>
                                         <div class="mb-2">
                                             Son Ödeme Tarihi<br/>
-                                            <b>→ ${formatDate(last_payment.required_payment_date, "LL, dddd")}</b>
+                                            <b>→ ${formatDate(delayed_payment.required_payment_date, "LL, dddd")}</b>
                                         </div>
                                         <div class="mb-2">
-                                            Ödeme Tutarı<br/>
-                                            <b>→ ${formatMoney(last_payment.fee)}</b>
+                                            Toplam Ödeme Tutarı<br/>
+                                            <b>→ ${formatMoney(delayed_payment.fee)}</b>
                                         </div>
                                         <div class="mb-2">
-                                            Ödenen Tutar<br/>
-                                            <b class="${last_payment.amount ? "text-green-dark" : ""}">
-                                                → ${formatMoney(last_payment.amount)}
+                                            Toplam Ödenen Tutar<br/>
+                                            <b class="${delayed_payment.amount ? "text-green-dark" : ""}">
+                                                → ${formatMoney(delayed_payment.amount)}
                                             </b>
                                         </div>
                                 
@@ -518,7 +518,7 @@ export class Add extends Component {
                 },
                 { data: null },
                 {
-                    data: "last_payment",
+                    data: "delayed_payment",
                     render: function(data, type, row) {
                         return data && 1;
                     }
@@ -973,7 +973,7 @@ export class Add extends Component {
                                                 <th className="birthday">DOĞUM YILI</th>
                                                 <th className="groups">GRUP</th>
                                                 <th className="w-1 no-sort rollcalls">SON 4 YOKLAMA</th>
-                                                <th className="w-1 last_payment">GECİKMİŞ ÖDEME</th>
+                                                <th className="w-1 delayed_payment">GECİKMİŞ ÖDEME</th>
                                                 <th className="w-1 no-sort status">DURUM</th>
                                                 <th className="w-1 no-sort action">İŞLEM</th>
                                             </tr>
