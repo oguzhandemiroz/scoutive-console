@@ -1,24 +1,31 @@
 import React, { Component } from "react";
+import MaintenanceImg from "../assets/images/illustrations/Maintenance.svg";
 
 export class Maintenance extends Component {
-    componentDidMount() {
-        const localeStorageList = ["sImage", "sName", "UID", "sID", "sType", "sPosition", "sBranch"];
-        localeStorageList.map(el => localStorage.removeItem(el));
-    }
-
     render() {
         return (
             <div className="page">
                 <div className="page-content">
                     <div className="container text-center">
-                        <div className="display-1 text-muted mb-5">
-                            <i className="fa fa-server"></i>
+                        <div className="px-5 pb-5">
+                            <img src={MaintenanceImg} alt="Bakım" width="600" />
                         </div>
-                        <h1 className="h2 mb-3">Bakımdayız!</h1>
-                        <p className="h4 text-muted font-weight-normal mb-7">
-                            Köklü bir değişiklik ile geliyoruz. <br />
-                            Bu süreç içerisinde sizlere hizmet veremeyeceğimiz için üzgünüz. <br />
-                            Sabrınız için teşekkürler...
+                        <h1 className="h3 mb-3">Scoutive şu an bakımda!</h1>
+                        <p className="h5 text-muted font-weight-normal leading-tight mb-5">
+                            Bu süreç içerisinde sizlere hizmet veremediğimiz için üzgünüz. <br />
+                            Sabrınız için teşekkür ederiz...
+                        </p>
+                        <p className="h5 text-muted font-weight-normal leading-tight mb-7">
+                            Dilerseniz bu süreçte bizi daha yakından tanıyabilir,
+                            <br />
+                            <a
+                                className="text-gray"
+                                href="https://scoutive.net"
+                                style={{ textDecoration: "underline" }}
+                                target="_blank">
+                                harika özelliklerimize
+                            </a>
+                            &nbsp;göz atabilirsiniz! 😎
                         </p>
 
                         <div id="suggestions">
