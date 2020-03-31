@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Link, withRouter } from "react-router-dom";
 import { UnpaidPlayers } from "../../services/Report";
-import { fullnameGenerator, avatarPlaceholder, CheckPermissions } from "../../services/Others";
+import { fullnameGenerator, avatarPlaceholder, CheckPermissions, formatMoney } from "../../services/Others";
 import moment from "moment";
 import ActionButton from "../../components/Players/ActionButton";
 
@@ -143,16 +143,21 @@ export class UnpaidPlayer extends Component {
                                                       gecikmiş!
                                                   </span>
                                                   <div className="small text-muted mt-1">
-                                                      Tutar: <strong>{el.fee.format() + " ₺"}</strong>, Ödenen:{" "}
-                                                      <strong>
-                                                          {el.amount ? el.amount.format() + " ₺" : "0,00 ₺"}
-                                                      </strong>
+                                                      Taksit Sayısı:
+                                                      <strong className="text-body"> {el.count} Taksit</strong>
                                                   </div>
-
                                                   <div className="small text-muted">
-                                                      Kalan tutar:{" "}
+                                                      Toplam Ödeme Tutarı:
+                                                      <strong className="text-body"> {formatMoney(el.fee)}</strong>,
+                                                      <br />
+                                                      Toplam Ödenen Tutar:
+                                                      <strong className="text-body"> {formatMoney(el.amount)}</strong>
+                                                  </div>
+                                                  <div className="small text-muted">
+                                                      Kalan tutar:
                                                       <strong className="text-body">
-                                                          {(el.fee - el.amount).format() + " ₺"}
+                                                          {" "}
+                                                          {formatMoney(el.fee - el.amount)}
                                                       </strong>
                                                   </div>
                                               </div>
