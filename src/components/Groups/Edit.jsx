@@ -592,12 +592,6 @@ export class Edit extends Component {
                                     />
                                 </div>
                             </div>
-                            <div className="alert alert-info card-alert pl-5">
-                                <p>
-                                    <strong>Öğrenci Seçmeyi Unutma!</strong>
-                                </p>
-                                Grubun bilgilerini girdikten sonra aşağıdan gruba eklenecek öğrencileri seçebilirsiniz.
-                            </div>
                             <div className="card-body pb-0">
                                 <div className="row row-cards row-deck">
                                     {select.initialPlayers ? (
