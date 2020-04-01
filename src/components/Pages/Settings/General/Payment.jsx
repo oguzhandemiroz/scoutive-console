@@ -49,7 +49,7 @@ export class Payment extends Component {
 
     handleRadio = e => {
         const { name, value } = e.target;
-        this.setState({ [name]: parseInt(value) });
+        this.setState({ [name]: parseInt(value), day: null });
     };
 
     showPaymentSettings = () => {
