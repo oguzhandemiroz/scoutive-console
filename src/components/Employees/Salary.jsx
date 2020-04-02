@@ -29,6 +29,7 @@ Inputmask.extendDefaults({
 
 Inputmask.extendAliases({
     try: {
+        integerDigits: 12,
         suffix: " ₺",
         radixPoint: ",",
         groupSeparator: ".",
@@ -46,8 +47,7 @@ Inputmask.extendAliases({
 const InputmaskDefaultOptions = {
     showMaskOnHover: false,
     showMaskOnFocus: false,
-    placeholder: "0,00",
-    autoUnmask: true
+    placeholder: ""
 };
 
 const { Option } = components;
@@ -117,13 +117,7 @@ export class Salary extends Component {
 
     fieldMasked = () => {
         try {
-            const elemArray = {
-                salary: $("[name=salary]")
-            };
-            Inputmask({
-                alias: "try",
-                ...InputmaskDefaultOptions
-            }).mask(elemArray.salary);
+            Inputmask({ alias: "try", ...InputmaskDefaultOptions, placeholder: "0,00" }).mask($("[name=salary]"));
         } catch (e) {}
     };
 
