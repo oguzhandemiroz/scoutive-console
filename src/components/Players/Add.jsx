@@ -529,8 +529,8 @@ export class Add extends Component {
     };
 
     renderFeeInfo = () => {
-        const { fee, installment, downpayment, installment_date, is_cash } = this.state;
-        if (fee)
+        const { fee, installment, downpayment, payment_type, installment_date, is_cash } = this.state;
+        if (payment_type === 2 && fee)
             return (
                 <div className="alert alert-icon alert-success" role="alert">
                     <i className="fa fa-align-left mr-2" aria-hidden="true"></i>
