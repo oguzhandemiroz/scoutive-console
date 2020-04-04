@@ -274,8 +274,8 @@ export class Add extends Component {
                                         </p>
                                         <div>
                                             <b>${formatDate(delayed_payment.required_payment_date, "LL, dddd")}</b> 
-                                            tarihine kadar ödenmesi gereken <b>${formatMoney(delayed_payment.fee)}</b>'lik 
-                                            ödeme gecikmiş veya eksik ödenmiştir.
+                                            tarihinde ödenmesi gereken <b>${formatMoney(delayed_payment.fee)}</b>'lik 
+                                            ödeme yapılmamıştır.
                                         </div>
                                         <hr class="my-3"/>
                                         <div class="mb-2">

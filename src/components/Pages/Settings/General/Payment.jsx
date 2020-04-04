@@ -49,7 +49,7 @@ export class Payment extends Component {
 
     handleRadio = e => {
         const { name, value } = e.target;
-        this.setState({ [name]: parseInt(value) });
+        this.setState({ [name]: parseInt(value), day: null });
     };
 
     showPaymentSettings = () => {
@@ -131,8 +131,8 @@ export class Payment extends Component {
                             {day ? (
                                 <div className="alert alert-icon alert-warning mb-2" role="alert">
                                     <i className="fe fe-bell mr-2" aria-hidden="true"></i>
-                                    Her ayın <strong>{parseInt(day.value)}. günü</strong> ödeme hatırlatıcısı devreye
-                                    girecektir ve sistem aidat ödemelerini bu günde bekleyecektir.
+                                    Sistem, her ayın <strong>{parseInt(day.value)}. günü</strong> öğrencinin aidat
+                                    ödemelerini bu günde bekleyecektir.
                                     {parseInt(day.value) >= 29 ? (
                                         <>
                                             <br />
