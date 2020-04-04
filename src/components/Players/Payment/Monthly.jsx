@@ -820,8 +820,8 @@ export class Monthly extends Component {
                                             <div className="form-group">
                                                 <label className="form-label">Aidat Ödeme Günü</label>
                                                 {settings.payment_day === "0"
-                                                    ? formatDate(player.start_date, "LL")
-                                                    : "Her ayın " + settings.payment_day + ". günü"}
+                                                    ? `Her ayın ${formatDate(player.start_date, "D")}. günü`
+                                                    : `Her ayın ${settings.payment_day}. günü (Sabit)`}
                                             </div>
                                         </div>
                                         <div className="col"></div>
