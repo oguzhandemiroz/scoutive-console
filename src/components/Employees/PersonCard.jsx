@@ -6,7 +6,8 @@ import {
     formatDate,
     formatPhone,
     formatMoney,
-    avatarPlaceholder
+    avatarPlaceholder,
+    CheckPermissions
 } from "../../services/Others";
 import Vacation from "../EmployeeAction/Vacation";
 import Password from "../EmployeeAction/Password";
@@ -92,25 +93,29 @@ export class PersonCard extends Component {
                                         {data.branch ? data.branch.label : "—"}
                                     </div>
                                 </div>
-                                <div className="form-group">
-                                    <label className="form-label">
-                                        Maaşı
-                                        <span className="ml-1 align-self-center">
-                                            <span
-                                                className="form-help"
-                                                data-toggle="popover"
-                                                data-trigger="hover"
-                                                data-placement="top"
-                                                data-html="true"
-                                                data-content='<p>Maaş bölümünü sadece yöneticinin yetkilendirdiği kişiler görüntüleyebilir.</p><p>Yönetici ise maaşları şifreleri ile görüntüleyebilir.</p><b>"—"</b>: Belirtilmedi.'>
-                                                ?
-                                            </span>
-                                        </span>
-                                    </label>
-                                    <div className="form-control-plaintext">
-                                        <span>{formatMoney(data.salary)}</span>
-                                    </div>
-                                </div>
+                                {CheckPermissions(
+                                    ["a_read"] && (
+                                        <div className="form-group">
+                                            <label className="form-label">
+                                                Maaşı
+                                                <span className="ml-1 align-self-center">
+                                                    <span
+                                                        className="form-help"
+                                                        data-toggle="popover"
+                                                        data-trigger="hover"
+                                                        data-placement="top"
+                                                        data-html="true"
+                                                        data-content='<p>Maaş bölümünü sadece yöneticinin yetkilendirdiği kişiler görüntüleyebilir.</p><p>Yönetici ise maaşları şifreleri ile görüntüleyebilir.</p><b>"—"</b>: Belirtilmedi.'>
+                                                        ?
+                                                    </span>
+                                                </span>
+                                            </label>
+                                            <div className="form-control-plaintext">
+                                                <span>{formatMoney(data.salary)}</span>
+                                            </div>
+                                        </div>
+                                    )
+                                )}
                                 <div className="form-group">
                                     <label className="form-label">İşe Başlama Tarihi</label>
                                     <div className="form-control-plaintext">{formatDate(data.start_date, "LL")}</div>

@@ -13,7 +13,8 @@ import {
     formatPhone,
     nullCheck,
     avatarPlaceholder,
-    formatMoney
+    formatMoney,
+    CheckPermissions
 } from "../../services/Others";
 import ActionButton from "./ActionButton";
 import ReactDOM from "react-dom";
@@ -90,6 +91,10 @@ class Table extends Component {
                     {
                         targets: [0, 1],
                         visible: false
+                    },
+                    {
+                        targets: "salary",
+                        visible: CheckPermissions(["a_read"]) ? true : false
                     },
                     {
                         className: "control",

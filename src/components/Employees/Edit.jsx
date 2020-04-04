@@ -9,7 +9,7 @@ import {
 } from "../../assets/js/core";
 import { Bloods, Branchs, Days, Months, Years, EmployeePositions, Kinship } from "../../services/FillSelect";
 import { DetailEmployee, UpdateEmployee } from "../../services/Employee";
-import { SplitBirthday, UploadFile, getSelectValue, clearMoney } from "../../services/Others";
+import { SplitBirthday, UploadFile, getSelectValue, clearMoney, CheckPermissions } from "../../services/Others";
 import { showSwal } from "../../components/Alert";
 import Select from "react-select";
 import { Link } from "react-router-dom";
@@ -670,21 +670,22 @@ export class Edit extends Component {
                                                 noOptionsMessage={value => `"${value.inputValue}" bulunamadı`}
                                             />
                                         </div>
-                                        <div className="form-group">
-                                            <label className="form-label">
-                                                Maaşı
-                                                <span className="form-required">*</span>
-                                            </label>
-                                            <input
-                                                type="text"
-                                                className={`form-control ${formErrors.salary}`}
-                                                onChange={this.handleChange}
-                                                placeholder="Maaş"
-                                                name="salary"
-                                                value={salary || ""}
-                                            />
-                                        </div>
-
+                                        {CheckPermissions(["a_read"]) && (
+                                            <div className="form-group">
+                                                <label className="form-label">
+                                                    Maaşı
+                                                    <span className="form-required">*</span>
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    className={`form-control ${formErrors.salary}`}
+                                                    onChange={this.handleChange}
+                                                    placeholder="Maaş"
+                                                    name="salary"
+                                                    value={salary || ""}
+                                                />
+                                            </div>
+                                        )}
                                         <div className="form-group">
                                             <label className="form-label">
                                                 İşe Başlama Tarihi
