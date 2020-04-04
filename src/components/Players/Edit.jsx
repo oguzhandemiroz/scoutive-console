@@ -10,7 +10,15 @@ import {
 } from "../../assets/js/core";
 import { Branchs, PlayerPositions, Bloods, Bodies } from "../../services/FillSelect";
 import { DetailPlayer, UpdatePlayer } from "../../services/Player";
-import { UploadFile, nullCheck, formatDate, formatMoney, fullnameGenerator, formatPhone } from "../../services/Others";
+import {
+    UploadFile,
+    nullCheck,
+    formatDate,
+    formatMoney,
+    fullnameGenerator,
+    formatPhone,
+    CheckPermissions
+} from "../../services/Others";
 import { showSwal } from "../../components/Alert";
 import Select from "react-select";
 import Inputmask from "inputmask";
@@ -680,209 +688,220 @@ export class Edit extends Component {
                                             />
                                         </div>
 
-                                        <div className="form-group">
-                                            <label className="form-label">
-                                                Ödeme Tipi<span className="form-required">*</span>
-                                            </label>
-                                            <div className="selectgroup w-100">
-                                                {payment_type === 2 ? (
-                                                    <label className="selectgroup-item">
-                                                        <input
-                                                            type="radio"
-                                                            name="payment_type"
-                                                            value="2"
-                                                            className="selectgroup-input"
-                                                            defaultChecked={true}
-                                                        />
-                                                        <span className="selectgroup-button selectgroup-button-icon">
-                                                            <i className="fa fa-money-bill-alt"></i>
-                                                            <div className="small">Tek Ödeme</div>
-                                                        </span>
+                                        {CheckPermissions(["a_read"]) && (
+                                            <>
+                                                <div className="form-group">
+                                                    <label className="form-label">
+                                                        Ödeme Tipi<span className="form-required">*</span>
                                                     </label>
-                                                ) : null}
-                                                {payment_type === 0 ? (
-                                                    <label className="selectgroup-item">
-                                                        <input
-                                                            type="radio"
-                                                            name="payment_type"
-                                                            value="0"
-                                                            className="selectgroup-input"
-                                                            defaultChecked={true}
-                                                        />
-                                                        <span className="selectgroup-button selectgroup-button-icon">
-                                                            <i className="fa fa-calendar-alt"></i>
-                                                            <div className="small">Aylık</div>
-                                                        </span>
-                                                    </label>
-                                                ) : null}
-                                                {payment_type === 1 ? (
-                                                    <label className="selectgroup-item">
-                                                        <input
-                                                            type="radio"
-                                                            name="payment_type"
-                                                            value="1"
-                                                            className="selectgroup-input"
-                                                            defaultChecked={true}
-                                                        />
-                                                        <span className="selectgroup-button selectgroup-button-icon">
-                                                            <i className="fa fa-graduation-cap"></i>
-                                                            <div className="small">Burslu</div>
-                                                        </span>
-                                                    </label>
-                                                ) : null}
-                                            </div>
-                                        </div>
-
-                                        <fieldset
-                                            className={`form-fieldset ${payment_type === 0 ? "d-block" : "d-none"}`}>
-                                            <label className="form-label mb-0">
-                                                Aidat<span className="form-required">*</span>
-                                            </label>
-                                            <div className="form-control-plaintext">
-                                                {formatMoney(parseFloat(fee) || 0)}
-                                            </div>
-                                        </fieldset>
-
-                                        <fieldset
-                                            className={`form-fieldset ${payment_type === 2 ? "d-block" : "d-none"}`}>
-                                            <div className="form-group mb-2">
-                                                <label className="form-label">
-                                                    Ödeme Tutarı<span className="form-required">*</span>
-                                                </label>
-                                                <div className="form-control-plaintext">
-                                                    {formatMoney(parseFloat(fee) || 0)}
-                                                </div>
-                                            </div>
-                                            <label className="custom-control custom-checkbox custom-control-inline">
-                                                <input
-                                                    type="checkbox"
-                                                    className="custom-control-input"
-                                                    name="is_cash"
-                                                    disabled
-                                                    checked={is_cash}
-                                                />
-                                                <span className="custom-control-label">Peşin Ödendi</span>
-                                            </label>
-                                            <div className={is_cash ? "d-none" : "d-block"}>
-                                                <div className="row gutters-xs">
-                                                    <div className="col-lg-6 col-md-12">
-                                                        <div className="form-group">
-                                                            <label className="form-label">Peşinat</label>
-                                                            <input
-                                                                type="text"
-                                                                className={`form-control ${formErrors.downpayment}`}
-                                                                onChange={this.handleChange}
-                                                                placeholder="Aidat"
-                                                                name="downpayment"
-                                                                value={downpayment || "0,00"}
-                                                                disabled={!fee}
-                                                            />
-                                                        </div>
-                                                    </div>
-                                                    <div className="col-lg-6 col-md-12">
-                                                        <div className="form-group">
-                                                            <label className="form-label">Peşinat Tarihi</label>
-                                                            <DatePicker
-                                                                autoComplete="off"
-                                                                selected={downpayment_date}
-                                                                selectsEnd
-                                                                startDate={downpayment_date}
-                                                                name="downpayment_date"
-                                                                locale="tr"
-                                                                dateFormat="dd/MM/yyyy"
-                                                                onChange={date =>
-                                                                    this.handleDate(date, "downpayment_date")
-                                                                }
-                                                                className={`form-control ${formErrors.downpayment_date}`}
-                                                            />
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div className="row gutters-xs">
-                                                    <div className="col-lg-6 col-md-12">
-                                                        <div className="form-group">
-                                                            <label className="form-label">
-                                                                Taksit Sayısı<span className="form-required">*</span>
+                                                    <div className="selectgroup w-100">
+                                                        {payment_type === 2 && (
+                                                            <label className="selectgroup-item">
+                                                                <input
+                                                                    type="radio"
+                                                                    name="payment_type"
+                                                                    value="2"
+                                                                    className="selectgroup-input"
+                                                                    defaultChecked={true}
+                                                                />
+                                                                <span className="selectgroup-button selectgroup-button-icon">
+                                                                    <i className="fa fa-money-bill-alt"></i>
+                                                                    <div className="small">Tek Ödeme</div>
+                                                                </span>
                                                             </label>
-                                                            <input
-                                                                type="number"
-                                                                className={`form-control ${formErrors.installment}`}
-                                                                onChange={this.handleChange}
-                                                                placeholder="Taksit"
-                                                                name="installment"
-                                                                min="1"
-                                                                max="48"
-                                                                value={installment}
-                                                            />
-                                                        </div>
-                                                    </div>
-                                                    <div className="col-lg-6 col-md-12">
-                                                        <div className="form-group">
-                                                            <label className="form-label">
-                                                                Taksit Başlangıç<span className="form-required">*</span>
+                                                        )}
+                                                        {payment_type === 0 && (
+                                                            <label className="selectgroup-item">
+                                                                <input
+                                                                    type="radio"
+                                                                    name="payment_type"
+                                                                    value="0"
+                                                                    className="selectgroup-input"
+                                                                    defaultChecked={true}
+                                                                />
+                                                                <span className="selectgroup-button selectgroup-button-icon">
+                                                                    <i className="fa fa-calendar-alt"></i>
+                                                                    <div className="small">Aylık</div>
+                                                                </span>
                                                             </label>
-                                                            <DatePicker
-                                                                autoComplete="off"
-                                                                selected={installment_date}
-                                                                selectsEnd
-                                                                startDate={installment_date}
-                                                                name="installment_date"
-                                                                locale="tr"
-                                                                dateFormat="dd/MM/yyyy"
-                                                                onChange={date =>
-                                                                    this.handleDate(date, "installment_date")
-                                                                }
-                                                                className={`form-control ${formErrors.installment_date}`}
-                                                            />
-                                                        </div>
+                                                        )}
+                                                        {payment_type === 1 && (
+                                                            <label className="selectgroup-item">
+                                                                <input
+                                                                    type="radio"
+                                                                    name="payment_type"
+                                                                    value="1"
+                                                                    className="selectgroup-input"
+                                                                    defaultChecked={true}
+                                                                />
+                                                                <span className="selectgroup-button selectgroup-button-icon">
+                                                                    <i className="fa fa-graduation-cap"></i>
+                                                                    <div className="small">Burslu</div>
+                                                                </span>
+                                                            </label>
+                                                        )}
                                                     </div>
                                                 </div>
-                                            </div>
-                                            {fee ? (
-                                                <div className="alert alert-icon alert-success" role="alert">
-                                                    <i className="fa fa-align-left mr-2" aria-hidden="true"></i>
-                                                    <p>
-                                                        <b>Ödeme Özeti</b>
-                                                    </p>
-                                                    <p>
-                                                        <b>{formatMoney(parseFloat(fee))}</b> ödemenin,
-                                                        <br />
-                                                        <b>
-                                                            {is_cash
-                                                                ? formatMoney(parseFloat(fee))
-                                                                : formatMoney(parseFloat(downpayment || 0))}
-                                                        </b>
-                                                        'sı peşin olarak ödendi.
-                                                    </p>
-                                                    {is_cash ? null : (
-                                                        <>
-                                                            Geriye kalan&nbsp;
-                                                            <b>
-                                                                {formatMoney(
-                                                                    parseFloat(fee) - parseFloat(downpayment || 0)
-                                                                )}
-                                                            </b>
-                                                            ,<br />
-                                                            <b>{formatDate(installment_date)}</b> tarihinden
-                                                            itibaren&nbsp;
-                                                            <b>{installment}</b>
-                                                            &nbsp;taksit olarak ayda
-                                                            <br />
-                                                            <b>
-                                                                {formatMoney(
-                                                                    (parseFloat(fee) - parseFloat(downpayment || 0)) /
-                                                                        parseInt(installment)
-                                                                )}
-                                                            </b>
-                                                            &nbsp; ödenecektir.
-                                                        </>
-                                                    )}
-                                                </div>
-                                            ) : null}
-                                        </fieldset>
 
-                                        {this.renderFeeWarning(payment_type)}
+                                                <fieldset
+                                                    className={`form-fieldset ${
+                                                        payment_type === 0 ? "d-block" : "d-none"
+                                                    }`}>
+                                                    <label className="form-label mb-0">
+                                                        Aidat<span className="form-required">*</span>
+                                                    </label>
+                                                    <div className="form-control-plaintext">
+                                                        {formatMoney(parseFloat(fee) || 0)}
+                                                    </div>
+                                                </fieldset>
 
+                                                <fieldset
+                                                    className={`form-fieldset ${
+                                                        payment_type === 2 ? "d-block" : "d-none"
+                                                    }`}>
+                                                    <div className="form-group mb-2">
+                                                        <label className="form-label">
+                                                            Ödeme Tutarı<span className="form-required">*</span>
+                                                        </label>
+                                                        <div className="form-control-plaintext">
+                                                            {formatMoney(parseFloat(fee) || 0)}
+                                                        </div>
+                                                    </div>
+                                                    <label className="custom-control custom-checkbox custom-control-inline">
+                                                        <input
+                                                            type="checkbox"
+                                                            className="custom-control-input"
+                                                            name="is_cash"
+                                                            disabled
+                                                            checked={is_cash}
+                                                        />
+                                                        <span className="custom-control-label">Peşin Ödendi</span>
+                                                    </label>
+                                                    <div className={is_cash ? "d-none" : "d-block"}>
+                                                        <div className="row gutters-xs">
+                                                            <div className="col-lg-6 col-md-12">
+                                                                <div className="form-group">
+                                                                    <label className="form-label">Peşinat</label>
+                                                                    <input
+                                                                        type="text"
+                                                                        className={`form-control ${formErrors.downpayment}`}
+                                                                        onChange={this.handleChange}
+                                                                        placeholder="Aidat"
+                                                                        name="downpayment"
+                                                                        value={downpayment || "0,00"}
+                                                                        disabled={!fee}
+                                                                    />
+                                                                </div>
+                                                            </div>
+                                                            <div className="col-lg-6 col-md-12">
+                                                                <div className="form-group">
+                                                                    <label className="form-label">Peşinat Tarihi</label>
+                                                                    <DatePicker
+                                                                        autoComplete="off"
+                                                                        selected={downpayment_date}
+                                                                        selectsEnd
+                                                                        startDate={downpayment_date}
+                                                                        name="downpayment_date"
+                                                                        locale="tr"
+                                                                        dateFormat="dd/MM/yyyy"
+                                                                        onChange={date =>
+                                                                            this.handleDate(date, "downpayment_date")
+                                                                        }
+                                                                        className={`form-control ${formErrors.downpayment_date}`}
+                                                                    />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div className="row gutters-xs">
+                                                            <div className="col-lg-6 col-md-12">
+                                                                <div className="form-group">
+                                                                    <label className="form-label">
+                                                                        Taksit Sayısı
+                                                                        <span className="form-required">*</span>
+                                                                    </label>
+                                                                    <input
+                                                                        type="number"
+                                                                        className={`form-control ${formErrors.installment}`}
+                                                                        onChange={this.handleChange}
+                                                                        placeholder="Taksit"
+                                                                        name="installment"
+                                                                        min="1"
+                                                                        max="48"
+                                                                        value={installment}
+                                                                    />
+                                                                </div>
+                                                            </div>
+                                                            <div className="col-lg-6 col-md-12">
+                                                                <div className="form-group">
+                                                                    <label className="form-label">
+                                                                        Taksit Başlangıç
+                                                                        <span className="form-required">*</span>
+                                                                    </label>
+                                                                    <DatePicker
+                                                                        autoComplete="off"
+                                                                        selected={installment_date}
+                                                                        selectsEnd
+                                                                        startDate={installment_date}
+                                                                        name="installment_date"
+                                                                        locale="tr"
+                                                                        dateFormat="dd/MM/yyyy"
+                                                                        onChange={date =>
+                                                                            this.handleDate(date, "installment_date")
+                                                                        }
+                                                                        className={`form-control ${formErrors.installment_date}`}
+                                                                    />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    {fee ? (
+                                                        <div className="alert alert-icon alert-success" role="alert">
+                                                            <i className="fa fa-align-left mr-2" aria-hidden="true"></i>
+                                                            <p>
+                                                                <b>Ödeme Özeti</b>
+                                                            </p>
+                                                            <p>
+                                                                <b>{formatMoney(parseFloat(fee))}</b> ödemenin,
+                                                                <br />
+                                                                <b>
+                                                                    {is_cash
+                                                                        ? formatMoney(parseFloat(fee))
+                                                                        : formatMoney(parseFloat(downpayment || 0))}
+                                                                </b>
+                                                                'sı peşin olarak ödendi.
+                                                            </p>
+                                                            {is_cash ? null : (
+                                                                <>
+                                                                    Geriye kalan&nbsp;
+                                                                    <b>
+                                                                        {formatMoney(
+                                                                            parseFloat(fee) -
+                                                                                parseFloat(downpayment || 0)
+                                                                        )}
+                                                                    </b>
+                                                                    ,<br />
+                                                                    <b>{formatDate(installment_date)}</b> tarihinden
+                                                                    itibaren&nbsp;
+                                                                    <b>{installment}</b>
+                                                                    &nbsp;taksit olarak ayda
+                                                                    <br />
+                                                                    <b>
+                                                                        {formatMoney(
+                                                                            (parseFloat(fee) -
+                                                                                parseFloat(downpayment || 0)) /
+                                                                                parseInt(installment)
+                                                                        )}
+                                                                    </b>
+                                                                    &nbsp; ödenecektir.
+                                                                </>
+                                                            )}
+                                                        </div>
+                                                    ) : null}
+                                                </fieldset>
+
+                                                {this.renderFeeWarning(payment_type)}
+                                            </>
+                                        )}
                                         <div className="form-group">
                                             <label className="form-label">
                                                 Okula Başlama Tarihi

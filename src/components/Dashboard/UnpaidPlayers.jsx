@@ -64,8 +64,7 @@ export class UnpaidPlayer extends Component {
 
     render() {
         const { list, count } = this.state;
-
-        if (!CheckPermissions(["a_read", "p_read"], "||")) {
+        if (!CheckPermissions(["a_read", "p_read"])) {
             return null;
         }
 
