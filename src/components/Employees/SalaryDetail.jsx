@@ -4,6 +4,7 @@ import { ListSalaries } from "../../services/EmployeeAction";
 import Tabs from "../../components/Employees/Tabs";
 import moment from "moment";
 import PersonCard from "./PersonCard.jsx";
+import { CheckPermissions } from "../../services/Others.jsx";
 
 const noRow = loading =>
     loading ? (
@@ -86,11 +87,13 @@ export class SalaryDetail extends Component {
                         <div className="card">
                             <div className="card-header">
                                 <h3 className="card-title">Maaş Geçmişi</h3>
-                                <button
-                                    onClick={() => this.props.history.push("/app/persons/employees/salary/" + to)}
-                                    className="btn btn-sm btn-success ml-auto">
-                                    Maaş Öde
-                                </button>
+                                {CheckPermissions(["a_write"]) && (
+                                    <button
+                                        onClick={() => this.props.history.push("/app/persons/employees/salary/" + to)}
+                                        className="btn btn-sm btn-success ml-auto">
+                                        Maaş Öde
+                                    </button>
+                                )}
                             </div>
                             <div className="card-body">
                                 {list ? (
@@ -114,7 +117,7 @@ export class SalaryDetail extends Component {
                                                     </div>
 
                                                     <div>
-                                                        {el.is_future === 1 ? (
+                                                        {CheckPermissions(["a_write"]) && el.is_future === 1 && (
                                                             <button
                                                                 type="button"
                                                                 data-toggle="tooltip"
@@ -122,7 +125,7 @@ export class SalaryDetail extends Component {
                                                                 className="btn btn-sm btn-success btn-icon p-1">
                                                                 <i className="fa fa-money-bill-wave"></i>
                                                             </button>
-                                                        ) : null}
+                                                        )}
                                                     </div>
                                                 </li>
                                             ))}

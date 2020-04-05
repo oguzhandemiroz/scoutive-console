@@ -5,7 +5,7 @@ import { Vacation as ModalVacation } from "../EmployeeAction/Vacation";
 import { showSwal, Toast } from "../Alert.jsx";
 import Tabs from "../../components/Employees/Tabs";
 import PersonCard from "./PersonCard.jsx";
-import { formatDate, formatMoney } from "../../services/Others.jsx";
+import { formatDate, formatMoney, CheckPermissions } from "../../services/Others.jsx";
 
 const noRow = loading => (
     <tr style={{ height: 80 }}>
@@ -155,15 +155,17 @@ export class Vacation extends Component {
                                                           <td>{el.day}</td>
                                                           <td>{formatMoney(el.daily_amount)}</td>
                                                           <td className="text-right">
-                                                              <button
-                                                                  className="btn btn-sm btn-icon btn-secondary"
-                                                                  onClick={() =>
-                                                                      this.deleteVacation(el.vacation_id, key + 1)
-                                                                  }
-                                                                  data-toggle="tooltip"
-                                                                  title="İptal et">
-                                                                  <i className="fe fe-x"></i>
-                                                              </button>
+                                                              {CheckPermissions(["e_write"]) && (
+                                                                  <button
+                                                                      className="btn btn-sm btn-icon btn-secondary"
+                                                                      onClick={() =>
+                                                                          this.deleteVacation(el.vacation_id, key + 1)
+                                                                      }
+                                                                      data-toggle="tooltip"
+                                                                      title="İptal et">
+                                                                      <i className="fe fe-x"></i>
+                                                                  </button>
+                                                              )}
                                                           </td>
                                                       </tr>
                                                   );
