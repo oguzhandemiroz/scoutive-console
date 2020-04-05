@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { DetailPlayer, ListPlayerFees } from "../../services/Player";
-import { fullnameGenerator } from "../../services/Others";
+import { fullnameGenerator, CheckPermissions } from "../../services/Others";
 import { UpdatePaymentFee } from "../../services/PlayerAction";
 import { GetBudgets } from "../../services/FillSelect";
 import Tabs from "../../components/Players/Tabs";
@@ -223,16 +223,18 @@ export class FeeDetail extends Component {
                                                                     {this.formatPaidDate(el.month)}
                                                                 </div>
                                                             </div>
-                                                            <div className="timeline-time">
-                                                                <button
-                                                                    onClick={() => this.completeFee(el)}
-                                                                    type="button"
-                                                                    data-toggle="tooltip"
-                                                                    title="Ödemeyi Tamamla"
-                                                                    className="btn btn-sm btn-primary btn-icon p-1">
-                                                                    <i className="fe fe-plus-circle"></i>
-                                                                </button>
-                                                            </div>
+                                                            {CheckPermissions(["a_write"]) && (
+                                                                <div className="timeline-time">
+                                                                    <button
+                                                                        onClick={() => this.completeFee(el)}
+                                                                        type="button"
+                                                                        data-toggle="tooltip"
+                                                                        title="Ödemeyi Tamamla"
+                                                                        className="btn btn-sm btn-primary btn-icon p-1">
+                                                                        <i className="fe fe-plus-circle"></i>
+                                                                    </button>
+                                                                </div>
+                                                            )}
                                                         </li>
                                                     );
                                                 } else {

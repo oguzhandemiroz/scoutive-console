@@ -6,7 +6,14 @@ import tr from "date-fns/locale/tr";
 import moment from "moment";
 import _ from "lodash";
 import Inputmask from "inputmask";
-import { avatarPlaceholder, clearMoney, formatMoney, formatDate, nullCheck } from "../../../services/Others";
+import {
+    avatarPlaceholder,
+    clearMoney,
+    formatMoney,
+    formatDate,
+    nullCheck,
+    CheckPermissions
+} from "../../../services/Others";
 import { selectCustomStyles, selectCustomStylesError, formValid } from "../../../assets/js/core";
 import { ListPlayerFeesNew } from "../../../services/Player";
 import { GetBudgets, Years } from "../../../services/FillSelect";
@@ -857,9 +864,11 @@ export class Monthly extends Component {
                         </div>
                         {select_fee.status === 1 ? (
                             <div className="card-footer d-flex justify-content-between">
-                                <button className="btn btn-danger btn-icon" onClick={this.deleteFee} type="button">
-                                    Ödemeyi İptal Et
-                                </button>
+                                {CheckPermissions(["a_remove"]) && (
+                                    <button className="btn btn-danger btn-icon" onClick={this.deleteFee} type="button">
+                                        Ödemeyi İptal Et
+                                    </button>
+                                )}
                                 <div>
                                     <button
                                         className="btn btn-secondary btn-icon mr-2"
@@ -893,9 +902,11 @@ export class Monthly extends Component {
                             </div>
                         ) : select_fee.status === 2 ? (
                             <div className="card-footer d-flex justify-content-between">
-                                <button className="btn btn-danger btn-icon" onClick={this.deleteFee} type="button">
-                                    Ödemeyi İptal Et
-                                </button>
+                                {CheckPermissions(["a_remove"]) && (
+                                    <button className="btn btn-danger btn-icon" onClick={this.deleteFee} type="button">
+                                        Ödemeyi İptal Et
+                                    </button>
+                                )}
                                 <button className="btn btn-secondary btn-icon" onClick={this.printSlip} type="button">
                                     <i className="fe fe-printer mr-2"></i>Makbuz Yazdır
                                 </button>

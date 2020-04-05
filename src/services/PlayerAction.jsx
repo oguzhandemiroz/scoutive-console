@@ -1,6 +1,7 @@
 import { errorSwal, fatalSwal, Toast, showToast } from "../components/Alert";
 import ep from "../assets/js/urls";
 import { getCookie } from "../assets/js/core.js";
+import { CheckPermissions } from "./Others";
 
 const h = new Headers();
 h.append("Content-Type", "application/json");
@@ -77,6 +78,10 @@ const ListVacations = (data, type) => {
 
 const CreatePaymentFee = data => {
     try {
+        if (!CheckPermissions(["a_write"])) {
+            return Promise.resolve(null);
+        }
+
         return fetch(ep.FEE_CREATE, {
             method: "POST",
             body: JSON.stringify(data),
@@ -103,6 +108,10 @@ const CreatePaymentFee = data => {
 
 const UpdatePaymentFee = data => {
     try {
+        if (!CheckPermissions(["a_write"])) {
+            return Promise.resolve(null);
+        }
+
         return fetch(ep.FEE_UPDATE, {
             method: "POST",
             body: JSON.stringify(data),
@@ -128,6 +137,10 @@ const UpdatePaymentFee = data => {
 
 const DeletePaymentFee = data => {
     try {
+        if (!CheckPermissions(["a_write", "a_remove"])) {
+            return Promise.resolve(null);
+        }
+
         return fetch(ep.FEE_DELETE, {
             method: "POST",
             body: JSON.stringify(data),
@@ -155,6 +168,10 @@ const DeletePaymentFee = data => {
 
 const ListFees = data => {
     try {
+        if (!CheckPermissions(["a_read"])) {
+            return Promise.resolve(null);
+        }
+
         return fetch(ep.FEE_LIST, {
             method: "POST",
             body: JSON.stringify(data),
