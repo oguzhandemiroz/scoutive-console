@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import ActionButton from "./ActionButton";
 import Vacation from "../PlayerAction/Vacation";
-import GroupChange from "../PlayerAction/GroupChange";
 import {
     fullnameGenerator,
     nullCheck,
@@ -95,16 +94,18 @@ export class PersonCard extends Component {
                                     <label className="form-label">T.C. Kimlik Numarası</label>
                                     <div className="form-control-plaintext">{nullCheck(data.security_id)}</div>
                                 </div>
-                                <div className="form-group">
-                                    <label className="form-label">Aidat</label>
-                                    <div className="form-control-plaintext">
-                                        {data.payment_type === 1
-                                            ? "BURSLU"
-                                            : formatMoney(data.fee) +
-                                              " — " +
-                                              nullCheck(paymentTypeText[data.payment_type], "")}
+                                {CheckPermissions(["a_read"]) && (
+                                    <div className="form-group">
+                                        <label className="form-label">Aidat</label>
+                                        <div className="form-control-plaintext">
+                                            {data.payment_type === 1
+                                                ? "BURSLU"
+                                                : formatMoney(data.fee) +
+                                                  " — " +
+                                                  nullCheck(paymentTypeText[data.payment_type], "")}
+                                        </div>
                                     </div>
-                                </div>
+                                )}
                                 <div className="form-group">
                                     <label className="form-label">Genel Puan</label>
                                     <div className="form-control-plaintext">{nullCheck(data.attributes.point)}</div>
