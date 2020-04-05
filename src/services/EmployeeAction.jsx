@@ -10,7 +10,10 @@ h.append("Authorization", localStorage.getItem("UID"));
 
 const CreateVacation = (data, type) => {
     try {
-        console.log(data, type);
+        if (!CheckPermissions(["e_write"])) {
+            return Promise.resolve(null);
+        }
+
         return fetch(ep.VACATION_CREATE + type, {
             method: "POST",
             body: JSON.stringify(data),
@@ -36,6 +39,10 @@ const CreateVacation = (data, type) => {
 
 const UpdateVacation = data => {
     try {
+        if (!CheckPermissions(["e_write"])) {
+            return Promise.resolve(null);
+        }
+
         return fetch(ep.VACATION_UPDATE, {
             method: "PATCH",
             body: JSON.stringify(data),
@@ -61,6 +68,9 @@ const UpdateVacation = data => {
 
 const ListVacations = (data, type) => {
     try {
+        if (!CheckPermissions(["e_read"])) {
+            return Promise.resolve(null);
+        }
         return fetch(ep.VACATION_LIST + type, {
             method: "POST",
             body: JSON.stringify(data),
@@ -82,6 +92,10 @@ const ListVacations = (data, type) => {
 
 const DeleteVacation = data => {
     try {
+        if (!CheckPermissions(["e_write"])) {
+            return Promise.resolve(null);
+        }
+
         return fetch(ep.VACATION_DELETE, {
             method: "DELETE",
             body: JSON.stringify(data),
@@ -105,6 +119,10 @@ const DeleteVacation = data => {
 
 const CreateAdvancePayment = data => {
     try {
+        if (!CheckPermissions(["a_write", "e_write"])) {
+            return Promise.resolve(null);
+        }
+
         return fetch(ep.ADVANCE_PAYMENT_CREATE, {
             method: "POST",
             body: JSON.stringify(data),
@@ -127,6 +145,10 @@ const CreateAdvancePayment = data => {
 };
 const ListAdvancePayments = data => {
     try {
+        if (!CheckPermissions(["a_read", "e_read"])) {
+            return Promise.resolve(null);
+        }
+
         return fetch(ep.ADVANCE_PAYMENT_LIST, {
             method: "POST",
             body: JSON.stringify(data),
@@ -173,6 +195,10 @@ const CreateSalary = data => {
 
 const ListSalaries = data => {
     try {
+        if (!CheckPermissions(["a_read", "e_read"])) {
+            return Promise.resolve(null);
+        }
+
         return fetch(ep.SALARY_LIST, {
             method: "POST",
             body: JSON.stringify(data),
@@ -192,6 +218,10 @@ const ListSalaries = data => {
 
 const PayVacations = data => {
     try {
+        if (!CheckPermissions(["a_write"])) {
+            return Promise.resolve(null);
+        }
+
         return fetch(ep.VACATION_PAY, {
             method: "POST",
             body: JSON.stringify(data),
@@ -211,6 +241,10 @@ const PayVacations = data => {
 
 const PayAdvancePayments = data => {
     try {
+        if (!CheckPermissions(["a_write", "e_write"])) {
+            return Promise.resolve(null);
+        }
+
         return fetch(ep.ADVANCE_PAYMENT_PAY, {
             method: "POST",
             body: JSON.stringify(data),
