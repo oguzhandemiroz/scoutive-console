@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import PersonCard from "./PersonCard";
 import { DetailParent, GetParentPlayers } from "../../services/Parent";
-import { fullnameGenerator, nullCheck, formatMoney, formatDate } from "../../services/Others";
+import { fullnameGenerator, nullCheck, formatMoney, formatDate, CheckPermissions } from "../../services/Others";
 import Tabs from "./Tabs";
 import { Link } from "react-router-dom";
 
@@ -105,94 +105,79 @@ export class Detail extends Component {
                                                             key={key.toString()}>
                                                             <div className="row">
                                                                 <div className="col-lg-4 col-md-6 col-sm-6">
-                                                                    <div className="form-group">
+                                                                    <div className="form-group mb-5">
                                                                         <label className="form-label">Ad Soyad</label>
                                                                         <Link
-                                                                            className="form-control-plaintext text-blue"
+                                                                            className="text-blue"
                                                                             to={`/app/players/detail/${el.uid}`}>
                                                                             {fullnameGenerator(el.name, el.surname)}
                                                                         </Link>
                                                                     </div>
                                                                 </div>
                                                                 <div className="col-lg-4 col-md-6 col-sm-6">
-                                                                    <div className="form-group">
+                                                                    <div className="form-group mb-5">
                                                                         <label className="form-label">
                                                                             T.C. Kimlik Numarası
                                                                         </label>
-                                                                        <div className="form-control-plaintext">
-                                                                            {el.security_id}
-                                                                        </div>
+                                                                        {el.security_id}
                                                                     </div>
                                                                 </div>
-                                                                <div className="col-lg-4 col-md-6 col-sm-6">
-                                                                    <div className="form-group">
-                                                                        <label className="form-label">Aidat</label>
-                                                                        <div className="form-control-plaintext">
+                                                                {CheckPermissions(["a_read"]) && (
+                                                                    <div className="col-lg-4 col-md-6 col-sm-6">
+                                                                        <div className="form-group mb-5">
+                                                                            <label className="form-label">Aidat</label>
                                                                             {this.renderFeeType(el)}
                                                                         </div>
                                                                     </div>
-                                                                </div>
-                                                            </div>
-                                                            <div className="row">
+                                                                )}
                                                                 <div className="col-lg-4 col-md-6 col-sm-6">
-                                                                    <div className="form-group">
+                                                                    <div className="form-group mb-5">
                                                                         <label className="form-label">Doğum Günü</label>
-                                                                        <div className="form-control-plaintext">
-                                                                            {formatDate(el.birthday, "LL")}
-                                                                        </div>
+                                                                        {formatDate(el.birthday, "LL")}
                                                                     </div>
                                                                 </div>
                                                                 <div className="col-lg-4 col-md-6 col-sm-6">
-                                                                    <div className="form-group">
+                                                                    <div className="form-group mb-5">
                                                                         <label className="form-label">Grup</label>
-                                                                        <div className="form-control-plaintext">
-                                                                            {el.group
-                                                                                ? el.group.map((el, key) => (
-                                                                                      <div key={key.toString()}>
-                                                                                          {el}
-                                                                                      </div>
-                                                                                  ))
-                                                                                : nullCheck(el.group)}
-                                                                        </div>
+                                                                        {el.group
+                                                                            ? el.group.map((el, key) => (
+                                                                                  <div key={key.toString()}>{el}</div>
+                                                                              ))
+                                                                            : nullCheck(el.group)}
                                                                     </div>
                                                                 </div>
                                                                 <div className="col-lg-4 col-md-6 col-sm-6">
-                                                                    <div className="form-group">
+                                                                    <div className="form-group mb-5">
                                                                         <label className="form-label">
                                                                             Okula Başlama Tarihi
                                                                         </label>
-                                                                        <div className="form-control-plaintext">
-                                                                            {formatDate(el.start_date)}
-                                                                        </div>
+
+                                                                        {formatDate(el.start_date)}
                                                                     </div>
                                                                 </div>
-                                                            </div>
-                                                            <div className="row">
                                                                 <div className="col-lg-4 col-md-6 col-sm-6">
-                                                                    <div className="form-group">
+                                                                    <div className="form-group mb-5">
                                                                         <label className="form-label">
                                                                             Kayıt Durumu
                                                                         </label>
-                                                                        <div className="form-control-plaintext">
-                                                                            <span
-                                                                                className={`status-icon ${
-                                                                                    el.is_trial
-                                                                                        ? statusType[3].bg
-                                                                                        : statusType[el.status].bg
-                                                                                } mr-2`}></span>
-                                                                            {el.is_trial
-                                                                                ? statusType[3].title
-                                                                                : statusType[el.status].title}
-                                                                        </div>
+                                                                        <span
+                                                                            className={`status-icon ${
+                                                                                el.is_trial
+                                                                                    ? statusType[3].bg
+                                                                                    : statusType[el.status].bg
+                                                                            } mr-2`}></span>
+                                                                        {el.is_trial
+                                                                            ? statusType[3].title
+                                                                            : statusType[el.status].title}
                                                                     </div>
                                                                 </div>
                                                                 <div className="col-lg-4 col-md-6 col-sm-6">
-                                                                    <div className="form-group">
+                                                                    <div className="form-group mb-5">
                                                                         <label className="form-label">
                                                                             Yoklama Durumu (Bugün)
                                                                         </label>
                                                                         <div
-                                                                            className={`form-control-plaintext text-${
+                                                                            className={`text-${
                                                                                 dailyType[el.daily].color
                                                                             }`}>
                                                                             <i

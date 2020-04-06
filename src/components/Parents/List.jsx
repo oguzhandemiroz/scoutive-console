@@ -306,6 +306,8 @@ export class List extends Component {
             $parent.empty();
             data.map(el => {
                 const fullname = fullnameGenerator(el.name, el.surname);
+                const group = el.group ? el.group.join(", ") : "—";
+
                 $parent.append(`
                     <a href="/app/players/detail/${el.uid}"
                     class="text-inherit" 
@@ -317,16 +319,18 @@ export class List extends Component {
                                 (${el.security_id})
                             </span>
                         </p>
-                        <p>
-                            <strong class="d-block">Aidat</strong>
-                            <span class="text-muted">
-                                ${this.renderFeeType(el)}
-                            </span>
-                        </p>
+                        ${
+                            CheckPermissions(["a_read"])
+                                ? `<p>
+                                <strong class="d-block">Aidat</strong>
+                                <span class="text-muted">${this.renderFeeType(el)}</span>
+                            </p>`
+                                : ""
+                        }
                         <p>
                             <strong class="d-block">Grubu</strong>
                             <span class="text-muted">
-                                ${nullCheck(el.group)}
+                                ${nullCheck(group)}
                             </span>
                         </p>
                         <p>

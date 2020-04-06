@@ -155,6 +155,10 @@ export class Add extends Component {
                     visible: false
                 },
                 {
+                    targets: "delayed_payment",
+                    visible: CheckPermissions(["a_read"]) ? true : false
+                },
+                {
                     className: "control",
                     orderable: false,
                     targets: [2]

@@ -177,6 +177,10 @@ class Table extends Component {
                         visible: false
                     },
                     {
+                        targets: "fee",
+                        visible: CheckPermissions(["a_read"]) ? true : false
+                    },
+                    {
                         className: "control",
                         orderable: false,
                         targets: [2]
