@@ -4,7 +4,7 @@ import { DetailPlayer } from "../../services/Player.jsx";
 import Tabs from "../../components/Players/Tabs";
 import PersonCard from "./PersonCard";
 import Swal from "sweetalert2";
-import { formatPhone, nullCheck, formatDate, fullnameGenerator } from "../../services/Others.jsx";
+import { formatPhone, nullCheck, formatDate, fullnameGenerator, CheckPermissions } from "../../services/Others.jsx";
 import { showSwal } from "../Alert.jsx";
 
 const genderToText = {
@@ -50,7 +50,7 @@ export class Detail extends Component {
                     const data = response.data;
                     delete data.uid;
                     this.setState({ ...data, loading: "" });
-                    if (data.recipient_parent_id === -1) {
+                    if (CheckPermissions(["m_write"]) && data.recipient_parent_id === -1) {
                         showSwal({
                             type: "warning",
                             title: "İletişim Servisi Uyarısı!",
