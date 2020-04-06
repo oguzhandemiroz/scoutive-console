@@ -139,63 +139,65 @@ export class Detail extends Component {
                                     <div className="loader" />
                                     <div className="dimmer-content">
                                         <div className="form-group mb-5">
-                                            <div className="float-right d-flex flex-column">
-                                                <span
-                                                    data-toggle="tooltip"
-                                                    data-placement="left"
-                                                    title="Para Girişi Ekle">
-                                                    <button
-                                                        className="btn btn-sm btn-icon btn-success"
-                                                        data-toggle="modal"
-                                                        data-target="#amountIncreaseModal">
-                                                        <i className="fe fe-plus" />
-                                                    </button>
-                                                    <AmountIncreaseModal
-                                                        history={this.props.history}
-                                                        bid={this.props.match.params.bid}
-                                                        budget={{
-                                                            name: budget_name,
-                                                            balance: balance,
-                                                            currency: getCurrencyType.sign
-                                                        }}
-                                                    />
-                                                </span>
-                                                <span
-                                                    data-toggle="tooltip"
-                                                    data-placement="left"
-                                                    title="Para Çıkışı Ekle">
-                                                    <button
-                                                        className="btn btn-sm btn-icon btn-danger my-1"
-                                                        data-toggle="modal"
-                                                        data-target="#amountDecreaseModal">
-                                                        <i className="fe fe-minus" />
-                                                    </button>
-                                                    <AmountDecreaseModal
-                                                        history={this.props.history}
-                                                        bid={this.props.match.params.bid}
-                                                        budget={{
-                                                            name: budget_name,
-                                                            balance: balance,
-                                                            currency: getCurrencyType.sign
-                                                        }}
-                                                    />
-                                                </span>
-                                                <span
-                                                    data-toggle="tooltip"
-                                                    data-placement="left"
-                                                    title="Hesaplar Arası Transfer">
-                                                    <button
-                                                        className="btn btn-sm btn-icon btn-azure"
-                                                        data-toggle="modal"
-                                                        data-target="#transferModal">
-                                                        <i className="fa fa-exchange-alt" />
-                                                    </button>
-                                                    <TransferModal
-                                                        history={this.props.history}
-                                                        bid={this.props.match.params.bid}
-                                                    />
-                                                </span>
-                                            </div>
+                                            {CheckPermissions(["a_write"]) && (
+                                                <div className="float-right d-flex flex-column">
+                                                    <span
+                                                        data-toggle="tooltip"
+                                                        data-placement="left"
+                                                        title="Para Girişi Ekle">
+                                                        <button
+                                                            className="btn btn-sm btn-icon btn-success"
+                                                            data-toggle="modal"
+                                                            data-target="#amountIncreaseModal">
+                                                            <i className="fe fe-plus" />
+                                                        </button>
+                                                        <AmountIncreaseModal
+                                                            history={this.props.history}
+                                                            bid={this.props.match.params.bid}
+                                                            budget={{
+                                                                name: budget_name,
+                                                                balance: balance,
+                                                                currency: getCurrencyType.sign
+                                                            }}
+                                                        />
+                                                    </span>
+                                                    <span
+                                                        data-toggle="tooltip"
+                                                        data-placement="left"
+                                                        title="Para Çıkışı Ekle">
+                                                        <button
+                                                            className="btn btn-sm btn-icon btn-danger my-1"
+                                                            data-toggle="modal"
+                                                            data-target="#amountDecreaseModal">
+                                                            <i className="fe fe-minus" />
+                                                        </button>
+                                                        <AmountDecreaseModal
+                                                            history={this.props.history}
+                                                            bid={this.props.match.params.bid}
+                                                            budget={{
+                                                                name: budget_name,
+                                                                balance: balance,
+                                                                currency: getCurrencyType.sign
+                                                            }}
+                                                        />
+                                                    </span>
+                                                    <span
+                                                        data-toggle="tooltip"
+                                                        data-placement="left"
+                                                        title="Hesaplar Arası Transfer">
+                                                        <button
+                                                            className="btn btn-sm btn-icon btn-azure"
+                                                            data-toggle="modal"
+                                                            data-target="#transferModal">
+                                                            <i className="fa fa-exchange-alt" />
+                                                        </button>
+                                                        <TransferModal
+                                                            history={this.props.history}
+                                                            bid={this.props.match.params.bid}
+                                                        />
+                                                    </span>
+                                                </div>
+                                            )}
                                             <h3 className="mb-1">
                                                 {balance.format(2, 3, ".", ",") + " " + getCurrencyType.sign}
                                             </h3>
@@ -263,13 +265,15 @@ export class Detail extends Component {
                                     </div>
                                 </div>
                             </div>
-                            <div className="card-footer">
-                                <Link
-                                    to="#"
-                                    className={`btn btn-link btn-block ${loadingData ? "disabled" : "disabled"}`}>
-                                    Hesabı Düzenle &nbsp;(<i className="fe fe-lock"></i>)
-                                </Link>
-                            </div>
+                            {CheckPermissions(["a_write"]) && (
+                                <div className="card-footer">
+                                    <Link
+                                        to="#"
+                                        className={`btn btn-link btn-block ${loadingData ? "disabled" : "disabled"}`}>
+                                        Hesabı Düzenle &nbsp;(<i className="fe fe-lock"></i>)
+                                    </Link>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>
