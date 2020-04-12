@@ -488,7 +488,7 @@ export class Edit extends Component {
                     const edited_data = {
                         ...data,
                         imagePreview: data.image,
-                        fee: data.fee ? data.fee.toString().replace(".", ",") : null,
+                        fee: data.fee,
                         birthday: moment(data.birthday, "YYYY-MM-DD").toDate(),
                         start_date: moment(data.start_date, "YYYY-MM-DD").toDate(),
                         end_date: data.end_date ? moment(data.end_date, "YYYY-MM-DD").toDate() : null
@@ -560,12 +560,7 @@ export class Edit extends Component {
             parents,
             parentError,
             show,
-            payment_type,
-            installment,
-            installment_date,
-            downpayment,
-            downpayment_date,
-            is_cash
+            payment_type
         } = this.state;
         return (
             <div className="container">
@@ -743,161 +738,14 @@ export class Edit extends Component {
                                                     </div>
                                                 </div>
 
-                                                <fieldset
-                                                    className={`form-fieldset ${
-                                                        payment_type === 0 ? "d-block" : "d-none"
-                                                    }`}>
-                                                    <label className="form-label mb-0">
-                                                        Aidat<span className="form-required">*</span>
-                                                    </label>
-                                                    <div className="form-control-plaintext">
-                                                        {formatMoney(parseFloat(fee) || 0)}
-                                                    </div>
-                                                </fieldset>
-
-                                                <fieldset
-                                                    className={`form-fieldset ${
-                                                        payment_type === 2 ? "d-block" : "d-none"
-                                                    }`}>
-                                                    <div className="form-group mb-2">
+                                                {payment_type !== 1 && (
+                                                    <fieldset className="form-fieldset">
                                                         <label className="form-label">
-                                                            Ödeme Tutarı<span className="form-required">*</span>
+                                                            {payment_type === 0 ? "Aidat" : "Ödeme Tutarı"}
                                                         </label>
-                                                        <div className="form-control-plaintext">
-                                                            {formatMoney(parseFloat(fee) || 0)}
-                                                        </div>
-                                                    </div>
-                                                    <label className="custom-control custom-checkbox custom-control-inline">
-                                                        <input
-                                                            type="checkbox"
-                                                            className="custom-control-input"
-                                                            name="is_cash"
-                                                            disabled
-                                                            checked={is_cash}
-                                                        />
-                                                        <span className="custom-control-label">Peşin Ödendi</span>
-                                                    </label>
-                                                    <div className={is_cash ? "d-none" : "d-block"}>
-                                                        <div className="row gutters-xs">
-                                                            <div className="col-lg-6 col-md-12">
-                                                                <div className="form-group">
-                                                                    <label className="form-label">Peşinat</label>
-                                                                    <input
-                                                                        type="text"
-                                                                        className={`form-control ${formErrors.downpayment}`}
-                                                                        onChange={this.handleChange}
-                                                                        placeholder="Aidat"
-                                                                        name="downpayment"
-                                                                        value={downpayment || "0,00"}
-                                                                        disabled={!fee}
-                                                                    />
-                                                                </div>
-                                                            </div>
-                                                            <div className="col-lg-6 col-md-12">
-                                                                <div className="form-group">
-                                                                    <label className="form-label">Peşinat Tarihi</label>
-                                                                    <DatePicker
-                                                                        autoComplete="off"
-                                                                        selected={downpayment_date}
-                                                                        selectsEnd
-                                                                        startDate={downpayment_date}
-                                                                        name="downpayment_date"
-                                                                        locale="tr"
-                                                                        dateFormat="dd/MM/yyyy"
-                                                                        onChange={date =>
-                                                                            this.handleDate(date, "downpayment_date")
-                                                                        }
-                                                                        className={`form-control ${formErrors.downpayment_date}`}
-                                                                    />
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div className="row gutters-xs">
-                                                            <div className="col-lg-6 col-md-12">
-                                                                <div className="form-group">
-                                                                    <label className="form-label">
-                                                                        Taksit Sayısı
-                                                                        <span className="form-required">*</span>
-                                                                    </label>
-                                                                    <input
-                                                                        type="number"
-                                                                        className={`form-control ${formErrors.installment}`}
-                                                                        onChange={this.handleChange}
-                                                                        placeholder="Taksit"
-                                                                        name="installment"
-                                                                        min="1"
-                                                                        max="48"
-                                                                        value={installment}
-                                                                    />
-                                                                </div>
-                                                            </div>
-                                                            <div className="col-lg-6 col-md-12">
-                                                                <div className="form-group">
-                                                                    <label className="form-label">
-                                                                        Taksit Başlangıç
-                                                                        <span className="form-required">*</span>
-                                                                    </label>
-                                                                    <DatePicker
-                                                                        autoComplete="off"
-                                                                        selected={installment_date}
-                                                                        selectsEnd
-                                                                        startDate={installment_date}
-                                                                        name="installment_date"
-                                                                        locale="tr"
-                                                                        dateFormat="dd/MM/yyyy"
-                                                                        onChange={date =>
-                                                                            this.handleDate(date, "installment_date")
-                                                                        }
-                                                                        className={`form-control ${formErrors.installment_date}`}
-                                                                    />
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    {fee ? (
-                                                        <div className="alert alert-icon alert-success" role="alert">
-                                                            <i className="fa fa-align-left mr-2" aria-hidden="true"></i>
-                                                            <p>
-                                                                <b>Ödeme Özeti</b>
-                                                            </p>
-                                                            <p>
-                                                                <b>{formatMoney(parseFloat(fee))}</b> ödemenin,
-                                                                <br />
-                                                                <b>
-                                                                    {is_cash
-                                                                        ? formatMoney(parseFloat(fee))
-                                                                        : formatMoney(parseFloat(downpayment || 0))}
-                                                                </b>
-                                                                'sı peşin olarak ödendi.
-                                                            </p>
-                                                            {is_cash ? null : (
-                                                                <>
-                                                                    Geriye kalan&nbsp;
-                                                                    <b>
-                                                                        {formatMoney(
-                                                                            parseFloat(fee) -
-                                                                                parseFloat(downpayment || 0)
-                                                                        )}
-                                                                    </b>
-                                                                    ,<br />
-                                                                    <b>{formatDate(installment_date)}</b> tarihinden
-                                                                    itibaren&nbsp;
-                                                                    <b>{installment}</b>
-                                                                    &nbsp;taksit olarak ayda
-                                                                    <br />
-                                                                    <b>
-                                                                        {formatMoney(
-                                                                            (parseFloat(fee) -
-                                                                                parseFloat(downpayment || 0)) /
-                                                                                parseInt(installment)
-                                                                        )}
-                                                                    </b>
-                                                                    &nbsp; ödenecektir.
-                                                                </>
-                                                            )}
-                                                        </div>
-                                                    ) : null}
-                                                </fieldset>
+                                                        {formatMoney(fee)}
+                                                    </fieldset>
+                                                )}
 
                                                 {this.renderFeeWarning(payment_type)}
                                             </>
