@@ -109,12 +109,7 @@ export class Payment extends Component {
 
     componentDidMount() {
         const { to } = this.state;
-        GetSettings().then(resSettings => {
-            this.setState({
-                settings: resSettings.settings
-            });
-            this.listPlayers();
-        });
+        GetSettings().then(resSettings => this.listPlayers(resSettings.settings));
         this.generateMonthList();
         this.listBudgets();
         if (to) this.listPastPayment(to);
@@ -251,10 +246,9 @@ export class Payment extends Component {
         } catch (e) {}
     };
 
-    listPlayers = () => {
+    listPlayers = settings => {
         try {
-            const { to, settings } = this.state;
-            console.log(settings);
+            const { to } = this.state;
             ListPlayers().then(response => {
                 if (response) {
                     const status = response.status;
